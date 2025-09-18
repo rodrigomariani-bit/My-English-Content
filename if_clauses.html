@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Guide to If Clauses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.4rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .conditional-type {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .structure {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .examples {
+            background: #f0f8e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #81c784;
+        }
+
+        .example {
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .usage {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffb74d;
+        }
+
+        .important-note {
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f44336;
+            font-weight: bold;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        .table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        /* Game Styles */
+        .game-section {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .game-section h2 {
+            color: white;
+            border-bottom: 3px solid white;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .question-card {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .question-number {
+            background: #4ecdc4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .option {
+            background: #f8f9fa;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            background: #ffcdd2;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .input-answer {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .score-board {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress {
+            background: white;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Complete Guide to If Clauses</h1>
+            <p class="subtitle">Master Conditional Sentences in English</p>
+        </div>
+
+        <div class="section">
+            <h2>📚 Introduction to If Clauses</h2>
+            <p>If clauses, also known as <strong>conditional sentences</strong>, are used to express situations that depend on a condition. They show relationships between actions, events, or situations where one thing happens as a result of another. Understanding conditionals is crucial for expressing possibilities, regrets, advice, and hypothetical situations in English.</p>
+            
+            <div class="important-note">
+                <strong>Key Point:</strong> All conditional sentences have two parts: the <em>if clause</em> (condition) and the <em>main clause</em> (result). These can appear in any order in the sentence.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 The Four Types of Conditionals</h2>
+
+            <div class="conditional-type">
+                <h3>🔹 Zero Conditional (Universal Truths)</h3>
+                <div class="structure">
+                    <strong>Structure:</strong> If + present simple, present simple<br>
+                    <strong>Alternative:</strong> When + present simple, present simple
+                </div>
+                <div class="usage">
+                    <strong>Usage:</strong> Scientific facts, general truths, laws of nature, habits, and automatic results
+                </div>
+                <div class="examples">
+                    <div class="example">• If you heat water to 100°C, it boils.</div>
+                    <div class="example">• If it rains, the ground gets wet.</div>
+                    <div class="example">• When I eat too much, I feel sick.</div>
+                    <div class="example">• If you don't water plants, they die.</div>
+                </div>
+                <div class="important-note">
+                    <strong>Remember:</strong> Both clauses use present tense because we're talking about general facts that are always true.
+                </div>
+            </div>
+
+            <div class="conditional-type">
+                <h3>🔹 First Conditional (Real Future Possibilities)</h3>
+                <div class="structure">
+                    <strong>Structure:</strong> If + present simple, will + base verb<br>
+                    <strong>Alternatives:</strong> may, might, can, should + base verb
+                </div>
+                <div class="usage">
+                    <strong>Usage:</strong> Real and possible situations in the future, promises, warnings, threats, predictions
+                </div>
+                <div class="examples">
+                    <div class="example">• If it rains tomorrow, we will cancel the picnic.</div>
+                    <div class="example">• If you study hard, you might pass the exam.</div>
+                    <div class="example">• If she arrives early, she can help us prepare.</div>
+                    <div class="example">• If you don't hurry, you'll miss the bus.</div>
+                </div>
+                <div class="important-note">
+                    <strong>Remember:</strong> Use present tense in the if clause, even though you're talking about the future. Never use "will" in the if clause.
+                </div>
+            </div>
+
+            <div class="conditional-type">
+                <h3>🔹 Second Conditional (Unreal Present/Future)</h3>
+                <div class="structure">
+                    <strong>Structure:</strong> If + past simple, would + base verb<br>
+                    <strong>Alternatives:</strong> could, might + base verb
+                </div>
+                <div class="usage">
+                    <strong>Usage:</strong> Hypothetical, unlikely, or impossible situations in the present or future, giving advice, expressing wishes
+                </div>
+                <div class="examples">
+                    <div class="example">• If I were rich, I would travel around the world.</div>
+                    <div class="example">• If she studied medicine, she could become a doctor.</div>
+                    <div class="example">• If I lived in Japan, I might learn Japanese quickly.</div>
+                    <div class="example">• If you were the president, what would you do?</div>
+                </div>
+                <div class="important-note">
+                    <strong>Special Note:</strong> Use "were" (not "was") for all persons with the verb "to be" in formal English: "If I were you..." However, "was" is acceptable in informal speech.
+                </div>
+            </div>
+
+            <div class="conditional-type">
+                <h3>🔹 Third Conditional (Unreal Past)</h3>
+                <div class="structure">
+                    <strong>Structure:</strong> If + past perfect, would have + past participle<br>
+                    <strong>Alternatives:</strong> could have, might have + past participle
+                </div>
+                <div class="usage">
+                    <strong>Usage:</strong> Imaginary situations in the past, regrets, criticism, expressing how things could have been different
+                </div>
+                <div class="examples">
+                    <div class="example">• If I had studied harder, I would have passed the exam.</div>
+                    <div class="example">• If she had left earlier, she wouldn't have missed the train.</div>
+                    <div class="example">• If they had invested in that company, they could have made millions.</div>
+                    <div class="example">• If we had brought umbrellas, we might not have gotten soaked.</div>
+                </div>
+                <div class="important-note">
+                    <strong>Remember:</strong> This talks about past situations that didn't happen. It's often used to express regret or to imagine different outcomes.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔄 Mixed Conditionals</h2>
+            <p>Mixed conditionals combine different time references and are used when the condition and result refer to different time periods.</p>
+            
+            <h3>Type 1: Past condition → Present result</h3>
+            <div class="structure">
+                <strong>Structure:</strong> If + past perfect, would + base verb
+            </div>
+            <div class="examples">
+                <div class="example">• If I had studied medicine, I would be a doctor now.</div>
+                <div class="example">• If she had saved money, she wouldn't be broke today.</div>
+            </div>
+
+            <h3>Type 2: Present condition → Past result</h3>
+            <div class="structure">
+                <strong>Structure:</strong> If + past simple, would have + past participle
+            </div>
+            <div class="examples">
+                <div class="example">• If he were more careful, he wouldn't have had the accident.</div>
+                <div class="example">• If I weren't so busy, I would have visited you yesterday.</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 Quick Reference Table</h2>
+            <table class="table">
+                <tr>
+                    <th>Type</th>
+                    <th>If Clause</th>
+                    <th>Main Clause</th>
+                    <th>Usage</th>
+                </tr>
+                <tr>
+                    <td><strong>Zero</strong></td>
+                    <td>present simple</td>
+                    <td>present simple</td>
+                    <td>General truths, facts</td>
+                </tr>
+                <tr>
+                    <td><strong>First</strong></td>
+                    <td>present simple</td>
+                    <td>will + base verb</td>
+                    <td>Real future possibilities</td>
+                </tr>
+                <tr>
+                    <td><strong>Second</strong></td>
+                    <td>past simple</td>
+                    <td>would + base verb</td>
+                    <td>Hypothetical present/future</td>
+                </tr>
+                <tr>
+                    <td><strong>Third</strong></td>
+                    <td>past perfect</td>
+                    <td>would have + past participle</td>
+                    <td>Unreal past situations</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>⚡ Important Grammar Points</h2>
+            
+            <h3>1. Word Order</h3>
+            <div class="examples">
+                <div class="example">• If it rains, we will stay home. (if clause first)</div>
+                <div class="example">• We will stay home if it rains. (main clause first)</div>
+            </div>
+            <div class="important-note">
+                <strong>Comma Rule:</strong> Use a comma when the if clause comes first. No comma when the main clause comes first.
+            </div>
+
+            <h3>2. Alternative Conjunctions</h3>
+            <p>Instead of "if," you can use:</p>
+            <div class="examples">
+                <div class="example">• <strong>Unless</strong> (= if not): Unless you hurry, you'll be late.</div>
+                <div class="example">• <strong>Provided/Providing</strong>: I'll help you provided you pay me.</div>
+                <div class="example">• <strong>As long as</strong>: You can stay as long as you behave.</div>
+                <div class="example">• <strong>In case</strong>: Take an umbrella in case it rains.</div>
+            </div>
+
+            <h3>3. Modals in Conditionals</h3>
+            <div class="examples">
+                <div class="example">• If you finish early, you <strong>can</strong> go home.</div>
+                <div class="example">• If I were you, I <strong>might</strong> consider that offer.</div>
+                <div class="example">• If she had tried harder, she <strong>could have</strong> succeeded.</div>
+            </div>
+        </div>
+
+        <div class="section game-section">
+            <h2>🎮 Interactive Practice Game</h2>
+            <p>Test your understanding of If Clauses with this interactive quiz!</p>
+            
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span> / <span id="totalQuestions">15</span></div>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+            </div>
+
+            <div class="game-container">
+                <div id="questionContainer" class="question-card">
+                    <!-- Questions will be loaded here -->
+                </div>
+
+                <div class="hidden" id="finalResults">
+                    <h3>🎉 Quiz Complete!</h3>
+                    <p>Your final score: <span id="finalScore"></span></p>
+                    <p id="performance"></p>
+                    <button class="btn" onclick="restartGame()">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let gameStarted = false;
+
+        const questions = [
+            {
+                type: "multiple",
+                question: "Complete the sentence: 'If it _____ tomorrow, we will have a barbecue.'",
+                options: ["rains", "doesn't rain", "rained", "would rain"],
+                correct: 1,
+                explanation: "First conditional uses present simple in the if clause for future possibilities."
+            },
+            {
+                type: "multiple",
+                question: "Which sentence expresses an impossible situation in the past?",
+                options: [
+                    "If I have time, I will call you.",
+                    "If she were here, she would help us.",
+                    "If you heat ice, it melts.",
+                    "If he had studied, he would have passed."
+                ],
+                correct: 3,
+                explanation: "Third conditional expresses unreal past situations - things that didn't happen."
+            },
+            {
+                type: "input",
+                question: "Complete with the correct form: 'If I _____ (be) rich, I would buy a yacht.'",
+                answer: ["were", "was"],
+                explanation: "'Were' is preferred in formal English for all persons in second conditional."
+            },
+            {
+                type: "multiple",
+                question: "What type of conditional is this? 'When you mix red and blue, you get purple.'",
+                options: ["First conditional", "Second conditional", "Zero conditional", "Third conditional"],
+                correct: 2,
+                explanation: "Zero conditional expresses general truths and facts that are always true."
+            },
+            {
+                type: "multiple",
+                question: "Choose the correct sentence:",
+                options: [
+                    "If I would have money, I will travel.",
+                    "If I had money, I would travel.",
+                    "If I have money, I would travel.",
+                    "If I will have money, I travel."
+                ],
+                correct: 1,
+                explanation: "Second conditional: If + past simple, would + base verb."
+            },
+            {
+                type: "input",
+                question: "Complete: 'If they _____ _____ (not/leave) so late, they wouldn't have missed the flight.'",
+                answer: ["hadn't left", "had not left"],
+                explanation: "Third conditional uses past perfect in the if clause."
+            },
+            {
+                type: "multiple",
+                question: "Which conditional expresses a real possibility in the future?",
+                options: ["Zero conditional", "Third conditional", "First conditional", "Second conditional"],
+                correct: 2,
+                explanation: "First conditional is used for real future possibilities that could happen."
+            },
+            {
+                type: "multiple",
+                question: "'Unless you study, you will fail.' This sentence means:",
+                options: [
+                    "If you study, you will fail.",
+                    "If you don't study, you will fail.",
+                    "When you study, you will pass.",
+                    "If you studied, you would fail."
+                ],
+                correct: 1,
+                explanation: "'Unless' means 'if not', so 'unless you study' = 'if you don't study'."
+            },
+            {
+                type: "input",
+                question: "Complete the mixed conditional: 'If she _____ _____ (study) medicine, she would be a doctor now.'",
+                answer: ["had studied"],
+                explanation: "Mixed conditional: past condition (had studied) affecting present result (would be)."
+            },
+            {
+                type: "multiple",
+                question: "In which sentence is the comma correctly used?",
+                options: [
+                    "I will help you, if you ask nicely.",
+                    "If you ask nicely I will help you.",
+                    "If you ask nicely, I will help you.",
+                    "I will help you if, you ask nicely."
+                ],
+                correct: 2,
+                explanation: "Use a comma when the if clause comes first, no comma when main clause comes first."
+            },
+            {
+                type: "multiple",
+                question: "Complete: 'If I _____ you, I would apologize immediately.'",
+                options: ["am", "was", "were", "will be"],
+                correct: 2,
+                explanation: "Use 'were' for all persons with 'to be' in second conditional formal English."
+            },
+            {
+                type: "input",
+                question: "What conditional type? 'If you don't water plants, they die.' Type: _____ conditional",
+                answer: ["zero", "0"],
+                explanation: "Zero conditional expresses general truths and automatic results."
+            },
+            {
+                type: "multiple",
+                question: "Which sentence expresses regret about the past?",
+                options: [
+                    "If I study hard, I will pass.",
+                    "If I were you, I would study more.",
+                    "If plants don't get water, they die.",
+                    "If I had studied harder, I would have passed."
+                ],
+                correct: 3,
+                explanation: "Third conditional often expresses regret about past actions or situations."
+            },
+            {
+                type: "multiple",
+                question: "'Provided you finish your homework, you can watch TV.' What does 'provided' mean?",
+                options: ["unless", "because", "if", "when"],
+                correct: 2,
+                explanation: "'Provided' means 'if' - it introduces a condition that must be met."
+            },
+            {
+                type: "input",
+                question: "Complete: 'If she _____ _____ _____ (not/be) so busy, she would have visited us yesterday.'",
+                answer: ["weren't", "wasn't"],
+                explanation: "Mixed conditional: present condition (weren't/wasn't) affecting past result."
+            }
+        ];
+
+        function startGame() {
+            currentQuestion = 0;
+            score = 0;
+            gameStarted = true;
+            updateScore();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                endGame();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                <div class="question-text">${question.question}</div>
+            `;
+
+            if (question.type === "multiple") {
+                html += '<div class="options">';
+                question.options.forEach((option, index) => {
+                    html += `<div class="option" onclick="selectAnswer(${index})">${String.fromCharCode(65 + index)}. ${option}</div>`;
+                });
+                html += '</div>';
+            } else {
+                html += `
+                    <input type="text" class="input-answer" id="userInput" placeholder="Type your answer here..." onkeypress="handleEnterKey(event)">
+                    <button class="btn" onclick="checkInputAnswer()">Submit Answer</button>
+                `;
+            }
+
+            html += '<div id="feedback" class="feedback hidden"></div>';
+            
+            container.innerHTML = html;
+            
+            if (question.type === "input") {
+                document.getElementById('userInput').focus();
+            }
+
+            updateProgress();
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+
+            options.forEach(option => option.classList.add('disabled'));
+
+            if (selectedIndex === question.correct) {
+                options[selectedIndex].classList.add('correct');
+                score++;
+                feedback.textContent = "✅ Correct! " + question.explanation;
+                feedback.className = "feedback correct";
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+                feedback.textContent = "❌ Incorrect. " + question.explanation;
+                feedback.className = "feedback incorrect";
+            }
+
+            feedback.classList.remove('hidden');
+            updateScore();
+
+            setTimeout(() => {
+                currentQuestion++;
+                showQuestion();
+            }, 3000);
+        }
+
+        function checkInputAnswer() {
+            const question = questions[currentQuestion];
+            const userAnswer = document.getElementById('userInput').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            const button = document.querySelector('.btn');
+
+            button.disabled = true;
+            document.getElementById('userInput').disabled = true;
+
+            const isCorrect = question.answer.some(answer => 
+                userAnswer === answer.toLowerCase() || 
+                userAnswer.includes(answer.toLowerCase())
+            );
+
+            if (isCorrect) {
+                score++;
+                feedback.textContent = "✅ Correct! " + question.explanation;
+                feedback.className = "feedback correct";
+            } else {
+                feedback.textContent = `❌ Incorrect. Correct answer: "${question.answer[0]}". ${question.explanation}`;
+                feedback.className = "feedback incorrect";
+            }
+
+            feedback.classList.remove('hidden');
+            updateScore();
+
+            setTimeout(() => {
+                currentQuestion++;
+                showQuestion();
+            }, 3000);
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                checkInputAnswer();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('totalQuestions').textContent = questions.length;
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function endGame() {
+            document.getElementById('questionContainer').classList.add('hidden');
+            document.getElementById('finalResults').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = `${score}/${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            let performance = "";
+            
+            if (percentage >= 90) {
+                performance = "🏆 Excellent! You've mastered If Clauses!";
+            } else if (percentage >= 70) {
+                performance = "🎉 Great job! You have a solid understanding of conditionals.";
+            } else if (percentage >= 50) {
+                performance = "👍 Good effort! Review the explanations and try again.";
+            } else {
+                performance = "📚 Keep studying! Go back to the theory section and practice more.";
+            }
+            
+            document.getElementById('performance').textContent = performance;
+        }
+
+        function restartGame() {
+            document.getElementById('questionContainer').classList.remove('hidden');
+            document.getElementById('finalResults').classList.add('hidden');
+            startGame();
+        }
+
+        // Start the game when the page loads
+        window.onload = function() {
+            startGame();
+        };
+    </script>
+</body>
+</html>
