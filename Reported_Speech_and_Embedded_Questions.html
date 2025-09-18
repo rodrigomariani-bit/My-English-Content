@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reported Speech & Embedded Questions</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .example {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .direct {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .reported {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .game-section {
+            background: #f1c40f;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .game-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .question-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .options {
+            margin: 15px 0;
+        }
+        
+        .option {
+            background: #ecf0f1;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background: #bdc3c7;
+            transform: translateX(5px);
+        }
+        
+        .option.correct {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .option.incorrect {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .text-input {
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 80%;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .feedback {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .correct-feedback {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect-feedback {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .score {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 10px;
+        }
+        
+        .tip {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reported Speech & Embedded Questions</h1>
+        
+        <!-- REPORTED SPEECH SECTION -->
+        <div class="section">
+            <h2>1. Reported Speech (Indirect Speech)</h2>
+            
+            <p><strong>Reported Speech</strong> é usado quando queremos relatar o que alguém disse sem usar as palavras exatas da pessoa. É também conhecido como <strong>Indirect Speech</strong>.</p>
+            
+            <h3>1.1 Basic Structure</h3>
+            <div class="example">
+                <p><span class="direct">Direct Speech:</span> "I am tired," she said.</p>
+                <p><span class="reported">Reported Speech:</span> She said (that) she was tired.</p>
+            </div>
+            
+            <h3>1.2 Reporting Verbs</h3>
+            <p>Os verbos mais comuns para reportar fala:</p>
+            <ul>
+                <li><strong>say</strong> - She said (that)...</li>
+                <li><strong>tell</strong> - He told me (that)... (sempre seguido de objeto)</li>
+                <li><strong>ask</strong> - They asked if/whether...</li>
+                <li><strong>explain</strong> - The teacher explained (that)...</li>
+                <li><strong>mention</strong> - He mentioned (that)...</li>
+                <li><strong>reply</strong> - She replied (that)...</li>
+            </ul>
+            
+            <h3>1.3 Tense Changes (Backshift)</h3>
+            <p>Quando o reporting verb está no passado, normalmente mudamos os tempos verbais:</p>
+            
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Direct Speech</th>
+                        <th>Reported Speech</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>Present Simple</td>
+                        <td>Past Simple</td>
+                        <td>"I live here" → He said he lived there</td>
+                    </tr>
+                    <tr>
+                        <td>Present Continuous</td>
+                        <td>Past Continuous</td>
+                        <td>"I am reading" → She said she was reading</td>
+                    </tr>
+                    <tr>
+                        <td>Past Simple</td>
+                        <td>Past Perfect</td>
+                        <td>"I went" → He said he had gone</td>
+                    </tr>
+                    <tr>
+                        <td>Present Perfect</td>
+                        <td>Past Perfect</td>
+                        <td>"I have done it" → She said she had done it</td>
+                    </tr>
+                    <tr>
+                        <td>Will</td>
+                        <td>Would</td>
+                        <td>"I will come" → He said he would come</td>
+                    </tr>
+                    <tr>
+                        <td>Can</td>
+                        <td>Could</td>
+                        <td>"I can swim" → She said she could swim</td>
+                    </tr>
+                    <tr>
+                        <td>May</td>
+                        <td>Might</td>
+                        <td>"I may go" → He said he might go</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h3>1.4 Pronoun Changes</h3>
+            <div class="example">
+                <p><span class="direct">Direct:</span> "I will help you," Tom said to Mary.</p>
+                <p><span class="reported">Reported:</span> Tom told Mary (that) he would help her.</p>
+            </div>
+            
+            <h3>1.5 Time and Place Changes</h3>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Direct Speech</th>
+                        <th>Reported Speech</th>
+                    </tr>
+                    <tr><td>today</td><td>that day</td></tr>
+                    <tr><td>tomorrow</td><td>the next/following day</td></tr>
+                    <tr><td>yesterday</td><td>the day before/the previous day</td></tr>
+                    <tr><td>now</td><td>then</td></tr>
+                    <tr><td>here</td><td>there</td></tr>
+                    <tr><td>this</td><td>that</td></tr>
+                    <tr><td>these</td><td>those</td></tr>
+                </table>
+            </div>
+            
+            <h3>1.6 Reporting Questions</h3>
+            
+            <h4>Yes/No Questions</h4>
+            <div class="example">
+                <p><span class="direct">Direct:</span> "Are you coming?" she asked.</p>
+                <p><span class="reported">Reported:</span> She asked if/whether I was coming.</p>
+            </div>
+            
+            <h4>Wh-Questions</h4>
+            <div class="example">
+                <p><span class="direct">Direct:</span> "Where do you live?" he asked.</p>
+                <p><span class="reported">Reported:</span> He asked where I lived.</p>
+            </div>
+            
+            <div class="tip">
+                <strong>Important:</strong> Em reported questions, a ordem das palavras muda para statement order (sujeito + verbo), não question order.
+            </div>
+            
+            <h3>1.7 Reporting Commands and Requests</h3>
+            <div class="example">
+                <p><span class="direct">Commands:</span> "Close the door!" → He told me to close the door.</p>
+                <p><span class="direct">Requests:</span> "Please help me." → She asked me to help her.</p>
+                <p><span class="direct">Negative:</span> "Don't be late!" → He told me not to be late.</p>
+            </div>
+        </div>
+        
+        <!-- EMBEDDED QUESTIONS SECTION -->
+        <div class="section">
+            <h2>2. Embedded Questions</h2>
+            
+            <p><strong>Embedded Questions</strong> são perguntas que aparecem dentro de outras sentenças. Elas são mais polidas e formais que perguntas diretas.</p>
+            
+            <h3>2.1 Structure</h3>
+            <div class="example">
+                <p><span class="direct">Direct Question:</span> "Where is the bank?"</p>
+                <p><span class="reported">Embedded Question:</span> Could you tell me where the bank is?</p>
+            </div>
+            
+            <h3>2.2 Common Introductory Phrases</h3>
+            <ul>
+                <li>Could you tell me...?</li>
+                <li>Do you know...?</li>
+                <li>I wonder...</li>
+                <li>I'd like to know...</li>
+                <li>Can you explain...?</li>
+                <li>I'm not sure...</li>
+                <li>I don't know...</li>
+            </ul>
+            
+            <h3>2.3 Yes/No Embedded Questions</h3>
+            <div class="example">
+                <p><span class="direct">Direct:</span> "Is the store open?"</p>
+                <p><span class="reported">Embedded:</span> Do you know if/whether the store is open?</p>
+                <br>
+                <p><span class="direct">Direct:</span> "Has she arrived?"</p>
+                <p><span class="reported">Embedded:</span> I wonder if/whether she has arrived.</p>
+            </div>
+            
+            <h3>2.4 Wh-Embedded Questions</h3>
+            <div class="example">
+                <p><span class="direct">Direct:</span> "What time does the movie start?"</p>
+                <p><span class="reported">Embedded:</span> Could you tell me what time the movie starts?</p>
+                <br>
+                <p><span class="direct">Direct:</span> "How much does it cost?"</p>
+                <p><span class="reported">Embedded:</span> I'd like to know how much it costs.</p>
+            </div>
+            
+            <div class="tip">
+                <strong>Key Rule:</strong> Em embedded questions, sempre use statement word order (sujeito + verbo), não question order, e não use auxiliary verbs (do/does/did) desnecessariamente.
+            </div>
+            
+            <h3>2.5 Embedded Questions vs. Reported Questions</h3>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Purpose</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>Reported Question</td>
+                        <td>Relatar o que alguém perguntou</td>
+                        <td>He asked where I lived.</td>
+                    </tr>
+                    <tr>
+                        <td>Embedded Question</td>
+                        <td>Fazer uma pergunta polida</td>
+                        <td>Could you tell me where you live?</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h3>2.6 Common Mistakes to Avoid</h3>
+            <div class="example">
+                <p>❌ <span style="color: red;">Could you tell me where is the bank?</span></p>
+                <p>✅ <span style="color: green;">Could you tell me where the bank is?</span></p>
+                <br>
+                <p>❌ <span style="color: red;">I don't know what does he want.</span></p>
+                <p>✅ <span style="color: green;">I don't know what he wants.</span></p>
+                <br>
+                <p>❌ <span style="color: red;">She asked me where do I live.</span></p>
+                <p>✅ <span style="color: green;">She asked me where I lived.</span></p>
+            </div>
+        </div>
+        
+        <!-- INTERACTIVE GAME SECTION -->
+        <div class="game-section">
+            <h2>🎮 Interactive Practice Game</h2>
+            <p>Test your knowledge with these interactive exercises!</p>
+            
+            <div id="gameContainer">
+                <div class="score" id="scoreDisplay">Score: 0/0</div>
+                <div id="questionArea"></div>
+                <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display: none;">Next Question</button>
+                <button class="btn" onclick="restartGame()" id="restartBtn" style="display: none;">Restart Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let totalQuestions = 0;
+        let gameQuestions = [];
+
+        // Question bank with varied correct answers
+        const questions = [
+            {
+                type: 'multiple',
+                question: 'Convert to reported speech: "I am studying English," Maria said.',
+                options: [
+                    'Maria said she is studying English.',
+                    'Maria said that she was studying English.',
+                    'Maria said she studies English.',
+                    'Maria told she was studying English.'
+                ],
+                correct: 1 // Option B
+            },
+            {
+                type: 'text',
+                question: 'Convert to embedded question: "Where does John work?"<br><br>Start with: "Do you know..."',
+                answer: 'do you know where john works',
+                variations: ['do you know where john works?', 'could you tell me where john works', 'could you tell me where john works?']
+            },
+            {
+                type: 'multiple',
+                question: 'Which is the correct reported speech for: "I will call you tomorrow," he said.',
+                options: [
+                    'He said he would call me tomorrow.',
+                    'He said he will call me the next day.',
+                    'He said he would call me the next day.',
+                    'He told he would call me tomorrow.'
+                ],
+                correct: 2 // Option C
+            },
+            {
+                type: 'multiple',
+                question: 'Convert to embedded question: "Is the restaurant open?"<br><br>Which is correct?',
+                options: [
+                    'Do you know if is the restaurant open?',
+                    'Do you know if the restaurant is open?',
+                    'Do you know is the restaurant open?',
+                    'Do you know if the restaurant open?'
+                ],
+                correct: 1 // Option B
+            },
+            {
+                type: 'text',
+                question: 'Convert to reported speech: "Don\'t forget your keys!" she told me.<br><br>Complete: "She told me..."',
+                answer: 'she told me not to forget my keys',
+                variations: ['she told me to not forget my keys', 'she told me not to forget the keys']
+            },
+            {
+                type: 'multiple',
+                question: 'What\'s the correct embedded question for: "How much does this cost?"',
+                options: [
+                    'Could you tell me how much does this cost?',
+                    'Could you tell me how much this cost?',
+                    'Could you tell me how much this costs?',
+                    'Could you tell me how much do this cost?'
+                ],
+                correct: 2 // Option C
+            },
+            {
+                type: 'multiple',
+                question: 'Convert: "Have you finished your homework?" the teacher asked.',
+                options: [
+                    'The teacher asked if I finished my homework.',
+                    'The teacher asked if I have finished my homework.',
+                    'The teacher asked whether I had finished my homework.',
+                    'The teacher asked have I finished my homework.'
+                ],
+                correct: 2 // Option C
+            },
+            {
+                type: 'text',
+                question: 'Make this more polite using an embedded question: "What time is it?"<br><br>Start with: "Could you tell me..."',
+                answer: 'could you tell me what time it is',
+                variations: ['could you tell me what time it is?', 'can you tell me what time it is', 'can you tell me what time it is?']
+            },
+            {
+                type: 'multiple',
+                question: 'Which time expression change is correct in reported speech?',
+                options: [
+                    '"I saw him yesterday" → She said she saw him yesterday.',
+                    '"I saw him yesterday" → She said she had seen him the day before.',
+                    '"I saw him yesterday" → She said she has seen him yesterday.',
+                    '"I saw him yesterday" → She said she sees him the day before.'
+                ],
+                correct: 1 // Option B
+            },
+            {
+                type: 'multiple',
+                question: 'What\'s wrong with this embedded question: "I wonder where does he live."',
+                options: [
+                    'Should use "where he lives" instead of "where does he live"',
+                    'Should use "did" instead of "does"',
+                    'Should add a question mark',
+                    'Nothing is wrong'
+                ],
+                correct: 0 // Option A
+            }
+        ];
+
+        function startGame() {
+            gameQuestions = [...questions].sort(() => Math.random() - 0.5);
+            totalQuestions = gameQuestions.length;
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+            updateScore();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= totalQuestions) {
+                endGame();
+                return;
+            }
+
+            const question = gameQuestions[currentQuestion];
+            const questionArea = document.getElementById('questionArea');
+            
+            let html = `
+                <div class="question-container">
+                    <div class="question">${currentQuestion + 1}. ${question.question}</div>
+            `;
+
+            if (question.type === 'multiple') {
+                html += '<div class="options">';
+                question.options.forEach((option, index) => {
+                    const letter = String.fromCharCode(65 + index);
+                    html += `<div class="option" onclick="selectOption(${index})" data-index="${index}">${letter}) ${option}</div>`;
+                });
+                html += '</div>';
+            } else {
+                html += `
+                    <input type="text" class="text-input" id="textAnswer" placeholder="Type your answer here...">
+                    <br><button class="btn" onclick="checkTextAnswer()">Check Answer</button>
+                `;
+            }
+
+            html += '<div id="feedback"></div></div>';
+            questionArea.innerHTML = html;
+        }
+
+        function selectOption(selectedIndex) {
+            const question = gameQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            
+            options.forEach((option, index) => {
+                option.onclick = null;
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    option.classList.add('incorrect');
+                } else {
+                    option.style.opacity = '0.5';
+                }
+            });
+
+            if (selectedIndex === question.correct) {
+                score++;
+                feedback.innerHTML = '<div class="feedback correct-feedback">✅ Correct! Well done!</div>';
+            } else {
+                const correctOption = String.fromCharCode(65 + question.correct);
+                feedback.innerHTML = `<div class="feedback incorrect-feedback">❌ Incorrect. The correct answer is ${correctOption}) ${question.options[question.correct]}</div>`;
+            }
+
+            updateScore();
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function checkTextAnswer() {
+            const question = gameQuestions[currentQuestion];
+            const userAnswer = document.getElementById('textAnswer').value.toLowerCase().trim();
+            const feedback = document.getElementById('feedback');
+            
+            let isCorrect = userAnswer === question.answer;
+            
+            if (!isCorrect && question.variations) {
+                isCorrect = question.variations.some(variation => 
+                    userAnswer === variation.toLowerCase().trim()
+                );
+            }
+
+            if (isCorrect) {
+                score++;
+                feedback.innerHTML = '<div class="feedback correct-feedback">✅ Correct! Excellent work!</div>';
+            } else {
+                feedback.innerHTML = `<div class="feedback incorrect-feedback">❌ Incorrect. A possible answer is: "<strong>${question.answer}</strong>"</div>`;
+            }
+
+            updateScore();
+            document.getElementById('textAnswer').disabled = true;
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}/${Math.min(currentQuestion + 1, totalQuestions)}`;
+        }
+
+        function endGame() {
+            const questionArea = document.getElementById('questionArea');
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            let message = '';
+            let color = '';
+            
+            if (percentage >= 90) {
+                message = 'Outstanding! You have mastered Reported Speech and Embedded Questions! 🎉';
+                color = '#27ae60';
+            } else if (percentage >= 70) {
+                message = 'Great job! You have a good understanding of the topic! 👍';
+                color = '#f39c12';
+            } else if (percentage >= 50) {
+                message = 'Good effort! Keep practicing to improve your skills! 💪';
+                color = '#e67e22';
+            } else {
+                message = 'Keep studying and practicing. You\'ll get better! 📚';
+                color = '#e74c3c';
+            }
+
+            questionArea.innerHTML = `
+                <div class="question-container" style="text-align: center;">
+                    <h3 style="color: ${color};">Game Complete!</h3>
+                    <div class="score" style="font-size: 2em; color: ${color};">
+                        Final Score: ${score}/${totalQuestions} (${percentage}%)
+                    </div>
+                    <p style="font-size: 1.2em; margin: 20px 0; color: #2c3e50;">
+                        ${message}
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('restartBtn').style.display = 'inline-block';
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        // Start the game when page loads
+        window.onload = function() {
+            startGame();
+        };
+    </script>
+</body>
+</html>
