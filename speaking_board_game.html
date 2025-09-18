@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaking Board Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            background: #e53e3e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            transform: rotateY(180deg);
+            font-size: 1.1rem;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .special-card .card-front {
+            background: linear-gradient(135deg, #ffa726, #fb8c00);
+        }
+
+        .special-card .card-back {
+            background: linear-gradient(135deg, #ab47bc, #8e24aa);
+        }
+
+        .question-type {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-weight: 600;
+        }
+
+        .tips {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .reset-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 1000;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .game-board {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            
+            .card {
+                height: 160px;
+            }
+            
+            .card-back {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="reset-btn" onclick="resetAllCards()">🔄 Reset All Cards</button>
+    
+    <div class="header">
+        <div class="logo">🗣️ CULTURA INGLESA</div>
+        <h1 class="title">SPEAKING BOARD GAME</h1>
+        <p class="subtitle">Click on the numbers to reveal conversation topics!</p>
+    </div>
+
+    <div class="game-board" id="gameBoard">
+        <!-- Cards will be generated by JavaScript -->
+    </div>
+
+    <script>
+        const topics = [
+            {
+                type: "Personal Experience",
+                question: "Tell us about your last weekend",
+                tips: "What did you do? Where did you go? Who were you with?"
+            },
+            {
+                type: "Pets & Animals",
+                question: "Describe your pet or a pet you would like to have",
+                tips: "What kind of animal? What's its personality like?"
+            },
+            {
+                type: "Hobbies",
+                question: "Talk about one of your hobbies",
+                tips: "When did you start? Why do you enjoy it? How often do you do it?"
+            },
+            {
+                type: "Interaction",
+                question: "ASK THE TEACHER A QUESTION",
+                tips: "Ask something interesting about their life, experiences, or opinions!"
+            },
+            {
+                type: "Emotions",
+                question: "What makes you angry or frustrated?",
+                tips: "Describe the situation and explain why it bothers you"
+            },
+            {
+                type: "Entertainment",
+                question: "What's your favorite film or TV series?",
+                tips: "What's the plot? Who are the main characters? Why do you love it?"
+            },
+            {
+                type: "Travel",
+                question: "Describe an interesting place you have visited",
+                tips: "Where was it? What made it special? Would you go back?"
+            },
+            {
+                type: "Interaction",
+                question: "ASK A CLASSMATE A QUESTION",
+                tips: "Ask something personal but appropriate - get to know them better!"
+            },
+            {
+                type: "Food",
+                question: "Talk about a food you absolutely hate",
+                tips: "What is it? Why don't you like it? When did you first try it?"
+            },
+            {
+                type: "Skills",
+                question: "How well can you cook?",
+                tips: "What's your specialty? Do you enjoy cooking? Share a cooking disaster!"
+            },
+            {
+                type: "Food",
+                question: "Describe your favorite comfort food",
+                tips: "What is it? When do you eat it? Does it remind you of something special?"
+            },
+            {
+                type: "Places",
+                question: "What's your favorite place in the world?",
+                tips: "Why is it special to you? How often do you go there?"
+            },
+            {
+                type: "Interaction",
+                question: "ASK THE TEACHER A QUESTION",
+                tips: "Maybe about their teaching experience or personal interests!"
+            },
+            {
+                type: "Relationships",
+                question: "Describe one of your best friends",
+                tips: "How did you meet? What do you like about them? What do you do together?"
+            },
+            {
+                type: "Fears",
+                question: "What are you most afraid of?",
+                tips: "Is it rational or irrational? Have you always had this fear?"
+            },
+            {
+                type: "Animals",
+                question: "What's your favorite animal and why?",
+                tips: "What characteristics do you admire? Have you seen one in real life?"
+            },
+            {
+                type: "Sports",
+                question: "What sports do you practice or watch?",
+                tips: "How long have you been involved? What do you love about it?"
+            },
+            {
+                type: "Preferences",
+                question: "What's your favorite color and why?",
+                tips: "Does it reflect your personality? Do you wear it often?"
+            },
+            {
+                type: "Opinions",
+                question: "What do you find really boring?",
+                tips: "Why is it boring to you? Have you always felt this way?"
+            },
+            {
+                type: "Family",
+                question: "Tell us about your family",
+                tips: "Who do you live with? What are they like? What do you do together?"
+            },
+            {
+                type: "Current Events",
+                question: "How's the weather today? Do you like it?",
+                tips: "What's your favorite type of weather? How does weather affect your mood?"
+            },
+            {
+                type: "Role Models",
+                question: "Describe someone you really admire",
+                tips: "Who are they? What qualities do they have? How do they inspire you?"
+            },
+            {
+                type: "Food",
+                question: "What's your absolute favorite food?",
+                tips: "When do you eat it? Can you make it yourself? What makes it special?"
+            },
+            {
+                type: "Interaction",
+                question: "ASK THE TEACHER A QUESTION",
+                tips: "Ask about their experiences, opinions, or something fun!"
+            },
+            {
+                type: "Music",
+                question: "What instruments can you play?",
+                tips: "How did you learn? Do you still play? What's your favorite piece?"
+            },
+            {
+                type: "Family",
+                question: "Describe your mother, father, or guardian",
+                tips: "What are they like? What's something special about them?"
+            },
+            {
+                type: "Games",
+                question: "What's your favorite game to play?",
+                tips: "Board game, video game, or sport? Who do you play with? Why is it fun?"
+            },
+            {
+                type: "Personality",
+                question: "What's your best personal characteristic?",
+                tips: "Why do you think it's your best quality? How does it help you?"
+            },
+            {
+                type: "Interaction",
+                question: "ASK A CLASSMATE A QUESTION",
+                tips: "Ask something that will help you learn something new about them!"
+            },
+            {
+                type: "Dreams",
+                question: "Share one of your dreams or goals",
+                tips: "Is it a life dream or a sleeping dream? How do you plan to achieve it?"
+            }
+        ];
+
+        function createCard(index) {
+            const topic = topics[index];
+            const isSpecial = topic.question.includes("ASK");
+            
+            return `
+                <div class="card ${isSpecial ? 'special-card' : ''}" onclick="flipCard(${index})">
+                    <div class="card-inner" id="card-${index}">
+                        <div class="card-front">
+                            ${index + 1}
+                        </div>
+                        <div class="card-back">
+                            <div class="question-type">${topic.type}</div>
+                            <div class="question-text">${topic.question}</div>
+                            <div class="tips">${topic.tips}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function flipCard(index) {
+            const card = document.querySelector(`#card-${index}`).parentElement;
+            card.classList.toggle('flipped');
+        }
+
+        function resetAllCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+
+        // Initialize the game board
+        function initializeBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = topics.map((_, index) => createCard(index)).join('');
+        }
+
+        // Start the game when page loads
+        initializeBoard();
+    </script>
+</body>
+</html>
