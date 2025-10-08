@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive English Exercises</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .score-board {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.3em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .exercise {
+            background: #f8f9fa;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .exercise-title {
+            color: #764ba2;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .question {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .question-text {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background: #f0f0f0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #2e7d32;
+        }
+        
+        .option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #c62828;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+        }
+        
+        .check-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .check-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .check-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #4caf50;
+            color: white;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f44336;
+            color: white;
+            display: block;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .match-item {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .match-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .match-item.selected {
+            background: #667eea;
+            color: white;
+            border-color: #764ba2;
+        }
+        
+        .match-item.matched {
+            background: #4caf50;
+            color: white;
+            cursor: default;
+        }
+        
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+        
+        .word-tag {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .word-tag:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+        
+        .word-tag.used {
+            background: #ccc;
+            cursor: default;
+        }
+        
+        .drop-zone {
+            border: 2px dashed #667eea;
+            padding: 10px;
+            min-height: 40px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            background: #f0f0f0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .final-score {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.5em;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .matching-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Interactive English Exercises</h1>
+        <p class="subtitle">Health, Feelings & Daily Communication</p>
+        
+        <div class="score-board">
+            <span id="score">Score: 0 / 0</span>
+        </div>
+
+        <!-- EXERCISE 1: Multiple Choice -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 1: Choose the Correct Answer</div>
+            
+            <div class="question" data-question="1">
+                <div class="question-text">1. Your friend looks very pale and weak. What do you say?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q1" value="a">
+                        That's great! Let's go running!
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="b">
+                        Are you OK? You don't look well.
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="c">
+                        I feel fantastic today!
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkAnswer(1, 'b')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="2">
+                <div class="question-text">2. Complete: "I have a terrible headache. I need to _____ and rest."</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q2" value="a">
+                        take medicine
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="b">
+                        go running
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="c">
+                        eat more food
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkAnswer(2, 'a')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="3">
+                <div class="question-text">3. Which sentence is correct?</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q3" value="a">
+                        I feel terrible. My stomach hurts.
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="b">
+                        I feel terrible. My stomach hurt.
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="c">
+                        I feels terrible. My stomach hurts.
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkAnswer(3, 'a')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <!-- EXERCISE 2: True or False -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 2: True or False</div>
+            
+            <div class="question" data-question="4">
+                <div class="question-text">4. "I feel tired" and "I look tired" mean exactly the same thing.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q4" value="true">
+                        True
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="false">
+                        False
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkAnswer(4, 'false')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="5">
+                <div class="question-text">5. When you say "My back hurts," you are describing a symptom.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q5" value="true">
+                        True
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="false">
+                        False
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkAnswer(5, 'true')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <!-- EXERCISE 3: Fill in the Blank -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 3: Fill in the Blank</div>
+            
+            <div class="question" data-question="6">
+                <div class="question-text">6. Complete: "How do you _____ today?"</div>
+                <input type="text" id="answer6" placeholder="Type your answer here...">
+                <button class="check-btn" onclick="checkTextAnswer(6, 'feel')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="7">
+                <div class="question-text">7. Complete: "You _____ tired. Did you sleep well?"</div>
+                <input type="text" id="answer7" placeholder="Type your answer here...">
+                <button class="check-btn" onclick="checkTextAnswer(7, 'look')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="8">
+                <div class="question-text">8. Complete: "My _____ hurts. I need to see a dentist."</div>
+                <input type="text" id="answer8" placeholder="Type your answer here...">
+                <button class="check-btn" onclick="checkTextAnswer(8, 'tooth')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <!-- EXERCISE 4: Matching -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 4: Match the Questions with Answers</div>
+            <p style="margin-bottom: 15px; color: #666;">Click on a question, then click on the matching answer.</p>
+            
+            <div class="matching-container">
+                <div>
+                    <div class="match-item" data-match="1" onclick="selectMatch('q', 1)">How do you feel today?</div>
+                    <div class="match-item" data-match="2" onclick="selectMatch('q', 2)">Does your teacher look well?</div>
+                    <div class="match-item" data-match="3" onclick="selectMatch('q', 3)">Do you feel OK?</div>
+                </div>
+                <div>
+                    <div class="match-item" data-match="1" onclick="selectMatch('a', 1)">I feel great!</div>
+                    <div class="match-item" data-match="3" onclick="selectMatch('a', 3)">No, I don't. I feel sick.</div>
+                    <div class="match-item" data-match="2" onclick="selectMatch('a', 2)">No, he looks tired.</div>
+                </div>
+            </div>
+            <div class="feedback" id="match-feedback"></div>
+        </div>
+
+        <!-- EXERCISE 5: Multiple Select -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 5: Select All Correct Answers</div>
+            
+            <div class="question" data-question="9">
+                <div class="question-text">9. Which of these are NEGATIVE feelings? (Select all that apply)</div>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="tired" data-correct="true">
+                        tired
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="fantastic" data-correct="false">
+                        fantastic
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="terrible" data-correct="true">
+                        terrible
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="great" data-correct="false">
+                        great
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="sick" data-correct="true">
+                        sick
+                    </label>
+                </div>
+                <button class="check-btn" onclick="checkMultipleAnswer(9)">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <!-- EXERCISE 6: Word Bank -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 6: Complete with Words from the Bank</div>
+            
+            <div class="question" data-question="10">
+                <div class="question-text">10. "I feel _____ because I didn't sleep well last night."</div>
+                <div class="word-bank">
+                    <span class="word-tag" onclick="selectWord(this, 10, 'tired')">tired</span>
+                    <span class="word-tag" onclick="selectWord(this, 10, 'happy')">happy</span>
+                    <span class="word-tag" onclick="selectWord(this, 10, 'fantastic')">fantastic</span>
+                </div>
+                <div class="drop-zone" id="drop10"></div>
+                <button class="check-btn" onclick="checkWordBank(10, 'tired')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" data-question="11">
+                <div class="question-text">11. "My _____ hurts when I eat cold food."</div>
+                <div class="word-bank">
+                    <span class="word-tag" onclick="selectWord(this, 11, 'arm')">arm</span>
+                    <span class="word-tag" onclick="selectWord(this, 11, 'tooth')">tooth</span>
+                    <span class="word-tag" onclick="selectWord(this, 11, 'leg')">leg</span>
+                </div>
+                <div class="drop-zone" id="drop11"></div>
+                <button class="check-btn" onclick="checkWordBank(11, 'tooth')">Check Answer</button>
+                <div class="feedback"></div>
+            </div>
+        </div>
+
+        <div class="final-score" id="finalScore"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let totalQuestions = 11;
+        let answeredQuestions = new Set();
+        let selectedQuestion = null;
+        let selectedAnswer = null;
+        let matchedPairs = 0;
+        let selectedWords = {};
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score} / ${totalQuestions}`;
+            
+            if (answeredQuestions.size === totalQuestions) {
+                const finalScore = document.getElementById('finalScore');
+                const percentage = Math.round((score / totalQuestions) * 100);
+                let message = '';
+                
+                if (percentage >= 90) {
+                    message = '🌟 Excellent! You mastered this lesson!';
+                } else if (percentage >= 70) {
+                    message = '👍 Great job! Keep practicing!';
+                } else if (percentage >= 50) {
+                    message = '💪 Good effort! Review and try again!';
+                } else {
+                    message = '📚 Keep studying! You can do better!';
+                }
+                
+                finalScore.innerHTML = `
+                    <div style="font-size: 2em; margin-bottom: 10px;">${percentage}%</div>
+                    <div>${message}</div>
+                    <div style="margin-top: 15px;">Final Score: ${score} / ${totalQuestions}</div>
+                `;
+                finalScore.style.display = 'block';
+            }
+        }
+
+        function checkAnswer(questionNum, correctAnswer) {
+            if (answeredQuestions.has(questionNum)) return;
+            
+            const question = document.querySelector(`[data-question="${questionNum}"]`);
+            const selected = question.querySelector(`input[name="q${questionNum}"]:checked`);
+            const feedback = question.querySelector('.feedback');
+            const btn = question.querySelector('.check-btn');
+            
+            if (!selected) {
+                alert('Please select an answer first!');
+                return;
+            }
+            
+            const selectedValue = selected.value;
+            const options = question.querySelectorAll('.option');
+            
+            options.forEach(option => {
+                const input = option.querySelector('input');
+                if (input.value === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (input.checked) {
+                    option.classList.add('incorrect');
+                }
+                input.disabled = true;
+            });
+            
+            if (selectedValue === correctAnswer) {
+                feedback.textContent = '✓ Correct! Well done!';
+                feedback.classList.add('correct');
+                score++;
+            } else {
+                feedback.textContent = '✗ Incorrect. Try to learn from this mistake!';
+                feedback.classList.add('incorrect');
+            }
+            
+            answeredQuestions.add(questionNum);
+            btn.disabled = true;
+            updateScore();
+        }
+
+        function checkTextAnswer(questionNum, correctAnswer) {
+            if (answeredQuestions.has(questionNum)) return;
+            
+            const question = document.querySelector(`[data-question="${questionNum}"]`);
+            const input = document.getElementById(`answer${questionNum}`);
+            const feedback = question.querySelector('.feedback');
+            const btn = question.querySelector('.check-btn');
+            const userAnswer = input.value.trim().toLowerCase();
+            
+            if (!userAnswer) {
+                alert('Please type your answer first!');
+                return;
+            }
+            
+            input.disabled = true;
+            
+            if (userAnswer === correctAnswer.toLowerCase()) {
+                feedback.textContent = `✓ Correct! The answer is "${correctAnswer}".`;
+                feedback.classList.add('correct');
+                input.style.borderColor = '#4caf50';
+                score++;
+            } else {
+                feedback.textContent = `✗ Incorrect. The correct answer is "${correctAnswer}".`;
+                feedback.classList.add('incorrect');
+                input.style.borderColor = '#f44336';
+            }
+            
+            answeredQuestions.add(questionNum);
+            btn.disabled = true;
+            updateScore();
+        }
+
+        function selectMatch(type, num) {
+            if (matchedPairs === 3) return;
+            
+            const item = document.querySelector(`[data-match="${num}"]`);
+            
+            if (item.classList.contains('matched')) return;
+            
+            if (type === 'q') {
+                if (selectedQuestion) {
+                    selectedQuestion.classList.remove('selected');
+                }
+                selectedQuestion = item;
+                item.classList.add('selected');
+            } else {
+                if (selectedAnswer) {
+                    selectedAnswer.classList.remove('selected');
+                }
+                selectedAnswer = item;
+                item.classList.add('selected');
+            }
+            
+            if (selectedQuestion && selectedAnswer) {
+                const qNum = selectedQuestion.getAttribute('data-match');
+                const aNum = selectedAnswer.getAttribute('data-match');
+                const feedback = document.getElementById('match-feedback');
+                
+                if (qNum === aNum) {
+                    selectedQuestion.classList.remove('selected');
+                    selectedAnswer.classList.remove('selected');
+                    selectedQuestion.classList.add('matched');
+                    selectedAnswer.classList.add('matched');
+                    matchedPairs++;
+                    
+                    if (matchedPairs === 3 && !answeredQuestions.has(4)) {
+                        feedback.textContent = '✓ Perfect! All matches are correct!';
+                        feedback.classList.add('correct');
+                        score++;
+                        answeredQuestions.add(4);
+                        updateScore();
+                    }
+                } else {
+                    feedback.textContent = '✗ Not a match. Try again!';
+                    feedback.classList.add('incorrect');
+                    setTimeout(() => {
+                        selectedQuestion.classList.remove('selected');
+                        selectedAnswer.classList.remove('selected');
+                        feedback.classList.remove('incorrect');
+                        feedback.textContent = '';
+                    }, 1500);
+                }
+                
+                selectedQuestion = null;
+                selectedAnswer = null;
+            }
+        }
+
+        function checkMultipleAnswer(questionNum) {
+            if (answeredQuestions.has(questionNum)) return;
+            
+            const question = document.querySelector(`[data-question="${questionNum}"]`);
+            const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+            const feedback = question.querySelector('.feedback');
+            const btn = question.querySelector('.check-btn');
+            
+            let allCorrect = true;
+            let anyChecked = false;
+            
+            checkboxes.forEach(checkbox => {
+                const isCorrect = checkbox.getAttribute('data-correct') === 'true';
+                if (checkbox.checked) {
+                    anyChecked = true;
+                    if (!isCorrect) allCorrect = false;
+                } else {
+                    if (isCorrect) allCorrect = false;
+                }
+                checkbox.disabled = true;
+            });
+            
+            if (!anyChecked) {
+                alert('Please select at least one answer!');
+                checkboxes.forEach(cb => cb.disabled = false);
+                return;
+            }
+            
+            if (allCorrect) {
+                feedback.textContent = '✓ Correct! You selected all the right answers!';
+                feedback.classList.add('correct');
+                score++;
+            } else {
+                feedback.textContent = '✗ Incorrect. The negative feelings are: tired, terrible, and sick.';
+                feedback.classList.add('incorrect');
+            }
+            
+            answeredQuestions.add(questionNum);
+            btn.disabled = true;
+            updateScore();
+        }
+
+        function selectWord(element, questionNum, word) {
+            if (answeredQuestions.has(questionNum)) return;
+            if (element.classList.contains('used')) return;
+            
+            selectedWords[questionNum] = word;
+            const dropZone = document.getElementById(`drop${questionNum}`);
+            dropZone.innerHTML = `<span class="word-tag">${word}</span>`;
+            element.classList.add('used');
+        }
+
+        function checkWordBank(questionNum, correctAnswer) {
+            if (answeredQuestions.has(questionNum)) return;
+            
+            const question = document.querySelector(`[data-question="${questionNum}"]`);
+            const feedback = question.querySelector('.feedback');
+            const btn = question.querySelector('.check-btn');
+            const userAnswer = selectedWords[questionNum];
+            
+            if (!userAnswer) {
+                alert('Please select a word first!');
+                return;
+            }
+            
+            if (userAnswer === correctAnswer) {
+                feedback.textContent = `✓ Correct! "${correctAnswer}" is the right answer.`;
+                feedback.classList.add('correct');
+                score++;
+            } else {
+                feedback.textContent = `✗ Incorrect. The correct answer is "${correctAnswer}".`;
+                feedback.classList.add('incorrect');
+            }
+            
+            answeredQuestions.add(questionNum);
+            btn.disabled = true;
+            
+            question.querySelectorAll('.word-tag').forEach(tag => {
+                tag.style.cursor = 'default';
+            });
+            
+            updateScore();
+        }
+    </script>
+</body>
+</html>
