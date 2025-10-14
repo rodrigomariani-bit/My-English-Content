@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Flashcards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card-wrapper {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-question {
+            font-size: 1.8em;
+            color: #333;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-button {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .shuffle-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 0 auto 20px;
+        }
+
+        .shuffle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .flashcard {
+                padding: 40px 25px;
+                min-height: 350px;
+            }
+            
+            .card-question {
+                font-size: 1.4em;
+            }
+            
+            .card-icon {
+                font-size: 3em;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-comments"></i> Conversation Flashcards</h1>
+            <p>Practice speaking with interesting questions!</p>
+        </div>
+
+        <button class="shuffle-button" onclick="shuffleCards()">
+            <i class="fas fa-random"></i> Shuffle Cards
+        </button>
+
+        <div class="card-wrapper">
+            <div class="flashcard fade-in" id="flashcard">
+                <div class="card-number" id="cardNumber">1</div>
+                <div class="card-icon" id="cardIcon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="card-question" id="cardQuestion">
+                    Can you tell about something you love?
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="nav-button" id="prevBtn" onclick="previousCard()">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <div class="progress" id="progress">1 / 82</div>
+            <button class="nav-button" id="nextBtn" onclick="nextCard()">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { question: "Can you tell about something you love?", icon: "fas fa-heart" },
+            { question: "Can you tell about something you hate?", icon: "fas fa-heart-broken" },
+            { question: "Can you tell about something you really care about?", icon: "fas fa-hand-holding-heart" },
+            { question: "Can you tell about someone you dislike?", icon: "fas fa-user-slash" },
+            { question: "Can you tell about a dream you've had?", icon: "fas fa-cloud" },
+            { question: "Can you tell about a goal you have?", icon: "fas fa-bullseye" },
+            { question: "Can you tell about yourself?", icon: "fas fa-user" },
+            { question: "Can you tell about your childhood?", icon: "fas fa-child" },
+            { question: "Can you tell about your family?", icon: "fas fa-users" },
+            { question: "Can you tell about your parents?", icon: "fas fa-user-friends" },
+            { question: "Can you tell about your boyfriend?", icon: "fas fa-male" },
+            { question: "Can you tell about your girlfriend?", icon: "fas fa-female" },
+            { question: "Can you tell about your pet?", icon: "fas fa-paw" },
+            { question: "Can you tell about something you believe in?", icon: "fas fa-praying-hands" },
+            { question: "Can you tell about a place you've visited?", icon: "fas fa-map-marked-alt" },
+            { question: "Can you tell about an accident you've seen?", icon: "fas fa-car-crash" },
+            { question: "Can you tell about a time when you were happy?", icon: "fas fa-smile-beam" },
+            { question: "Can you tell about a time when you were sad?", icon: "fas fa-sad-tear" },
+            { question: "Can you tell about a time when you were excited?", icon: "fas fa-grin-stars" },
+            { question: "Can you tell about a time when you were frightened?", icon: "fas fa-ghost" },
+            { question: "Can you tell about your favorite pastime?", icon: "fas fa-gamepad" },
+            { question: "Can you tell about chocolate?", icon: "fas fa-candy-cane" },
+            { question: "Can you tell about rainy days?", icon: "fas fa-cloud-rain" },
+            { question: "Can you tell about something beautiful?", icon: "fas fa-gem" },
+            { question: "Can you tell about something ugly?", icon: "fas fa-frown" },
+            { question: "Can you tell about something delicious?", icon: "fas fa-ice-cream" },
+            { question: "Can you tell about something pleasant?", icon: "fas fa-sun" },
+            { question: "Can you tell about something boring?", icon: "fas fa-bed" },
+            { question: "Can you tell about something with four legs?", icon: "fas fa-dog" },
+            { question: "Can you tell about something with a tail?", icon: "fas fa-cat" },
+            { question: "Can you tell about something spicy?", icon: "fas fa-pepper-hot" },
+            { question: "Can you tell about your education?", icon: "fas fa-graduation-cap" },
+            { question: "Can you tell me about your work?", icon: "fas fa-briefcase" },
+            { question: "Can you tell me about a teacher you had?", icon: "fas fa-chalkboard-teacher" },
+            { question: "Can you tell me about a boss you had?", icon: "fas fa-user-tie" },
+            { question: "Can you tell me about the hardest thing you ever had to do?", icon: "fas fa-mountain" },
+            { question: "Can you tell me about a time you lied?", icon: "fas fa-mask" },
+            { question: "Can you tell me about something you regret?", icon: "fas fa-undo" },
+            { question: "Can you tell me about a mistake you made?", icon: "fas fa-times-circle" },
+            { question: "Can you tell me about someone in your family?", icon: "fas fa-home" },
+            { question: "Can you tell me about your favorite book?", icon: "fas fa-book" },
+            { question: "Can you tell me about someone you envy?", icon: "fas fa-eye" },
+            { question: "Can you tell me about something you've achieved?", icon: "fas fa-trophy" },
+            { question: "Can you tell me about the worst punishment you had when you were a child?", icon: "fas fa-angry" },
+            { question: "Can you tell me about your first kiss (if it is possible)?", icon: "fas fa-kiss" },
+            { question: "Can you tell me about someone you admire?", icon: "fas fa-star" },
+            { question: "Can you tell me about the last book you've read / movie you've watched?", icon: "fas fa-film" },
+            { question: "Can you tell me about a country or place you would like to visit and why?", icon: "fas fa-plane" },
+            { question: "Can you tell me about your favorite music / song / band?", icon: "fas fa-music" },
+            { question: "Can you tell me about something you would happily do again?", icon: "fas fa-redo" },
+            { question: "Can you tell me about your worst vacation?", icon: "fas fa-suitcase" },
+            { question: "Can you tell me about a problem you have now?", icon: "fas fa-question-circle" },
+            { question: "Can you tell me about gambling?", icon: "fas fa-dice" },
+            { question: "Can you tell me about a collection you have?", icon: "fas fa-box-open" },
+            { question: "Can you tell me about your first boyfriend/girlfriend?", icon: "fas fa-heart-circle" },
+            { question: "Can you tell me about your first kiss?", icon: "fas fa-lips" },
+            { question: "Can you tell me about a prize you won?", icon: "fas fa-award" },
+            { question: "Can you tell me about your favorite restaurant?", icon: "fas fa-utensils" },
+            { question: "Can you tell me about your favorite movie?", icon: "fas fa-video" },
+            { question: "Can you tell me about your dreams?", icon: "fas fa-bed" },
+            { question: "Can you tell me about your dream car?", icon: "fas fa-car" },
+            { question: "Can you tell me about your country?", icon: "fas fa-flag" },
+            { question: "Can you tell me about your fears?", icon: "fas fa-spider" },
+            { question: "Can you tell me about your hopes?", icon: "fas fa-dove" },
+            { question: "Can you tell me about love?", icon: "fas fa-heart-pulse" },
+            { question: "Can you tell me about the most important lesson you've learnt in life so far?", icon: "fas fa-lightbulb" },
+            { question: "Can you tell me about your home town?", icon: "fas fa-city" },
+            { question: "Can you tell me about your computer system?", icon: "fas fa-laptop" },
+            { question: "Can you tell me about something you would never do, if you have chance to come back life again?", icon: "fas fa-ban" },
+            { question: "Can you tell me about a time in your life when you were very, very busy?", icon: "fas fa-clock" },
+            { question: "Can you tell me about what your God is like?", icon: "fas fa-church" },
+            { question: "Can you tell me about your past relationships?", icon: "fas fa-ring" },
+            { question: "Can you tell me about something that scares you?", icon: "fas fa-skull" },
+            { question: "Can you tell me about one of your grandparents?", icon: "fas fa-user-clock" },
+            { question: "Can you tell me about the hardest decision you have ever made?", icon: "fas fa-road" },
+            { question: "Can you tell me about a recent embarrassing moment you've had lately?", icon: "fas fa-face-flushed" },
+            { question: "Can you tell me about a time you felt really proud?", icon: "fas fa-medal" },
+            { question: "Can you tell me about a famous historical person (living or dead) who if you had the opportunity, you'd like to interview?", icon: "fas fa-microphone" },
+            { question: "Can you tell me about your hometown?", icon: "fas fa-house" },
+            { question: "Can you tell me about your job / school?", icon: "fas fa-school" },
+            { question: "Can you tell me about your friends?", icon: "fas fa-user-group" },
+            { question: "Can you tell me about your family?", icon: "fas fa-people-roof" },
+            { question: "Can you tell me about what you enjoy doing most in your free time?", icon: "fas fa-guitar" }
+        ];
+
+        let currentIndex = 0;
+        let cards = [...flashcards];
+
+        function updateCard() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('fade-in');
+            
+            setTimeout(() => {
+                document.getElementById('cardNumber').textContent = currentIndex + 1;
+                document.getElementById('cardQuestion').textContent = cards[currentIndex].question;
+                document.getElementById('cardIcon').innerHTML = `<i class="${cards[currentIndex].icon}"></i>`;
+                document.getElementById('progress').textContent = `${currentIndex + 1} / ${cards.length}`;
+                
+                document.getElementById('prevBtn').disabled = currentIndex === 0;
+                document.getElementById('nextBtn').disabled = currentIndex === cards.length - 1;
+                
+                flashcard.classList.add('fade-in');
+            }, 150);
+        }
+
+        function nextCard() {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        }
+
+        function previousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        }
+
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') previousCard();
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                nextCard();
+            }
+        });
+
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
