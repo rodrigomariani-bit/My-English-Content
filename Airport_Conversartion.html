@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Airport English – Survival Phrases (Slide Deck)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;/* deep navy */
+      --panel:#101735;
+      --ink:#eaf0ff;
+      --muted:#9fb0ff;
+      --accent:#5ae1ff;/* cyan */
+      --accent-2:#8aff6c;/* lime */
+      --warn:#ffd66b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--ink); background: radial-gradient(1200px 800px at 80% -20%, #21305f33, transparent),
+                         radial-gradient(800px 600px at 0% 100%, #0d1639aa, transparent), var(--bg);
+      overflow:hidden;
+    }
+    .deck{position:relative; height:100dvh; display:grid; grid-template-rows:auto 1fr auto;}
+    header{
+      padding:10px 16px; display:flex; align-items:center; gap:12px; backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, #0e1533aa, #0e153300);
+      border-bottom:1px solid #1a2453;
+    }
+    header .brand{font-weight:800; letter-spacing:.5px}
+    header .progress{flex:1; height:6px; background:#1a2453; border-radius:999px; overflow:hidden}
+    header .progress>span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .3s ease}
+
+    .slides{position:relative; height:100%;}
+    .slide{
+      position:absolute; inset:0; padding:48px clamp(16px, 4vw, 56px);
+      display:grid; grid-template-rows: auto 1fr; gap:18px;
+      background:linear-gradient(180deg,#0c1230cc,#0b1020dd),
+                 url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+      opacity:0; transform: translateX(20px) scale(.98); filter:saturate(.95);
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .slide.active{opacity:1; transform:none; pointer-events:auto}
+    .slide h1,.slide h2{margin:0}
+    .kicker{font-size:.95rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
+    h1{font-size:clamp(28px,4.6vw,56px); line-height:1.05}
+    h2{font-size:clamp(22px,3.2vw,34px); color:var(--warn)}
+    p,li{font-size:clamp(16px,1.6vw,20px); color:#d8e1ff}
+    ul{margin:0; padding-left:20px; display:grid; gap:10px}
+    .card{background: linear-gradient(180deg,#141d4a,#0e1535); border:1px solid #223175; border-radius:16px; padding:18px 18px}
+    .grid{display:grid; gap:14px}
+    .grid.cols-2{grid-template-columns:repeat(2, minmax(0,1fr))}
+    @media (max-width:920px){.grid.cols-2{grid-template-columns:1fr}}
+
+    .media{
+      border-radius:18px; overflow:hidden; border:1px solid #24306b;
+      background:#0e1535; aspect-ratio: 16/9; display:grid; place-items:center; position:relative;
+    }
+    .media img{width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(1.05)}
+    .media .caption{position:absolute; inset:auto 12px 12px 12px; font-size:.9rem; color:#cbd6ff; background:#0a1246cc; padding:8px 10px; border-radius:10px; border:1px solid #1c2a67}
+
+    .chips{display:flex; flex-wrap:wrap; gap:10px}
+    .chip{font-size:.9rem; padding:8px 12px; border-radius:999px; border:1px solid #26409a; background:#0f1b50}
+
+    footer{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; background:linear-gradient(0deg, #0e1533aa, #0e153300); border-top:1px solid #1a2453}
+    .controls{display:flex; gap:10px}
+    button.nav{
+      all:unset; cursor:pointer; padding:10px 14px; border-radius:12px; font-weight:600; letter-spacing:.2px;
+      background:linear-gradient(180deg,#1a2a66,#15245a); border:1px solid #29418f; color:#eaf2ff;
+      display:inline-flex; align-items:center; gap:10px; transition: transform .08s ease, background .2s ease;
+    }
+    button.nav:hover{transform:translateY(-1px)}
+    button.nav:active{transform:translateY(0)}
+    .ghost{background:#0e1535; border-color:#263a84}
+
+    .help{
+      position:fixed; right:14px; bottom:14px; font-size:.9rem; background:#0d1544; border:1px solid #20317a; color:#cfe2ff;
+      padding:10px 12px; border-radius:12px; opacity:.9
+    }
+    .badge{display:inline-block; padding:6px 10px; border:1px solid #2e4dc2; border-radius:999px; background:#0d1e66; font-size:.8rem; color:#cfe2ff}
+
+    .note{font-size:.95rem; color:#b9c8ff}
+    .muted{color:#9fb0ff}
+    .list-split{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:900px){.list-split{grid-template-columns:1fr}}
+
+    /* Speaker notes toggler */
+    details{margin-top:10px}
+    summary{cursor:pointer; color:#b9c8ff}
+  </style>
+</head>
+<body>
+  <div class="deck" role="application" aria-label="Airport English slide deck">
+    <header>
+      <span class="brand">✈️ Airport English</span>
+      <span class="badge" id="slideLabel">Slide 1 / 6</span>
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      <span class="muted" style="font-size:.9rem">Use ← / → or buttons</span>
+    </header>
+
+    <main class="slides" id="slides">
+      <!-- SLIDE 1: Title -->
+      <section class="slide active" data-title="Title">
+        <div>
+          <div class="kicker">Survival Phrases for Your Trip 🇺🇸</div>
+          <h1>Airport English<br><span style="color:var(--accent)">Speak with Confidence</span></h1>
+          <p class="note">Goal today: master the exact phrases to survive check‑in, security, immigration, and asking for help. Short, simple, polite.</p>
+          <div class="chips" aria-label="objectives">
+            <span class="chip">Check‑in</span>
+            <span class="chip">Security</span>
+            <span class="chip">Immigration / Customs</span>
+            <span class="chip">Asking for help</span>
+          </div>
+          <details>
+            <summary>Teacher note</summary>
+            <p class="note">Warm‑up: small talk; set the promise: “By the end, you’ll feel ready.”</p>
+          </details>
+        </div>
+        <div class="media" aria-label="airport photo">
+          <img alt="Modern airport terminal" src="https://moodynolan.com/wp-content/uploads/2023/09/R21923_01_web.jpg"/>
+          <div class="caption">Tip: confidence > perfection. Be clear and simple.</div>
+        </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Airport Map -->
+      <section class="slide" data-title="Airport Map" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Where you’ll speak English</div>
+          <h1>Airport Sections</h1>
+          <p class="note">Follow the path: Check‑in → Security → Immigration/Customs → Inside Airport → Boarding Gate</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>1) 🎫 Check‑in Counter</h2>
+            <ul>
+              <li><strong>Where do I check in?</strong></li>
+              <li><em>Agent:</em> “May I see your passport and ticket?”</li>
+              <li><em>You:</em> “Here’s my passport.”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>2) 🔒 Security</h2>
+            <ul>
+              <li><em>Officer:</em> “Remove your shoes, belt, and laptop.”</li>
+              <li><em>You:</em> “Okay. Do I need to remove this?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>3) 🛂 Immigration / Customs</h2>
+            <ul>
+              <li><em>Officer:</em> “What’s the purpose of your visit?”</li>
+              <li><em>You:</em> “Tourism.” (keep it short)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>4) 🚶 Inside Airport / ✈️ Boarding</h2>
+            <ul>
+              <li><strong>Where is gate 23?</strong></li>
+              <li><em>Gate:</em> “Now boarding group 3.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Check-in Counter -->
+      <section class="slide" data-title="Check‑in" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">At the counter</div>
+          <h1>🎫 Check‑in Counter</h1>
+          <p class="note">Listen first (YOU WILL HEAR), then repeat (YOU CAN SAY).</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>YOU WILL HEAR</h2>
+            <ul>
+              <li>“May I see your passport and ticket?”</li>
+              <li>“How many bags are you checking?”</li>
+              <li>“Did you pack your bags yourself?”</li>
+              <li>“Window or aisle seat?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>YOU CAN SAY</h2>
+            <ul>
+              <li>“Here’s my passport.”</li>
+              <li>“I have one checked bag.” / “Just carry‑on.”</li>
+              <li>“Yes, I packed them myself.”</li>
+              <li>“Window seat, please.” / “Aisle seat, please.”</li>
+            </ul>
+          </div>
+        </div>
+        <details>
+          <summary>Teacher tip</summary>
+          <p class="note">Run call‑and‑response drills. Repeat 2–3× for muscle memory.</p>
+        </details>
+      </section>
+
+      <!-- SLIDE 4: Security -->
+      <section class="slide" data-title="Security" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1558233043-3ca9b6fe9f1d?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Follow instructions</div>
+          <h1>🔒 Security</h1>
+          <p class="note">Be ready to remove items and walk through the scanner.</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>YOU WILL HEAR</h2>
+            <ul>
+              <li>“Please remove your shoes, belt, and laptop.”</li>
+              <li>“Empty your pockets.”</li>
+              <li>“Step through the scanner.”</li>
+              <li>“Arms up.”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>YOU CAN SAY</h2>
+            <ul>
+              <li>“Okay.” / “Sure.”</li>
+              <li>“Do I need to remove this?”</li>
+              <li>“Sorry, I don’t understand.”</li>
+              <li>“Like this?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Immigration/Customs -->
+      <section class="slide" data-title="Immigration" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1562564055-71e051d33c19?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Short & simple answers</div>
+          <h1>🛂 Immigration / Customs</h1>
+          <p class="note">Answer politely and briefly. No extra details.</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>THEY WILL ASK</h2>
+            <ul>
+              <li>“What’s the purpose of your visit?”</li>
+              <li>“How long will you stay?”</li>
+              <li>“Where will you be staying?”</li>
+              <li>“Is this your first time in the US?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>YOU SHOULD ANSWER</h2>
+            <ul>
+              <li>“Tourism.” / “Vacation.”</li>
+              <li>“Two weeks.” / “Ten days.”</li>
+              <li>“With family.” / “At a hotel.”</li>
+              <li>“Yes, it is.” / “No, I’ve been here before.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <strong>Extra:</strong> “What will you do in the US?” → “Sightseeing.” / “Visit family.”
+        </div>
+        <details>
+          <summary>Teacher tip</summary>
+          <p class="note">Model bad vs. good answers; practice 3–4× with variations.</p>
+        </details>
+      </section>
+
+      <!-- SLIDE 6: Asking for Help -->
+      <section class="slide" data-title="Asking for Help" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1592038788254-60f9c9075593?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">When you’re lost or confused</div>
+          <h1>❓ Asking for Help</h1>
+          <p class="note">Use these anytime—people will help you!</p>
+        </div>
+        <div class="list-split">
+          <div class="card">
+            <h2>Essential phrases</h2>
+            <ul>
+              <li>“Excuse me, where is gate ___?”</li>
+              <li>“Where can I find ___?”</li>
+              <li>“Can you help me, please?”</li>
+              <li>“I’m lost. Where is ___?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Emergency phrase ⭐</h2>
+            <p style="font-size:1.25rem; line-height:1.35">
+              <strong>“Sorry, I don’t understand. Can you speak more slowly, please?”</strong>
+            </p>
+            <p class="note">Repeat 3× with the student. Confidence boost guaranteed.</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- SLIDE 7: Signs & Announcements -->
+      <section class="slide" data-title="Signs & Announcements" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Understand the airport language</div>
+          <h1>🔊 Signs & Announcements</h1>
+          <p class="note">Common words on boards & loudspeakers</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>On the boards</h2>
+            <ul>
+              <li><strong>On time</strong> = no delay</li>
+              <li><strong>Delayed</strong> = leaving later</li>
+              <li><strong>Cancelled</strong> = flight won't go</li>
+              <li><strong>Gate change</strong> = different gate</li>
+              <li><strong>Final call</strong> = last chance to board</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Over the speaker</h2>
+            <ul>
+              <li>“<em>Now boarding groups 1 to 3.</em>”</li>
+              <li>“<em>Passenger [Your Name], please proceed to gate C12.</em>”</li>
+              <li>“<em>Security alert. Do not leave bags unattended.</em>”</li>
+              <li>“<em>We are experiencing a short delay.</em>”</li>
+            </ul>
+            <p class="note">If you miss something → “<strong>Sorry, could you repeat that, please?</strong>”</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Directions & Navigation -->
+      <section class="slide" data-title="Directions" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Find places fast</div>
+          <h1>🧭 Directions & Navigation</h1>
+          <p class="note">Ask clearly. Use short questions.</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Ask</h2>
+            <ul>
+              <li>“Excuse me, <strong>where is</strong> gate C10?”</li>
+              <li>“Is it <strong>this way</strong>?” / “<strong>Straight ahead</strong>?”</li>
+              <li>“How long does it take to walk to gate C12?”</li>
+              <li>“Is there an elevator / escalator nearby?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Understand replies</h2>
+            <ul>
+              <li><strong>Go straight</strong>, then <strong>turn left/right</strong>.</li>
+              <li><strong>Upstairs / downstairs</strong></li>
+              <li><strong>Next to / across from / behind</strong></li>
+              <li>“It’s a <strong>5‑minute</strong> walk.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Problems & Solutions -->
+      <section class="slide" data-title="Problems" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">When things go wrong</div>
+          <h1>⚠️ Problems & Solutions</h1>
+          <p class="note">Stay calm. Be polite. Use these scripts.</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Lost baggage</h2>
+            <ul>
+              <li>“My bag <strong>didn’t arrive</strong>.”</li>
+              <li>“Where is the <strong>baggage service office</strong>?”</li>
+              <li>“Here’s my <strong>baggage claim tag</strong>.”</li>
+              <li>“Can you <strong>deliver</strong> it to my hotel?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Missed / changed flight</h2>
+            <ul>
+              <li>“I <strong>missed my connection</strong>. What are my options?”</li>
+              <li>“Can you <strong>rebook</strong> me on the next flight?”</li>
+              <li>“Is there a <strong>standby list</strong>?”</li>
+              <li>“Can I change seats? <strong>Aisle</strong>, if possible.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <strong>Gate issues:</strong> “My boarding pass isn’t scanning. <em>Is there a problem?</em> What should I do?”
+        </div>
+      </section>
+
+      <!-- SLIDE 10: Services & Amenities -->
+      <section class="slide" data-title="Services" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Useful places inside</div>
+          <h1>🧩 Services & Amenities</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Ask for</h2>
+            <ul>
+              <li>“Where can I buy a <strong>SIM card</strong>?”</li>
+              <li>“Is there free <strong>Wi‑Fi</strong>?” / “What’s the password?”</li>
+              <li>“Where can I <strong>charge</strong> my phone?”</li>
+              <li>“Where is the <strong>restroom</strong>?”</li>
+              <li>“Is there a <strong>water fountain</strong>?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Food & allergies</h2>
+            <ul>
+              <li>“Do you have <strong>vegetarian</strong> options?”</li>
+              <li>“Does this contain <strong>nuts</strong>?”</li>
+              <li>“Can I have a <strong>bottle of water</strong>, please?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 11: Ground Transportation -->
+      <section class="slide" data-title="Transport" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1523627830225-9b2ae411f9a3?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">After you land</div>
+          <h1>🚌 Ground Transportation</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Ask</h2>
+            <ul>
+              <li>“Where is <strong>rideshare pickup</strong> (Uber/Lyft)?”</li>
+              <li>“How do I get to <strong>downtown</strong>?”</li>
+              <li>“Is there a <strong>shuttle bus</strong> to this hotel?”</li>
+              <li>“Where can I find a <strong>taxi</strong>?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Money talk</h2>
+            <ul>
+              <li>“How much is the <strong>fare</strong>?”</li>
+              <li>“Do you accept <strong>credit card</strong>?”</li>
+              <li>“Can I pay <strong>cash</strong>?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12: Money & Payments -->
+      <section class="slide" data-title="Payments" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Cards, cash, exchange</div>
+          <h1>💳 Money & Payments</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Useful questions</h2>
+            <ul>
+              <li>“Do you accept <strong>contactless</strong> / tap to pay?”</li>
+              <li>“Is there an <strong>ATM</strong> nearby?”</li>
+              <li>“Where can I <strong>exchange money</strong>?”</li>
+              <li>“Are there any <strong>fees</strong>?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Phrases</h2>
+            <ul>
+              <li>“Could I have a <strong>receipt</strong>, please?”</li>
+              <li>“The card <strong>didn’t go through</strong>. Can we try again?”</li>
+              <li>“I’ll pay by <strong>card</strong> / <strong>cash</strong>.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 13: Polite Language & Repair -->
+      <section class="slide" data-title="Polite & Repair" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Sound polite & keep the talk flowing</div>
+          <h1>🗣️ Polite Language & Repair</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Polite starters</h2>
+            <ul>
+              <li>“<strong>Excuse me</strong>…” / “<strong>Sorry</strong> to bother you…”</li>
+              <li>“<strong>Could you</strong> help me, please?”</li>
+              <li>“<strong>Would you mind</strong> repeating that?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Repair & clarify</h2>
+            <ul>
+              <li>“<strong>How do you spell</strong> that?”</li>
+              <li>“<strong>Can you write it down</strong>, please?”</li>
+              <li>“<strong>One moment</strong>, let me check my documents.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 14: Numbers, Time & Spelling -->
+      <section class="slide" data-title="Numbers & Time" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1544290747-4a1b8e93d0f5?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Understand gates & times</div>
+          <h1>⏱️ Numbers, Time & Spelling</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Time & gates</h2>
+            <ul>
+              <li><strong>Boarding at</strong> 10:25 → “ten twenty‑five”</li>
+              <li><strong>Gate C12</strong> → “see twelve”</li>
+              <li><strong>Row</strong> 17, <strong>Seat</strong> 17A</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Spell your name</h2>
+            <ul>
+              <li>“My name is <strong>Rodrigo</strong>. That’s <strong>R‑O‑D‑R‑I‑G‑O</strong>.”</li>
+              <li>Ask: “<strong>Could you spell that</strong> for me, please?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 15: Quick Pronunciation -->
+      <section class="slide" data-title="Pronunciation" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Say it clearly</div>
+          <h1>🎧 Quick Pronunciation Help</h1>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>Tricky words</h2>
+            <ul>
+              <li><strong>aisle</strong> (corridor) → “<em>ai‑uhl</em>”</li>
+              <li><strong>visa</strong> → “<em>vee‑zuh</em>”</li>
+              <li><strong>schedule</strong> (US) → “<em>ske‑jool</em>”</li>
+              <li><strong>receipt</strong> → “<em>ri‑SEET</em>” (p is silent)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Sound confident</h2>
+            <ul>
+              <li>Speak <strong>slowly</strong> and <strong>clearly</strong>.</li>
+              <li>Use <strong>please</strong> and <strong>thank you</strong>.</li>
+              <li>Make eye contact & smile 🙂</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 16: Mini Check -->
+      <section class="slide" data-title="Mini Check" style="background:
+        linear-gradient(180deg,#0c1230cc,#0b1020dd),
+        url('https://images.unsplash.com/photo-1482192505345-5655af888cc4?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;">
+        <div>
+          <div class="kicker">Quick practice</div>
+          <h1>✅ Mini Check</h1>
+          <p class="note">Read each and answer aloud:</p>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <ol>
+              <li>Agent: “How many bags are you checking?” → <em>Your answer:</em></li>
+              <li>Officer: “Step through the scanner.” → <em>Your action/phrase:</em></li>
+              <li>Gate: “Final call for flight 302.” → <em>What do you do/say?</em></li>
+            </ol>
+          </div>
+          <div class="card">
+            <ol start="4">
+              <li>Lost: “I can’t find gate B23.” → <em>Ask for help.</em></li>
+              <li>Problem: “Your card didn’t go through.” → <em>What do you say?</em></li>
+              <li>Transport: “Where is rideshare pickup?” → <em>Ask politely.</em></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="muted" id="slideTitle">Title</div>
+      <div class="controls">
+        <button class="nav ghost" id="btnStart" title="Start from beginning" aria-label="Go to first slide">⏮ Start</button>
+        <button class="nav" id="prev" title="Previous (←)" aria-label="Previous slide">← Prev</button>
+        <button class="nav" id="next" title="Next (→)" aria-label="Next slide">Next →</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="help">Tip: press <strong>F11</strong> (Windows) for true fullscreen.</div>
+
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const progress = document.getElementById('progressBar');
+      const label = document.getElementById('slideLabel');
+      const title = document.getElementById('slideTitle');
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+      const startBtn = document.getElementById('btnStart');
+      let i = 0;
+
+      function sync(){
+        slides.forEach((s,idx)=>s.classList.toggle('active', idx===i));
+        const total = slides.length; const pct = ((i+1)/total)*100;
+        progress.style.width = pct + '%';
+        label.textContent = `Slide ${i+1} / ${total}`;
+        title.textContent = slides[i].dataset.title || '';
+        history.replaceState(null,'', `#${i+1}`);
+      }
+
+      function go(n){ i = Math.max(0, Math.min(slides.length-1, n)); sync(); }
+      function next(){ go(i+1); }
+      function prev(){ go(i-1); }
+      function start(){ go(0); }
+
+      // Keyboard nav
+      window.addEventListener('keydown', (e)=>{
+        if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ e.preventDefault(); next(); }
+        if(e.key==='ArrowLeft'  || e.key==='PageUp'){ e.preventDefault(); prev(); }
+        if(e.key==='Home'){ e.preventDefault(); start(); }
+        if(e.key==='End'){ e.preventDefault(); go(slides.length-1); }
+      });
+
+      // Buttons
+      prevBtn.addEventListener('click', prev);
+      nextBtn.addEventListener('click', next);
+      startBtn.addEventListener('click', start);
+
+      // Touch swipe (basic)
+      let x0=null; let y0=null;
+      window.addEventListener('touchstart', e=>{ const t=e.touches[0]; x0=t.clientX; y0=t.clientY; }, {passive:true});
+      window.addEventListener('touchend', e=>{ if(x0===null) return; const t=e.changedTouches[0]; const dx=t.clientX-x0; const dy=t.clientY-y0; if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); } x0=y0=null; }, {passive:true});
+
+      // Deep link support #N
+      const hash = location.hash.replace('#','');
+      const n = parseInt(hash,10); if(!isNaN(n) && n>=1 && n<=slides.length){ i=n-1; }
+      sync();
+    })();
+  </script>
+</body>
+</html>
