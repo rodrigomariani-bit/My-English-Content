@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Sorteador de Palavras em Inglês</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .level-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .level-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .level-btn.easy {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #0d5e3a;
+        }
+
+        .level-btn.medium {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #6c4a00;
+        }
+
+        .level-btn.hard {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: #690d2e;
+        }
+
+        .level-btn.selected {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .word-display {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 60px 30px;
+            margin: 30px 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word-container {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+        }
+
+        .word {
+            font-size: 3em;
+            font-weight: bold;
+            color: #2d3436;
+            text-transform: uppercase;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .word.visible {
+            opacity: 1;
+        }
+
+        .word.spinning {
+            animation: spin 0.1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .slot-animation {
+            animation: slot 0.1s ease-in-out infinite;
+        }
+
+        @keyframes slot {
+            0%, 100% { transform: translateY(-50%); }
+            50% { transform: translateY(-70%); }
+        }
+
+        .draw-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .draw-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .draw-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .reset-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.complete {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .word {
+                font-size: 2em;
+            }
+
+            .level-btn {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 Word Randomizer</h1>
+        <p class="subtitle">Escolha o nível e sorteie palavras em inglês!</p>
+
+        <div class="level-selector">
+            <button class="level-btn easy" data-level="easy">
+                🟩 Fácil
+            </button>
+            <button class="level-btn medium" data-level="medium">
+                🟨 Médio
+            </button>
+            <button class="level-btn hard" data-level="hard">
+                🟥 Difícil
+            </button>
+        </div>
+
+        <div class="word-display">
+            <div class="word-container">
+                <div class="word" id="wordDisplay">Selecione um nível</div>
+            </div>
+        </div>
+
+        <button class="draw-btn" id="drawBtn" disabled>
+            🎲 Sortear Palavra
+        </button>
+
+        <div class="info">
+            <div class="info-item">
+                <div class="info-label">Nível Selecionado</div>
+                <div class="info-value" id="currentLevel">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Palavras Restantes</div>
+                <div class="info-value" id="wordsLeft">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Total Sorteadas</div>
+                <div class="info-value" id="totalDrawn">0</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <button class="reset-btn" id="resetBtn">
+            🔄 Resetar Palavras
+        </button>
+    </div>
+
+    <script>
+        const words = {
+            easy: ["ant", "apartment", "apps", "April", "bear", "bike", "bus", "cab", "calm", "cinema", "cold", "cooker", "cow", "desert", "fall", "fast", "hill", "hospital", "hot", "July", "June", "lion", "March", "May", "near", "never", "palace", "park", "restaurant", "river", "safe", "shark", "sink", "slow", "snake", "spring", "summer", "sunny", "take", "taxi", "tiger", "toilet", "train", "winter"],
+            
+            medium: ["August", "bakery", "bedroom", "bookshop", "boring", "bridge", "castle", "cheap", "chicken", "church", "clean", "December", "elephant", "February", "ferry", "first", "forest", "fourth", "fridge", "January", "kitchen", "ninth", "noisy", "November", "ocean", "October", "often", "once", "oven", "polluted", "pyramid", "quiet", "rainy", "second", "September", "snowy", "square", "statue", "strong", "subway", "supermarket", "temple", "third", "toaster", "tower", "twice", "walk", "weak", "whale", "windy", "wolf"],
+            
+            hard: ["aggressive", "always", "autumn", "bathroom", "bicycle", "brilliant", "building", "butterfly", "chemist's", "crowded", "cupboard", "dangerous", "dishwasher", "exciting", "expensive", "field", "friendly", "microwave", "mosque", "mountain", "opposite", "seriously", "sometimes", "straight", "underground", "usually"]
+        };
+
+        let availableWords = {
+            easy: [...words.easy],
+            medium: [...words.medium],
+            hard: [...words.hard]
+        };
+
+        let currentLevel = null;
+        let totalDrawn = 0;
+        let isAnimating = false;
+
+        const levelButtons = document.querySelectorAll('.level-btn');
+        const drawBtn = document.getElementById('drawBtn');
+        const wordDisplay = document.getElementById('wordDisplay');
+        const currentLevelDisplay = document.getElementById('currentLevel');
+        const wordsLeftDisplay = document.getElementById('wordsLeft');
+        const totalDrawnDisplay = document.getElementById('totalDrawn');
+        const resetBtn = document.getElementById('resetBtn');
+        const messageDiv = document.getElementById('message');
+
+        levelButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isAnimating) return;
+                
+                levelButtons.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                
+                currentLevel = btn.dataset.level;
+                drawBtn.disabled = false;
+                
+                updateInfo();
+                wordDisplay.textContent = 'Clique para sortear!';
+                wordDisplay.classList.add('visible');
+                hideMessage();
+            });
+        });
+
+        drawBtn.addEventListener('click', () => {
+            if (!currentLevel || isAnimating || availableWords[currentLevel].length === 0) return;
+            
+            drawWord();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (isAnimating) return;
+            
+            availableWords = {
+                easy: [...words.easy],
+                medium: [...words.medium],
+                hard: [...words.hard]
+            };
+            
+            totalDrawn = 0;
+            updateInfo();
+            wordDisplay.textContent = 'Palavras resetadas!';
+            
+            showMessage('Todas as palavras foram resetadas! 🔄', 'complete');
+            
+            setTimeout(() => {
+                wordDisplay.textContent = 'Clique para sortear!';
+            }, 1500);
+        });
+
+        function drawWord() {
+            if (availableWords[currentLevel].length === 0) {
+                showMessage('Todas as palavras deste nível já foram sorteadas! Use o botão Resetar.', 'warning');
+                return;
+            }
+
+            isAnimating = true;
+            drawBtn.disabled = true;
+            hideMessage();
+
+            // Animação de roleta
+            const animationDuration = 2000; // 2 segundos
+            const intervalTime = 100; // Troca a cada 100ms
+            let elapsed = 0;
+
+            wordDisplay.classList.add('slot-animation');
+
+            const interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * availableWords[currentLevel].length);
+                wordDisplay.textContent = availableWords[currentLevel][randomIndex];
+                elapsed += intervalTime;
+
+                if (elapsed >= animationDuration) {
+                    clearInterval(interval);
+                    showFinalWord();
+                }
+            }, intervalTime);
+        }
+
+        function showFinalWord() {
+            wordDisplay.classList.remove('slot-animation');
+
+            // Seleciona palavra final
+            const randomIndex = Math.floor(Math.random() * availableWords[currentLevel].length);
+            const selectedWord = availableWords[currentLevel][randomIndex];
+
+            // Remove a palavra do array
+            availableWords[currentLevel].splice(randomIndex, 1);
+
+            // Efeito de "revelação"
+            wordDisplay.style.transform = 'scale(0)';
+            wordDisplay.style.opacity = '0';
+
+            setTimeout(() => {
+                wordDisplay.textContent = selectedWord;
+                wordDisplay.style.transform = 'scale(1.2)';
+                wordDisplay.style.opacity = '1';
+                wordDisplay.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+                setTimeout(() => {
+                    wordDisplay.style.transform = 'scale(1)';
+                }, 300);
+            }, 200);
+
+            totalDrawn++;
+            updateInfo();
+
+            setTimeout(() => {
+                isAnimating = false;
+                drawBtn.disabled = false;
+
+                if (availableWords[currentLevel].length === 0) {
+                    showMessage('🎉 Parabéns! Você sorteou todas as palavras deste nível!', 'complete');
+                    drawBtn.disabled = true;
+                }
+            }, 1000);
+        }
+
+        function updateInfo() {
+            if (currentLevel) {
+                const levelNames = {
+                    easy: '🟩 Fácil',
+                    medium: '🟨 Médio',
+                    hard: '🟥 Difícil'
+                };
+                currentLevelDisplay.textContent = levelNames[currentLevel];
+                wordsLeftDisplay.textContent = availableWords[currentLevel].length;
+            } else {
+                currentLevelDisplay.textContent = '-';
+                wordsLeftDisplay.textContent = '-';
+            }
+            totalDrawnDisplay.textContent = totalDrawn;
+        }
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = 'message show ' + type;
+        }
+
+        function hideMessage() {
+            messageDiv.className = 'message';
+        }
+
+        // Inicialização
+        updateInfo();
+    </script>
+</body>
+</html>
