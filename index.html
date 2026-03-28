@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My English Content - Materiais de Ensino</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,10 +14,7 @@
             padding: 40px 20px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
         header {
             text-align: center;
@@ -33,57 +26,147 @@
             color: white;
             font-size: 3em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255,255,255,0.9);
             font-size: 1.2em;
             font-weight: 300;
         }
 
+        /* ── SECTION BLOCK ── */
+        .section-block {
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease both;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .section-label h2 {
+            color: white;
+            font-size: 1.6em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }
+
+        /* ── COURSE FOLDERS ── */
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .folder-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 18px;
+            padding: 28px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .folder-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+            border-radius: 18px 18px 0 0;
+        }
+
+        .folder-card:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+        }
+
+        .folder-icon { font-size: 2.4em; margin-bottom: 12px; display: block; }
+
+        .folder-name {
+            color: white;
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .folder-count {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.88em;
+        }
+
+        /* ── SUBFOLDER PANEL (shown on click) ── */
+        .subfolder-panel {
+            display: none;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+            animation: fadeInUp 0.35s ease;
+        }
+
+        .subfolder-panel.open { display: block; }
+
+        .subfolder-title {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        /* ── MATERIALS GRID (inside folder) ── */
         .materials-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .material-card {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
             transition: all 0.3s ease;
-            animation: fadeInUp 0.8s ease;
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.5s ease both;
         }
 
         .material-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
+            top: 0; left: 0;
+            width: 100%; height: 5px;
             background: linear-gradient(90deg, #667eea, #764ba2);
         }
 
         .material-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 14px 36px rgba(0,0,0,0.28);
         }
 
-        .material-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            display: block;
-        }
+        .material-icon { font-size: 2.6em; margin-bottom: 12px; display: block; }
 
         .material-title {
             color: #333;
-            font-size: 1.3em;
+            font-size: 1.15em;
             font-weight: bold;
             margin-bottom: 10px;
             line-height: 1.4;
@@ -95,43 +178,46 @@
             display: block;
         }
 
-        .material-link:hover .material-title {
-            color: #667eea;
+        .material-link:hover .material-title { color: #667eea; }
+
+        /* ── EMPTY FOLDER ── */
+        .empty-folder {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.95em;
+            font-style: italic;
+            padding: 12px 0;
         }
 
+        /* ── TAGS ── */
         .category-tag {
             display: inline-block;
-            padding: 5px 15px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.85em;
+            font-size: 0.82em;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 8px;
+            margin-right: 4px;
         }
+        .tag-grammar    { background: #e3f2fd; color: #1976d2; }
+        .tag-conversation { background: #f3e5f5; color: #7b1fa2; }
+        .tag-game       { background: #fff3e0; color: #f57c00; }
+        .tag-spelling   { background: #e8f5e9; color: #388e3c; }
+        .tag-lesson     { background: #fce4ec; color: #c2185b; }
+        .tag-activity   { background: #e0f2f1; color: #00796b; }
 
-        .tag-grammar {
-            background: #e3f2fd;
-            color: #1976d2;
+        /* ── STATS ── */
+        .stats {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            margin-bottom: 44px;
+            animation: fadeIn 0.8s ease 0.3s both;
         }
-
-        .tag-conversation {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .tag-game {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
-        .tag-spelling {
-            background: #e8f5e9;
-            color: #388e3c;
-        }
-
-        .tag-lesson {
-            background: #fce4ec;
-            color: #c2185b;
-        }
+        .stats h2 { font-size: 2.4em; margin-bottom: 4px; }
+        .stats p   { font-size: 1.05em; opacity: 0.9; }
 
         footer {
             text-align: center;
@@ -141,193 +227,261 @@
             animation: fadeIn 1s ease 0.5s both;
         }
 
+        /* ── ANIMATIONS ── */
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
 
-        /* Animação escalonada para os cards */
-        .material-card:nth-child(1) { animation-delay: 0.1s; }
-        .material-card:nth-child(2) { animation-delay: 0.2s; }
-        .material-card:nth-child(3) { animation-delay: 0.3s; }
-        .material-card:nth-child(4) { animation-delay: 0.4s; }
-        .material-card:nth-child(5) { animation-delay: 0.5s; }
-        .material-card:nth-child(6) { animation-delay: 0.6s; }
-        .material-card:nth-child(7) { animation-delay: 0.7s; }
-        .material-card:nth-child(8) { animation-delay: 0.8s; }
-        .material-card:nth-child(9) { animation-delay: 0.9s; }
-        .material-card:nth-child(10) { animation-delay: 1s; }
-        .material-card:nth-child(11) { animation-delay: 1.1s; }
-
-        .stats {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-            animation: fadeIn 0.8s ease 0.3s both;
-        }
-
-        .stats h2 {
-            font-size: 2.5em;
-            margin-bottom: 5px;
-        }
-
-        .stats p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
+        .material-card:nth-child(1)  { animation-delay: 0.05s; }
+        .material-card:nth-child(2)  { animation-delay: 0.10s; }
+        .material-card:nth-child(3)  { animation-delay: 0.15s; }
+        .material-card:nth-child(4)  { animation-delay: 0.20s; }
+        .material-card:nth-child(5)  { animation-delay: 0.25s; }
+        .material-card:nth-child(6)  { animation-delay: 0.30s; }
+        .material-card:nth-child(7)  { animation-delay: 0.35s; }
+        .material-card:nth-child(8)  { animation-delay: 0.40s; }
+        .material-card:nth-child(9)  { animation-delay: 0.45s; }
+        .material-card:nth-child(10) { animation-delay: 0.50s; }
+        .material-card:nth-child(11) { animation-delay: 0.55s; }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .materials-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .material-card {
-                padding: 25px;
-            }
+            h1 { font-size: 2em; }
+            .folders-grid { grid-template-columns: 1fr 1fr; }
+            .materials-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .folders-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📚 My English Content</h1>
-            <p class="subtitle">Materiais de Ensino de Inglês</p>
-        </header>
+<div class="container">
 
-        <div class="stats">
-            <h2>11</h2>
-            <p>Materiais Disponíveis</p>
-        </div>
+    <header>
+        <h1>📚 My English Content</h1>
+        <p class="subtitle">Materiais de Ensino de Inglês</p>
+    </header>
 
-        <div class="materials-grid">
-            <div class="material-card">
-                <a href="speaking_board_game.html" class="material-link">
-                    <span class="material-icon">🎲</span>
-                    <h2 class="material-title">Speaking Board Game</h2>
-                    <span class="category-tag tag-game">Jogo</span>
-                    <span class="category-tag tag-conversation">Conversação</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="if_clauses.html" class="material-link">
-                    <span class="material-icon">📝</span>
-                    <h2 class="material-title">If Clauses</h2>
-                    <span class="category-tag tag-grammar">Gramática</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Reported_Speech_and_Embedded_Questions" class="material-link">
-                    <span class="material-icon">💬</span>
-                    <h2 class="material-title">Reported Speech and Embedded Questions</h2>
-                    <span class="category-tag tag-grammar">Gramática</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="feels_and_looks.html" class="material-link">
-                    <span class="material-icon">👀</span>
-                    <h2 class="material-title">Looks and Feels</h2>
-                    <span class="category-tag tag-grammar">Gramática</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="EXP_Pack_Lesson6.html" class="material-link">
-                    <span class="material-icon">📖</span>
-                    <h2 class="material-title">EXP. Pack Lesson 6</h2>
-                    <span class="category-tag tag-lesson">Lição</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Conversation_Can_You_Tell.html" class="material-link">
-                    <span class="material-icon">🗣️</span>
-                    <h2 class="material-title">Conversation: Can You Tell...</h2>
-                    <span class="category-tag tag-conversation">Conversação</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Airport_Conversartion.html" class="material-link">
-                    <span class="material-icon">✈️</span>
-                    <h2 class="material-title">Airport Conversation - Davi</h2>
-                    <span class="category-tag tag-conversation">Conversação</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Soletrando_6ºAno.html" class="material-link">
-                    <span class="material-icon">🔤</span>
-                    <h2 class="material-title">Soletrando 6º Ano</h2>
-                    <span class="category-tag tag-spelling">Spelling</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Soletrando_7ºAno.html" class="material-link">
-                    <span class="material-icon">🔠</span>
-                    <h2 class="material-title">Soletrando 7º Ano</h2>
-                    <span class="category-tag tag-spelling">Spelling</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="Soletrando_8ºAno.html" class="material-link">
-                    <span class="material-icon">🔡</span>
-                    <h2 class="material-title">Soletrando 8º Ano</h2>
-                    <span class="category-tag tag-spelling">Spelling</span>
-                </a>
-            </div>
-
-            <div class="material-card">
-                <a href="english-pronouns-guide.html" class="material-link">
-                    <span class="material-icon">👤</span>
-                    <h2 class="material-title">Pronouns & WH Question Words</h2>
-                    <span class="category-tag tag-grammar">Gramática</span>
-                </a>
-            </div>
-
-        </div>
-
-        <footer>
-            <p>✨ Desenvolvido para ensino de inglês • 2024</p>
-        </footer>
+    <div class="stats">
+        <h2>12</h2>
+        <p>Materiais Disponíveis</p>
     </div>
+
+    <!-- ══════════════════════════════════
+         ENGLISH COURSE
+    ═══════════════════════════════════ -->
+    <div class="section-block">
+        <div class="section-label">
+            <h2>🎓 English Course</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="folders-grid">
+
+            <!-- English 1-2 -->
+            <div>
+                <div class="folder-card" onclick="toggleFolder('en12')">
+                    <span class="folder-icon">📂</span>
+                    <div class="folder-name">English 1-2</div>
+                    <div class="folder-count">1 material</div>
+                </div>
+                <div class="subfolder-panel" id="en12">
+                    <div class="subfolder-title">📄 Materiais — English 1-2</div>
+                    <div class="materials-grid">
+                        <div class="material-card">
+                            <a href="English Course/English 1-2/lesson10_activity.html" class="material-link">
+                                <span class="material-icon">✏️</span>
+                                <h2 class="material-title">Online English 1-2 · Lesson 10 Activity</h2>
+                                <span class="category-tag tag-activity">Atividade</span>
+                                <span class="category-tag tag-grammar">Gramática</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English 3 -->
+            <div>
+                <div class="folder-card" onclick="toggleFolder('en3')">
+                    <span class="folder-icon">📁</span>
+                    <div class="folder-name">English 3</div>
+                    <div class="folder-count">Em breve</div>
+                </div>
+                <div class="subfolder-panel" id="en3">
+                    <div class="subfolder-title">📄 Materiais — English 3</div>
+                    <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                </div>
+            </div>
+
+            <!-- English 4 -->
+            <div>
+                <div class="folder-card" onclick="toggleFolder('en4')">
+                    <span class="folder-icon">📁</span>
+                    <div class="folder-name">English 4</div>
+                    <div class="folder-count">Em breve</div>
+                </div>
+                <div class="subfolder-panel" id="en4">
+                    <div class="subfolder-title">📄 Materiais — English 4</div>
+                    <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                </div>
+            </div>
+
+            <!-- English 5 -->
+            <div>
+                <div class="folder-card" onclick="toggleFolder('en5')">
+                    <span class="folder-icon">📁</span>
+                    <div class="folder-name">English 5</div>
+                    <div class="folder-count">Em breve</div>
+                </div>
+                <div class="subfolder-panel" id="en5">
+                    <div class="subfolder-title">📄 Materiais — English 5</div>
+                    <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         ARQUIVOS ALEATÓRIOS
+    ═══════════════════════════════════ -->
+    <div class="section-block">
+        <div class="section-label">
+            <h2>🗂️ Arquivos Aleatórios</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div>
+            <div class="folder-card" onclick="toggleFolder('misc')">
+                <span class="folder-icon">📂</span>
+                <div class="folder-name">Arquivos Aleatórios</div>
+                <div class="folder-count">11 materiais</div>
+            </div>
+
+            <div class="subfolder-panel" id="misc">
+                <div class="subfolder-title">📄 Todos os materiais</div>
+                <div class="materials-grid">
+
+                    <div class="material-card">
+                        <a href="speaking_board_game.html" class="material-link">
+                            <span class="material-icon">🎲</span>
+                            <h2 class="material-title">Speaking Board Game</h2>
+                            <span class="category-tag tag-game">Jogo</span>
+                            <span class="category-tag tag-conversation">Conversação</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="if_clauses.html" class="material-link">
+                            <span class="material-icon">📝</span>
+                            <h2 class="material-title">If Clauses</h2>
+                            <span class="category-tag tag-grammar">Gramática</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Reported_Speech_and_Embedded_Questions" class="material-link">
+                            <span class="material-icon">💬</span>
+                            <h2 class="material-title">Reported Speech and Embedded Questions</h2>
+                            <span class="category-tag tag-grammar">Gramática</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="feels_and_looks.html" class="material-link">
+                            <span class="material-icon">👀</span>
+                            <h2 class="material-title">Looks and Feels</h2>
+                            <span class="category-tag tag-grammar">Gramática</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="EXP_Pack_Lesson6.html" class="material-link">
+                            <span class="material-icon">📖</span>
+                            <h2 class="material-title">EXP. Pack Lesson 6</h2>
+                            <span class="category-tag tag-lesson">Lição</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Conversation_Can_You_Tell.html" class="material-link">
+                            <span class="material-icon">🗣️</span>
+                            <h2 class="material-title">Conversation: Can You Tell...</h2>
+                            <span class="category-tag tag-conversation">Conversação</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Airport_Conversartion.html" class="material-link">
+                            <span class="material-icon">✈️</span>
+                            <h2 class="material-title">Airport Conversation - Davi</h2>
+                            <span class="category-tag tag-conversation">Conversação</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Soletrando_6ºAno.html" class="material-link">
+                            <span class="material-icon">🔤</span>
+                            <h2 class="material-title">Soletrando 6º Ano</h2>
+                            <span class="category-tag tag-spelling">Spelling</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Soletrando_7ºAno.html" class="material-link">
+                            <span class="material-icon">🔠</span>
+                            <h2 class="material-title">Soletrando 7º Ano</h2>
+                            <span class="category-tag tag-spelling">Spelling</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="Soletrando_8ºAno.html" class="material-link">
+                            <span class="material-icon">🔡</span>
+                            <h2 class="material-title">Soletrando 8º Ano</h2>
+                            <span class="category-tag tag-spelling">Spelling</span>
+                        </a>
+                    </div>
+
+                    <div class="material-card">
+                        <a href="english-pronouns-guide.html" class="material-link">
+                            <span class="material-icon">👤</span>
+                            <h2 class="material-title">Pronouns &amp; WH Question Words</h2>
+                            <span class="category-tag tag-grammar">Gramática</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>✨ Desenvolvido para ensino de inglês • 2025</p>
+    </footer>
+
+</div>
+
+<script>
+    function toggleFolder(id) {
+        const panel = document.getElementById(id);
+        const isOpen = panel.classList.contains('open');
+
+        // Fecha todos os painéis abertos
+        document.querySelectorAll('.subfolder-panel.open').forEach(p => p.classList.remove('open'));
+
+        // Abre o clicado (se estava fechado)
+        if (!isOpen) panel.classList.add('open');
+    }
+</script>
 </body>
 </html>
