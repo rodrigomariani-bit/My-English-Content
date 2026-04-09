@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angles 5 – Unit 1 Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral: #E8523F;
+  --teal: #00BCD4;
+  --dark: #1a1a2e;
+  --cream: #FFF8F0;
+  --gold: #F5A623;
+  --green: #4CAF50;
+  --red: #E53935;
+  --purple: #7C4DFF;
+  --blue: #2979FF;
+  --light-teal: #E0F7FA;
+  --light-coral: #FFEBE8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--coral) 0%, #FF6F61 40%, var(--teal) 100%);
+  color: white;
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: repeating-conic-gradient(rgba(255,255,255,0.03) 0% 25%, transparent 25% 50%);
+  animation: spin 60s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hero h1 {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  position: relative;
+  letter-spacing: -1px;
+}
+.hero p {
+  font-size: 1.15rem;
+  margin-top: 12px;
+  opacity: 0.9;
+  position: relative;
+  font-weight: 300;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+nav.toc {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  margin: -36px auto 40px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  max-width: 860px;
+}
+nav.toc h2 {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--coral);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+nav.toc a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--dark);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+nav.toc a:hover {
+  background: var(--light-teal);
+  border-left-color: var(--teal);
+}
+nav.toc .toc-number {
+  font-family: 'Space Mono', monospace;
+  color: var(--coral);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+section {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 36px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+h2.section-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+h2.section-title .badge {
+  background: var(--coral);
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  color: var(--teal);
+}
+
+.frame-box {
+  background: linear-gradient(135deg, var(--light-teal), #f0feff);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.frame-box.coral {
+  background: linear-gradient(135deg, var(--light-coral), #fff5f3);
+  border-left-color: var(--coral);
+}
+.frame-box.purple {
+  background: linear-gradient(135deg, #F3E5F5, #f9f0fc);
+  border-left-color: var(--purple);
+}
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.vocab-card {
+  background: var(--light-teal);
+  padding: 14px 16px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s;
+}
+.vocab-card:hover { transform: translateY(-2px); }
+.vocab-card small {
+  display: block;
+  font-weight: 400;
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.95rem;
+}
+th {
+  background: var(--dark);
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+tr:nth-child(even) td { background: #fafafa; }
+
+.example {
+  background: #f8f8f8;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 0.95rem;
+  border-left: 3px solid var(--gold);
+}
+.example strong { color: var(--coral); }
+.example em { color: var(--teal); font-style: normal; font-weight: 600; }
+
+.tip {
+  background: #FFF8E1;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.tip::before {
+  content: '💡';
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* QUIZ STYLES */
+.quiz-section {
+  background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 40px 36px;
+  margin-bottom: 32px;
+}
+.quiz-section h2 { color: white; }
+.quiz-section h3 { color: var(--gold); }
+
+.question {
+  background: rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.question p.q-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.question p.q-text {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.options label {
+  display: block;
+  padding: 12px 16px;
+  margin: 6px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.2s;
+}
+.options label:hover { background: rgba(255,255,255,0.1); }
+.options input[type="radio"] { margin-right: 10px; accent-color: var(--gold); }
+
+.text-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+.text-input::placeholder { color: rgba(255,255,255,0.35); }
+
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.match-item {
+  background: rgba(255,255,255,0.1);
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.match-arrow { color: var(--gold); font-weight: 700; }
+
+select.match-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+select.match-select option { background: var(--dark); color: white; }
+
+.btn {
+  display: inline-block;
+  padding: 14px 36px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 24px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--coral), #FF6F61);
+  color: white;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,82,63,0.4); }
+
+.result-box {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  display: none;
+  font-weight: 500;
+}
+.result-box.show { display: block; }
+.result-box.correct { background: rgba(76,175,80,0.2); border: 1px solid rgba(76,175,80,0.4); }
+.result-box.incorrect { background: rgba(229,57,53,0.2); border: 1px solid rgba(229,57,53,0.4); }
+.result-box.mixed { background: rgba(245,166,35,0.2); border: 1px solid rgba(245,166,35,0.4); }
+
+.score-display {
+  text-align: center;
+  padding: 32px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: none;
+}
+.score-display.show { display: block; }
+.score-display .big-score {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 32px 0;
+}
+
+@media (max-width: 600px) {
+  section, .quiz-section { padding: 24px 18px; }
+  nav.toc { padding: 24px 18px; }
+  .vocab-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>📘 Angles 5 — Unit 1</h1>
+  <p>Study Guide & Practice Quiz</p>
+</div>
+
+<div class="container">
+
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <a href="#vocab-sports"><span class="toc-number">01</span> Playing Sports — Vocabulary</a>
+  <a href="#indefinite"><span class="toc-number">02</span> Indefinite Pronouns (People, Places & Things)</a>
+  <a href="#first-cond"><span class="toc-number">03</span> First Conditional (Conditions & Consequences)</a>
+  <a href="#toys"><span class="toc-number">04</span> Describing Toys — Adjectives</a>
+  <a href="#opinions"><span class="toc-number">05</span> Giving Opinions: <em>looks</em> vs <em>sounds</em></a>
+  <a href="#connectors"><span class="toc-number">06</span> Words to Connect Ideas</a>
+  <a href="#quiz"><span class="toc-number">07</span> Practice Quiz</a>
+</nav>
+
+<!-- ================= SECTION 1 ================= -->
+<section id="vocab-sports">
+  <h2 class="section-title">Playing Sports <span class="badge">Lesson 1A</span></h2>
+
+  <p>These are the key <strong>verbs</strong> we use when we talk about sports and games:</p>
+
+  <div class="vocab-grid">
+    <div class="vocab-card">kick <small>use your foot</small></div>
+    <div class="vocab-card">hit <small>with bat/racquet</small></div>
+    <div class="vocab-card">throw <small>with your hand (release)</small></div>
+    <div class="vocab-card">catch <small>receive with hands</small></div>
+    <div class="vocab-card">pass <small>give to teammate</small></div>
+    <div class="vocab-card">shoot <small>try to score</small></div>
+    <div class="vocab-card">run <small>move fast on feet</small></div>
+    <div class="vocab-card">jump <small>go up in the air</small></div>
+  </div>
+
+  <h3>Match Results</h3>
+  <div class="vocab-grid">
+    <div class="vocab-card" style="background:var(--light-coral)">win 🏆<small>be the best / get 1st</small></div>
+    <div class="vocab-card" style="background:#FFF8E1">draw (UK) / tie (USA) 🤝<small>same score</small></div>
+    <div class="vocab-card" style="background:#f3e5f5">lose 😞<small>not win</small></div>
+  </div>
+
+  <h3>Examples in context</h3>
+  <div class="example">In marathon running, it's important to have good shoes, otherwise you can hurt your knees when you <strong>run</strong>.</div>
+  <div class="example">In tennis, don't look at your racquet when you <strong>hit</strong> the ball — look at where you want it to go.</div>
+  <div class="example">In ice hockey, it's always better to <strong>pass</strong> the ball to your teammate if they are in a better position.</div>
+
+  <div class="tip">Remember: <strong>throw</strong> = you release the object (like a javelin); <strong>pass</strong> = you give it to a teammate; <strong>shoot</strong> = you aim at a goal to score.</div>
+</section>
+
+<!-- ================= SECTION 2 ================= -->
+<section id="indefinite">
+  <h2 class="section-title">Indefinite Pronouns <span class="badge">Lesson 1B</span></h2>
+
+  <p>We combine prefixes (<em>every-</em>, <em>some-</em>, <em>no-</em>) with suffixes (<em>-body/-one</em>, <em>-where</em>, <em>-thing</em>) to talk about people, places, and things in a general way.</p>
+
+  <table>
+    <thead>
+      <tr><th></th><th>People</th><th>Places</th><th>Things</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ALL</strong></td><td>everyone / everybody</td><td>everywhere</td><td>everything</td></tr>
+      <tr><td><strong>ONE</strong></td><td>someone / somebody</td><td>somewhere</td><td>something</td></tr>
+      <tr><td><strong>NONE</strong></td><td>no one / nobody</td><td>nowhere</td><td>nothing</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Examples</h3>
+  <div class="example"><em>People everywhere</em> like football — it's the most popular sport in the world. (= all places)</div>
+  <div class="example">A racquet is <em>something</em> that you use to hit the ball in tennis. (= one thing)</div>
+  <div class="example">In basketball, <em>nobody</em> is allowed to kick the ball. (= no person)</div>
+
+  <div class="frame-box coral">
+    <strong>⚠️ Important Grammar Rule:</strong><br>
+    With <strong>everybody</strong> and <strong>nobody</strong>, always use a <strong>singular verb</strong>.<br><br>
+    ✅ <em>Everybody <strong>is</strong></em> good at tennis.<br>
+    ❌ <s>Everybody <strong>are</strong></s> good at tennis.
+  </div>
+
+  <h3>Building the words — Exercise 5B (Keith's interview)</h3>
+  <div class="example">
+    What <strong>(1) nobody</strong> realises about my job is that I have to be extremely fit. I have to follow the ball <strong>(2) everywhere</strong>, and at the same time I have to watch what <strong>(3) everybody</strong> else is doing. And if <strong>(4) somebody</strong> breaks the rules, I have to see it! But the worst thing about my job is the supporters. They always have <strong>(5) something</strong> to complain about!
+  </div>
+</section>
+
+<!-- ================= SECTION 3 ================= -->
+<section id="first-cond">
+  <h2 class="section-title">First Conditional <span class="badge">Lesson 1C</span></h2>
+
+  <div class="frame-box">
+    <strong>Structure:</strong><br>
+    <code style="font-family:'Space Mono',monospace; font-size:0.95rem;">
+      IF + present simple , &nbsp; will / might / can + infinitive
+    </code>
+  </div>
+
+  <p>We use the first conditional to talk about a <strong>possible future situation</strong> and its <strong>consequence</strong>.</p>
+
+  <table>
+    <thead><tr><th>Modal</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>will / won't</strong></td>
+        <td>Prediction (certain)</td>
+        <td>If I'm late, I<strong>'ll miss</strong> the test.</td>
+      </tr>
+      <tr>
+        <td><strong>might / might not</strong></td>
+        <td>Possibility (maybe)</td>
+        <td>If I miss the test, my parents <strong>might take</strong> my PS away.</td>
+      </tr>
+      <tr>
+        <td><strong>can / can't</strong></td>
+        <td>Opportunity / Ability</td>
+        <td>If they take my PS, we <strong>can't play</strong> games this weekend!</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="frame-box coral">
+    <strong>⚠️ Common Mistake:</strong><br>
+    ❌ If I <s>will be</s> late… → ✅ If I <strong>am</strong> late…<br>
+    The IF clause uses <strong>present simple</strong>, NOT <em>will</em>.
+  </div>
+
+  <h3>More examples from the lesson</h3>
+  <div class="example">If you <em>try</em> to carry too much gold, you<strong>'ll be</strong> too slow to escape the monsters.</div>
+  <div class="example">If we <em>find</em> a horse, then we <strong>can follow</strong> it to the forest.</div>
+  <div class="example">If we <em>go</em> into the abandoned house, we <strong>might be</strong> safe!</div>
+
+  <h3>Hero Quest Tips (Exercise 4)</h3>
+  <div class="example">
+    If the monster <strong>(1) sees</strong> you, just relax, he might only want to talk to you.<br>
+    If you <strong>(2) try</strong> to fight him, he'll win easily.<br>
+    If he tries to talk to you, you can <strong>(3) sing</strong> him a song.<br>
+    If you sing to him, he'll <strong>(4) fall</strong> asleep.
+  </div>
+</section>
+
+<!-- ================= SECTION 4 ================= -->
+<section id="toys">
+  <h2 class="section-title">Describing Toys — Adjectives <span class="badge">Lesson 1D</span></h2>
+
+  <p>We use adjective pairs (opposites) to describe toys, games, and activities:</p>
+
+  <table>
+    <thead><tr><th>Positive ✅</th><th>Negative ❌</th></tr></thead>
+    <tbody>
+      <tr><td><strong>fun</strong> — enjoyable</td><td><strong>boring</strong> — not interesting</td></tr>
+      <tr><td><strong>safe</strong> — no danger</td><td><strong>dangerous</strong> — can hurt you</td></tr>
+      <tr><td><strong>simple</strong> — easy to understand</td><td><strong>complicated</strong> — hard to understand</td></tr>
+      <tr><td><strong>relaxing</strong> — makes you calm</td><td><strong>stressful</strong> — makes you tense</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <div>
+      <strong>fun</strong> vs <strong>funny</strong>:<br>
+      <strong>fun</strong> = something you enjoy doing → "Playing football is really <em>fun</em>!"<br>
+      <strong>funny</strong> = something that makes you laugh → "My sister told a really <em>funny</em> joke!"
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 5 ================= -->
+<section id="opinions">
+  <h2 class="section-title">Giving Opinions <span class="badge">Lesson 1D</span></h2>
+
+  <div class="frame-box purple">
+    <strong>it looks</strong> + adjective → your opinion is based on what you <strong>SEE</strong> 👁️<br>
+    <strong>it sounds</strong> + adjective → your opinion is based on what you <strong>HEAR or READ</strong> 👂
+  </div>
+
+  <h3>Examples</h3>
+  <div class="example">Wow, that <em>looks</em> fun. I want to play next! (= I can see it)</div>
+  <div class="example">10,000 pieces?! This puzzle <em>sounds</em> complicated. (= someone told me)</div>
+  <div class="example">Did you see the new roller coaster? It <em>looks</em> dangerous!</div>
+  <div class="example">I don't want to go to the opera. It <em>sounds</em> boring to me!</div>
+
+  <div class="tip">If someone describes a game to you and you react → use <strong>sounds</strong>.<br>
+  If you see a photo or video of a game and react → use <strong>looks</strong>.</div>
+</section>
+
+<!-- ================= SECTION 6 ================= -->
+<section id="connectors">
+  <h2 class="section-title">Words to Connect Ideas <span class="badge">Lesson 1E</span></h2>
+
+  <h3>Connecting SIMILAR ideas (+)</h3>
+  <table>
+    <thead><tr><th>Word</th><th>Position</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>also</strong></td><td>before the main verb / after <em>be</em></td><td>This game is very popular and it is <em>also</em> great fun.</td></tr>
+      <tr><td><strong>as well</strong></td><td>end of the sentence</td><td>Adults can play it <em>as well</em>.</td></tr>
+      <tr><td><strong>too</strong></td><td>end of the sentence</td><td>The game is easy, and it's fun <em>too</em>.</td></tr>
+      <tr><td><strong>and</strong></td><td>between clauses</td><td>It can roll quickly, <em>and</em> it can jump.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Connecting DIFFERENT ideas (−)</h3>
+  <table>
+    <thead><tr><th>Word</th><th>Position</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>however</strong></td><td>beginning of a new sentence (+ comma)</td><td>I love the game. <em>However</em>, some people say it has too many rules.</td></tr>
+      <tr><td><strong>though</strong></td><td>end of the sentence</td><td>They say it is boring. I think it's really fun, <em>though</em>.</td></tr>
+      <tr><td><strong>but</strong></td><td>between clauses</td><td>It sounds simple, <em>but</em> there are lots of rules.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="frame-box">
+    <strong>Quick Summary:</strong><br>
+    Similar ideas → <strong>also, as well, too, and</strong><br>
+    Different ideas → <strong>however, though, but</strong>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section class="quiz-section" id="quiz">
+  <h2 class="section-title" style="color:white">🎯 Practice Quiz <span class="badge" style="background:var(--gold);color:var(--dark)">All Topics</span></h2>
+  <p style="opacity:0.8;margin-bottom:8px;">Test your knowledge of all Unit 1 topics. Answer all questions and click "Check My Answers" at the end.</p>
+
+  <!-- PART A: Multiple Choice -->
+  <div class="divider"></div>
+  <h3>Part A — Multiple Choice</h3>
+
+  <div class="question" data-answer="b">
+    <p class="q-label">Question 1 · Sports Verbs</p>
+    <p class="q-text">In football, players __________ the ball with their feet, not their hands.</p>
+    <div class="options">
+      <label><input type="radio" name="q1" value="a"> throw</label>
+      <label><input type="radio" name="q1" value="b"> kick</label>
+      <label><input type="radio" name="q1" value="c"> catch</label>
+      <label><input type="radio" name="q1" value="d"> hit</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="c">
+    <p class="q-label">Question 2 · Indefinite Pronouns</p>
+    <p class="q-text">__________ is allowed to use their phone during the exam. (= no person)</p>
+    <div class="options">
+      <label><input type="radio" name="q2" value="a"> Someone</label>
+      <label><input type="radio" name="q2" value="b"> Everyone</label>
+      <label><input type="radio" name="q2" value="c"> Nobody</label>
+      <label><input type="radio" name="q2" value="d"> Somebody</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="a">
+    <p class="q-label">Question 3 · First Conditional</p>
+    <p class="q-text">If it __________ tomorrow, we'll cancel the game.</p>
+    <div class="options">
+      <label><input type="radio" name="q3" value="a"> rains</label>
+      <label><input type="radio" name="q3" value="b"> will rain</label>
+      <label><input type="radio" name="q3" value="c"> rain</label>
+      <label><input type="radio" name="q3" value="d"> rained</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="b">
+    <p class="q-label">Question 4 · Looks vs Sounds</p>
+    <p class="q-text">My friend told me about a new board game. It __________ really fun!</p>
+    <div class="options">
+      <label><input type="radio" name="q4" value="a"> looks</label>
+      <label><input type="radio" name="q4" value="b"> sounds</label>
+      <label><input type="radio" name="q4" value="c"> feels</label>
+      <label><input type="radio" name="q4" value="d"> seems</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="d">
+    <p class="q-label">Question 5 · Connectors</p>
+    <p class="q-text">I love this game. __________, the adverts are really annoying.</p>
+    <div class="options">
+      <label><input type="radio" name="q5" value="a"> Also</label>
+      <label><input type="radio" name="q5" value="b"> Too</label>
+      <label><input type="radio" name="q5" value="c"> As well</label>
+      <label><input type="radio" name="q5" value="d"> However</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="c">
+    <p class="q-label">Question 6 · Indefinite Pronouns</p>
+    <p class="q-text">I looked __________ for my keys, but I couldn't find them. (= all places)</p>
+    <div class="options">
+      <label><input type="radio" name="q6" value="a"> somewhere</label>
+      <label><input type="radio" name="q6" value="b"> nowhere</label>
+      <label><input type="radio" name="q6" value="c"> everywhere</label>
+      <label><input type="radio" name="q6" value="d"> anywhere</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="b">
+    <p class="q-label">Question 7 · First Conditional</p>
+    <p class="q-text">If we __________ the bus, we might be late for school.</p>
+    <div class="options">
+      <label><input type="radio" name="q7" value="a"> will miss</label>
+      <label><input type="radio" name="q7" value="b"> miss</label>
+      <label><input type="radio" name="q7" value="c"> missed</label>
+      <label><input type="radio" name="q7" value="d"> missing</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="a">
+    <p class="q-label">Question 8 · Sports Verbs</p>
+    <p class="q-text">The goalkeeper tried to __________ the ball, but it went into the goal.</p>
+    <div class="options">
+      <label><input type="radio" name="q8" value="a"> catch</label>
+      <label><input type="radio" name="q8" value="b"> kick</label>
+      <label><input type="radio" name="q8" value="c"> shoot</label>
+      <label><input type="radio" name="q8" value="d"> pass</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="c">
+    <p class="q-label">Question 9 · Adjectives</p>
+    <p class="q-text">That game has 500 rules! It's so __________.</p>
+    <div class="options">
+      <label><input type="radio" name="q9" value="a"> boring</label>
+      <label><input type="radio" name="q9" value="b"> dangerous</label>
+      <label><input type="radio" name="q9" value="c"> complicated</label>
+      <label><input type="radio" name="q9" value="d"> stressful</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="a">
+    <p class="q-label">Question 10 · Looks vs Sounds</p>
+    <p class="q-text">Look at that roller coaster! It __________ dangerous!</p>
+    <div class="options">
+      <label><input type="radio" name="q10" value="a"> looks</label>
+      <label><input type="radio" name="q10" value="b"> sounds</label>
+      <label><input type="radio" name="q10" value="c"> tastes</label>
+      <label><input type="radio" name="q10" value="d"> hears</label>
+    </div>
+  </div>
+
+  <!-- PART B: Fill in the blanks -->
+  <div class="divider"></div>
+  <h3>Part B — Fill in the Blanks</h3>
+
+  <div class="question">
+    <p class="q-label">Question 11 · First Conditional</p>
+    <p class="q-text">Complete the sentence: "If you study hard, you __________ pass the exam." (prediction)</p>
+    <input type="text" class="text-input" id="q11" placeholder="Type your answer...">
+    <div class="result-box" id="r11"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 12 · Indefinite Pronouns</p>
+    <p class="q-text">Complete: "There's __________ wrong with my computer. It's working perfectly." (= no thing)</p>
+    <input type="text" class="text-input" id="q12" placeholder="Type your answer...">
+    <div class="result-box" id="r12"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 13 · Connectors</p>
+    <p class="q-text">Complete: "He's great at basketball, and he's great at football __________." (= add similar idea, end of sentence)</p>
+    <input type="text" class="text-input" id="q13" placeholder="Type your answer...">
+    <div class="result-box" id="r13"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 14 · Sports Verbs</p>
+    <p class="q-text">In basketball, you __________ the ball to score points. (= aim at the basket)</p>
+    <input type="text" class="text-input" id="q14" placeholder="Type your answer...">
+    <div class="result-box" id="r14"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 15 · Indefinite Pronouns</p>
+    <p class="q-text">Complete: "__________ called you while you were out, but they didn't leave a message." (= one person)</p>
+    <input type="text" class="text-input" id="q15" placeholder="Type your answer...">
+    <div class="result-box" id="r15"></div>
+  </div>
+
+  <!-- PART C: Matching -->
+  <div class="divider"></div>
+  <h3>Part C — Matching</h3>
+
+  <div class="question">
+    <p class="q-label">Question 16 · Match the columns</p>
+    <p class="q-text">Match each IF clause with its consequence:</p>
+
+    <div style="margin:12px 0">
+      <p style="margin-bottom:8px;">1. If my team loses the match, →
+        <select class="match-select" id="q16a">
+          <option value="">choose...</option>
+          <option value="b">I'll be really sad.</option>
+          <option value="a">your parents might let you go.</option>
+          <option value="c">we can't go to the beach.</option>
+        </select>
+      </p>
+      <p style="margin-bottom:8px;">2. If you ask politely, →
+        <select class="match-select" id="q16b">
+          <option value="">choose...</option>
+          <option value="b">I'll be really sad.</option>
+          <option value="a">your parents might let you go.</option>
+          <option value="c">we can't go to the beach.</option>
+        </select>
+      </p>
+      <p style="margin-bottom:8px;">3. If it rains this weekend, →
+        <select class="match-select" id="q16c">
+          <option value="">choose...</option>
+          <option value="b">I'll be really sad.</option>
+          <option value="a">your parents might let you go.</option>
+          <option value="c">we can't go to the beach.</option>
+        </select>
+      </p>
+    </div>
+    <div class="result-box" id="r16"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 17 · Match connectors</p>
+    <p class="q-text">Classify each word: Similar (S) or Different (D)?</p>
+    <div style="margin:12px 0">
+      <p style="margin-bottom:8px;">1. <strong>also</strong> →
+        <select class="match-select" id="q17a"><option value="">choose...</option><option value="S">Similar</option><option value="D">Different</option></select>
+      </p>
+      <p style="margin-bottom:8px;">2. <strong>however</strong> →
+        <select class="match-select" id="q17b"><option value="">choose...</option><option value="S">Similar</option><option value="D">Different</option></select>
+      </p>
+      <p style="margin-bottom:8px;">3. <strong>too</strong> →
+        <select class="match-select" id="q17c"><option value="">choose...</option><option value="S">Similar</option><option value="D">Different</option></select>
+      </p>
+      <p style="margin-bottom:8px;">4. <strong>though</strong> →
+        <select class="match-select" id="q17d"><option value="">choose...</option><option value="S">Similar</option><option value="D">Different</option></select>
+      </p>
+      <p style="margin-bottom:8px;">5. <strong>as well</strong> →
+        <select class="match-select" id="q17e"><option value="">choose...</option><option value="S">Similar</option><option value="D">Different</option></select>
+      </p>
+    </div>
+    <div class="result-box" id="r17"></div>
+  </div>
+
+  <!-- PART D: Open-ended -->
+  <div class="divider"></div>
+  <h3>Part D — Write Your Own Sentences</h3>
+
+  <div class="question">
+    <p class="q-label">Question 18 · First Conditional</p>
+    <p class="q-text">Write a first conditional sentence about what will happen if you don't study for the test:</p>
+    <input type="text" class="text-input" id="q18" placeholder="If I don't study...">
+    <div class="result-box" id="r18"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 19 · Looks / Sounds</p>
+    <p class="q-text">Your friend describes a game where you fight zombies underwater. Write your reaction using <em>sounds</em>:</p>
+    <input type="text" class="text-input" id="q19" placeholder="That sounds...">
+    <div class="result-box" id="r19"></div>
+  </div>
+
+  <div class="question">
+    <p class="q-label">Question 20 · Connectors</p>
+    <p class="q-text">Write two sentences about a sport or game you like. Use <strong>however</strong> or <strong>though</strong> to connect a positive and a negative idea.</p>
+    <input type="text" class="text-input" id="q20" placeholder="I love... However,...">
+    <div class="result-box" id="r20"></div>
+  </div>
+
+  <!-- PART E: True or False -->
+  <div class="divider"></div>
+  <h3>Part E — True or False</h3>
+
+  <div class="question" data-answer="false">
+    <p class="q-label">Question 21</p>
+    <p class="q-text">"In the first conditional, we use WILL in the IF clause."</p>
+    <div class="options">
+      <label><input type="radio" name="q21" value="true"> True</label>
+      <label><input type="radio" name="q21" value="false"> False</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="true">
+    <p class="q-label">Question 22</p>
+    <p class="q-text">"With 'nobody' and 'everybody', we use a singular verb (is, has, wants…)."</p>
+    <div class="options">
+      <label><input type="radio" name="q22" value="true"> True</label>
+      <label><input type="radio" name="q22" value="false"> False</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="false">
+    <p class="q-label">Question 23</p>
+    <p class="q-text">"'It looks boring' means someone told you it was boring."</p>
+    <div class="options">
+      <label><input type="radio" name="q23" value="true"> True</label>
+      <label><input type="radio" name="q23" value="false"> False</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="true">
+    <p class="q-label">Question 24</p>
+    <p class="q-text">"'However' connects two different or contrasting ideas."</p>
+    <div class="options">
+      <label><input type="radio" name="q24" value="true"> True</label>
+      <label><input type="radio" name="q24" value="false"> False</label>
+    </div>
+  </div>
+
+  <div class="question" data-answer="false">
+    <p class="q-label">Question 25</p>
+    <p class="q-text">"'Fun' and 'funny' have exactly the same meaning."</p>
+    <div class="options">
+      <label><input type="radio" name="q25" value="true"> True</label>
+      <label><input type="radio" name="q25" value="false"> False</label>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="checkQuiz()">✅ Check My Answers</button>
+
+  <div class="score-display" id="scoreBox">
+    <p class="big-score" id="scoreText"></p>
+    <p id="scoreSummary"></p>
+  </div>
+
+</section>
+
+</div>
+
+<script>
+function checkQuiz() {
+  let score = 0;
+  let total = 0;
+
+  // Part A: Multiple choice (q1-q10)
+  for (let i = 1; i <= 10; i++) {
+    total++;
+    const q = document.querySelector(`.question[data-answer]:nth-of-type(${i})`);
+    // Use radio buttons
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const correct = document.querySelectorAll('.question[data-answer]');
+  }
+
+  // Better approach: iterate all data-answer questions
+  let mcScore = 0;
+  document.querySelectorAll('.question[data-answer]').forEach(q => {
+    const answer = q.dataset.answer;
+    const radios = q.querySelectorAll('input[type="radio"]');
+    let selected = null;
+    radios.forEach(r => { if (r.checked) selected = r.value; });
+    if (selected === answer) {
+      mcScore++;
+      q.style.borderColor = 'rgba(76,175,80,0.6)';
+    } else if (selected) {
+      q.style.borderColor = 'rgba(229,57,53,0.6)';
+    }
+  });
+
+  const totalMC = document.querySelectorAll('.question[data-answer]').length;
+
+  // Part B: Fill in the blanks
+  const fillAnswers = {
+    q11: ["will", "'ll", "will pass", "'ll pass"],
+    q12: ["nothing"],
+    q13: ["too", "as well"],
+    q14: ["shoot"],
+    q15: ["someone", "somebody"]
+  };
+
+  let fillScore = 0;
+  let fillTotal = 0;
+  for (const [id, answers] of Object.entries(fillAnswers)) {
+    fillTotal++;
+    const val = document.getElementById(id).value.trim().toLowerCase();
+    const rb = document.getElementById('r' + id.slice(1));
+    if (answers.some(a => val.includes(a.toLowerCase()))) {
+      fillScore++;
+      rb.className = 'result-box show correct';
+      rb.textContent = '✅ Correct!';
+    } else if (val) {
+      rb.className = 'result-box show incorrect';
+      rb.textContent = '❌ Expected: ' + answers[0];
+    } else {
+      rb.className = 'result-box show incorrect';
+      rb.textContent = '⚠️ No answer. Expected: ' + answers[0];
+    }
+  }
+
+  // Part C: Matching Q16
+  let matchScore = 0;
+  let matchTotal = 0;
+  const q16answers = { q16a: 'b', q16b: 'a', q16c: 'c' };
+  let q16correct = 0;
+  for (const [id, ans] of Object.entries(q16answers)) {
+    matchTotal++;
+    if (document.getElementById(id).value === ans) { q16correct++; matchScore++; }
+  }
+  const r16 = document.getElementById('r16');
+  r16.className = `result-box show ${q16correct === 3 ? 'correct' : 'incorrect'}`;
+  r16.textContent = `${q16correct}/3 correct. (1→sad, 2→parents, 3→beach)`;
+
+  // Q17
+  const q17answers = { q17a: 'S', q17b: 'D', q17c: 'S', q17d: 'D', q17e: 'S' };
+  let q17correct = 0;
+  for (const [id, ans] of Object.entries(q17answers)) {
+    matchTotal++;
+    if (document.getElementById(id).value === ans) { q17correct++; matchScore++; }
+  }
+  const r17 = document.getElementById('r17');
+  r17.className = `result-box show ${q17correct === 5 ? 'correct' : 'mixed'}`;
+  r17.textContent = `${q17correct}/5 correct. (also=S, however=D, too=S, though=D, as well=S)`;
+
+  // Part D: open-ended - just check if they wrote something
+  let openScore = 0;
+  [18, 19, 20].forEach(n => {
+    const val = document.getElementById('q' + n).value.trim();
+    const rb = document.getElementById('r' + n);
+    if (val.length > 5) {
+      openScore++;
+      rb.className = 'result-box show correct';
+      rb.textContent = '✅ Great job writing your own sentence! Review it to make sure grammar is correct.';
+    } else {
+      rb.className = 'result-box show incorrect';
+      rb.textContent = '⚠️ Please write a complete sentence.';
+    }
+  });
+
+  // Total score
+  const autoTotal = totalMC + fillTotal + matchTotal;
+  const autoScore = mcScore + fillScore + matchScore;
+  const grandTotal = autoTotal + 3;
+  const grandScore = autoScore + openScore;
+
+  const box = document.getElementById('scoreBox');
+  box.className = 'score-display show';
+  document.getElementById('scoreText').textContent = `${grandScore} / ${grandTotal}`;
+  const pct = Math.round((grandScore / grandTotal) * 100);
+  let msg = pct >= 90 ? '🌟 Excellent! You\'re ready for the test!' : pct >= 70 ? '👍 Good job! Review the topics you missed.' : '📖 Keep studying! Review the guide above and try again.';
+  document.getElementById('scoreSummary').textContent = `${pct}% — ${msg}`;
+  box.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
