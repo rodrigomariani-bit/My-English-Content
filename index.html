@@ -131,6 +131,45 @@
             margin-bottom: 16px;
         }
 
+        /* ── NESTED SUBFOLDER CARDS ── */
+        .nested-folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .nested-folder-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 14px;
+            padding: 20px 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nested-folder-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .nested-folder-card .folder-icon { font-size: 1.8em; margin-bottom: 8px; }
+        .nested-folder-card .folder-name { font-size: 1em; }
+        .nested-folder-card .folder-count { font-size: 0.82em; }
+
+        /* ── NESTED SUBFOLDER PANEL (level 3) ── */
+        .nested-subfolder-panel {
+            display: none;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 12px;
+            animation: fadeInUp 0.35s ease;
+        }
+
+        .nested-subfolder-panel.open { display: block; }
+
         /* ── MATERIALS GRID (inside folder) ── */
         .materials-grid {
             display: grid;
@@ -204,6 +243,7 @@
         .tag-spelling   { background: #e8f5e9; color: #388e3c; }
         .tag-lesson     { background: #fce4ec; color: #c2185b; }
         .tag-activity   { background: #e0f2f1; color: #00796b; }
+        .tag-review     { background: #fff9c4; color: #f9a825; }
 
         /* ── STATS ── */
         .stats {
@@ -257,9 +297,11 @@
             h1 { font-size: 2em; }
             .folders-grid { grid-template-columns: 1fr 1fr; }
             .materials-grid { grid-template-columns: 1fr; }
+            .nested-folders-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 480px) {
             .folders-grid { grid-template-columns: 1fr; }
+            .nested-folders-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -272,7 +314,7 @@
     </header>
 
     <div class="stats">
-        <h2>12</h2>
+        <h2>13</h2>
         <p>Materiais Disponíveis</p>
     </div>
 
@@ -348,6 +390,112 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         DARWIN
+    ═══════════════════════════════════ -->
+    <div class="section-block">
+        <div class="section-label">
+            <h2>🧬 Darwin</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div>
+            <div class="folder-card" onclick="toggleFolder('darwin-reviews')">
+                <span class="folder-icon">📂</span>
+                <div class="folder-name">Revisões de Materiais</div>
+                <div class="folder-count">1 material</div>
+            </div>
+
+            <div class="subfolder-panel" id="darwin-reviews">
+                <div class="subfolder-title">📁 Subpastas — Revisões de Materiais</div>
+
+                <div class="nested-folders-grid">
+
+                    <!-- Angles 1 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles1')">
+                            <span class="folder-icon">📁</span>
+                            <div class="folder-name">Angles 1</div>
+                            <div class="folder-count">Em breve</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="angles1">
+                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                        </div>
+                    </div>
+
+                    <!-- Angles 2 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles2')">
+                            <span class="folder-icon">📁</span>
+                            <div class="folder-name">Angles 2</div>
+                            <div class="folder-count">Em breve</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="angles2">
+                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                        </div>
+                    </div>
+
+                    <!-- Angles 5 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles5')">
+                            <span class="folder-icon">📁</span>
+                            <div class="folder-name">Angles 5</div>
+                            <div class="folder-count">Em breve</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="angles5">
+                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                        </div>
+                    </div>
+
+                    <!-- Angles 6 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles6')">
+                            <span class="folder-icon">📁</span>
+                            <div class="folder-name">Angles 6</div>
+                            <div class="folder-count">Em breve</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="angles6">
+                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mindflow 1 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'mindflow1')">
+                            <span class="folder-icon">📂</span>
+                            <div class="folder-name">Mindflow 1</div>
+                            <div class="folder-count">1 material</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="mindflow1">
+                            <div class="materials-grid">
+                                <div class="material-card">
+                                    <a href="MindFlow_1_Review_Uni1.html" class="material-link">
+                                        <span class="material-icon">📝</span>
+                                        <h2 class="material-title">MindFlow 1 — Review Unit 1</h2>
+                                        <span class="category-tag tag-review">Revisão</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mindflow 2 -->
+                    <div>
+                        <div class="nested-folder-card" onclick="toggleNested(event, 'mindflow2')">
+                            <span class="folder-icon">📁</span>
+                            <div class="folder-name">Mindflow 2</div>
+                            <div class="folder-count">Em breve</div>
+                        </div>
+                        <div class="nested-subfolder-panel" id="mindflow2">
+                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
@@ -476,10 +624,22 @@
         const panel = document.getElementById(id);
         const isOpen = panel.classList.contains('open');
 
-        // Fecha todos os painéis abertos
+        // Fecha todos os painéis de nível 1
         document.querySelectorAll('.subfolder-panel.open').forEach(p => p.classList.remove('open'));
+        // Fecha todos os painéis aninhados
+        document.querySelectorAll('.nested-subfolder-panel.open').forEach(p => p.classList.remove('open'));
 
-        // Abre o clicado (se estava fechado)
+        if (!isOpen) panel.classList.add('open');
+    }
+
+    function toggleNested(event, id) {
+        event.stopPropagation();
+        const panel = document.getElementById(id);
+        const isOpen = panel.classList.contains('open');
+
+        // Fecha todos os painéis aninhados
+        document.querySelectorAll('.nested-subfolder-panel.open').forEach(p => p.classList.remove('open'));
+
         if (!isOpen) panel.classList.add('open');
     }
 </script>
