@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grammar Review – Frequency</title>
+<link href="./Grammar_Review_SmartGen6A_Unit1_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg: #FFF8F0;
+  --card: #FFFFFF;
+  --primary: #6C5CE7;
+  --primary-light: #A29BFE;
+  --accent: #FDCB6E;
+  --accent2: #00CEC9;
+  --accent3: #E17055;
+  --text: #2D3436;
+  --text-light: #636E72;
+  --success: #00B894;
+  --error: #D63031;
+  --border: #DFE6E9;
+  --shadow: 0 4px 24px rgba(108,92,231,0.10);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 50%, #00CEC9 100%);
+  padding: 60px 24px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -40%; right: -20%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(253,203,110,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+  position: relative;
+}
+.hero p {
+  color: rgba(255,255,255,0.9);
+  font-size: 1.1rem;
+  margin-top: 10px;
+  font-weight: 300;
+  position: relative;
+}
+.badge {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-top: 16px;
+  position: relative;
+  letter-spacing: 0.5px;
+}
+
+/* NAV */
+.toc {
+  max-width: 800px;
+  margin: -28px auto 0;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+.toc-inner {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 24px 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.toc a {
+  text-decoration: none;
+  background: var(--bg);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+.toc a:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* MAIN */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+
+/* SECTIONS */
+.section {
+  margin-bottom: 48px;
+  animation: fadeUp 0.5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.section-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: var(--primary-light);
+  margin-bottom: 4px;
+}
+.section h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+/* TABLES */
+.freq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  margin: 16px 0;
+}
+.freq-table th {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.freq-table td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+.freq-table tr:nth-child(even) td {
+  background: #F8F7FF;
+}
+.freq-table .adverb {
+  font-weight: 700;
+  color: var(--primary);
+}
+.freq-table .pct {
+  font-weight: 600;
+  color: var(--accent3);
+}
+
+/* VISUAL BAR */
+.bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bar-label {
+  width: 110px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: right;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.bar-track {
+  flex: 1;
+  height: 28px;
+  background: #EDE8FF;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  transition: width 1s ease;
+}
+
+/* RULE BOX */
+.rule-box {
+  background: linear-gradient(135deg, #F8F7FF, #EDE8FF);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.rule-box strong {
+  color: var(--primary);
+}
+
+.example {
+  background: #F0FFF0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 10px 0;
+  font-size: 0.95rem;
+  border-left: 4px solid var(--success);
+}
+.example .hl {
+  font-weight: 700;
+  color: var(--primary);
+}
+.wrong {
+  background: #FFF0F0;
+  border-left-color: var(--error);
+}
+.wrong .hl {
+  color: var(--error);
+  text-decoration: line-through;
+}
+
+.note-box {
+  background: #FFFDE7;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 14px 0;
+  border: 2px dashed var(--accent);
+  font-size: 0.92rem;
+}
+.note-box .icon { margin-right: 6px; }
+
+/* PHRASES GRID */
+.phrase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.phrase-chip {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.phrase-chip:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(108,92,231,0.12);
+}
+.phrase-chip .phrase {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1rem;
+}
+.phrase-chip .cat {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* QUIZ */
+.quiz-section {
+  background: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 100%);
+  border-radius: 20px;
+  padding: 36px 28px;
+  color: #fff;
+}
+.quiz-section h2 {
+  color: #fff;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+.quiz-subtitle {
+  text-align: center;
+  font-weight: 300;
+  opacity: 0.85;
+  margin-bottom: 28px;
+}
+.q-card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s;
+}
+.q-num {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.q-text {
+  font-size: 1rem;
+  margin: 8px 0 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.q-opt {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: 'Outfit', sans-serif;
+  color: #fff;
+  transition: all 0.2s;
+  text-align: left;
+}
+.q-opt:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: var(--accent);
+}
+.q-opt.selected {
+  border-color: var(--accent);
+  background: rgba(253,203,110,0.2);
+}
+.q-opt.correct {
+  border-color: var(--success) !important;
+  background: rgba(0,184,148,0.25) !important;
+}
+.q-opt.incorrect {
+  border-color: var(--error) !important;
+  background: rgba(214,48,49,0.2) !important;
+}
+.q-feedback {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-height: 24px;
+}
+
+/* FILL-IN-THE-BLANK */
+.fib-input {
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  width: 160px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.fib-input::placeholder { color: rgba(255,255,255,0.4); }
+.fib-input:focus { border-color: var(--accent); }
+.fib-input.correct { border-color: var(--success); background: rgba(0,184,148,0.15); }
+.fib-input.incorrect { border-color: var(--error); background: rgba(214,48,49,0.12); }
+
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 14px 36px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 24px;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253,203,110,0.4);
+}
+
+.score-box {
+  text-align: center;
+  margin-top: 28px;
+  padding: 24px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 14px;
+  display: none;
+}
+.score-box .big {
+  font-size: 3rem;
+  font-weight: 800;
+}
+.score-box p {
+  font-weight: 300;
+  opacity: 0.85;
+}
+
+/* REORDER */
+.reorder-sentence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.reorder-sentence .word-chip {
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.25);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  user-select: none;
+}
+.reorder-sentence .word-chip:hover { background: rgba(255,255,255,0.25); }
+.reorder-sentence .word-chip.picked { opacity: 0.3; pointer-events: none; }
+.answer-zone {
+  min-height: 48px;
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.answer-zone .word-chip {
+  background: rgba(253,203,110,0.25);
+  border: 2px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .card { padding: 20px; }
+  .quiz-section { padding: 24px 16px; }
+  .bar-label { width: 80px; font-size: 0.8rem; }
+  .toc-inner { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>📚 Grammar Review</h1>
+  <p>Adverbs of Frequency &amp; Adverbial Phrases</p>
+  <span class="badge">LESSONS 1–4</span>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <div class="toc-inner">
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#s1">Adverbs of Frequency</a>
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#s2">Word Order</a>
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#s3">Special Rules</a>
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#s4">Adverbial Phrases</a>
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#s5">Phrase Position</a>
+    <a href="file:///Users/rodrigopereiramariani/Downloads/grammar-review-unit1-4.html#quiz">Quiz</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== SECTION 1 ===== -->
+<div class="section" id="s1">
+  <p class="section-label">Lessons 2A &amp; 2B</p>
+  <h2>1. Adverbs of Frequency</h2>
+
+  <div class="card">
+    <h3>What are adverbs of frequency?</h3>
+    <p>Adverbs of frequency tell us <strong>how often</strong> something happens. They range from 100% (all the time) to 0% (not at any time).</p>
+
+    <table class="freq-table">
+      <thead>
+        <tr><th>Adverb</th><th>Frequency</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="adverb">always</td><td class="pct">100%</td><td>I <strong>always</strong> brush my teeth before bed.</td></tr>
+        <tr><td class="adverb">usually</td><td class="pct">80%</td><td>My mum <strong>usually</strong> drinks coffee for breakfast.</td></tr>
+        <tr><td class="adverb">often</td><td class="pct">70%</td><td>My friends <strong>often</strong> go to school by bus.</td></tr>
+        <tr><td class="adverb">sometimes</td><td class="pct">50%</td><td>We <strong>sometimes</strong> go to the cinema on weekends.</td></tr>
+        <tr><td class="adverb">rarely</td><td class="pct">20%</td><td>Daddy <strong>rarely</strong> eats fast food.</td></tr>
+        <tr><td class="adverb">never</td><td class="pct">0%</td><td>Hannah is <strong>never</strong> on time for school.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Visual Scale</h3>
+    <div class="bar-container">
+      <div class="bar-row"><span class="bar-label">always</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--primary);">100%</div></div></div>
+      <div class="bar-row"><span class="bar-label">usually</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:#7C6FE7;">80%</div></div></div>
+      <div class="bar-row"><span class="bar-label">often</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:#8E80EE;">70%</div></div></div>
+      <div class="bar-row"><span class="bar-label">sometimes</span><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--accent2);">50%</div></div></div>
+      <div class="bar-row"><span class="bar-label">rarely</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--accent3);">20%</div></div></div>
+      <div class="bar-row"><span class="bar-label">never</span><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--error);padding-right:0;justify-content:center;">0%</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2 ===== -->
+<div class="section" id="s2">
+  <p class="section-label">Lessons 2A &amp; 2B</p>
+  <h2>2. Word Order – Where Do They Go?</h2>
+
+  <div class="card">
+    <h3>Rule 1: Before the main verb</h3>
+    <p>Most adverbs of frequency go <strong>before the main verb</strong> (except the verb <em>to be</em>).</p>
+    <div class="example">Lucas <span class="hl">often</span> walks to school.</div>
+    <div class="example">We <span class="hl">rarely</span> eat dinner after 9 p.m.</div>
+    <div class="example">I <span class="hl">always</span> brush my teeth before bed.</div>
+  </div>
+
+  <div class="card">
+    <h3>Rule 2: After the verb TO BE</h3>
+    <p>When the main verb is <strong>be</strong> (am / is / are / was / were), the adverb comes <strong>after</strong> it.</p>
+    <div class="example">Omar is <span class="hl">never</span> late for school.</div>
+    <div class="example">They are <span class="hl">usually</span> very busy in the morning.</div>
+  </div>
+
+  <div class="card">
+    <h3>Rule 3: <em>Sometimes</em> &amp; <em>Usually</em> – flexible position</h3>
+    <p>These two adverbs can also go at the <strong>beginning</strong> or <strong>end</strong> of a sentence.</p>
+    <div class="example"><span class="hl">Sometimes</span>, I forget my homework.</div>
+    <div class="example">I forget my homework <span class="hl">sometimes</span>.</div>
+    <div class="example"><span class="hl">Usually</span>, she drinks tea in the morning.</div>
+  </div>
+
+  <div class="rule-box">
+    <strong>🧠 Quick tip:</strong> The position does NOT change in questions or negatives.<br>
+    ✅ Does Lucas <strong>often</strong> walk to school?<br>
+    ✅ Lucas doesn't <strong>often</strong> walk to school.
+  </div>
+</div>
+
+<!-- ===== SECTION 3 ===== -->
+<div class="section" id="s3">
+  <p class="section-label">Lesson 2A</p>
+  <h2>3. Special Rules for <em>Never</em> &amp; <em>Ever</em></h2>
+
+  <div class="card">
+    <h3><em>Never</em> = already negative</h3>
+    <p><strong>Never</strong> means "not at any time", so we do NOT use it with <em>don't / doesn't / isn't</em>. That would create a double negative.</p>
+    <div class="example">I <span class="hl">never</span> drink coffee at night. ✅</div>
+    <div class="example wrong">I don't <span class="hl">never</span> drink coffee at night. ❌</div>
+
+    <div class="note-box">
+      <span class="icon">💡</span> Instead of <em>never</em> + negative, we use <strong>ever</strong> + negative:<br>
+      I <strong>don't ever</strong> drink coffee at night. ✅
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><em>Ever</em> in questions</h3>
+    <p>We don't usually use <em>never</em> in questions. We use <strong>ever</strong> instead.</p>
+    <div class="example">Do you <span class="hl">ever</span> eat breakfast in bed?</div>
+    <p style="margin-top:8px;">Possible answers: <em>No, never.</em> / <em>Sometimes.</em> / <em>I rarely do.</em></p>
+  </div>
+</div>
+
+<!-- ===== SECTION 4 ===== -->
+<div class="section" id="s4">
+  <p class="section-label">Lessons 3B &amp; 4A</p>
+  <h2>4. Adverbial Phrases of Frequency</h2>
+
+  <div class="card">
+    <h3>What are they?</h3>
+    <p>Besides single adverbs, we can also use <strong>phrases</strong> (groups of words) to say how often something happens. They give more specific information.</p>
+
+    <h3 style="margin-top:20px;">Organised by frequency</h3>
+    <div class="phrase-grid">
+      <div class="phrase-chip" style="border-color:var(--primary);"><span class="phrase">every morning/day</span><div class="cat">🔵 Regular habit</div></div>
+      <div class="phrase-chip" style="border-color:var(--primary);"><span class="phrase">most of the time</span><div class="cat">🔵 Regular habit</div></div>
+      <div class="phrase-chip" style="border-color:var(--primary);"><span class="phrase">four times a week</span><div class="cat">🔵 Regular habit</div></div>
+      <div class="phrase-chip" style="border-color:var(--primary);"><span class="phrase">once a day</span><div class="cat">🔵 Regular habit</div></div>
+      <div class="phrase-chip" style="border-color:var(--accent2);"><span class="phrase">from time to time</span><div class="cat">🟢 Occasional</div></div>
+      <div class="phrase-chip" style="border-color:var(--accent2);"><span class="phrase">twice a month</span><div class="cat">🟢 Occasional</div></div>
+      <div class="phrase-chip" style="border-color:var(--accent2);"><span class="phrase">once a week</span><div class="cat">🟢 Occasional</div></div>
+      <div class="phrase-chip" style="border-color:var(--accent2);"><span class="phrase">on Saturdays</span><div class="cat">🟢 Occasional</div></div>
+      <div class="phrase-chip" style="border-color:var(--accent3);"><span class="phrase">hardly ever</span><div class="cat">🔴 Rare</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Special case: <em>hardly ever</em></h3>
+    <p><em>Hardly ever</em> means "almost never" and behaves like an adverb of frequency for word order:</p>
+    <div class="example">I <span class="hl">hardly ever</span> eat fast food. (before the main verb)</div>
+    <div class="example">They are <span class="hl">hardly ever</span> late for school. (after verb <em>to be</em>)</div>
+  </div>
+</div>
+
+<!-- ===== SECTION 5 ===== -->
+<div class="section" id="s5">
+  <p class="section-label">Lesson 4A</p>
+  <h2>5. Position of Adverbial Phrases</h2>
+
+  <div class="card">
+    <h3>Main position: end of the sentence</h3>
+    <p>Most adverbial phrases of frequency go at the <strong>end</strong> of the sentence.</p>
+    <div class="example">I drink tea <span class="hl">every morning</span>.</div>
+    <div class="example">I take vitamin C <span class="hl">once a day</span>.</div>
+    <div class="example">We have English class <span class="hl">on Fridays</span>.</div>
+    <div class="example">My cousins visit me <span class="hl">from time to time</span>.</div>
+  </div>
+
+  <div class="card">
+    <h3>Alternative: beginning of the sentence (for emphasis)</h3>
+    <p>For <strong>emphasis</strong>, we can put the phrase at the beginning. In this case, we add a <strong>comma</strong>.</p>
+    <div class="example"><span class="hl">Most of the time</span>, we have lunch at home.</div>
+    <div class="example"><span class="hl">On Sundays</span>, we go to a restaurant.</div>
+  </div>
+
+  <div class="rule-box">
+    <strong>📌 Summary:</strong><br>
+    • <strong>Adverbs</strong> (always, usually, often, etc.) → before the verb / after <em>be</em><br>
+    • <strong>Phrases</strong> (every day, once a week, etc.) → end of sentence (or beginning + comma)<br>
+    • <strong>hardly ever</strong> → follows adverb rules (before verb / after <em>be</em>)
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="section quiz-section" id="quiz">
+  <h2>🎯 Quiz Time!</h2>
+  <p class="quiz-subtitle">Test everything you learned – 15 questions</p>
+
+  <div id="quiz-container"><div class="q-card" id="q0">
+      <span class="q-num">Question 1</span>
+      <p class="q-text">My sister ______ wakes up before 7 a.m. She does it every single day.</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="0" data-opt="0" onclick="selectOpt(this)">sometimes</button><button class="q-opt" data-q="0" data-opt="1" onclick="selectOpt(this)">always</button><button class="q-opt" data-q="0" data-opt="2" onclick="selectOpt(this)">rarely</button><button class="q-opt" data-q="0" data-opt="3" onclick="selectOpt(this)">never</button>
+      </div>
+      <div class="q-feedback" id="fb0"></div>
+    </div><div class="q-card" id="q1">
+      <span class="q-num">Question 2</span>
+      <p class="q-text">They are ______ late for class. They arrive on time 100% of the time.</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="1" data-opt="0" onclick="selectOpt(this)">often</button><button class="q-opt" data-q="1" data-opt="1" onclick="selectOpt(this)">never</button><button class="q-opt" data-q="1" data-opt="2" onclick="selectOpt(this)">always</button><button class="q-opt" data-q="1" data-opt="3" onclick="selectOpt(this)">usually</button>
+      </div>
+      <div class="q-feedback" id="fb1"></div>
+    </div><div class="q-card" id="q2">
+      <span class="q-num">Question 3</span>
+      <p class="q-text">Where does the adverb go? "She ______ eats breakfast at home."</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="2" data-opt="0" onclick="selectOpt(this)">usually – before the verb ✅</button><button class="q-opt" data-q="2" data-opt="1" onclick="selectOpt(this)">usually – after the verb ❌</button><button class="q-opt" data-q="2" data-opt="2" onclick="selectOpt(this)">at the end ❌</button><button class="q-opt" data-q="2" data-opt="3" onclick="selectOpt(this)">before "she" ❌</button>
+      </div>
+      <div class="q-feedback" id="fb2"></div>
+    </div><div class="q-card" id="q3">
+      <span class="q-num">Question 4</span>
+      <p class="q-text">Which sentence is CORRECT?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="3" data-opt="0" onclick="selectOpt(this)">He doesn't never eat fish.</button><button class="q-opt" data-q="3" data-opt="1" onclick="selectOpt(this)">He never eats fish.</button><button class="q-opt" data-q="3" data-opt="2" onclick="selectOpt(this)">He never doesn't eat fish.</button><button class="q-opt" data-q="3" data-opt="3" onclick="selectOpt(this)">Never he eats fish.</button>
+      </div>
+      <div class="q-feedback" id="fb3"></div>
+    </div><div class="q-card" id="q4">
+      <span class="q-num">Question 5</span>
+      <p class="q-text">"Do you ______ play football after school?"</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="4" data-opt="0" onclick="selectOpt(this)">never</button><button class="q-opt" data-q="4" data-opt="1" onclick="selectOpt(this)">ever</button><button class="q-opt" data-q="4" data-opt="2" onclick="selectOpt(this)">always</button><button class="q-opt" data-q="4" data-opt="3" onclick="selectOpt(this)">don't</button>
+      </div>
+      <div class="q-feedback" id="fb4"></div>
+    </div><div class="q-card" id="q5">
+      <span class="q-num">Question 6</span>
+      <p class="q-text">Which adverb means 50% of the time?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="5" data-opt="0" onclick="selectOpt(this)">often</button><button class="q-opt" data-q="5" data-opt="1" onclick="selectOpt(this)">usually</button><button class="q-opt" data-q="5" data-opt="2" onclick="selectOpt(this)">sometimes</button><button class="q-opt" data-q="5" data-opt="3" onclick="selectOpt(this)">rarely</button>
+      </div>
+      <div class="q-feedback" id="fb5"></div>
+    </div><div class="q-card" id="q6">
+      <span class="q-num">Question 7</span>
+      <p class="q-text">Which phrase means "almost never"?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="6" data-opt="0" onclick="selectOpt(this)">from time to time</button><button class="q-opt" data-q="6" data-opt="1" onclick="selectOpt(this)">most of the time</button><button class="q-opt" data-q="6" data-opt="2" onclick="selectOpt(this)">hardly ever</button><button class="q-opt" data-q="6" data-opt="3" onclick="selectOpt(this)">once a week</button>
+      </div>
+      <div class="q-feedback" id="fb6"></div>
+    </div><div class="q-card" id="q7">
+      <span class="q-num">Question 8</span>
+      <p class="q-text">Where do adverbial PHRASES usually go?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="7" data-opt="0" onclick="selectOpt(this)">Before the subject</button><button class="q-opt" data-q="7" data-opt="1" onclick="selectOpt(this)">Between subject and verb</button><button class="q-opt" data-q="7" data-opt="2" onclick="selectOpt(this)">At the end of the sentence</button><button class="q-opt" data-q="7" data-opt="3" onclick="selectOpt(this)">After the auxiliary</button>
+      </div>
+      <div class="q-feedback" id="fb7"></div>
+    </div><div class="q-card" id="q8">
+      <span class="q-num">Question 9</span>
+      <p class="q-text">"______, we go to the beach." — Why is there a comma?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="8" data-opt="0" onclick="selectOpt(this)">Because the phrase is at the END</button><button class="q-opt" data-q="8" data-opt="1" onclick="selectOpt(this)">Because the phrase is at the BEGINNING for emphasis</button><button class="q-opt" data-q="8" data-opt="2" onclick="selectOpt(this)">Because it's a question</button><button class="q-opt" data-q="8" data-opt="3" onclick="selectOpt(this)">Because of the verb to be</button>
+      </div>
+      <div class="q-feedback" id="fb8"></div>
+    </div><div class="q-card" id="q9">
+      <span class="q-num">Question 10</span>
+      <p class="q-text">"I hardly ever ______ fast food." Which verb form?</p>
+      <div class="q-options">
+        <button class="q-opt" data-q="9" data-opt="0" onclick="selectOpt(this)">eat</button><button class="q-opt" data-q="9" data-opt="1" onclick="selectOpt(this)">eats</button><button class="q-opt" data-q="9" data-opt="2" onclick="selectOpt(this)">eating</button><button class="q-opt" data-q="9" data-opt="3" onclick="selectOpt(this)">to eat</button>
+      </div>
+      <div class="q-feedback" id="fb9"></div>
+    </div><div class="q-card" id="q10">
+      <span class="q-num">Question 11</span>
+      <p class="q-text">Complete: "Lucas ______ walks to school." (70% of the time)</p>
+      <input class="fib-input" id="fib10" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb10"></div>
+    </div><div class="q-card" id="q11">
+      <span class="q-num">Question 12</span>
+      <p class="q-text">Complete: "Omar is ______ late for school." (0%)</p>
+      <input class="fib-input" id="fib11" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb11"></div>
+    </div><div class="q-card" id="q12">
+      <span class="q-num">Question 13</span>
+      <p class="q-text">Complete: "I take vitamin C ______ ______ ______." (1x per day)</p>
+      <input class="fib-input" id="fib12" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb12"></div>
+    </div><div class="q-card" id="q13">
+      <span class="q-num">Question 14</span>
+      <p class="q-text">Complete: "My cousins visit me ______ ______ ______ ______." (occasionally)</p>
+      <input class="fib-input" id="fib13" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb13"></div>
+    </div><div class="q-card" id="q14">
+      <span class="q-num">Question 15</span>
+      <p class="q-text">Complete: "I ______ ______ eat sweets." (almost never)</p>
+      <input class="fib-input" id="fib14" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb14"></div>
+    </div></div>
+
+  <div style="text-align:center;">
+    <button class="btn" onclick="checkQuiz()">Check My Answers</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <p class="big" id="scoreNum"></p>
+    <p id="scoreMsg"></p>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const quizData = [
+  // MC
+  {type:'mc', q:'My sister ______ wakes up before 7 a.m. She does it every single day.', opts:['sometimes','always','rarely','never'], ans:1},
+  {type:'mc', q:'They are ______ late for class. They arrive on time 100% of the time.', opts:['often','never','always','usually'], ans:1},
+  {type:'mc', q:'Where does the adverb go? "She ______ eats breakfast at home."', opts:['usually – before the verb ✅','usually – after the verb ❌','at the end ❌','before "she" ❌'], ans:0},
+  {type:'mc', q:'Which sentence is CORRECT?', opts:['He doesn\'t never eat fish.','He never eats fish.','He never doesn\'t eat fish.','Never he eats fish.'], ans:1},
+  {type:'mc', q:'"Do you ______ play football after school?"', opts:['never','ever','always','don\'t'], ans:1},
+  {type:'mc', q:'Which adverb means 50% of the time?', opts:['often','usually','sometimes','rarely'], ans:2},
+  {type:'mc', q:'Which phrase means "almost never"?', opts:['from time to time','most of the time','hardly ever','once a week'], ans:2},
+  {type:'mc', q:'Where do adverbial PHRASES usually go?', opts:['Before the subject','Between subject and verb','At the end of the sentence','After the auxiliary'], ans:2},
+  {type:'mc', q:'"______, we go to the beach." — Why is there a comma?', opts:['Because the phrase is at the END','Because the phrase is at the BEGINNING for emphasis','Because it\'s a question','Because of the verb to be'], ans:1},
+  {type:'mc', q:'"I hardly ever ______ fast food." Which verb form?', opts:['eat','eats','eating','to eat'], ans:0},
+
+  // FIB
+  {type:'fib', q:'Complete: "Lucas ______ walks to school." (70% of the time)', ans:['often']},
+  {type:'fib', q:'Complete: "Omar is ______ late for school." (0%)', ans:['never']},
+  {type:'fib', q:'Complete: "I take vitamin C ______ ______ ______." (1x per day)', ans:['once a day']},
+  {type:'fib', q:'Complete: "My cousins visit me ______ ______ ______ ______." (occasionally)', ans:['from time to time']},
+  {type:'fib', q:'Complete: "I ______ ______ eat sweets." (almost never)', ans:['hardly ever']},
+];
+
+const container = document.getElementById('quiz-container');
+
+quizData.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'q-card';
+  div.id = 'q' + i;
+
+  if (item.type === 'mc') {
+    div.innerHTML = `
+      <span class="q-num">Question ${i+1}</span>
+      <p class="q-text">${item.q}</p>
+      <div class="q-options">
+        ${item.opts.map((o, j) => `<button class="q-opt" data-q="${i}" data-opt="${j}" onclick="selectOpt(this)">${o}</button>`).join('')}
+      </div>
+      <div class="q-feedback" id="fb${i}"></div>
+    `;
+  } else {
+    div.innerHTML = `
+      <span class="q-num">Question ${i+1}</span>
+      <p class="q-text">${item.q}</p>
+      <input class="fib-input" id="fib${i}" placeholder="type here..." autocomplete="off">
+      <div class="q-feedback" id="fb${i}"></div>
+    `;
+  }
+  container.appendChild(div);
+});
+
+function selectOpt(btn) {
+  const q = btn.dataset.q;
+  document.querySelectorAll(`[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function checkQuiz() {
+  let score = 0;
+  quizData.forEach((item, i) => {
+    const fb = document.getElementById('fb' + i);
+    if (item.type === 'mc') {
+      const sel = document.querySelector(`[data-q="${i}"].selected`);
+      document.querySelectorAll(`[data-q="${i}"]`).forEach(b => {
+        b.classList.remove('correct','incorrect');
+        if (parseInt(b.dataset.opt) === item.ans) b.classList.add('correct');
+      });
+      if (sel) {
+        if (parseInt(sel.dataset.opt) === item.ans) {
+          score++;
+          fb.textContent = '✅ Correct!';
+          fb.style.color = '#00B894';
+        } else {
+          sel.classList.add('incorrect');
+          fb.textContent = '❌ Not quite!';
+          fb.style.color = '#FDCB6E';
+        }
+      } else {
+        fb.textContent = '⚠️ No answer selected';
+        fb.style.color = '#FDCB6E';
+      }
+    } else {
+      const input = document.getElementById('fib' + i);
+      const val = input.value.trim().toLowerCase();
+      const correct = item.ans.some(a => val === a.toLowerCase());
+      input.classList.remove('correct','incorrect');
+      if (correct) {
+        score++;
+        input.classList.add('correct');
+        fb.textContent = '✅ Correct!';
+        fb.style.color = '#00B894';
+      } else {
+        input.classList.add('incorrect');
+        fb.textContent = `❌ Answer: ${item.ans[0]}`;
+        fb.style.color = '#FDCB6E';
+      }
+    }
+  });
+
+  const box = document.getElementById('scoreBox');
+  box.style.display = 'block';
+  document.getElementById('scoreNum').textContent = score + ' / ' + quizData.length;
+  const pct = Math.round(score / quizData.length * 100);
+  const msg = pct === 100 ? '🎉 Perfect! Amazing job!' : pct >= 70 ? '👏 Great work! Keep it up!' : pct >= 50 ? '👍 Good effort! Review the tricky parts.' : '📖 Keep studying – you\'ll get there!';
+  document.getElementById('scoreMsg').textContent = msg;
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+
+
+</body></html>
