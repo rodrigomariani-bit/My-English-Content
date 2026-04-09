@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Flow 1 – Study Guide & Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --accent: #e8553d;
+  --accent2: #2a7d6e;
+  --accent3: #d4a843;
+  --text: #2c2c2c;
+  --muted: #6b6b6b;
+  --border: #e8e2d8;
+  --highlight: #fff8e1;
+  --correct: #2a7d6e;
+  --wrong: #c0392b;
+  --tag-bg: #f0ebe3;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Source Sans 3',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+.container { max-width:860px; margin:0 auto; padding:20px; }
+
+/* HEADER */
+header { text-align:center; padding:60px 20px 40px; position:relative; }
+header::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:5px; background:var(--accent); border-radius:3px; }
+header h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.2rem); font-weight:900; letter-spacing:-1px; margin-bottom:8px; }
+header p { color:var(--muted); font-size:1.1rem; }
+
+/* NAV */
+nav { position:sticky; top:0; z-index:100; background:var(--bg); border-bottom:2px solid var(--border); padding:12px 0; margin-bottom:30px; }
+nav .nav-inner { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; max-width:860px; margin:0 auto; padding-left:20px; padding-right:20px; }
+nav a { white-space:nowrap; padding:6px 14px; border-radius:20px; font-size:.85rem; font-weight:600; text-decoration:none; color:var(--muted); border:1.5px solid var(--border); transition:.2s; }
+nav a:hover, nav a.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* SECTIONS */
+.section { background:var(--card); border-radius:16px; padding:clamp(24px,4vw,40px); margin-bottom:28px; border:1px solid var(--border); box-shadow:0 2px 12px rgba(0,0,0,.04); }
+.section h2 { font-family:'Playfair Display',serif; font-size:1.7rem; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.section h2 .num { background:var(--accent); color:#fff; width:36px; height:36px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-family:'Source Sans 3',sans-serif; font-size:.9rem; font-weight:700; flex-shrink:0; }
+.section .subtitle { color:var(--muted); font-size:.95rem; margin-bottom:24px; border-bottom:1px dashed var(--border); padding-bottom:16px; }
+h3 { font-size:1.15rem; color:var(--accent); margin:22px 0 10px; font-weight:700; }
+h4 { font-size:1rem; color:var(--accent2); margin:16px 0 8px; font-weight:700; }
+
+/* TABLES */
+table { width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:.93rem; }
+th { background:var(--accent); color:#fff; padding:10px 14px; text-align:left; font-weight:600; }
+td { padding:9px 14px; border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:#faf7f2; }
+
+/* EXAMPLE BOXES */
+.example { background:var(--highlight); border-left:4px solid var(--accent3); padding:14px 18px; margin:12px 0; border-radius:0 8px 8px 0; font-size:.95rem; }
+.example code { font-family:'JetBrains Mono',monospace; font-size:.88rem; background:rgba(0,0,0,.06); padding:1px 5px; border-radius:3px; }
+.example strong { color:var(--accent); }
+
+.tip { background:#e8f5f1; border-left:4px solid var(--accent2); padding:14px 18px; margin:14px 0; border-radius:0 8px 8px 0; }
+.tip::before { content:'💡 '; }
+
+.warning { background:#fde8e8; border-left:4px solid var(--wrong); padding:14px 18px; margin:14px 0; border-radius:0 8px 8px 0; }
+.warning::before { content:'⚠️ '; }
+
+ul, ol { padding-left:22px; margin:8px 0 14px; }
+li { margin-bottom:5px; }
+
+/* VOCAB GRID */
+.vocab-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin:14px 0; }
+.vocab-card { background:var(--tag-bg); padding:12px 14px; border-radius:10px; text-align:center; }
+.vocab-card .word { font-weight:700; font-size:1rem; color:var(--accent2); }
+.vocab-card .def { font-size:.82rem; color:var(--muted); margin-top:3px; }
+
+/* QUIZ */
+.quiz-section { counter-reset:quiz; }
+.q-block { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin-bottom:18px; }
+.q-block .q-num { font-weight:700; color:var(--accent); font-size:.85rem; text-transform:uppercase; margin-bottom:6px; }
+.q-block .q-text { font-weight:600; margin-bottom:12px; font-size:1.02rem; }
+
+/* Multiple choice */
+.mc-option { display:block; padding:10px 14px; margin:5px 0; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; transition:.2s; font-size:.95rem; }
+.mc-option:hover { border-color:var(--accent); background:#fff5f3; }
+.mc-option.selected { border-color:var(--accent); background:#fff5f3; font-weight:600; }
+.mc-option.correct { border-color:var(--correct); background:#e8f5f1; }
+.mc-option.wrong { border-color:var(--wrong); background:#fde8e8; }
+
+/* Fill in the blank */
+.fill-input { border:none; border-bottom:2px solid var(--border); padding:4px 8px; font-size:1rem; font-family:inherit; background:transparent; width:160px; transition:.2s; outline:none; }
+.fill-input:focus { border-color:var(--accent); }
+.fill-input.correct { border-color:var(--correct); color:var(--correct); }
+.fill-input.wrong { border-color:var(--wrong); color:var(--wrong); }
+
+/* Matching */
+.match-container { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.match-col { display:flex; flex-direction:column; gap:8px; }
+.match-item { padding:10px 14px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; transition:.2s; font-size:.93rem; text-align:center; }
+.match-item:hover { border-color:var(--accent3); }
+.match-item.selected { border-color:var(--accent3); background:#fff8e1; }
+.match-item.matched { border-color:var(--correct); background:#e8f5f1; pointer-events:none; }
+
+/* Open question */
+.open-textarea { width:100%; min-height:80px; border:1.5px solid var(--border); border-radius:8px; padding:12px; font-family:inherit; font-size:.95rem; resize:vertical; outline:none; transition:.2s; }
+.open-textarea:focus { border-color:var(--accent); }
+
+/* Buttons */
+.btn { display:inline-block; padding:10px 24px; border:none; border-radius:8px; font-family:inherit; font-size:.95rem; font-weight:600; cursor:pointer; transition:.2s; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#c9442e; }
+.btn-secondary { background:var(--accent2); color:#fff; }
+.btn-secondary:hover { background:#1f6356; }
+.btn-outline { background:transparent; border:1.5px solid var(--accent); color:var(--accent); }
+
+.feedback { margin-top:10px; padding:10px 14px; border-radius:8px; font-size:.9rem; display:none; }
+.feedback.show { display:block; }
+.feedback.correct { background:#e8f5f1; color:var(--correct); }
+.feedback.wrong { background:#fde8e8; color:var(--wrong); }
+
+.score-bar { text-align:center; padding:24px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-radius:12px; margin-top:24px; }
+.score-bar .score-num { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; }
+
+/* T/F styling */
+.tf-options { display:flex; gap:10px; margin-top:6px; }
+.tf-btn { padding:8px 20px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-weight:600; transition:.2s; background:#fff; }
+.tf-btn:hover { border-color:var(--accent); }
+.tf-btn.selected { background:var(--accent); color:#fff; border-color:var(--accent); }
+.tf-btn.correct-answer { background:var(--correct); color:#fff; border-color:var(--correct); }
+.tf-btn.wrong-answer { background:var(--wrong); color:#fff; border-color:var(--wrong); }
+
+/* Reorder */
+.reorder-items { display:flex; flex-direction:column; gap:6px; }
+.reorder-item { padding:10px 14px; border:1.5px solid var(--border); border-radius:8px; cursor:grab; background:#fff; display:flex; align-items:center; gap:10px; user-select:none; }
+.reorder-item .grip { color:var(--muted); font-size:1.2rem; }
+.reorder-item.dragging { opacity:.5; }
+
+@media(max-width:600px){
+  .match-container { grid-template-columns:1fr; }
+  .vocab-grid { grid-template-columns:1fr 1fr; }
+  .q-block { padding:16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Mind Flow 1 – Study Guide</h1>
+  <p>Complete review: Grammar, Vocabulary &amp; Interactive Quiz</p>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#sec1" class="active">Likes &amp; Dislikes</a>
+    <a href="#sec2">Similarities</a>
+    <a href="#sec3">Adjectives</a>
+    <a href="#sec4">Narrative Tenses</a>
+    <a href="#sec5">Reported Speech</a>
+    <a href="#sec6">Modals</a>
+    <a href="#sec7">Present Perfect</a>
+    <a href="#sec8">Vocabulary</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ===== 1. LIKES & DISLIKES ===== -->
+<div class="section" id="sec1">
+  <h2><span class="num">1</span> Likes &amp; Dislikes</h2>
+  <p class="subtitle">Expressing preferences using special expressions + gerund / noun</p>
+
+  <h3>Key Expressions</h3>
+  <table>
+    <tr><th>Expression</th><th>Meaning</th><th>Like / Dislike?</th></tr>
+    <tr><td><strong>really enjoy</strong> + -ing / noun</td><td>like a lot</td><td>👍 Like</td></tr>
+    <tr><td><strong>be (really) into</strong> + -ing / noun</td><td>be interested in</td><td>👍 Like</td></tr>
+    <tr><td><strong>be crazy about</strong> + -ing / noun</td><td>love intensely</td><td>👍 Like</td></tr>
+    <tr><td><strong>love</strong> + -ing / noun</td><td>like very much</td><td>👍 Like</td></tr>
+    <tr><td><strong>can't stand</strong> + -ing / noun</td><td>hate</td><td>👎 Dislike</td></tr>
+    <tr><td><strong>be not interested in</strong> + -ing / noun</td><td>don't care about</td><td>👎 Dislike</td></tr>
+    <tr><td><strong>be not into</strong> + -ing / noun</td><td>don't like</td><td>👎 Dislike</td></tr>
+  </table>
+
+  <h3>Grammar Rule</h3>
+  <div class="tip">After all these expressions, use the <strong>-ing form</strong> of the verb or a <strong>noun</strong>. Never use the infinitive (to + verb).</div>
+
+  <div class="example">
+    ✅ I really enjoy <strong>reading</strong>. (gerund)<br>
+    ✅ I'm crazy about <strong>chocolate</strong>. (noun)<br>
+    ✅ I can't stand <strong>cooking</strong>. (gerund)<br>
+    ❌ <s>I really enjoy to read.</s>
+  </div>
+
+  <h3>Responding: So / Neither / Really?</h3>
+  <table>
+    <tr><th>Situation</th><th>Structure</th><th>Example</th></tr>
+    <tr><td>Same (positive)</td><td><strong>So</strong> + am/do/can + I</td><td>"I love pizza." → "So do I."</td></tr>
+    <tr><td>Same (negative)</td><td><strong>Neither</strong> / <strong>Nor</strong> + am/do/can + I</td><td>"I can't stand jazz." → "Neither can I."</td></tr>
+    <tr><td>Different (from +)</td><td><strong>Really? I</strong> + don't / can't / 'm not</td><td>"I love sushi." → "Really? I don't."</td></tr>
+    <tr><td>Different (from −)</td><td><strong>Really? I</strong> + do / can / am</td><td>"I can't stand it." → "Really? I can."</td></tr>
+  </table>
+</div>
+
+<!-- ===== 2. SIMILARITIES & DIFFERENCES ===== -->
+<div class="section" id="sec2">
+  <h2><span class="num">2</span> Differences &amp; Similarities</h2>
+  <p class="subtitle">Comparing yourself to family members and friends</p>
+
+  <h3>Expressions for Similarity (S)</h3>
+  <div class="example">
+    He's <strong>just like</strong> his father.<br>
+    My cousin <strong>looks exactly like</strong> / <strong>looks a lot like</strong> my aunt.<br>
+    My sister <strong>takes after</strong> my mum.
+  </div>
+
+  <h3>Expressions for Difference (D)</h3>
+  <div class="example">
+    I <strong>look nothing like</strong> my mother.<br>
+    She's <strong>nothing like</strong> her father.
+  </div>
+
+  <h3>Useful Pocket Expressions</h3>
+  <ul>
+    <li><em>What I love/hate most about him/her is (that)…</em></li>
+    <li><em>He's/She's so… that…</em></li>
+    <li><em>That's why I (don't) like him/her.</em></li>
+  </ul>
+</div>
+
+<!-- ===== 3. ADJECTIVES ===== -->
+<div class="section" id="sec3">
+  <h2><span class="num">3</span> Adjectives: Appearance &amp; Personality</h2>
+  <p class="subtitle">Describing people's looks and character</p>
+
+  <table>
+    <tr><th>Appearance</th><th>Personality</th></tr>
+    <tr><td>athletic</td><td>arrogant</td></tr>
+    <tr><td>fit</td><td>easy-going</td></tr>
+    <tr><td>gorgeous</td><td>friendly</td></tr>
+    <tr><td>overweight</td><td>fussy</td></tr>
+    <tr><td>slim</td><td>narrow-minded</td></tr>
+    <tr><td>tall</td><td>serious</td></tr>
+  </table>
+
+  <div class="tip">Some adjectives are used for <strong>praise</strong> (gorgeous, friendly, easy-going) and others for <strong>criticism</strong> (arrogant, fussy, narrow-minded). Context matters!</div>
+</div>
+
+<!-- ===== 4. NARRATIVE TENSES ===== -->
+<div class="section" id="sec4">
+  <h2><span class="num">4</span> Narrative Tenses: Past Simple &amp; Past Continuous</h2>
+  <p class="subtitle">Telling stories about past events</p>
+
+  <table>
+    <tr><th>Tense</th><th>Use</th><th>Form</th></tr>
+    <tr><td><strong>Past Continuous</strong></td><td>Set the scene / background action (longer action)</td><td>was / were + verb + <em>-ing</em></td></tr>
+    <tr><td><strong>Past Simple</strong></td><td>Short completed action that <strong>interrupted</strong> the background</td><td>verb + <em>-ed</em> (regular) or irregular form</td></tr>
+  </table>
+
+  <h3>Key Connectors</h3>
+  <div class="example">
+    Charlotte <strong>was sitting</strong> on the couch <strong>when</strong> an intruder <strong>broke</strong> into her house.<br>
+    Brutus <strong>attacked</strong> the intruder <strong>while</strong> he <strong>was speaking</strong> to the victim.
+  </div>
+
+  <div class="tip"><strong>when</strong> → usually followed by Past Simple (the interruption).<br>
+  <strong>while</strong> → usually followed by Past Continuous (the ongoing action).</div>
+
+  <h3>Pronunciation of <em>-ed</em> endings</h3>
+  <table>
+    <tr><th>/d/</th><th>/t/</th><th>/ɪd/</th></tr>
+    <tr><td>arrived, called, played</td><td>attacked, stopped, watched</td><td>wanted, needed, waited</td></tr>
+  </table>
+  <div class="tip">The <em>-ed</em> is only pronounced as a separate syllable (/ɪd/) when the verb ends in <strong>t</strong> or <strong>d</strong>.</div>
+</div>
+
+<!-- ===== 5. REPORTED SPEECH ===== -->
+<div class="section" id="sec5">
+  <h2><span class="num">5</span> Reporting What People Said</h2>
+  <p class="subtitle">Using reporting verbs + object + (not) to + infinitive</p>
+
+  <h3>Structure</h3>
+  <div class="example">
+    <strong>Subject + reporting verb + object + (not) to + infinitive</strong>
+  </div>
+
+  <table>
+    <tr><th>Function</th><th>Verb</th><th>Example</th></tr>
+    <tr><td>Advice</td><td><strong>advised</strong></td><td>Kate <em>advised</em> Lily <em>to forget</em> Chris.</td></tr>
+    <tr><td>Request</td><td><strong>asked</strong></td><td>Chris <em>asked</em> Lily <em>to let</em> him explain.</td></tr>
+    <tr><td>Encouragement</td><td><strong>encouraged</strong></td><td>She <em>encouraged</em> Lily <em>to accept</em>.</td></tr>
+    <tr><td>Invitation</td><td><strong>invited</strong></td><td>Jake <em>invited</em> her <em>to see</em> a film.</td></tr>
+    <tr><td>Reminder</td><td><strong>reminded</strong></td><td>He <em>reminded</em> Lily <em>to text</em> Jake.</td></tr>
+    <tr><td>Command</td><td><strong>told</strong></td><td>She <em>told</em> him <em>not to call</em> her again.</td></tr>
+  </table>
+
+  <h3>Negative Form</h3>
+  <div class="warning"><strong>not</strong> comes BEFORE <strong>to</strong>:<br>
+    ✅ She told me <strong>not to</strong> be upset.<br>
+    ❌ <s>She told me to not be upset.</s>
+  </div>
+
+  <h3>Pronunciation: Weak Forms</h3>
+  <div class="tip">In connected speech, object pronouns (<em>him, her, them, us</em>) are pronounced with a weak /ə/ sound: "told <em>him</em>" → /toʊld ɪm/</div>
+</div>
+
+<!-- ===== 6. MODAL VERBS ===== -->
+<div class="section" id="sec6">
+  <h2><span class="num">6</span> Modal Verbs: must, should, may</h2>
+  <p class="subtitle">Obligation, advice, and possibility</p>
+
+  <table>
+    <tr><th>Modal</th><th>Use</th><th>Example</th></tr>
+    <tr><td><strong>must</strong></td><td>Obligation / something important</td><td>I <em>must</em> be careful with personal info.</td></tr>
+    <tr><td><strong>should</strong></td><td>Advice / recommendation</td><td>Teens <em>should</em> limit their time online.</td></tr>
+    <tr><td><strong>may</strong></td><td>Possibility</td><td>Social networks <em>may</em> promote community.</td></tr>
+  </table>
+
+  <div class="tip">All three modals are followed by the <strong>base form</strong> of the verb (no <em>to</em>, no <em>-s</em>, no <em>-ing</em>).</div>
+
+  <div class="example">
+    ✅ You <strong>should study</strong> more.<br>
+    ❌ <s>You should to study more.</s><br>
+    ❌ <s>You should studying more.</s>
+  </div>
+</div>
+
+<!-- ===== 7. PRESENT PERFECT vs PAST SIMPLE ===== -->
+<div class="section" id="sec7">
+  <h2><span class="num">7</span> Present Perfect &amp; Past Simple</h2>
+  <p class="subtitle">Talking about life experiences and their details</p>
+
+  <table>
+    <tr><th>Tense</th><th>Use</th><th>Form</th></tr>
+    <tr><td><strong>Present Perfect</strong></td><td>Introduce a past experience (no specific time)</td><td>have / has + past participle</td></tr>
+    <tr><td><strong>Past Simple</strong></td><td>Give details about a specific time</td><td>verb + -ed / irregular</td></tr>
+  </table>
+
+  <div class="example">
+    "I<strong>'ve eaten</strong> very odd things quite a few times." (experience → Pres. Perfect)<br>
+    "It <strong>was</strong> when I <strong>was</strong> in Cambodia." (detail → Past Simple)<br><br>
+    "<strong>Have</strong> you ever <strong>eaten</strong> in a totally unique place?"<br>
+    "Well, I once <strong>went</strong> to a restaurant in Germany."
+  </div>
+
+  <h3>Answering "Have you ever…?" Questions</h3>
+  <table>
+    <tr><th>Answer</th><th>Examples</th></tr>
+    <tr><td>Yes (Present Perfect)</td><td>Yes, I've tried it <em>twice / loads of times / a couple of times</em>.</td></tr>
+    <tr><td>Yes (Past Simple)</td><td>Yes, I tried it <em>just the other day / some months ago / when I was on holidays</em>.</td></tr>
+    <tr><td>No</td><td>No, never, <em>but I'd like to / but I hope to one day / and I wouldn't like to</em>.</td></tr>
+  </table>
+
+  <h3>Food Adjectives</h3>
+  <div class="vocab-grid">
+    <div class="vocab-card"><div class="word">mouth-watering</div><div class="def">looks/smells amazing</div></div>
+    <div class="vocab-card"><div class="word">tasty</div><div class="def">delicious flavour</div></div>
+    <div class="vocab-card"><div class="word">gross</div><div class="def">disgusting</div></div>
+    <div class="vocab-card"><div class="word">disgusting</div><div class="def">terrible, awful</div></div>
+    <div class="vocab-card"><div class="word">yummy</div><div class="def">delicious (informal)</div></div>
+  </div>
+
+  <h3>Reacting Interjections</h3>
+  <div class="example">
+    <strong>Positive:</strong> That's yummy! / Mmmm!<br>
+    <strong>Negative:</strong> Eww! / Urrgh! / Yuck!<br>
+    <strong>Surprise:</strong> How bizarre! / Sounds fascinating!
+  </div>
+</div>
+
+<!-- ===== 8. VOCABULARY ===== -->
+<div class="section" id="sec8">
+  <h2><span class="num">8</span> Vocabulary Reference</h2>
+  <p class="subtitle">Multi-word verbs, family, relationships, opinion expressions</p>
+
+  <h3>Multi-word Verbs &amp; Expressions (Relationships)</h3>
+  <table>
+    <tr><th>Expression</th><th>Meaning</th></tr>
+    <tr><td><strong>chat up</strong></td><td>flirt with someone</td></tr>
+    <tr><td><strong>cheat on</strong></td><td>be unfaithful to your partner</td></tr>
+    <tr><td><strong>split up</strong></td><td>end a relationship</td></tr>
+    <tr><td><strong>freak out</strong></td><td>become very upset / shocked</td></tr>
+    <tr><td><strong>cheer up</strong></td><td>make someone feel happier</td></tr>
+    <tr><td><strong>go out with</strong></td><td>be in a romantic relationship</td></tr>
+    <tr><td><strong>be upset</strong></td><td>be sad / unhappy</td></tr>
+    <tr><td><strong>have a row</strong></td><td>have an argument</td></tr>
+    <tr><td><strong>change your mind</strong></td><td>change a decision</td></tr>
+    <tr><td><strong>move on</strong></td><td>start a new phase / relationship</td></tr>
+  </table>
+
+  <h3>Chat-up Lines vs Break-up Lines</h3>
+  <div class="example">
+    <strong>Chat-up:</strong> "Did it hurt when you fell from heaven?"<br>
+    <strong>Break-up:</strong> "We can still be friends." / "We are never ever getting back together."
+  </div>
+
+  <h3>Family Vocabulary</h3>
+  <table>
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td>single-parent family</td><td>only one parent and a child (or children)</td></tr>
+    <tr><td>blended family</td><td>a couple plus children from current and previous relationships</td></tr>
+    <tr><td>widow</td><td>a woman whose husband has died</td></tr>
+    <tr><td>widower</td><td>a man whose wife has died</td></tr>
+    <tr><td>stepmother / stepfather</td><td>the person who has married your parent</td></tr>
+    <tr><td>stepbrother / stepsister</td><td>the son/daughter of the person your parent married</td></tr>
+    <tr><td>nuclear family</td><td>parents and children living together</td></tr>
+    <tr><td>extended family</td><td>nuclear family plus all other relatives</td></tr>
+  </table>
+
+  <h3>Opinion Expressions (Writing)</h3>
+  <table>
+    <tr><th>Introduce facts</th><th>Arguments for</th><th>Arguments against</th><th>Give opinion</th></tr>
+    <tr><td>It is a fact that…</td><td>Some people argue that…</td><td>On the other hand…</td><td>In my view…</td></tr>
+  </table>
+
+  <h3>Agreeing &amp; Disagreeing</h3>
+  <table>
+    <tr><th>Agreeing</th><th>Disagreeing</th></tr>
+    <tr><td>I totally agree.</td><td>I don't agree.</td></tr>
+    <tr><td>Absolutely! / Definitely! / Exactly!</td><td>That's (really) not true! / That's nonsense!</td></tr>
+    <tr><td></td><td>I'm not so sure about that.</td></tr>
+  </table>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="section quiz-section" id="quiz">
+  <h2><span class="num">Q</span> Interactive Quiz</h2>
+  <p class="subtitle">Test your knowledge – answer all questions, then check your score!</p>
+
+  <div id="quizContainer"></div>
+
+  <div style="text-align:center; margin-top:24px;">
+    <button class="btn btn-primary" onclick="checkAllAnswers()" style="font-size:1.1rem; padding:14px 40px;">Check My Answers</button>
+    <button class="btn btn-outline" onclick="resetQuiz()" style="margin-left:10px;">Reset</button>
+  </div>
+  <div id="scoreResult"></div>
+</div>
+
+</div><!-- container -->
+
+<footer style="text-align:center; padding:30px; color:var(--muted); font-size:.85rem;">
+  Mind Flow 1 – Study Guide &amp; Quiz &bull; Created for exam preparation
+</footer>
+
+<script>
+const quizData = [
+  // 1 - MC
+  { type:'mc', q:'Which form do we use after "I really enjoy…"?', options:['infinitive (to + verb)','gerund (-ing form)','base form','past participle'], answer:1 },
+  // 2 - MC
+  { type:'mc', q:'"I can\'t stand cooking." This expresses:', options:['a strong like','a mild dislike','a strong dislike','indifference'], answer:2 },
+  // 3 - MC
+  { type:'mc', q:'Someone says "I love pizza." You agree. You say:', options:['"Neither do I."','"So do I."','"Really? I don\'t."','"Nor do I."'], answer:1 },
+  // 4 - MC
+  { type:'mc', q:'Someone says "I can\'t stand jazz." You also dislike jazz. You say:', options:['"So can I."','"Really? I can."','"Neither can I."','"So do I."'], answer:2 },
+  // 5 - Fill
+  { type:'fill', q:'Complete: She _____ (sit) on the couch when the phone _____ (ring).', blanks:['was sitting','rang'], labels:['was sitting','rang'] },
+  // 6 - MC
+  { type:'mc', q:'In narrative tenses, the Past Continuous is used to:', options:['describe short completed actions','set the scene / background action','talk about future plans','give commands'], answer:1 },
+  // 7 - Fill
+  { type:'fill', q:'Reported speech: "Don\'t call me again." → She told him _____ her again.', blanks:['not to call'], labels:['not to call'] },
+  // 8 - MC
+  { type:'mc', q:'Kate said: "You should forget him." → Kate _____ Lily to forget him.', options:['told','asked','advised','reminded'], answer:2 },
+  // 9 - TF
+  { type:'tf', q:'"She told me to not be upset" is the correct form.', answer:false },
+  // 10 - TF
+  { type:'tf', q:'After modal verbs (must, should, may), we use the base form of the verb.', answer:true },
+  // 11 - MC
+  { type:'mc', q:'Which modal expresses POSSIBILITY?', options:['must','should','may','would'], answer:2 },
+  // 12 - MC
+  { type:'mc', q:'Which modal gives ADVICE?', options:['must','should','may','can'], answer:1 },
+  // 13 - Fill
+  { type:'fill', q:'Complete: "Have you ever _____ (eat) sushi?" "Yes, I _____ (try) it last year."', blanks:['eaten','tried'], labels:['eaten','tried'] },
+  // 14 - MC
+  { type:'mc', q:'We use the Present Perfect to:', options:['talk about specific past details','introduce a past experience (no specific time)','describe background actions','report speech'], answer:1 },
+  // 15 - MC
+  { type:'mc', q:'What does "cheat on" mean?', options:['flirt with someone','be unfaithful to your partner','end a relationship','have an argument'], answer:1 },
+  // 16 - MC
+  { type:'mc', q:'What does "have a row" mean?', options:['go on a date','have a party','have an argument','have fun'], answer:2 },
+  // 17 - MC
+  { type:'mc', q:'A "blended family" is:', options:['only one parent and children','parents and children only','a couple plus children from current and previous relationships','all relatives including grandparents'], answer:2 },
+  // 18 - TF
+  { type:'tf', q:'"My sister takes after my mum" expresses SIMILARITY.', answer:true },
+  // 19 - TF
+  { type:'tf', q:'"I look nothing like my mother" expresses SIMILARITY.', answer:false },
+  // 20 - MC
+  { type:'mc', q:'The -ed in "wanted" is pronounced as:', options:['/d/','/t/','/ɪd/'], answer:2 },
+  // 21 - MC
+  { type:'mc', q:'The -ed in "played" is pronounced as:', options:['/d/','/t/','/ɪd/'], answer:0 },
+  // 22 - Fill
+  { type:'fill', q:'Complete: Teens _____ (should/must/may) limit the time they spend online. (advice)', blanks:['should'], labels:['should'] },
+  // 23 - MC
+  { type:'mc', q:'"He\'s just like his father" means they are:', options:['very different','very similar','not related','not friends'], answer:1 },
+  // 24 - Fill
+  { type:'fill', q:'Complete: "I\'m crazy _____ chocolate." / "She\'s not interested _____ watching TV."', blanks:['about','in'], labels:['about','in'] },
+  // 25 - MC
+  { type:'mc', q:'What does "move on" mean?', options:['go back to an ex','start a new phase in life','travel to a new city','forget your friends'], answer:1 },
+  // 26 - TF
+  { type:'tf', q:'A "widower" is a woman whose husband has died.', answer:false },
+  // 27 - Fill
+  { type:'fill', q:'Reported speech: "Remember to take your mobile." → Mum _____ her to take her mobile.', blanks:['reminded'], labels:['reminded'] },
+  // 28 - MC
+  { type:'mc', q:'Which is a NEGATIVE food interjection?', options:['Mmmm!','That\'s yummy!','Yuck!','Sounds delicious!'], answer:2 },
+  // 29 - Fill
+  { type:'fill', q:'Complete: Brutus _____ (attack) the intruder while he _____ (speak) to the victim.', blanks:['attacked','was speaking'], labels:['attacked','was speaking'] },
+  // 30 - MC
+  { type:'mc', q:'"It is a fact that…" is used to:', options:['give your opinion','present arguments against','introduce facts','express disagreement'], answer:2 },
+];
+
+let userAnswers = {};
+const container = document.getElementById('quizContainer');
+
+function renderQuiz() {
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-block';
+    div.id = 'q' + i;
+    let html = `<div class="q-num">Question ${i+1} / ${quizData.length}</div><div class="q-text">${q.q}</div>`;
+
+    if (q.type === 'mc') {
+      q.options.forEach((opt, j) => {
+        html += `<div class="mc-option" data-q="${i}" data-v="${j}" onclick="selectMC(this,${i},${j})">${String.fromCharCode(65+j)}) ${opt}</div>`;
+      });
+    } else if (q.type === 'tf') {
+      html += `<div class="tf-options">
+        <div class="tf-btn" data-q="${i}" data-v="true" onclick="selectTF(this,${i},true)">True</div>
+        <div class="tf-btn" data-q="${i}" data-v="false" onclick="selectTF(this,${i},false)">False</div>
+      </div>`;
+    } else if (q.type === 'fill') {
+      let parts = q.q.split('_____');
+      html += '<div style="margin-top:8px;">';
+      parts.forEach((p, k) => {
+        html += p;
+        if (k < q.blanks.length) {
+          html += `<input type="text" class="fill-input" data-q="${i}" data-b="${k}" placeholder="${q.labels?.[k] ? '…' : '…'}">`;
+        }
+      });
+      html += '</div>';
+    }
+
+    html += `<div class="feedback" id="fb${i}"></div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function selectMC(el, qi, val) {
+  document.querySelectorAll(`.mc-option[data-q="${qi}"]`).forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  userAnswers[qi] = val;
+}
+
+function selectTF(el, qi, val) {
+  document.querySelectorAll(`.tf-btn[data-q="${qi}"]`).forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  userAnswers[qi] = val;
+}
+
+function checkAllAnswers() {
+  let score = 0;
+  quizData.forEach((q, i) => {
+    const fb = document.getElementById('fb' + i);
+    let correct = false;
+
+    if (q.type === 'mc') {
+      const sel = userAnswers[i];
+      document.querySelectorAll(`.mc-option[data-q="${i}"]`).forEach(e => {
+        e.classList.remove('correct','wrong');
+        if (parseInt(e.dataset.v) === q.answer) e.classList.add('correct');
+        else if (parseInt(e.dataset.v) === sel && sel !== q.answer) e.classList.add('wrong');
+      });
+      correct = sel === q.answer;
+    } else if (q.type === 'tf') {
+      const sel = userAnswers[i];
+      document.querySelectorAll(`.tf-btn[data-q="${i}"]`).forEach(e => {
+        e.classList.remove('correct-answer','wrong-answer');
+        if (String(e.dataset.v) === String(q.answer)) e.classList.add('correct-answer');
+        else if (e.classList.contains('selected') && sel !== q.answer) e.classList.add('wrong-answer');
+      });
+      correct = sel === q.answer;
+    } else if (q.type === 'fill') {
+      const inputs = document.querySelectorAll(`.fill-input[data-q="${i}"]`);
+      let allRight = true;
+      inputs.forEach((inp, k) => {
+        const val = inp.value.trim().toLowerCase();
+        const exp = q.blanks[k].toLowerCase();
+        if (val === exp) { inp.classList.add('correct'); inp.classList.remove('wrong'); }
+        else { inp.classList.add('wrong'); inp.classList.remove('correct'); allRight = false; inp.value = inp.value || ''; inp.placeholder = q.blanks[k]; }
+      });
+      correct = allRight;
+    }
+
+    fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+    fb.textContent = correct ? '✅ Correct!' : '❌ Correct answer: ' + (q.type === 'mc' ? q.options[q.answer] : q.type === 'tf' ? (q.answer ? 'True' : 'False') : q.blanks.join(' / '));
+    if (correct) score++;
+  });
+
+  const pct = Math.round(score / quizData.length * 100);
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
+  document.getElementById('scoreResult').innerHTML = `
+    <div class="score-bar">
+      <div class="score-num">${score} / ${quizData.length}</div>
+      <div style="font-size:1.2rem; margin-top:4px;">${pct}% ${emoji}</div>
+      <div style="margin-top:6px; opacity:.85;">${pct >= 80 ? 'Excellent work!' : pct >= 60 ? 'Good job! Review the topics you missed.' : 'Keep studying! Review the guide above and try again.'}</div>
+    </div>`;
+}
+
+function resetQuiz() {
+  userAnswers = {};
+  document.getElementById('scoreResult').innerHTML = '';
+  renderQuiz();
+}
+
+// Smooth scroll nav
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior:'smooth', block:'start' });
+    document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+
+renderQuiz();
+</script>
+</body>
+</html>
