@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9º Ano – Study Guide · AV1 2º Trimestre</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coral:#E8523F;
+  --teal:#00BCD4;
+  --dark:#1a1a2e;
+  --cream:#FFF8F0;
+  --gold:#F5A623;
+  --green:#4CAF50;
+  --red:#E53935;
+  --purple:#7C4DFF;
+  --blue:#2979FF;
+  --light-teal:#E0F7FA;
+  --light-coral:#FFEBE8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--cream);
+  color:var(--dark);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,var(--coral) 0%,#FF6F61 40%,var(--teal) 100%);
+  color:#fff;
+  padding:70px 24px 56px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:repeating-conic-gradient(rgba(255,255,255,.03) 0% 25%,transparent 25% 50%);
+  animation:spin 60s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.hero .badge{
+  display:inline-block;background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.4);
+  padding:6px 18px;border-radius:30px;font-size:.85rem;
+  font-weight:600;letter-spacing:1px;margin-bottom:18px;
+  position:relative;text-transform:uppercase;
+}
+.hero h1{
+  font-size:clamp(2rem,6vw,3.6rem);font-weight:800;
+  position:relative;letter-spacing:-1px;line-height:1.1;
+}
+.hero p{font-size:1.12rem;margin-top:14px;opacity:.95;position:relative;}
+.hero .meta{
+  margin-top:22px;position:relative;display:flex;
+  gap:12px;justify-content:center;flex-wrap:wrap;
+}
+.hero .meta span{
+  background:rgba(0,0,0,.15);padding:7px 15px;border-radius:10px;
+  font-size:.9rem;font-weight:500;
+}
+
+/* ── LAYOUT ── */
+.wrap{max-width:920px;margin:0 auto;padding:0 20px;}
+section{margin:56px 0;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.section-head .num{
+  min-width:44px;height:44px;border-radius:12px;
+  background:var(--dark);color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:1.1rem;
+  font-family:'Space Mono',monospace;
+}
+.section-head h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;letter-spacing:-.5px;}
+.section-sub{color:#6b6b7b;font-size:1rem;margin:2px 0 26px 58px;}
+@media(max-width:560px){.section-sub{margin-left:0;}}
+
+/* ── CARDS ── */
+.card{
+  background:#fff;border-radius:20px;padding:28px 26px;
+  box-shadow:0 8px 30px rgba(26,26,46,.07);
+  border:1px solid rgba(26,26,46,.05);margin-bottom:22px;
+}
+.card h3{font-size:1.25rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.card h3 .ico{font-size:1.4rem;}
+.card p{margin-bottom:10px;}
+.lead{color:#555;margin-bottom:18px;}
+
+/* ── FORMULA BOX ── */
+.formula{
+  background:linear-gradient(135deg,var(--dark),#2d2d4d);
+  color:#fff;border-radius:16px;padding:22px 24px;margin:16px 0;
+  font-family:'Space Mono',monospace;font-size:1.05rem;text-align:center;
+}
+.formula b{color:var(--gold);}
+.formula .arrow{color:var(--teal);margin:0 8px;}
+
+/* ── EXAMPLE LINES ── */
+.ex{
+  border-left:4px solid var(--teal);background:var(--light-teal);
+  padding:12px 16px;border-radius:0 10px 10px 0;margin:10px 0;
+}
+.ex.coral{border-left-color:var(--coral);background:var(--light-coral);}
+.ex .en{font-weight:600;}
+.ex .pt{color:#666;font-size:.92rem;font-style:italic;}
+.hl{background:var(--gold);color:var(--dark);padding:1px 6px;border-radius:5px;font-weight:700;}
+.hl.teal{background:var(--teal);color:#fff;}
+.hl.coral{background:var(--coral);color:#fff;}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:14px;border:1px solid #eee;}
+table{width:100%;border-collapse:collapse;min-width:480px;background:#fff;}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #f0f0f0;}
+th{background:var(--dark);color:#fff;font-weight:600;font-size:.92rem;}
+tr:last-child td{border-bottom:none;}
+td:first-child{font-weight:700;color:var(--coral);}
+tbody tr:nth-child(even){background:#faf7f2;}
+
+/* ── VOCAB GRID ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:8px;}
+.vword{
+  background:#fff;border:1px solid #eee;border-radius:14px;padding:16px 18px;
+  border-top:4px solid var(--purple);transition:transform .2s,box-shadow .2s;
+}
+.vword:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(124,77,255,.15);}
+.vword .w{font-weight:800;font-size:1.08rem;color:var(--dark);}
+.vword .cls{font-size:.75rem;color:var(--purple);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.vword .def{font-size:.92rem;color:#555;margin-top:6px;}
+.vword .pt{font-size:.85rem;color:#999;font-style:italic;margin-top:2px;}
+
+/* ── TIP / WARNING ── */
+.tip,.warn{border-radius:14px;padding:16px 18px;margin:14px 0;font-size:.96rem;}
+.tip{background:#E8F5E9;border-left:4px solid var(--green);}
+.warn{background:#FFF3E0;border-left:4px solid var(--gold);}
+.tip b,.warn b{display:block;margin-bottom:4px;}
+
+/* ── PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+.pill{background:var(--dark);color:#fff;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:600;font-family:'Space Mono',monospace;}
+.pill.teal{background:var(--teal);}
+.pill.coral{background:var(--coral);}
+.pill.purple{background:var(--purple);}
+
+/* ── QUIZ ── */
+.quiz-hero{
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  color:#fff;border-radius:20px;padding:34px 28px;text-align:center;margin-bottom:24px;
+}
+.quiz-hero h2{font-size:2rem;font-weight:800;}
+.quiz-hero p{opacity:.9;margin-top:8px;}
+.question{
+  background:#fff;border-radius:16px;padding:22px 24px;margin-bottom:18px;
+  box-shadow:0 6px 20px rgba(26,26,46,.06);border:1px solid #eee;
+}
+.q-title{font-weight:700;font-size:1.05rem;margin-bottom:14px;}
+.q-title .qn{
+  display:inline-flex;width:28px;height:28px;background:var(--purple);color:#fff;
+  border-radius:8px;align-items:center;justify-content:center;font-family:'Space Mono',monospace;
+  font-size:.85rem;margin-right:8px;
+}
+.opts{display:flex;flex-direction:column;gap:9px;}
+.opt{
+  display:flex;align-items:center;gap:12px;padding:12px 15px;border:2px solid #eee;
+  border-radius:12px;cursor:pointer;transition:all .18s;font-size:.98rem;
+}
+.opt:hover{border-color:var(--purple);background:#f7f5ff;}
+.opt input{accent-color:var(--purple);width:18px;height:18px;cursor:pointer;}
+.opt.correct{border-color:var(--green);background:#E8F5E9;}
+.opt.wrong{border-color:var(--red);background:#FFEBEE;}
+.result-box{
+  display:none;margin-top:12px;padding:12px 16px;border-radius:10px;font-size:.94rem;font-weight:600;
+}
+.result-box.show{display:block;}
+.result-box.correct{background:#E8F5E9;color:#2e7d32;border:1px solid #a5d6a7;}
+.result-box.incorrect{background:#FFEBEE;color:#c62828;border:1px solid #ef9a9a;}
+.fill-input{
+  padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-family:'Outfit',sans-serif;
+  font-size:.98rem;width:100%;max-width:260px;margin:2px 0;
+}
+.fill-input:focus{outline:none;border-color:var(--purple);}
+.fill-line{margin:10px 0;}
+.fill-line label{font-weight:600;display:block;margin-bottom:4px;}
+
+.btn{
+  display:inline-block;padding:15px 40px;border:none;border-radius:50px;
+  font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-primary{background:var(--coral);color:#fff;box-shadow:0 8px 24px rgba(232,82,63,.4);}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(232,82,63,.5);}
+.btn-ghost{background:transparent;color:var(--purple);border:2px solid var(--purple);margin-left:10px;}
+.quiz-actions{text-align:center;margin:26px 0;}
+#scoreBox{
+  display:none;text-align:center;background:#fff;border-radius:20px;padding:30px;
+  margin-top:20px;box-shadow:0 8px 30px rgba(26,26,46,.1);
+}
+#scoreBox.show{display:block;}
+#scoreBox .score{font-size:3rem;font-weight:800;font-family:'Space Mono',monospace;}
+#scoreBox .msg{font-size:1.1rem;margin-top:8px;color:#555;}
+
+footer{
+  background:var(--dark);color:#fff;text-align:center;padding:40px 20px;margin-top:60px;
+}
+footer p{opacity:.85;}
+footer .tag{color:var(--gold);font-weight:700;}
+
+.checklist{list-style:none;}
+.checklist li{padding:8px 0 8px 34px;position:relative;border-bottom:1px dashed #eee;}
+.checklist li::before{content:'✅';position:absolute;left:0;top:8px;}
+.checklist li:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="badge">📘 Study Guide · Guia de Estudos</span>
+  <h1>9º Ano — English</h1>
+  <p>Everything you need to review for the <b>AV1 · 2º Trimestre</b></p>
+  <div class="meta">
+    <span>🎯 Present Perfect Continuous</span>
+    <span>🔮 Future Forms</span>
+    <span>🔗 Contrast Linkers</span>
+    <span>🎪 Sports &amp; Festivals Vocab</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- INTRO -->
+  <section>
+    <div class="card" style="border-top:5px solid var(--coral);">
+      <h3><span class="ico">👋</span> How to use this guide</h3>
+      <p class="lead">Este guia reúne <b>toda a gramática e o vocabulário</b> que vão cair na sua avaliação. Estude por partes, faça as tabelas em voz alta e, no final, teste-se no <b>Quiz Interativo</b> — ele corrige na hora e mostra o que você acertou e o que precisa revisar. Boa sorte! / <i>Good luck!</i></p>
+      <ul class="checklist">
+        <li><b>Vocabulary:</b> sports values, urban sports &amp; music festivals</li>
+        <li><b>Grammar 1:</b> Present Perfect Continuous</li>
+        <li><b>Grammar 2:</b> Present Perfect Continuous vs. Present Perfect Simple</li>
+        <li><b>Grammar 3:</b> Future forms — <i>will</i>, <i>going to</i>, Present Continuous</li>
+        <li><b>Grammar 4:</b> Contrast linkers — <i>although, though, in spite of, however, but</i></li>
+        <li><b>Quiz:</b> 12 questions with instant correction</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ VOCABULARY ══════════ -->
+  <section>
+    <div class="section-head"><span class="num">01</span><h2>Vocabulary</h2></div>
+    <p class="section-sub">Palavras-chave sobre esportes, valores, esportes urbanos e festivais de música.</p>
+
+    <div class="card">
+      <h3><span class="ico">🏆</span> Sports &amp; Values</h3>
+      <p class="lead">Words that describe attitudes and behaviours in sports.</p>
+      <div class="vocab-grid">
+        <div class="vword"><div class="cls">noun</div><div class="w">resilience</div><div class="def">the ability to recover and keep going after difficulties</div><div class="pt">resiliência</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">leadership</div><div class="def">the ability to guide and motivate a team</div><div class="pt">liderança</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">fair play</div><div class="def">playing honestly and respecting the rules</div><div class="pt">jogo limpo</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">cheating</div><div class="def">breaking the rules to win unfairly</div><div class="pt">trapaça</div></div>
+        <div class="vword"><div class="cls">noun (inf.)</div><div class="w">couch potato</div><div class="def">a lazy person who watches a lot of TV and does no exercise</div><div class="pt">preguiçoso, sedentário</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">endurance</div><div class="def">the ability to keep doing something physical for a long time</div><div class="pt">resistência</div></div>
+      </div>
+      <div class="tip"><b>💡 Exam tip</b> Uma questão pede para você <b>ler uma descrição</b> e escolher o valor que ela mostra (ex.: alguém que nunca desiste = <span class="hl">resilience</span>).</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ico">🛹</span> Urban Sports</h3>
+      <p class="lead">Sports usually practised in the city, in urban or natural settings.</p>
+      <div class="vocab-grid">
+        <div class="vword"><div class="cls">noun</div><div class="w">parkour</div><div class="def">the "art of movement" — running, jumping and climbing over obstacles</div><div class="pt">parkour</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">skateboarding</div><div class="def">riding and doing tricks on a skateboard</div><div class="pt">andar de skate</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">agility</div><div class="def">the ability to move quickly and easily</div><div class="pt">agilidade</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">balance</div><div class="def">keeping steady and not falling</div><div class="pt">equilíbrio</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">obstacle</div><div class="def">something that blocks your way</div><div class="pt">obstáculo</div></div>
+        <div class="vword"><div class="cls">noun</div><div class="w">mindset</div><div class="def">a way of thinking / an attitude</div><div class="pt">mentalidade</div></div>
+      </div>
+      <div class="warn"><b>📖 Reading focus</b> O texto "What Is Parkour?" fala dos <b>benefícios</b> dos esportes urbanos: melhora <i>strength, agility, balance and endurance</i>; desenvolve <i>mental resilience, problem-solving, discipline and focus</i>. Saiba citar <b>dois benefícios</b> em inglês, com suas próprias palavras.</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ico">🎪</span> Music Festivals</h3>
+      <p class="lead">Key words to talk about concerts and festivals.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Word</th><th>Meaning</th><th>Português</th></tr></thead>
+          <tbody>
+            <tr><td>venue</td><td>the place where an organized event happens</td><td>local do evento</td></tr>
+            <tr><td>lineup</td><td>the list of bands and artists who are going to perform</td><td>programação de artistas</td></tr>
+            <tr><td>audience</td><td>the group of people who come to watch the show</td><td>plateia, público</td></tr>
+            <tr><td>crowd</td><td>a large group of people together</td><td>multidão</td></tr>
+            <tr><td>stage</td><td>the raised area where artists perform</td><td>palco</td></tr>
+            <tr><td>genre</td><td>a style/type of music (rock, pop, hip-hop…)</td><td>gênero musical</td></tr>
+            <tr><td>headliner</td><td>the most important act of the festival</td><td>atração principal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip"><b>💡 Don't mix them up!</b> <span class="hl">venue</span> = lugar · <span class="hl teal">lineup</span> = quem toca · <span class="hl coral">audience/crowd</span> = as pessoas.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ GRAMMAR 1: PPC ══════════ -->
+  <section>
+    <div class="section-head"><span class="num">02</span><h2>Present Perfect Continuous</h2></div>
+    <p class="section-sub">Para ações que <b>começaram no passado e continuam agora</b> (ou acabaram de parar), enfatizando a <b>duração</b>.</p>
+
+    <div class="card">
+      <h3><span class="ico">🔧</span> Structure</h3>
+      <div class="formula">
+        subject <span class="arrow">+</span> <b>have / has</b> <span class="arrow">+</span> <b>been</b> <span class="arrow">+</span> verb<b>-ing</b>
+      </div>
+      <div class="pills">
+        <span class="pill teal">I / you / we / they → <b>have been</b></span>
+        <span class="pill coral">he / she / it → <b>has been</b></span>
+      </div>
+      <div class="ex"><span class="en">I <span class="hl teal">have been training</span> since 8 o'clock.</span><br><span class="pt">Eu estou treinando desde as 8h (e ainda estou).</span></div>
+      <div class="ex"><span class="en">She <span class="hl teal">has been running</span> every morning since March.</span><br><span class="pt">Ela corre toda manhã desde março.</span></div>
+      <div class="ex coral"><span class="en">❓ <span class="hl coral">How long have</span> you <span class="hl coral">been practising</span> skateboarding?</span><br><span class="pt">Perguntas: (question word) + have/has + subject + been + -ing?</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ico">⏱️</span> When to use it — <i>for</i> &amp; <i>since</i></h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Word</th><th>Use</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>for</td><td>a period of time (duração)</td><td>for almost a year · for two hours</td></tr>
+            <tr><td>since</td><td>a starting point (ponto de início)</td><td>since 8 o'clock · since March · since Monday</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip"><b>✅ Use Present Perfect Continuous for:</b> ações em progresso que continuam agora, com foco em <b>quanto tempo</b> (<i>How long…?</i>).</div>
+    </div>
+  </section>
+
+  <!-- ══════════ GRAMMAR 2: PPC vs PPS ══════════ -->
+  <section>
+    <div class="section-head"><span class="num">03</span><h2>Continuous vs. Simple</h2></div>
+    <p class="section-sub">Present Perfect Continuous <b>vs.</b> Present Perfect Simple — a diferença que a prova adora cobrar.</p>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th></th><th>Present Perfect Continuous</th><th>Present Perfect Simple</th></tr></thead>
+          <tbody>
+            <tr><td>Form</td><td>have/has been + <b>-ing</b></td><td>have/has + <b>past participle</b></td></tr>
+            <tr><td>Focus</td><td>the <b>activity / duration</b></td><td>the <b>result</b> or a completed action</td></tr>
+            <tr><td>Example</td><td>She <b>has been studying</b> the rules.</td><td>She <b>has been</b> a member for two years.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warn"><b>⚠️ Stative verbs (verbos de estado)</b> Alguns verbos <b>não</b> costumam ir no contínuo: <i>be, know, have</i> (posse), <i>like, want, believe</i>.
+        <br>✅ I <b>have known</b> her my whole life. &nbsp; ❌ <s>I have been knowing…</s>
+        <br>✅ I <b>have never seen</b> her so motivated. &nbsp; ❌ <s>I have never been seeing…</s>
+      </div>
+      <div class="ex"><span class="en">✅ She <span class="hl teal">has been running</span> since March, and she <span class="hl">has been</span> a member of the gym for two years.</span><br><span class="pt">"has been running" (ação em progresso) + "has been" (estado — verbo <i>be</i>, sem -ing).</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ GRAMMAR 3: FUTURE ══════════ -->
+  <section>
+    <div class="section-head"><span class="num">04</span><h2>Future Forms</h2></div>
+    <p class="section-sub">Três formas de falar do futuro: <i>will</i>, <i>going to</i> e o <b>Present Continuous</b>. Cada uma tem seu uso!</p>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Form</th><th>Use it for…</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>will</td><td>decisão na hora, promessa, oferta, previsão</td><td>Don't worry, I <b>'ll answer</b> it.</td></tr>
+            <tr><td>going to</td><td>plano / intenção &amp; previsão com evidência</td><td>I<b>'m going to study</b> for the exam.</td></tr>
+            <tr><td>Present Continuous</td><td>arranjo / compromisso já marcado (com horário)</td><td>I<b>'m meeting</b> my cousins on Saturday.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ex"><span class="en">Ana: What <span class="hl">are you doing</span> tonight? &nbsp; Bia: I<span class="hl teal">'m going to study</span>. I plan to review the whole unit.</span><br><span class="pt">"plan to" mostra intenção → <i>going to</i>.</span></div>
+      <div class="ex coral"><span class="en">Your phone is ringing! — Don't worry, I<span class="hl coral">'ll answer</span> it.</span><br><span class="pt">Decisão feita na hora → <i>will</i>.</span></div>
+      <div class="ex"><span class="en">I<span class="hl teal">'m meeting</span> my cousins at the festival. We arranged it last week.</span><br><span class="pt">"arranged" (já combinado) → Present Continuous.</span></div>
+      <div class="tip"><b>🔑 Quick rule</b> Combinou/marcou antes → <i>going to</i> ou Present Continuous. Decidiu agora → <i>will</i>.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ GRAMMAR 4: LINKERS ══════════ -->
+  <section>
+    <div class="section-head"><span class="num">05</span><h2>Contrast Linkers</h2></div>
+    <p class="section-sub">Conectivos de <b>contraste</b> (ideias opostas): <i>although, though, in spite of / despite, however, but</i>.</p>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Linker</th><th>Followed by…</th><th>Position &amp; example</th></tr></thead>
+          <tbody>
+            <tr><td>although</td><td>a full clause (subject + verb)</td><td><b>Although</b> it was raining, they went running.</td></tr>
+            <tr><td>though</td><td>a clause; also common at the <b>end</b></td><td>The park was crowded. I had a great time, <b>though</b>.</td></tr>
+            <tr><td>in spite of / despite</td><td>a <b>noun</b> or verb-<i>ing</i></td><td><b>In spite of</b> the expensive tickets, the festival was amazing.</td></tr>
+            <tr><td>however</td><td>starts a new sentence + comma</td><td>Parkour looks dangerous. <b>However,</b> it is quite safe.</td></tr>
+            <tr><td>but</td><td>joins two clauses in one sentence</td><td>Our team trained hard, <b>but</b> we lost the final.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warn"><b>⚠️ Cuidado com a estrutura!</b>
+        <br>• <b>although / though</b> + <span class="hl teal">frase completa</span> (sujeito + verbo)
+        <br>• <b>in spite of / despite</b> + <span class="hl coral">substantivo</span> ou <span class="hl coral">verbo-ing</span> (NÃO uma frase completa)
+        <br>• <b>however</b> começa uma frase nova, sempre com vírgula depois
+      </div>
+      <div class="ex"><span class="en">✅ <b>In spite of</b> <span class="hl coral">the rain</span>… / <b>In spite of</b> <span class="hl coral">being tired</span>… &nbsp; ❌ <s>In spite of it was raining…</s></span></div>
+    </div>
+  </section>
+
+  <!-- ══════════ QUIZ ══════════ -->
+  <section>
+    <div class="quiz-hero">
+      <h2>🧠 Quiz Interativo</h2>
+      <p>12 questões · corrige na hora · mostra seus acertos e erros</p>
+    </div>
+
+    <div id="quiz">
+
+      <!-- Q1 vocab -->
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">1</span> "Even after losing three matches, Bruno never gave up and came back stronger." Which value does this show?</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q1" value="a"> leadership</label>
+          <label class="opt"><input type="radio" name="q1" value="b"> cheating</label>
+          <label class="opt"><input type="radio" name="q1" value="c"> resilience</label>
+          <label class="opt"><input type="radio" name="q1" value="d"> couch potato</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q2 vocab -->
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">2</span> Match: <i>1. the place of the event · 2. the list of artists · 3. the people watching.</i></div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q2" value="a"> 1. lineup – 2. venue – 3. audience</label>
+          <label class="opt"><input type="radio" name="q2" value="b"> 1. venue – 2. lineup – 3. audience</label>
+          <label class="opt"><input type="radio" name="q2" value="c"> 1. audience – 2. lineup – 3. venue</label>
+          <label class="opt"><input type="radio" name="q2" value="d"> 1. venue – 2. audience – 3. lineup</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q3 PPC -->
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">3</span> I ______ to call you all morning! (Present Perfect Continuous)</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q3" value="a"> am trying</label>
+          <label class="opt"><input type="radio" name="q3" value="b"> have been trying</label>
+          <label class="opt"><input type="radio" name="q3" value="c"> has been trying</label>
+          <label class="opt"><input type="radio" name="q3" value="d"> have been tried</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q4 PPC question -->
+      <div class="question" data-answer="d">
+        <div class="q-title"><span class="qn">4</span> How long ______ skateboarding?</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q4" value="a"> you have been practising</label>
+          <label class="opt"><input type="radio" name="q4" value="b"> have you practise</label>
+          <label class="opt"><input type="radio" name="q4" value="c"> you are practising</label>
+          <label class="opt"><input type="radio" name="q4" value="d"> have you been practising</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q5 for/since -->
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">5</span> She has been a member of the gym ______ two years, and she has been running ______ March.</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q5" value="a"> for … since</label>
+          <label class="opt"><input type="radio" name="q5" value="b"> since … for</label>
+          <label class="opt"><input type="radio" name="q5" value="c"> for … for</label>
+          <label class="opt"><input type="radio" name="q5" value="d"> since … since</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q6 PPC vs PPS stative -->
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">6</span> Choose the CORRECT sentence.</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q6" value="a"> I have been knowing her my whole life.</label>
+          <label class="opt"><input type="radio" name="q6" value="b"> I have never been seeing her so motivated.</label>
+          <label class="opt"><input type="radio" name="q6" value="c"> I have known her my whole life and have never seen her so motivated.</label>
+          <label class="opt"><input type="radio" name="q6" value="d"> I am knowing her since my whole life.</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q7 future will (on the spot) -->
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">7</span> "Your phone is ringing!" — "Don't worry, I ______ it." (decision made now)</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q7" value="a"> am going to answer</label>
+          <label class="opt"><input type="radio" name="q7" value="b"> 'll answer</label>
+          <label class="opt"><input type="radio" name="q7" value="c"> am answering</label>
+          <label class="opt"><input type="radio" name="q7" value="d"> answer</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q8 future arranged -->
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">8</span> "I ______ my cousins at the festival. We arranged it last week." (fixed arrangement)</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q8" value="a"> am meeting</label>
+          <label class="opt"><input type="radio" name="q8" value="b"> will meet</label>
+          <label class="opt"><input type="radio" name="q8" value="c"> meet</label>
+          <label class="opt"><input type="radio" name="q8" value="d"> will be met</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q9 future going to intention -->
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">9</span> "What are you doing tonight?" — "I ______ for the English exam. I <i>plan to</i> review the whole unit."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q9" value="a"> study</label>
+          <label class="opt"><input type="radio" name="q9" value="b"> will studying</label>
+          <label class="opt"><input type="radio" name="q9" value="c"> am going to study</label>
+          <label class="opt"><input type="radio" name="q9" value="d"> studied</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q10 linker although -->
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">10</span> ______ it was raining a lot, they decided to go running.</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q10" value="a"> Although</label>
+          <label class="opt"><input type="radio" name="q10" value="b"> In spite of</label>
+          <label class="opt"><input type="radio" name="q10" value="c"> However</label>
+          <label class="opt"><input type="radio" name="q10" value="d"> Despite</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q11 linker in spite of + noun -->
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">11</span> ______ the expensive tickets, the festival was amazing.</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q11" value="a"> Although</label>
+          <label class="opt"><input type="radio" name="q11" value="b"> In spite of</label>
+          <label class="opt"><input type="radio" name="q11" value="c"> But</label>
+          <label class="opt"><input type="radio" name="q11" value="d"> Though the</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <!-- Q12 linker however -->
+      <div class="question" data-answer="d">
+        <div class="q-title"><span class="qn">12</span> "Parkour looks dangerous. ______ it is quite safe with the right training."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q12" value="a"> But</label>
+          <label class="opt"><input type="radio" name="q12" value="b"> In spite of</label>
+          <label class="opt"><input type="radio" name="q12" value="c"> Although</label>
+          <label class="opt"><input type="radio" name="q12" value="d"> However,</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn btn-primary" onclick="checkQuiz()">✅ Check My Answers</button>
+      <button class="btn btn-ghost" onclick="resetQuiz()">🔄 Try Again</button>
+    </div>
+
+    <div id="scoreBox">
+      <div class="score" id="scoreNum">0/12</div>
+      <div class="msg" id="scoreMsg"></div>
+    </div>
+  </section>
+
+  <!-- FINAL CHECKLIST -->
+  <section>
+    <div class="card" style="border-top:5px solid var(--teal);">
+      <h3><span class="ico">📝</span> Before the exam — checklist</h3>
+      <ul class="checklist">
+        <li>I can form the <b>Present Perfect Continuous</b> (have/has been + -ing).</li>
+        <li>I know when to use <b>for</b> and <b>since</b>.</li>
+        <li>I understand the difference between <b>Continuous</b> and <b>Simple</b>, and remember stative verbs (know, be, have).</li>
+        <li>I can choose between <b>will</b>, <b>going to</b> and <b>Present Continuous</b> for the future.</li>
+        <li>I can use <b>although, though, in spite of, however, but</b> correctly.</li>
+        <li>I know the vocabulary for <b>sports values, urban sports</b> and <b>music festivals</b>.</li>
+        <li>I can write a short paragraph with my own opinion and reasons.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>📚 <span class="tag">My English Content</span> · Study Guide 9º Ano — AV1 · 2º Trimestre</p>
+  <p style="font-size:.85rem;margin-top:6px;opacity:.7;">Prof. Rodrigo · You've got this! 💪</p>
+</footer>
+
+<script>
+function checkQuiz(){
+  const questions=document.querySelectorAll('.question[data-answer]');
+  let score=0, answered=0;
+  questions.forEach(q=>{
+    const correct=q.getAttribute('data-answer');
+    const rb=q.querySelector('.result-box');
+    const chosen=q.querySelector('input:checked');
+    // clear previous highlight
+    q.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','wrong'));
+    if(!chosen){
+      rb.className='result-box show incorrect';
+      rb.textContent='⚠️ You did not answer this question.';
+      return;
+    }
+    answered++;
+    const chosenOpt=chosen.closest('.opt');
+    // mark correct option
+    q.querySelectorAll('.opt').forEach(o=>{
+      if(o.querySelector('input').value===correct) o.classList.add('correct');
+    });
+    if(chosen.value===correct){
+      score++;
+      rb.className='result-box show correct';
+      rb.textContent='✅ Correct! Very good.';
+    }else{
+      chosenOpt.classList.add('wrong');
+      rb.className='result-box show incorrect';
+      rb.textContent='❌ Not quite. The correct answer is highlighted in green.';
+    }
+  });
+  const box=document.getElementById('scoreBox');
+  const num=document.getElementById('scoreNum');
+  const msg=document.getElementById('scoreMsg');
+  num.textContent=score+'/12';
+  let m='';
+  if(score===12) m='🏆 Perfect score! You are ready for the exam!';
+  else if(score>=9) m='🌟 Great job! Just review a few points and you are set.';
+  else if(score>=6) m='👍 Good start — go back and study the topics you missed.';
+  else m='💪 Keep studying! Re-read the guide and try again.';
+  msg.textContent=m;
+  box.className='show';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQuiz(){
+  document.querySelectorAll('.question input:checked').forEach(i=>i.checked=false);
+  document.querySelectorAll('.result-box').forEach(rb=>rb.className='result-box');
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','wrong'));
+  document.getElementById('scoreBox').className='';
+  document.querySelector('.quiz-hero').scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
