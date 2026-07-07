@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6º Ano – Study Guide · AV1 2º Trimestre</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2D9CDB;
+  --green:#27AE60;
+  --orange:#F2994A;
+  --yellow:#F2C94C;
+  --purple:#9B51E0;
+  --pink:#EB5757;
+  --dark:#20323f;
+  --cream:#F4FBFF;
+  --red:#E53935;
+  --light-blue:#E3F4FD;
+  --light-green:#E6F7EE;
+  --light-orange:#FDF0E4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--cream);
+  color:var(--dark);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,var(--blue) 0%,#56CCF2 45%,var(--green) 100%);
+  color:#fff;padding:64px 24px 54px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'⏰ 🛏️ 📚 🍽️ 🚌 🌙';position:absolute;bottom:8px;left:0;right:0;
+  font-size:1.4rem;opacity:.35;letter-spacing:18px;text-align:center;
+}
+.hero .badge{
+  display:inline-block;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);
+  padding:6px 20px;border-radius:30px;font-size:.9rem;font-weight:700;
+  margin-bottom:16px;font-family:'Baloo 2',cursive;
+}
+.hero h1{font-family:'Baloo 2',cursive;font-size:clamp(2.1rem,6vw,3.6rem);font-weight:800;line-height:1.1;}
+.hero p{font-size:1.15rem;margin-top:12px;opacity:.97;font-weight:600;}
+.hero .meta{margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.hero .meta span{background:rgba(0,0,0,.14);padding:7px 15px;border-radius:20px;font-size:.88rem;font-weight:700;}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px;}
+section{margin:52px 0;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.section-head .num{
+  min-width:46px;height:46px;border-radius:50%;background:var(--orange);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;
+  font-family:'Baloo 2',cursive;box-shadow:0 4px 0 rgba(0,0,0,.12);
+}
+.section-head h2{font-family:'Baloo 2',cursive;font-size:clamp(1.5rem,4.5vw,2.1rem);font-weight:800;}
+.section-sub{color:#5b6b76;font-size:1rem;margin:2px 0 24px 60px;}
+@media(max-width:560px){.section-sub{margin-left:0;}}
+
+/* ── CARDS ── */
+.card{
+  background:#fff;border-radius:22px;padding:26px 24px;margin-bottom:20px;
+  box-shadow:0 6px 22px rgba(45,156,219,.12);border:2px solid #eaf6fd;
+}
+.card h3{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.lead{color:#5b6b76;margin-bottom:16px;}
+
+/* ── FORMULA ── */
+.formula{
+  background:var(--dark);color:#fff;border-radius:16px;padding:20px 22px;margin:14px 0;
+  font-family:'Space Mono',monospace;font-size:1.02rem;text-align:center;
+}
+.formula b{color:var(--yellow);}
+.formula .plus{color:var(--green);margin:0 6px;}
+
+/* ── EXAMPLES ── */
+.ex{border-left:5px solid var(--blue);background:var(--light-blue);padding:12px 16px;border-radius:0 12px 12px 0;margin:9px 0;}
+.ex.green{border-left-color:var(--green);background:var(--light-green);}
+.ex.orange{border-left-color:var(--orange);background:var(--light-orange);}
+.ex .en{font-weight:700;}
+.ex .pt{color:#667;font-size:.9rem;font-style:italic;}
+.hl{background:var(--yellow);color:var(--dark);padding:1px 7px;border-radius:6px;font-weight:800;}
+.hl.blue{background:var(--blue);color:#fff;}
+.hl.green{background:var(--green);color:#fff;}
+.hl.orange{background:var(--orange);color:#fff;}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:14px;border:2px solid #eaf6fd;}
+table{width:100%;border-collapse:collapse;min-width:440px;background:#fff;}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #f0f6fa;}
+th{background:var(--blue);color:#fff;font-weight:700;font-size:.92rem;font-family:'Baloo 2',cursive;}
+tr:last-child td{border-bottom:none;}
+td:first-child{font-weight:800;color:var(--blue);}
+tbody tr:nth-child(even){background:#f7fcff;}
+
+/* ── VOCAB GRID ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px;}
+.vword{background:#fff;border:2px solid #eaf6fd;border-radius:16px;padding:14px;text-align:center;transition:transform .18s,box-shadow .18s;border-bottom:5px solid var(--purple);}
+.vword:hover{transform:translateY(-5px) rotate(-1deg);box-shadow:0 10px 22px rgba(155,81,224,.18);}
+.vword .emoji{font-size:2rem;display:block;margin-bottom:4px;}
+.vword .w{font-weight:800;font-size:1.02rem;color:var(--dark);font-family:'Baloo 2',cursive;}
+.vword .pt{font-size:.82rem;color:#8a97a0;}
+
+/* ── TIP / WARNING ── */
+.tip,.warn{border-radius:14px;padding:15px 18px;margin:13px 0;font-size:.96rem;}
+.tip{background:var(--light-green);border-left:5px solid var(--green);}
+.warn{background:#FFF6E0;border-left:5px solid var(--orange);}
+.tip b,.warn b{display:block;margin-bottom:3px;}
+
+/* ── PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+.pill{color:#fff;padding:6px 15px;border-radius:20px;font-size:.86rem;font-weight:700;font-family:'Space Mono',monospace;}
+.pill.blue{background:var(--blue);}
+.pill.green{background:var(--green);}
+.pill.orange{background:var(--orange);}
+.pill.purple{background:var(--purple);}
+
+/* clock chips */
+.clocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:8px;}
+.clock{background:var(--dark);color:#fff;border-radius:14px;padding:14px 16px;text-align:center;}
+.clock .digi{font-family:'Space Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--yellow);}
+.clock .say{font-size:.92rem;margin-top:4px;}
+
+/* ── QUIZ ── */
+.quiz-hero{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border-radius:22px;padding:32px 26px;text-align:center;margin-bottom:22px;}
+.quiz-hero h2{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;}
+.quiz-hero p{opacity:.95;margin-top:6px;font-weight:600;}
+.question{background:#fff;border-radius:18px;padding:20px 22px;margin-bottom:16px;box-shadow:0 5px 18px rgba(45,156,219,.1);border:2px solid #eaf6fd;}
+.q-title{font-weight:800;font-size:1.03rem;margin-bottom:12px;}
+.q-title .qn{display:inline-flex;width:30px;height:30px;background:var(--purple);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-size:.9rem;margin-right:8px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:center;gap:12px;padding:11px 15px;border:2px solid #e8eef2;border-radius:14px;cursor:pointer;transition:all .15s;font-size:.98rem;font-weight:600;}
+.opt:hover{border-color:var(--purple);background:#faf5ff;}
+.opt input{accent-color:var(--purple);width:18px;height:18px;cursor:pointer;}
+.opt.correct{border-color:var(--green);background:var(--light-green);}
+.opt.wrong{border-color:var(--red);background:#FFEBEE;}
+.result-box{display:none;margin-top:11px;padding:11px 15px;border-radius:12px;font-size:.93rem;font-weight:700;}
+.result-box.show{display:block;}
+.result-box.correct{background:var(--light-green);color:#1e7e44;border:2px solid #a5e0bd;}
+.result-box.incorrect{background:#FFEBEE;color:#c62828;border:2px solid #ef9a9a;}
+
+.btn{display:inline-block;padding:14px 38px;border:none;border-radius:50px;font-family:'Baloo 2',cursive;font-size:1.08rem;font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s;}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 6px 0 #d97e30;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 0 #d97e30;}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 2px 0 #d97e30;}
+.btn-ghost{background:#fff;color:var(--purple);border:2px solid var(--purple);margin-left:8px;box-shadow:0 6px 0 rgba(155,81,224,.25);}
+.btn-ghost:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(155,81,224,.25);}
+.quiz-actions{text-align:center;margin:24px 0;}
+#scoreBox{display:none;text-align:center;background:#fff;border-radius:22px;padding:28px;margin-top:18px;box-shadow:0 6px 22px rgba(45,156,219,.15);}
+#scoreBox.show{display:block;}
+#scoreBox .score{font-family:'Baloo 2',cursive;font-size:3rem;font-weight:800;color:var(--purple);}
+#scoreBox .msg{font-size:1.1rem;margin-top:6px;color:#5b6b76;font-weight:700;}
+
+footer{background:var(--dark);color:#fff;text-align:center;padding:36px 20px;margin-top:56px;}
+footer p{opacity:.9;font-weight:600;}
+footer .tag{color:var(--yellow);font-weight:800;font-family:'Baloo 2',cursive;}
+
+.checklist{list-style:none;}
+.checklist li{padding:8px 0 8px 32px;position:relative;border-bottom:1px dashed #e3eef4;font-weight:600;}
+.checklist li::before{content:'⭐';position:absolute;left:0;top:8px;}
+.checklist li:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="badge">📗 Study Guide · Guia de Estudos</span>
+  <h1>6º Ano — English</h1>
+  <p>Revisão para a <b>AV1 · 2º Trimestre</b> — Daily Routines!</p>
+  <div class="meta">
+    <span>🗓️ Present Simple</span>
+    <span>⏰ Telling the Time</span>
+    <span>📍 In / On / At</span>
+    <span>🚿 Routine Vocabulary</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- INTRO -->
+  <section>
+    <div class="card" style="border-top:6px solid var(--orange);">
+      <h3>👋 Como usar este guia</h3>
+      <p class="lead">Oi, turma! Aqui está tudo o que vamos cobrar na avaliação sobre <b>rotina diária (daily routine)</b>. Leia com calma, treine as tabelas e, no final, faça o <b>Quiz</b> — ele corrige na hora e mostra o que você acertou e o que precisa revisar. <i>Let's study!</i></p>
+      <ul class="checklist">
+        <li><b>Vocabulário:</b> verbos de rotina e atividades de tempo livre</li>
+        <li><b>Present Simple:</b> frases afirmativas (e o famoso <b>-s</b> em he/she/it)</li>
+        <li><b>Negative &amp; Questions:</b> don't / doesn't · Do / Does</li>
+        <li><b>Prepositions of time:</b> IN, ON, AT</li>
+        <li><b>Telling the time:</b> como dizer as horas</li>
+        <li><b>Days of the week</b></li>
+        <li><b>Quiz</b> com 12 perguntas e correção na hora</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VOCAB -->
+  <section>
+    <div class="section-head"><span class="num">1</span><h2>Vocabulary</h2></div>
+    <p class="section-sub">Os verbos e expressões da rotina do dia a dia.</p>
+
+    <div class="card">
+      <h3>🌅 Daily Routine</h3>
+      <div class="vocab-grid">
+        <div class="vword"><span class="emoji">⏰</span><div class="w">wake up</div><div class="pt">acordar</div></div>
+        <div class="vword"><span class="emoji">🛏️</span><div class="w">get up</div><div class="pt">levantar-se</div></div>
+        <div class="vword"><span class="emoji">🚿</span><div class="w">have a shower</div><div class="pt">tomar banho</div></div>
+        <div class="vword"><span class="emoji">🥣</span><div class="w">have breakfast</div><div class="pt">tomar café da manhã</div></div>
+        <div class="vword"><span class="emoji">🚌</span><div class="w">go to school</div><div class="pt">ir para a escola</div></div>
+        <div class="vword"><span class="emoji">🍽️</span><div class="w">have lunch</div><div class="pt">almoçar</div></div>
+        <div class="vword"><span class="emoji">📚</span><div class="w">do homework</div><div class="pt">fazer a lição</div></div>
+        <div class="vword"><span class="emoji">🧽</span><div class="w">wash the dishes</div><div class="pt">lavar a louça</div></div>
+        <div class="vword"><span class="emoji">🍝</span><div class="w">have dinner</div><div class="pt">jantar</div></div>
+        <div class="vword"><span class="emoji">💻</span><div class="w">go online</div><div class="pt">entrar na internet</div></div>
+        <div class="vword"><span class="emoji">📺</span><div class="w">watch TV</div><div class="pt">assistir TV</div></div>
+        <div class="vword"><span class="emoji">🌙</span><div class="w">go to bed</div><div class="pt">ir dormir</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚽ Free Time Activities</h3>
+      <p class="lead">Coisas que fazemos no tempo livre (<i>in my free time…</i>).</p>
+      <div class="vocab-grid">
+        <div class="vword"><span class="emoji">🥾</span><div class="w">go hiking</div><div class="pt">fazer trilha</div></div>
+        <div class="vword"><span class="emoji">🏊</span><div class="w">go swimming</div><div class="pt">nadar</div></div>
+        <div class="vword"><span class="emoji">🎮</span><div class="w">play video games</div><div class="pt">jogar videogame</div></div>
+        <div class="vword"><span class="emoji">♟️</span><div class="w">play chess</div><div class="pt">jogar xadrez</div></div>
+        <div class="vword"><span class="emoji">🎹</span><div class="w">have piano lessons</div><div class="pt">ter aula de piano</div></div>
+        <div class="vword"><span class="emoji">📖</span><div class="w">read books</div><div class="pt">ler livros</div></div>
+        <div class="vword"><span class="emoji">🎬</span><div class="w">watch movies</div><div class="pt">assistir filmes</div></div>
+        <div class="vword"><span class="emoji">🏖️</span><div class="w">go to the beach</div><div class="pt">ir à praia</div></div>
+      </div>
+      <div class="tip"><b>💡 Dica de leitura</b> Nos textos, preste atenção em <b>o que</b> a pessoa faz e <b>quando</b> (de manhã, à tarde, à noite, em quais dias). Muitas perguntas pedem isso!</div>
+    </div>
+  </section>
+
+  <!-- PRESENT SIMPLE -->
+  <section>
+    <div class="section-head"><span class="num">2</span><h2>Present Simple</h2></div>
+    <p class="section-sub">Usamos para <b>rotinas e hábitos</b> — coisas que fazemos sempre.</p>
+
+    <div class="card">
+      <h3>✅ Affirmative (frases positivas)</h3>
+      <div class="formula">
+        I / You / We / They <span class="plus">+</span> <b>verb</b> &nbsp;&nbsp;|&nbsp;&nbsp; He / She / It <span class="plus">+</span> <b>verb + S</b>
+      </div>
+      <div class="ex green"><span class="en">I <span class="hl green">wake up</span> early. · They <span class="hl green">play</span> football.</span></div>
+      <div class="ex"><span class="en">He <span class="hl blue">wakes</span> up early. · She <span class="hl blue">plays</span> the piano.</span><br><span class="pt">Com he / she / it, o verbo ganha um -s!</span></div>
+
+      <div class="warn"><b>⚠️ Regra de ouro do -s</b> Com <b>he, she, it</b>, quase todo verbo ganha <b>-s</b>. Alguns são especiais:</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ends in…</th><th>Add</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>normal</td><td>+ s</td><td>play → play<b>s</b> · read → read<b>s</b></td></tr>
+            <tr><td>-o, -ch, -sh, -ss, -x</td><td>+ es</td><td>go → go<b>es</b> · watch → watch<b>es</b> · wash → wash<b>es</b></td></tr>
+            <tr><td>consonant + y</td><td>y → ies</td><td>study → stud<b>ies</b></td></tr>
+            <tr><td>have (special!)</td><td>→ has</td><td>He <b>has</b> lunch at school.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>❌ Negative &amp; ❓ Questions</h3>
+      <p class="lead">Aqui entram os ajudantes <b>do</b> e <b>does</b>.</p>
+      <div class="pills">
+        <span class="pill blue">I / you / we / they → <b>don't</b> / <b>Do…?</b></span>
+        <span class="pill orange">he / she / it → <b>doesn't</b> / <b>Does…?</b></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th></th><th>Negative</th><th>Question</th></tr></thead>
+          <tbody>
+            <tr><td>I / You / We / They</td><td>I <b>don't</b> play chess.</td><td><b>Do</b> you play chess?</td></tr>
+            <tr><td>He / She / It</td><td>He <b>doesn't</b> play chess.</td><td><b>Does</b> he play chess?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warn"><b>⚠️ Cuidado!</b> Depois de <b>doesn't</b> e <b>Does</b>, o verbo volta ao normal, <b>SEM o -s</b>! O <i>does</i> já carrega o -s.
+        <br>✅ He <b>doesn't watch</b> TV. &nbsp; ❌ <s>He doesn't watches TV.</s>
+        <br>✅ <b>Does</b> she <b>go</b> swimming? &nbsp; ❌ <s>Does she goes…?</s>
+      </div>
+      <div class="ex orange"><span class="en">Affirmative → Negative → Question</span><br>She watches TV. → She <span class="hl">doesn't</span> watch TV. → <span class="hl">Does</span> she watch TV?</div>
+    </div>
+  </section>
+
+  <!-- PREPOSITIONS -->
+  <section>
+    <div class="section-head"><span class="num">3</span><h2>In · On · At</h2></div>
+    <p class="section-sub">As três preposições de tempo. Cada uma tem seu lugar!</p>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Preposition</th><th>Use for…</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td>IN</td><td>parts of the day, months, years</td><td><b>in</b> the morning · <b>in</b> the evening · <b>in</b> March</td></tr>
+            <tr><td>ON</td><td>days of the week &amp; dates</td><td><b>on</b> Monday · <b>on</b> Saturdays · <b>on</b> weekends</td></tr>
+            <tr><td>AT</td><td>exact times (horas) &amp; night</td><td><b>at</b> 6:30 · <b>at</b> 10 o'clock · <b>at</b> night</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip"><b>🎯 Truque para lembrar</b> <span class="hl blue">AT</span> = horas certinhas (relógio) · <span class="hl orange">ON</span> = dias · <span class="hl">IN</span> = períodos maiores (manhã, mês, ano).</div>
+      <div class="warn"><b>⭐ Exceções especiais</b> <b>at</b> night (à noite) e <b>at</b> the weekend / <b>on</b> the weekend — os dois aparecem!</div>
+      <div class="ex"><span class="en">He wakes up <span class="hl blue">at</span> 6:30 <span class="hl">in</span> the morning, and <span class="hl orange">on</span> Sundays he stays home.</span></div>
+    </div>
+  </section>
+
+  <!-- TIME -->
+  <section>
+    <div class="section-head"><span class="num">4</span><h2>Telling the Time</h2></div>
+    <p class="section-sub">Como dizer as horas em inglês.</p>
+
+    <div class="card">
+      <h3>🕐 Read the clock</h3>
+      <p class="lead">Diga a hora e depois os minutos: <b>hour + minutes</b>.</p>
+      <div class="clocks">
+        <div class="clock"><div class="digi">3:00</div><div class="say">It's three o'clock.</div></div>
+        <div class="clock"><div class="digi">9:05</div><div class="say">It's nine oh five.</div></div>
+        <div class="clock"><div class="digi">7:35</div><div class="say">It's seven thirty-five.</div></div>
+        <div class="clock"><div class="digi">8:30</div><div class="say">It's eight thirty.</div></div>
+        <div class="clock"><div class="digi">12:00</div><div class="say">It's midday / midnight.</div></div>
+        <div class="clock"><div class="digi">6:15</div><div class="say">It's six fifteen.</div></div>
+      </div>
+      <div class="tip"><b>💡 Boa saber</b>
+        <br>• <b>o'clock</b> = hora exata (só use com :00) → 5:00 = five o'clock
+        <br>• <b>oh</b> = para o zero → 9:05 = nine <b>oh</b> five
+        <br>• <b>a.m.</b> = manhã (0h–12h) · <b>p.m.</b> = tarde/noite (12h–24h)
+        <br>• <b>midday</b> = meio-dia (12 p.m.) · <b>midnight</b> = meia-noite (12 a.m.)
+      </div>
+    </div>
+  </section>
+
+  <!-- DAYS -->
+  <section>
+    <div class="section-head"><span class="num">5</span><h2>Days of the Week</h2></div>
+    <p class="section-sub">Os dias começam com <b>letra maiúscula</b> em inglês!</p>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>English</th><th>Português</th></tr></thead>
+          <tbody>
+            <tr><td>Monday</td><td>segunda-feira</td></tr>
+            <tr><td>Tuesday</td><td>terça-feira</td></tr>
+            <tr><td>Wednesday</td><td>quarta-feira</td></tr>
+            <tr><td>Thursday</td><td>quinta-feira</td></tr>
+            <tr><td>Friday</td><td>sexta-feira</td></tr>
+            <tr><td>Saturday</td><td>sábado</td></tr>
+            <tr><td>Sunday</td><td>domingo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ex green"><span class="en">On <span class="hl green">Mondays</span> and <span class="hl green">Wednesdays</span> she goes swimming.</span><br><span class="pt">Use <b>on</b> antes dos dias. O -s (Mondays) mostra que é toda semana.</span></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section>
+    <div class="quiz-hero">
+      <h2>🎮 Quiz Time!</h2>
+      <p>12 perguntas · corrige na hora · mostra acertos e erros</p>
+    </div>
+
+    <div id="quiz">
+
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">1</span> Choose the correct verb: "Anna ______ from Brazil."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q1" value="a"> live</label>
+          <label class="opt"><input type="radio" name="q1" value="b"> comes</label>
+          <label class="opt"><input type="radio" name="q1" value="c"> come</label>
+          <label class="opt"><input type="radio" name="q1" value="d"> go</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">2</span> He ______ the dishes after dinner. (he/she/it form)</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q2" value="a"> wash</label>
+          <label class="opt"><input type="radio" name="q2" value="b"> washs</label>
+          <label class="opt"><input type="radio" name="q2" value="c"> washes</label>
+          <label class="opt"><input type="radio" name="q2" value="d"> washees</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">3</span> She ______ to bed at 10 p.m.</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q3" value="a"> goes</label>
+          <label class="opt"><input type="radio" name="q3" value="b"> go</label>
+          <label class="opt"><input type="radio" name="q3" value="c"> gos</label>
+          <label class="opt"><input type="radio" name="q3" value="d"> going</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="d">
+        <div class="q-title"><span class="qn">4</span> Make it NEGATIVE: "He plays football."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q4" value="a"> He don't plays football.</label>
+          <label class="opt"><input type="radio" name="q4" value="b"> He doesn't plays football.</label>
+          <label class="opt"><input type="radio" name="q4" value="c"> He not play football.</label>
+          <label class="opt"><input type="radio" name="q4" value="d"> He doesn't play football.</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">5</span> Make it a QUESTION: "She watches TV in the evening."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q5" value="a"> Does she watches TV in the evening?</label>
+          <label class="opt"><input type="radio" name="q5" value="b"> Does she watch TV in the evening?</label>
+          <label class="opt"><input type="radio" name="q5" value="c"> Do she watch TV in the evening?</label>
+          <label class="opt"><input type="radio" name="q5" value="d"> She does watch TV in the evening?</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">6</span> Complete: "I don't ______ video games."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q6" value="a"> play</label>
+          <label class="opt"><input type="radio" name="q6" value="b"> plays</label>
+          <label class="opt"><input type="radio" name="q6" value="c"> playing</label>
+          <label class="opt"><input type="radio" name="q6" value="d"> to play</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">7</span> Choose the right preposition: "We have classes ______ the morning."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q7" value="a"> at</label>
+          <label class="opt"><input type="radio" name="q7" value="b"> on</label>
+          <label class="opt"><input type="radio" name="q7" value="c"> in</label>
+          <label class="opt"><input type="radio" name="q7" value="d"> to</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">8</span> "She goes to the beach ______ Sundays."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q8" value="a"> in</label>
+          <label class="opt"><input type="radio" name="q8" value="b"> on</label>
+          <label class="opt"><input type="radio" name="q8" value="c"> at</label>
+          <label class="opt"><input type="radio" name="q8" value="d"> of</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="a">
+        <div class="q-title"><span class="qn">9</span> "He wakes up ______ 6:30."</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q9" value="a"> at</label>
+          <label class="opt"><input type="radio" name="q9" value="b"> in</label>
+          <label class="opt"><input type="radio" name="q9" value="c"> on</label>
+          <label class="opt"><input type="radio" name="q9" value="d"> by</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="d">
+        <div class="q-title"><span class="qn">10</span> How do we say <b>9:05</b>?</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q10" value="a"> It's nine five o'clock.</label>
+          <label class="opt"><input type="radio" name="q10" value="b"> It's five oh nine.</label>
+          <label class="opt"><input type="radio" name="q10" value="c"> It's nine and five.</label>
+          <label class="opt"><input type="radio" name="q10" value="d"> It's nine oh five.</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="c">
+        <div class="q-title"><span class="qn">11</span> How do we say <b>12:00 (day)</b>?</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q11" value="a"> It's twelve o'clock at night.</label>
+          <label class="opt"><input type="radio" name="q11" value="b"> It's midnight.</label>
+          <label class="opt"><input type="radio" name="q11" value="c"> It's midday. / It's twelve p.m.</label>
+          <label class="opt"><input type="radio" name="q11" value="d"> It's twelve oh clock.</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+      <div class="question" data-answer="b">
+        <div class="q-title"><span class="qn">12</span> Which sentence is 100% correct?</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q12" value="a"> My brother get up early and have breakfast.</label>
+          <label class="opt"><input type="radio" name="q12" value="b"> My brother gets up early and has breakfast.</label>
+          <label class="opt"><input type="radio" name="q12" value="c"> My brother gets up early and have breakfast.</label>
+          <label class="opt"><input type="radio" name="q12" value="d"> My brother getting up early and has breakfast.</label>
+        </div>
+        <div class="result-box"></div>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn btn-primary" onclick="checkQuiz()">✅ Check my answers</button>
+      <button class="btn btn-ghost" onclick="resetQuiz()">🔄 Try again</button>
+    </div>
+
+    <div id="scoreBox">
+      <div class="score" id="scoreNum">0/12</div>
+      <div class="msg" id="scoreMsg"></div>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section>
+    <div class="card" style="border-top:6px solid var(--green);">
+      <h3>📝 Antes da prova — checklist</h3>
+      <ul class="checklist">
+        <li>Sei os verbos de rotina e as atividades de tempo livre.</li>
+        <li>Coloco o <b>-s</b> certinho com he / she / it (go → goes, watch → watches, have → has).</li>
+        <li>Sei fazer frases <b>negativas</b> (don't / doesn't) e <b>perguntas</b> (Do / Does).</li>
+        <li>Lembro que depois de <b>doesn't</b> e <b>Does</b> o verbo fica <b>sem -s</b>.</li>
+        <li>Uso <b>in / on / at</b> corretamente.</li>
+        <li>Sei dizer as horas (o'clock, oh, a.m./p.m., midday/midnight).</li>
+        <li>Escrevo os dias da semana com letra maiúscula.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>📗 <span class="tag">My English Content</span> · Study Guide 6º Ano — AV1 · 2º Trimestre</p>
+  <p style="font-size:.85rem;margin-top:6px;opacity:.75;">Prof. Rodrigo · You can do it! 🌟</p>
+</footer>
+
+<script>
+function checkQuiz(){
+  const questions=document.querySelectorAll('.question[data-answer]');
+  let score=0;
+  questions.forEach(q=>{
+    const correct=q.getAttribute('data-answer');
+    const rb=q.querySelector('.result-box');
+    const chosen=q.querySelector('input:checked');
+    q.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','wrong'));
+    if(!chosen){
+      rb.className='result-box show incorrect';
+      rb.textContent='⚠️ You did not answer this question.';
+      return;
+    }
+    q.querySelectorAll('.opt').forEach(o=>{
+      if(o.querySelector('input').value===correct) o.classList.add('correct');
+    });
+    if(chosen.value===correct){
+      score++;
+      rb.className='result-box show correct';
+      rb.textContent='✅ Correct! Well done!';
+    }else{
+      chosen.closest('.opt').classList.add('wrong');
+      rb.className='result-box show incorrect';
+      rb.textContent='❌ Not this one. The correct answer is in green.';
+    }
+  });
+  const box=document.getElementById('scoreBox');
+  document.getElementById('scoreNum').textContent=score+'/12';
+  let m='';
+  if(score===12) m='🏆 Perfect! You are ready for the test!';
+  else if(score>=9) m='🌟 Great job! Review just a few points.';
+  else if(score>=6) m='👍 Good start — study the topics you missed and try again.';
+  else m='💪 Keep going! Read the guide again and try once more.';
+  document.getElementById('scoreMsg').textContent=m;
+  box.className='show';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQuiz(){
+  document.querySelectorAll('.question input:checked').forEach(i=>i.checked=false);
+  document.querySelectorAll('.result-box').forEach(rb=>rb.className='result-box');
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','wrong'));
+  document.getElementById('scoreBox').className='';
+  document.querySelector('.quiz-hero').scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
