@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Film Lab</title>
 <meta name="description" content="Film Lab — a pocket darkroom. Develop your photos with analog film, VHS and lens looks, right in the browser.">
 <meta property="og:title" content="Film Lab">
@@ -22,7 +22,7 @@
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(var(--border))}
-html{-webkit-text-size-adjust:100%;height:100%;color-scheme:dark}
+html{-webkit-text-size-adjust:100%;height:100%;color-scheme:dark;overscroll-behavior-y:none}
 body{min-height:100%;background:hsl(var(--background));color:hsl(var(--foreground));font-family:var(--font-sans);line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
 button,input,label{font:inherit;color:inherit;letter-spacing:inherit}
 button{background:none;cursor:pointer;touch-action:manipulation}
@@ -246,7 +246,7 @@ svg{flex-shrink:0}
 .switch input:checked+i{background:hsl(var(--primary)/.5)}
 
 /* ---------- overlays ---------- */
-.overlay{position:absolute;inset:0;z-index:50;background:hsl(var(--background)/.85);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem}
+.overlay{position:fixed;inset:0;z-index:50;background:hsl(var(--background)/.85);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem}
 .overlay .big-spinner{width:1.75rem;height:1.75rem;border:2px solid hsl(var(--primary));border-top-color:transparent;border-radius:9999px;animation:spin 1s linear infinite}
 .overlay p{font-family:var(--font-mono);font-size:.875rem;color:hsl(var(--muted-foreground));text-transform:uppercase;letter-spacing:.05em;animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
 .overlay p.sub{font-size:10px;color:hsl(var(--muted-foreground)/.6);animation:none}
@@ -283,7 +283,7 @@ svg{flex-shrink:0}
     <div id="dropzone" class="dropzone">
       <svg class="drop-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
       <p class="hint"><span class="only-sm">Drag &amp; drop a photo here</span><span class="until-sm">Choose a photo to begin</span></p>
-      <label class="btn-upload"><span>Upload Photo</span><input id="file-upload" class="sr-file" type="file" accept="image/jpeg,image/png,image/webp,image/dng,image/x-adobe-dng,.dng,.cr2,.cr3,.nef,.arw,.orf,.rw2,.raf"></label>
+      <label class="btn-upload"><span>Upload Photo</span><input id="file-upload" class="sr-file" type="file" accept="image/*,image/dng,image/x-adobe-dng,.dng,.cr2,.cr3,.crw,.nef,.nrw,.arw,.srf,.sr2,.orf,.rw2,.raf,.pef,.srw,.x3f,.3fr,.iiq,.mrw,.dcr,.kdc,.erf,.mef,.mos,.rwl"></label>
       <p class="formats">JPEG · PNG · WebP · RAW</p>
     </div>
   </div>
@@ -298,7 +298,7 @@ svg{flex-shrink:0}
         <label class="btn-new tactile" title="Open a new photo">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
           <span class="only-sm">New Photo</span>
-          <input id="file-new" class="sr-file" type="file" accept="image/jpeg,image/png,image/webp,image/dng,image/x-adobe-dng,.dng,.cr2,.cr3,.nef,.arw,.orf,.rw2,.raf">
+          <input id="file-new" class="sr-file" type="file" accept="image/*,image/dng,image/x-adobe-dng,.dng,.cr2,.cr3,.crw,.nef,.nrw,.arw,.srf,.sr2,.orf,.rw2,.raf,.pef,.srw,.x3f,.3fr,.iiq,.mrw,.dcr,.kdc,.erf,.mef,.mos,.rwl">
         </label>
       </div>
       <div class="topbar-right">
@@ -451,8 +451,8 @@ const SECTIONS = [
 
 const STORAGE_SECTIONS = 'film-lab-sections';
 const STORAGE_PRESETS = 'film_lab_custom_presets';
-const RAW_EXT = /\.(dng|cr2|cr3|nef|arw|orf|rw2|raf)$/i;
-const RAW_MIME = /^(image\/(x-adobe-dng|dng|x-canon-cr2|x-canon-cr3|x-nikon-nef|x-sony-arw)|application\/x-adobe-dng)$/i;
+const RAW_EXT = /\.(dng|cr2|cr3|crw|nef|nrw|arw|srf|sr2|orf|rw2|raf|pef|srw|x3f|3fr|iiq|mrw|dcr|kdc|erf|mef|mos|rwl)$/i;
+const RAW_MIME = /^(image\/(x-adobe-dng|dng|x-canon-cr2|x-canon-cr3|x-canon-crw|x-nikon-nef|x-nikon-nrw|x-sony-arw|x-sony-sr2|x-sony-srf|x-olympus-orf|x-panasonic-rw2|x-panasonic-raw|x-fuji-raf|x-fujifilm-raf|x-pentax-pef|x-samsung-srw|x-sigma-x3f|x-hasselblad-3fr|x-phaseone-iiq|x-minolta-mrw|x-kodak-dcr|x-kodak-kdc|x-epson-erf|x-mamiya-mef|x-leaf-mos|x-dcraw|x-raw)|application\/x-adobe-dng)$/i;
 const IMAGE_EXT = /\.(jpe?g|jfif|png|webp|gif|bmp|avif|heic|heif|tiff?)$/i;
 
 const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
@@ -1000,6 +1000,7 @@ function createSlider(opts, onChange) {
   labelEl.textContent = label;
   input.min = min; input.max = max; input.step = step;
   input.setAttribute('aria-label', label);
+  resetBtn.setAttribute('aria-label', 'Reset ' + label);
 
   let value = resetValue;
   let pending = null;
@@ -1371,7 +1372,11 @@ function isNeutral(settings) {
 }
 function syncStrip() {
   const noneSelected = !state.presetId && isNeutral(state.settings);
-  for (const [id, card] of cards) card.classList.toggle('selected', id === null ? noneSelected : id === state.presetId);
+  for (const [id, card] of cards) {
+    const on = id === null ? noneSelected : id === state.presetId;
+    card.classList.toggle('selected', on);
+    card.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
   dom.intensity.classList.toggle('off', !state.presetId);
 }
 async function generateThumbs() {
@@ -1542,17 +1547,28 @@ function renderPreview() {
   }
   syncVhsLoop();
 }
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 function syncVhsLoop() {
-  const animate = state.settings.vhsTracking > 0 && !state.holdOriginal && !document.hidden;
+  const animate = state.settings.vhsTracking > 0 && !state.holdOriginal && !document.hidden && !reducedMotion.matches;
   if (animate && vhsLoop === null) {
-    const tick = () => { vhsLoop = requestAnimationFrame(tick); renderPreview(); };
-    vhsLoop = requestAnimationFrame(tick);
+    // ~15 fps is plenty for tape jitter and keeps phones cool
+    const tick = () => {
+      vhsLoop = setTimeout(() => {
+        requestAnimationFrame(() => {
+          if (vhsLoop === null) return;
+          renderPreview();
+          if (vhsLoop !== null) tick();
+        });
+      }, 66);
+    };
+    tick();
   } else if (!animate && vhsLoop !== null) {
-    cancelAnimationFrame(vhsLoop);
+    clearTimeout(vhsLoop);
     vhsLoop = null;
   }
 }
 document.addEventListener('visibilitychange', () => { if (state.preview) requestRender(); });
+reducedMotion.addEventListener('change', () => { if (state.preview) requestRender(); });
 
 function syncOverlays() {
   const hold = state.holdOriginal, split = state.split;
@@ -1905,7 +1921,7 @@ async function develop() {
     }
     const filename = 'film-lab-' + Date.now() + '.jpg';
     const file = new File([blob], filename, { type: 'image/jpeg' });
-    const canShare = 'share' in navigator && (!navigator.canShare || navigator.canShare({ files: [file] }));
+    const canShare = isTouchDevice() && 'share' in navigator && (!navigator.canShare || navigator.canShare({ files: [file] }));
     if (token !== state.exportToken) { setExportStatus({ status: 'idle' }); toast('Settings changed while developing. Tap Download again.'); return; }
     setExportStatus({ status: 'ready', file, blob, filename, canShare });
   } catch (e) {
@@ -1958,56 +1974,167 @@ async function finishExport() {
   downloadDeveloped();
 }
 
-/* ---------- RAW ---------- */
+/* ---------- RAW ----------
+ * The decoder (libraw-wasm) is vendored next to this page, so it never depends on a
+ * hashed build chunk that can disappear after a redeploy. Decoding is attempted in a
+ * cascade: full size -> half size -> the camera's embedded JPEG preview, and every
+ * failure is reported with a specific message instead of a generic alert.
+ */
+const RAW_STAGE_TEXT = {
+  full: 'Decoding the sensor data',
+  half: 'Retrying at half size',
+  thumb: 'Extracting the embedded preview',
+};
+function rawTimeout(size) {
+  return 90000 + Math.ceil(size / 1e6) * 2000; // 90 s plus 2 s for every MB
+}
+function withTimeout(promise, ms) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('RAW decode timed out')), ms); }),
+  ]).finally(() => clearTimeout(timer));
+}
+function setRawStage(stage) {
+  const sub = dom.rawOverlay.querySelector('.sub');
+  if (sub) sub.textContent = stage ? RAW_STAGE_TEXT[stage] + '…' : 'Large files can take a moment';
+}
+async function decodeRawAttempt(LibRaw, file, stage, opts, timeoutMs) {
+  const raw = new LibRaw();
+  try {
+    // a fresh buffer every time: the previous one was transferred to the worker
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    await withTimeout(raw.open(bytes, opts), timeoutMs);
+    if (stage === 'thumb') {
+      const thumb = await withTimeout(raw.thumbnailData(), timeoutMs);
+      if (!thumb || !thumb.data || !thumb.data.length) throw new Error('No embedded preview in this RAW file');
+      let flip = 0;
+      try { const meta = await withTimeout(raw.metadata(false), 15000); flip = (meta && meta.flip) || 0; } catch (e) { /* orientation unknown */ }
+      return { stage, thumb, flip };
+    }
+    const data = await withTimeout(raw.imageData(), timeoutMs);
+    if (!data || !data.width || !data.height || !data.data) throw new Error('No image data returned from RAW decoder');
+    return { stage, data };
+  } finally {
+    try { raw.dispose(); } catch (e) { /* worker already gone */ }
+  }
+}
+function rawImageToCanvas(data, cap) {
+  const s = Math.min(1, cap / Math.max(data.width, data.height));
+  const w = Math.max(1, Math.round(data.width * s));
+  const h = Math.max(1, Math.round(data.height * s));
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error("Couldn't create a canvas for the decoded RAW");
+  const img = ctx.createImageData(w, h);
+  const px = data.data, ch = data.colors || 3;
+  for (let y = 0, o = 0; y < h; y++) {
+    const sy = Math.min(data.height - 1, Math.floor(y / s));
+    for (let x = 0; x < w; x++) {
+      const sx = Math.min(data.width - 1, Math.floor(x / s));
+      const i = (sy * data.width + sx) * ch;
+      img.data[o++] = px[i];
+      img.data[o++] = ch > 1 ? px[i + 1] : px[i];
+      img.data[o++] = ch > 2 ? px[i + 2] : px[i];
+      img.data[o++] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  return canvas;
+}
+async function rawThumbToCanvas(thumb, flip, cap) {
+  let source;
+  if (thumb.format === 'jpeg' || thumb.format === 'unknown' || !thumb.format) {
+    const blob = new Blob([thumb.data], { type: 'image/jpeg' });
+    source = await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Embedded preview could not be decoded')); };
+      img.src = url;
+    });
+  } else {
+    // bitmap preview: packed RGB(A) samples
+    const ch = thumb.data.length === thumb.width * thumb.height * 4 ? 4 : 3;
+    source = rawImageToCanvas({ width: thumb.width, height: thumb.height, colors: ch, data: thumb.data }, Infinity);
+  }
+  const rotate = flip === 3 ? 180 : flip === 5 ? 270 : flip === 6 ? 90 : 0;
+  const sw = source.width, sh = source.height;
+  const s = Math.min(1, cap / Math.max(sw, sh));
+  const w = Math.max(1, Math.round(sw * s)), h = Math.max(1, Math.round(sh * s));
+  const canvas = document.createElement('canvas');
+  const swap = rotate === 90 || rotate === 270;
+  canvas.width = swap ? h : w;
+  canvas.height = swap ? w : h;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error("Couldn't create a canvas for the RAW preview");
+  ctx.imageSmoothingQuality = 'high';
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((rotate * Math.PI) / 180);
+  ctx.drawImage(source, -w / 2, -h / 2, w, h);
+  return canvas;
+}
 async function loadRaw(file) {
   const token = ++state.loadToken;
   state.rawBusy = true;
+  setRawStage(null);
   dom.rawOverlay.hidden = false;
   await nextFrame();
-  let raw = null;
-  let disposed = false;
+  const constrained = isConstrainedDevice();
+  const cap = constrained ? 2048 : Infinity;
+  const timeoutMs = rawTimeout(file.size);
+  let LibRaw = null;
   try {
     const mod = await import('./film_lab_assets/libraw/index.js');
-    const LibRaw = mod.default;
-    raw = new LibRaw();
-    const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('RAW decode timed out')), ms))]);
-    const mobile = isConstrainedDevice();
-    await withTimeout(raw.open(new Uint8Array(await file.arrayBuffer()), { useCameraWb: true, outputBps: 8, halfSize: mobile }), 90000);
-    const data = await withTimeout(raw.imageData(), 90000);
-    if (!data) throw new Error('No image data returned from RAW decoder');
-    raw.dispose();
-    disposed = true;
-    if (token !== state.loadToken) return;
-    const cap = mobile ? 2048 : Math.max(data.width, data.height);
-    const s = Math.min(1, cap / Math.max(data.width, data.height));
-    const w = Math.max(1, Math.round(data.width * s));
-    const h = Math.max(1, Math.round(data.height * s));
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error("Couldn't create a canvas for the decoded RAW");
-    const img = ctx.createImageData(w, h);
-    const px = data.data, ch = data.colors || 3;
-    for (let y = 0, o = 0; y < h; y++) {
-      const sy = Math.min(data.height - 1, Math.floor(y / s));
-      for (let x = 0; x < w; x++) {
-        const sx = Math.min(data.width - 1, Math.floor(x / s));
-        const i = (sy * data.width + sx) * ch;
-        img.data[o++] = px[i];
-        img.data[o++] = ch > 1 ? px[i + 1] : px[i];
-        img.data[o++] = ch > 2 ? px[i + 2] : px[i];
-        img.data[o++] = 255;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    if (token === state.loadToken) setImage(canvas);
+    LibRaw = mod.default;
+    if (typeof LibRaw !== 'function') throw new Error('RAW decoder module has no default export');
   } catch (e) {
-    console.error('RAW decode failed:', e);
-    if (token === state.loadToken) toast("Couldn't develop this RAW file. It may be too large or use unsupported compression.", 'error');
-  } finally {
-    if (raw && !disposed) { try { raw.dispose(); } catch (e) { /* ignore */ } }
+    console.error('RAW decoder failed to load:', e);
+    if (token === state.loadToken) toast("Couldn't load the RAW decoder. Check your connection, reload the page and try again.", 'error');
     state.rawBusy = false;
     dom.rawOverlay.hidden = true;
+    return;
+  }
+  const attempts = [{ stage: 'full', opts: { useCameraWb: true, outputBps: 8, halfSize: constrained } }];
+  if (!constrained) attempts.push({ stage: 'half', opts: { useCameraWb: true, outputBps: 8, halfSize: true } });
+  attempts.push({ stage: 'thumb', opts: { useCameraWb: true, outputBps: 8, halfSize: true } });
+  const failures = [];
+  let result = null;
+  try {
+    for (const attempt of attempts) {
+      if (token !== state.loadToken) return;
+      setRawStage(attempt.stage);
+      try {
+        result = await decodeRawAttempt(LibRaw, file, attempt.stage, attempt.opts, timeoutMs);
+        break;
+      } catch (e) {
+        console.warn('RAW ' + attempt.stage + ' attempt failed:', e);
+        failures.push(e);
+      }
+    }
+    if (token !== state.loadToken) return;
+    if (!result) {
+      const timedOut = failures.length && failures.every((e) => /timed out/i.test(e && e.message));
+      toast(timedOut
+        ? 'This RAW file took too long to develop. Try a smaller file, or export a JPEG from your camera app.'
+        : "Couldn't develop this RAW file. Its format may not be supported yet — try converting it to DNG or JPEG.", 'error');
+      return;
+    }
+    const canvas = result.stage === 'thumb'
+      ? await rawThumbToCanvas(result.thumb, result.flip, cap)
+      : rawImageToCanvas(result.data, cap);
+    if (token !== state.loadToken) return;
+    setImage(canvas);
+    if (result.stage === 'thumb') toast("This RAW format isn't fully supported yet, so the camera's embedded JPEG preview was used.");
+    else if (result.stage === 'half') toast('Developed at half resolution: the full-size decode did not fit in memory.');
+  } catch (e) {
+    console.error('RAW decode failed:', e);
+    if (token === state.loadToken) toast("Couldn't develop this RAW file. Its format may not be supported yet — try converting it to DNG or JPEG.", 'error');
+  } finally {
+    state.rawBusy = false;
+    dom.rawOverlay.hidden = true;
+    setRawStage(null);
   }
 }
 
