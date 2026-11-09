@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spelling Bee · Sorteador de palavras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mel:#FFC21A; --mel-2:#FFD95A; --mel-3:#FFF1BF; --ambar:#F2A007; --ambar-esc:#B86E00;
+  --tinta:#3A2A12; --tinta-2:#6E5A36; --tinta-3:#9C8763;
+  --fundo:#FFFAEC; --papel:#FFFFFF; --borda:#F0DFB4;
+  --sombra:0 14px 34px rgba(120,80,0,.13);
+  --facil:#16904B; --facil-bg:#E2F6E9; --facil-esc:#0E6B37;
+  --medio:#D86F00; --medio-bg:#FFEFD6; --medio-esc:#9E5100;
+  --dificil:#D1344A; --dificil-bg:#FDE4E8; --dificil-esc:#992333;
+  --c6:#FF7340; --c7:#0FA39A; --c8:#7B5CF5; --c9:#2C82EE;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh; color:var(--tinta); font-family:Nunito,system-ui,-apple-system,"Segoe UI",sans-serif; font-weight:600;
+  background-color:var(--fundo);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23F4E4B8' stroke-width='1.6'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23F7EBCB' stroke-width='1.6'/%3E%3C/svg%3E");
+}
+button{font:inherit;color:inherit;cursor:pointer}
+.oculto{display:none!important}
+
+/* topo */
+.topo{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:12px clamp(16px,3vw,32px);
+  background:rgba(255,250,236,.92);backdrop-filter:blur(8px);border-bottom:2px solid var(--borda)}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+.marca svg{width:46px;height:46px}
+.marca b{display:block;font-family:Fredoka,Nunito,sans-serif;font-size:26px;line-height:1;font-weight:700;letter-spacing:.2px}
+.marca small{display:block;font-size:13px;color:var(--tinta-2);font-weight:700;margin-top:2px}
+.controles{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chave{display:flex;align-items:center;gap:8px;border:2px solid var(--borda);background:var(--papel);border-radius:999px;padding:6px 12px 6px 8px;font-size:14px;font-weight:800;color:var(--tinta-2)}
+.chave .trilho{width:38px;height:22px;border-radius:99px;background:#E6D8B4;position:relative;transition:.2s}
+.chave .trilho::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
+.chave[aria-pressed="true"]{border-color:var(--mel);color:var(--tinta)}
+.chave[aria-pressed="true"] .trilho{background:var(--ambar)}
+.chave[aria-pressed="true"] .trilho::after{left:19px}
+.icone-bt{width:40px;height:40px;border-radius:12px;border:2px solid var(--borda);background:var(--papel);display:grid;place-items:center;color:var(--tinta-2)}
+.icone-bt:hover,.chave:hover{border-color:var(--mel)}
+.icone-bt svg{width:20px;height:20px}
+
+main{max-width:1240px;margin:0 auto;padding:clamp(16px,3vw,32px)}
+
+/* início */
+.saudacao{text-align:center;margin:10px auto 26px;max-width:720px}
+.saudacao h1{font-family:Fredoka,Nunito,sans-serif;font-size:clamp(34px,5vw,56px);margin:0;line-height:1.05}
+.saudacao h1 span{background:linear-gradient(transparent 62%,var(--mel-2) 62%);padding:0 6px}
+.saudacao p{margin:12px 0 0;font-size:18px;color:var(--tinta-2)}
+.turmas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.cartao-turma{position:relative;text-align:left;border:0;background:var(--papel);border-radius:26px;padding:22px 22px 20px 22px;box-shadow:var(--sombra);
+  display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;border:3px solid transparent;transition:transform .15s,border-color .15s}
+.cartao-turma:hover{transform:translateY(-3px);border-color:var(--cor)}
+.cartao-turma:focus-visible{outline:4px solid var(--cor);outline-offset:3px}
+.hexa{width:92px;height:104px;display:grid;place-items:center;font-family:Fredoka,Nunito,sans-serif;font-weight:700;font-size:38px;color:#fff;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--cor)}
+.cartao-turma h2{margin:0;font-family:Fredoka,Nunito,sans-serif;font-size:28px;line-height:1.1}
+.cartao-turma .livro{margin:4px 0 2px;font-size:17px;font-weight:800;color:var(--cor)}
+.cartao-turma .temas{font-size:14px;color:var(--tinta-3);font-weight:700}
+.contagens{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pilula{font-size:13px;font-weight:800;border-radius:99px;padding:3px 10px}
+.pilula.n1{background:var(--facil-bg);color:var(--facil-esc)}
+.pilula.n2{background:var(--medio-bg);color:var(--medio-esc)}
+.pilula.n3{background:var(--dificil-bg);color:var(--dificil-esc)}
+.rodape{margin:30px auto 0;text-align:center;color:var(--tinta-3);font-size:14px;font-weight:700}
+.rodape kbd,.atalhos kbd{font-family:inherit;font-size:12px;border:1.5px solid var(--borda);border-bottom-width:3px;background:#fff;border-radius:6px;padding:1px 6px;color:var(--tinta-2)}
+
+/* sala */
+.barra-sala{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.voltar{border:2px solid var(--borda);background:var(--papel);border-radius:14px;padding:9px 14px;font-weight:800;display:flex;align-items:center;gap:6px}
+.voltar:hover{border-color:var(--mel)}
+.titulo-sala{display:flex;align-items:center;gap:12px}
+.titulo-sala .hexa{width:52px;height:58px;font-size:22px}
+.titulo-sala h2{margin:0;font-family:Fredoka,Nunito,sans-serif;font-size:30px;line-height:1}
+.titulo-sala small{display:block;font-size:15px;color:var(--tinta-2);font-weight:800;margin-top:3px}
+.acoes-sala{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.bt-sec{border:2px solid var(--borda);background:var(--papel);border-radius:14px;padding:9px 14px;font-weight:800;color:var(--tinta-2);display:flex;align-items:center;gap:7px}
+.bt-sec:hover{border-color:var(--mel);color:var(--tinta)}
+.bt-sec.perigo{border-color:#F3B9C1;color:var(--dificil-esc);background:var(--dificil-bg)}
+.bt-sec svg{width:18px;height:18px}
+
+.niveis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.nivel{border:3px solid transparent;border-radius:20px;padding:14px 16px;text-align:left;display:flex;align-items:center;gap:12px;background:var(--papel);box-shadow:0 6px 0 var(--borda);transition:transform .1s,box-shadow .1s}
+.nivel:active{transform:translateY(4px);box-shadow:0 2px 0 var(--borda)}
+.nivel .favo{width:44px;height:50px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;color:#fff;font-family:Fredoka,Nunito,sans-serif;font-size:22px;font-weight:700;flex:none}
+.nivel b{display:block;font-family:Fredoka,Nunito,sans-serif;font-size:24px;line-height:1}
+.nivel small{display:block;font-size:14px;color:var(--tinta-2);font-weight:800;margin-top:3px}
+.nivel.n1 .favo{background:var(--facil)} .nivel.n2 .favo{background:var(--medio)} .nivel.n3 .favo{background:var(--dificil)}
+.nivel.n1[aria-pressed="true"]{border-color:var(--facil);background:var(--facil-bg);box-shadow:0 6px 0 var(--facil)}
+.nivel.n2[aria-pressed="true"]{border-color:var(--medio);background:var(--medio-bg);box-shadow:0 6px 0 var(--medio)}
+.nivel.n3[aria-pressed="true"]{border-color:var(--dificil);background:var(--dificil-bg);box-shadow:0 6px 0 var(--dificil)}
+
+.palco{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);grid-template-areas:"roda niveis" "roda cartao";grid-template-rows:auto 1fr;column-gap:26px;row-gap:16px;align-items:start}
+.palco .niveis{grid-area:niveis;margin:0}
+.palco .lado-roda{grid-area:roda}
+.palco .cartao{grid-area:cartao}
+.palco .nivel{padding:10px 12px;gap:10px}
+.palco .nivel .favo{width:36px;height:41px;font-size:18px}
+.palco .nivel b{font-size:21px}
+.palco .nivel small{font-size:13px}
+.lado-roda{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px}
+.roda-caixa{position:relative;width:min(100%,520px,calc(100vh - 300px));min-width:280px;aspect-ratio:1}
+#roda{display:block;width:100%;height:100%;filter:drop-shadow(0 16px 26px rgba(120,80,0,.25))}
+.ponteiro{position:absolute;left:50%;top:-14px;width:54px;height:66px;transform:translateX(-50%);transform-origin:50% 18%;z-index:2;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
+.ponteiro.mexe{animation:mexe .12s ease-out}
+@keyframes mexe{0%{transform:translateX(-50%) rotate(-16deg)}100%{transform:translateX(-50%) rotate(0)}}
+.cubo{position:absolute;left:50%;top:50%;width:21%;height:21%;transform:translate(-50%,-50%);display:grid;place-items:center;pointer-events:none}
+.cubo svg{width:78%;height:78%}
+.cubo.voa svg{animation:voa .5s ease-in-out infinite alternate}
+@keyframes voa{from{transform:translateY(-3px) rotate(-6deg)}to{transform:translateY(3px) rotate(6deg)}}
+.bt-girar{border:0;border-radius:22px;background:var(--mel);color:var(--tinta);font-family:Fredoka,Nunito,sans-serif;font-weight:700;font-size:30px;padding:16px 44px;
+  box-shadow:0 8px 0 var(--ambar-esc),0 14px 24px rgba(184,110,0,.25);transition:transform .08s,box-shadow .08s;display:flex;align-items:center;gap:12px}
+.bt-girar:hover{background:var(--mel-2)}
+.bt-girar:active,.bt-girar.apertado{transform:translateY(6px);box-shadow:0 2px 0 var(--ambar-esc),0 6px 12px rgba(184,110,0,.2)}
+.bt-girar:disabled{opacity:.6;cursor:default}
+.bt-girar svg{width:30px;height:30px}
+.dica-tecla{font-size:14px;color:var(--tinta-3);font-weight:800;margin-top:-6px}
+.restam{font-size:15px;font-weight:800;color:var(--tinta-2)}
+
+/* cartão da palavra */
+.cartao{background:var(--papel);border-radius:28px;box-shadow:var(--sombra);padding:24px clamp(18px,2.4vw,30px) 24px;min-height:440px;display:flex;flex-direction:column;position:relative;overflow:hidden;border:3px solid var(--borda)}
+.cartao.n1{border-color:#9FDDB7} .cartao.n2{border-color:#FFC985} .cartao.n3{border-color:#F2A3AE}
+.cartao.entra{animation:entra .55s cubic-bezier(.2,1.4,.4,1)}
+@keyframes entra{0%{transform:perspective(900px) rotateY(80deg) scale(.9);opacity:.2}100%{transform:none;opacity:1}}
+.vazio{margin:auto;text-align:center;color:var(--tinta-2);max-width:340px}
+.vazio svg{width:120px;height:120px}
+.vazio h3{font-family:Fredoka,Nunito,sans-serif;font-size:28px;margin:8px 0 6px;color:var(--tinta)}
+.vazio p{margin:0;font-size:17px}
+.etiquetas{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.etq{font-size:14px;font-weight:900;border-radius:99px;padding:5px 12px;background:var(--mel-3);color:var(--tinta-2)}
+.etq.n1{background:var(--facil-bg);color:var(--facil-esc)} .etq.n2{background:var(--medio-bg);color:var(--medio-esc)} .etq.n3{background:var(--dificil-bg);color:var(--dificil-esc)}
+.zona-palavra{margin:22px 0 10px;min-height:118px;display:flex;align-items:center;justify-content:center}
+.escondida{display:flex;align-items:center;gap:14px;border:3px dashed var(--mel);background:repeating-linear-gradient(45deg,#FFF8DD,#FFF8DD 12px,#FFF2C4 12px,#FFF2C4 24px);border-radius:22px;padding:22px 30px;font-family:Fredoka,Nunito,sans-serif;font-size:clamp(24px,3vw,34px);font-weight:600;color:var(--tinta-2)}
+.escondida svg{width:38px;height:38px;flex:none}
+.letras{display:flex;flex-wrap:nowrap;justify-content:center;gap:var(--gap,8px);width:100%}
+.letra{width:var(--tam,58px);height:calc(var(--tam,58px)*1.16);display:grid;place-items:center;font-family:Fredoka,Nunito,sans-serif;font-weight:700;font-size:calc(var(--tam,58px)*.62);
+  color:var(--tinta);background:linear-gradient(180deg,#FFE27A,#FFC21A);border-radius:calc(var(--tam,58px)*.22);box-shadow:0 calc(var(--tam,58px)*.08) 0 var(--ambar-esc);flex:none}
+.letra.espaco{background:none;box-shadow:none;width:calc(var(--tam,58px)*.45)}
+.letra.pop{animation:pop .38s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{0%{transform:scale(0) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+.grafias{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 4px}
+.grafia{display:flex;align-items:center;gap:8px;border-radius:14px;padding:7px 12px;font-size:17px;font-weight:800;background:#F4F7FF;color:#23426E;border:2px solid #D9E4FA}
+.grafia em{font-style:normal;font-size:12px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;border-radius:6px;padding:2px 6px;background:#23426E;color:#fff}
+.grafia.uk{background:#FFF3F3;color:#7A1F2B;border-color:#F6D3D7}
+.grafia.uk em{background:#B4283C}
+.grafia.igual{background:#F6F4EE;color:var(--tinta-2);border-color:#ECE6D6;font-size:15px}
+.nota{text-align:center;font-size:15px;color:var(--tinta-2);margin:4px 0 0;font-weight:700}
+.audio{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0 4px}
+.bt-audio{border:2px solid #CFE0FB;background:#EEF5FF;color:#1D4E9A;border-radius:14px;padding:10px 16px;font-weight:900;font-size:16px;display:flex;align-items:center;gap:8px}
+.bt-audio:hover{border-color:#8DB5F2}
+.bt-audio svg{width:20px;height:20px}
+.dicas{display:grid;gap:10px;margin-top:14px}
+.dica{border-radius:16px;background:#FFFCF2;border:2px solid var(--borda);padding:10px 14px;display:flex;gap:10px;align-items:flex-start}
+.dica b{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--tinta-3);flex:none;padding-top:3px;min-width:96px}
+.dica span{font-size:18px;font-weight:700;line-height:1.35}
+.dica mark{background:var(--mel-2);border-radius:5px;padding:0 3px;color:inherit}
+.dica .lacuna{display:inline-block;min-width:80px;border-bottom:3px solid var(--tinta-3);transform:translateY(-4px)}
+.dica button{border:0;background:var(--mel-3);border-radius:10px;padding:4px 12px;font-weight:900;font-size:14px;color:var(--tinta-2)}
+.final{margin-top:auto;padding-top:18px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+.bt-grande{border:0;border-radius:18px;font-family:Fredoka,Nunito,sans-serif;font-weight:700;font-size:22px;padding:13px 26px;display:flex;align-items:center;gap:9px;transition:transform .08s,box-shadow .08s}
+.bt-grande svg{width:24px;height:24px}
+.bt-grande:active{transform:translateY(5px)}
+.bt-revelar{background:var(--tinta);color:#fff;box-shadow:0 6px 0 #1C1408}
+.bt-revelar:active{box-shadow:0 1px 0 #1C1408}
+.bt-certo{background:var(--facil);color:#fff;box-shadow:0 6px 0 var(--facil-esc)}
+.bt-certo:active{box-shadow:0 1px 0 var(--facil-esc)}
+.bt-errado{background:var(--dificil);color:#fff;box-shadow:0 6px 0 var(--dificil-esc)}
+.bt-errado:active{box-shadow:0 1px 0 var(--dificil-esc)}
+.bt-link{border:0;background:none;color:var(--tinta-3);font-weight:800;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px}
+.resultado{font-family:Fredoka,Nunito,sans-serif;font-size:24px;font-weight:700;display:flex;align-items:center;gap:8px;padding:8px 18px;border-radius:16px}
+.resultado.ok{background:var(--facil-bg);color:var(--facil-esc)}
+.resultado.x{background:var(--dificil-bg);color:var(--dificil-esc)}
+.cartao.treme{animation:treme .45s}
+@keyframes treme{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+
+/* histórico */
+.historico{margin-top:26px;background:rgba(255,255,255,.75);border:2px solid var(--borda);border-radius:22px;padding:14px 16px}
+.historico h3{margin:0 0 10px;font-family:Fredoka,Nunito,sans-serif;font-size:20px;display:flex;align-items:center;gap:10px}
+.historico h3 small{font-family:Nunito,sans-serif;font-size:14px;color:var(--tinta-3);font-weight:800}
+.fichas{display:flex;gap:8px;flex-wrap:wrap}
+.ficha{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:6px 10px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:6px}
+.ficha:hover{border-color:var(--mel)}
+.ficha i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ficha i.n1{background:var(--facil)} .ficha i.n2{background:var(--medio)} .ficha i.n3{background:var(--dificil)}
+.ficha .r-ok{color:var(--facil)} .ficha .r-x{color:var(--dificil)}
+.sem-hist{color:var(--tinta-3);font-size:15px;margin:0}
+.atalhos{margin-top:14px;text-align:center;color:var(--tinta-3);font-size:13px;font-weight:700}
+
+/* lista */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(58,42,18,.45);display:grid;place-items:center;padding:16px}
+.janela{background:var(--papel);border-radius:24px;width:min(980px,100%);max-height:min(88vh,900px);display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.25)}
+.janela header{display:flex;align-items:center;gap:12px;padding:18px 20px 12px;border-bottom:2px solid var(--borda);flex-wrap:wrap}
+.janela header h3{margin:0;font-family:Fredoka,Nunito,sans-serif;font-size:24px}
+.janela header .bt-fechar{margin-left:auto}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 20px}
+.filtro{border:2px solid var(--borda);background:#fff;border-radius:99px;padding:5px 12px;font-weight:800;font-size:14px}
+.filtro[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.busca{margin-left:auto;border:2px solid var(--borda);border-radius:12px;padding:8px 12px;font:inherit;min-width:200px}
+.aviso-lista{padding:0 20px 8px;font-size:13px;color:var(--dificil-esc);font-weight:800}
+.tabela-caixa{overflow:auto;padding:0 12px 14px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{position:sticky;top:0;background:#FFF8E4;text-align:left;padding:8px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--tinta-2)}
+td{padding:7px 10px;border-bottom:1px solid #F5ECD3;vertical-align:top}
+td.pal{font-weight:900;font-size:16px}
+td.uk{color:#B4283C;font-weight:800}
+tr.saiu td{color:var(--tinta-3)}
+tr.saiu td.pal{text-decoration:line-through}
+td .etq{font-size:12px;padding:2px 9px}
+
+#confete{position:fixed;inset:0;pointer-events:none;z-index:60}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--tinta);color:#fff;border-radius:14px;padding:12px 18px;font-weight:800;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+@media (max-width:980px){
+  .palco{grid-template-columns:1fr;grid-template-areas:"niveis" "roda" "cartao";grid-template-rows:auto}
+  .roda-caixa{width:min(100%,440px)}
+  .cartao{min-height:0}
+}
+@media (max-width:720px){
+  .turmas{grid-template-columns:1fr}
+  .marca small{display:none}
+  .chave .rotulo{display:none}
+  .niveis{gap:8px}
+  .palco .nivel{padding:10px;gap:8px;flex-direction:column;text-align:center}
+  .palco .nivel .favo{width:34px;height:39px;font-size:17px}
+  .palco .nivel b{font-size:19px}
+  .palco .nivel small{font-size:12px}
+  .bt-girar{font-size:24px;padding:14px 30px}
+  .hexa{width:72px;height:82px;font-size:30px}
+  .cartao-turma{padding:18px;gap:14px}
+  .busca{margin-left:0;width:100%}
+  .dica{flex-direction:column;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  .cartao.entra,.letra.pop,.cubo.voa svg{animation:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="corpo-abelha"><ellipse cx="30" cy="38" rx="18" ry="13.5"/></clipPath>
+  </defs>
+  <symbol id="abelha" viewBox="0 0 64 64">
+    <path d="M47 27 C49 20 52 16 56 14" fill="none" stroke="#3A2A12" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="56.5" cy="13.5" r="2.6" fill="#3A2A12"/>
+    <ellipse cx="25" cy="21" rx="10" ry="7.5" fill="#E3F4FF" stroke="#3A2A12" stroke-width="2.4" transform="rotate(-28 25 21)"/>
+    <ellipse cx="36" cy="19" rx="10" ry="7.5" fill="#F2FAFF" stroke="#3A2A12" stroke-width="2.4" transform="rotate(22 36 19)"/>
+    <path d="M12.5 35.5 L5 38 L12.5 41" fill="#3A2A12" stroke="#3A2A12" stroke-width="2" stroke-linejoin="round"/>
+    <ellipse cx="30" cy="38" rx="18" ry="13.5" fill="#FFC21A"/>
+    <g clip-path="url(#corpo-abelha)" fill="#3A2A12"><rect x="20" y="20" width="5.5" height="40"/><rect x="31" y="20" width="5.5" height="40"/></g>
+    <ellipse cx="30" cy="38" rx="18" ry="13.5" fill="none" stroke="#3A2A12" stroke-width="2.4"/>
+    <circle cx="49" cy="35" r="9.5" fill="#FFC21A" stroke="#3A2A12" stroke-width="2.4"/>
+    <circle cx="51.5" cy="32.5" r="2.4" fill="#3A2A12"/><circle cx="52.3" cy="31.7" r=".8" fill="#fff"/>
+    <circle cx="54" cy="38.5" r="2" fill="#FF8C7A" opacity=".75"/>
+    <path d="M46.5 39.5 Q49 42 51.5 40" fill="none" stroke="#3A2A12" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-som" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-tela" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-voltar" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lista" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="4" cy="6" r="1.6" fill="currentColor"/><circle cx="4" cy="12" r="1.6" fill="currentColor"/><circle cx="4" cy="18" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-reiniciar" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
+  <symbol id="i-olho" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></symbol>
+  <symbol id="i-lento" viewBox="0 0 24 24"><path d="M3 17h13a5 5 0 0 0 0-10c-3 0-5 2-5 5 0 2 1.5 3 3 3s2.5-1 2.5-2.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M16 7c1-2 2.5-3 4-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-frase" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M8 9h8M8 12.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-abc" viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-size="11" font-weight="900" font-family="Nunito,sans-serif" fill="currentColor">ABC</text></symbol>
+  <symbol id="i-certo" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-errado" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="i-roda" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></symbol>
+</svg>
+
+<header class="topo">
+  <button class="marca" id="ir-inicio" aria-label="Voltar para a escolha da turma">
+    <svg><use href="#abelha"/></svg>
+    <span><b>Spelling Bee</b><small>Sorteador de palavras</small></span>
+  </button>
+  <div class="controles">
+    <button class="chave" id="chave-esconder" aria-pressed="true" title="Para projetar: a palavra só aparece quando você clicar em Revelar">
+      <span class="trilho"></span><span class="rotulo">Esconder a palavra</span>
+    </button>
+    <button class="chave" id="chave-som" aria-pressed="true" title="Sons da roleta">
+      <span class="trilho"></span><span class="rotulo">Som</span>
+    </button>
+    <button class="icone-bt" id="bt-tela" title="Tela cheia (F)" aria-label="Tela cheia"><svg><use href="#i-tela"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <section id="inicio">
+    <div class="saudacao">
+      <h1>Escolha a <span>turma</span></h1>
+      <p>Cada turma tem as palavras do próprio livro, separadas em fácil, médio e difícil.</p>
+    </div>
+    <div class="turmas" id="lista-turmas"></div>
+    <p class="rodape">Na sala: <kbd>Espaço</kbd> gira a roleta · <kbd>R</kbd> revela · <kbd>O</kbd> pronuncia · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> trocam o nível · <kbd>F</kbd> tela cheia</p>
+  </section>
+
+  <section id="sala" class="oculto">
+    <div class="barra-sala">
+      <button class="voltar" id="bt-voltar"><svg width="18" height="18"><use href="#i-voltar"/></svg>Turmas</button>
+      <div class="titulo-sala">
+        <div class="hexa" id="sala-hexa"></div>
+        <div><h2 id="sala-nome"></h2><small id="sala-livro"></small></div>
+      </div>
+      <div class="acoes-sala">
+        <button class="bt-sec" id="bt-lista"><svg><use href="#i-lista"/></svg>Lista de palavras</button>
+        <button class="bt-sec" id="bt-reiniciar"><svg><use href="#i-reiniciar"/></svg><span>Reiniciar sorteio</span></button>
+      </div>
+    </div>
+
+    <div class="palco">
+      <div class="niveis" id="niveis"></div>
+      <div class="lado-roda">
+        <div class="roda-caixa">
+          <svg class="ponteiro" id="ponteiro" viewBox="0 0 54 66" aria-hidden="true">
+            <path d="M27 63 L7 22 A21 21 0 1 1 47 22 Z" fill="#FFC21A" stroke="#3A2A12" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="27" cy="21" r="8" fill="#fff" stroke="#3A2A12" stroke-width="3.5"/>
+          </svg>
+          <canvas id="roda" aria-label="Roleta de palavras"></canvas>
+          <div class="cubo" id="cubo"><svg><use href="#abelha"/></svg></div>
+        </div>
+        <button class="bt-girar" id="bt-girar"><svg><use href="#i-roda"/></svg>Girar a roleta</button>
+        <div class="dica-tecla">ou aperte a barra de espaço</div>
+        <div class="restam" id="restam"></div>
+      </div>
+      <div class="cartao" id="cartao" aria-live="polite"></div>
+    </div>
+
+    <div class="historico">
+      <h3>Já sorteadas <small id="hist-resumo"></small></h3>
+      <div class="fichas" id="fichas"></div>
+    </div>
+    <p class="atalhos"><kbd>Espaço</kbd> gira · <kbd>R</kbd> revela · <kbd>O</kbd> pronuncia · <kbd>D</kbd> devagar · <kbd>C</kbd> acertou · <kbd>X</kbd> errou · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> nível · <kbd>F</kbd> tela cheia</p>
+  </section>
+</main>
+
+<div class="modal oculto" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div class="janela">
+    <header>
+      <h3 id="modal-titulo">Lista de palavras</h3>
+      <button class="bt-sec bt-fechar" id="bt-fechar">Fechar</button>
+    </header>
+    <div class="filtros" id="filtros"></div>
+    <div class="aviso-lista" id="aviso-lista">Atenção: se a tela estiver projetada, a turma vê todas as palavras.</div>
+    <div class="tabela-caixa"><table><thead><tr><th>Palavra (EUA)</th><th>Britânico</th><th>Tradução</th><th>Lição</th><th>Nível</th></tr></thead><tbody id="tabela"></tbody></table></div>
+  </div>
+</div>
+
+<canvas id="confete"></canvas>
+
+<script>
+const DADOS = {"turmas":[{"id":"6","nome":"6º ano","livro":"Angles 2","unidades":"Units 1 a 3","temas":"Urban Life · Having Fun · Nature","palavras":[{"w":"city","uk":"","pt":"cidade","pos":"noun","l":"1A","lv":1,"ex":"São Paulo is a very big city.","nota":""},{"w":"park","uk":"","pt":"parque","pos":"noun","l":"1A","lv":1,"ex":"We play football in the park.","nota":""},{"w":"mall","uk":"","pt":"shopping","pos":"noun","l":"1A","lv":1,"ex":"We hang out at the mall on weekends.","nota":"No Reino Unido também: shopping centre."},{"w":"bakery","uk":"","pt":"padaria","pos":"noun","l":"1A","lv":2,"ex":"I buy bread at the bakery every morning.","nota":""},{"w":"bookshop","uk":"","pt":"livraria","pos":"noun","l":"1A","lv":2,"ex":"There is a small bookshop near my school.","nota":"Nos EUA é mais comum bookstore."},{"w":"church","uk":"","pt":"igreja","pos":"noun","l":"1A","lv":2,"ex":"My grandparents go to church on Sundays.","nota":""},{"w":"cinema","uk":"","pt":"cinema","pos":"noun","l":"1A","lv":2,"ex":"Let's go to the cinema on Saturday.","nota":""},{"w":"hospital","uk":"","pt":"hospital","pos":"noun","l":"1A","lv":2,"ex":"The doctor works at the hospital.","nota":""},{"w":"square","uk":"","pt":"praça","pos":"noun","l":"1A","lv":2,"ex":"There is a fountain in the square.","nota":""},{"w":"supermarket","uk":"","pt":"supermercado","pos":"noun","l":"1A","lv":2,"ex":"My mom buys fruit at the supermarket.","nota":""},{"w":"apartment","uk":"","pt":"apartamento","pos":"noun","l":"1A","lv":2,"ex":"I live in an apartment on the fifth floor.","nota":"No Reino Unido também: flat."},{"w":"center","uk":"centre","pt":"centro","pos":"noun","l":"1A","lv":2,"ex":"The shopping center is very big.","nota":""},{"w":"restaurant","uk":"","pt":"restaurante","pos":"noun","l":"1A","lv":3,"ex":"This Italian restaurant has great pizza.","nota":""},{"w":"cheap","uk":"","pt":"barato","pos":"adjective","l":"1B","lv":1,"ex":"These books are really cheap.","nota":""},{"w":"clean","uk":"","pt":"limpo","pos":"adjective","l":"1B","lv":1,"ex":"My bedroom is clean and tidy.","nota":""},{"w":"safe","uk":"","pt":"seguro","pos":"adjective","l":"1B","lv":1,"ex":"This park is safe for children.","nota":""},{"w":"boring","uk":"","pt":"chato, entediante","pos":"adjective","l":"1B","lv":1,"ex":"This TV show is so boring!","nota":""},{"w":"busy","uk":"","pt":"movimentado","pos":"adjective","l":"1B","lv":2,"ex":"The streets are busy on Fridays.","nota":""},{"w":"calm","uk":"","pt":"calmo","pos":"adjective","l":"1B","lv":2,"ex":"The lake is calm in the morning.","nota":""},{"w":"crowded","uk":"","pt":"lotado","pos":"adjective","l":"1B","lv":2,"ex":"The bus is always crowded in the morning.","nota":""},{"w":"noisy","uk":"","pt":"barulhento","pos":"adjective","l":"1B","lv":2,"ex":"The city is noisy because of the cars.","nota":""},{"w":"quiet","uk":"","pt":"silencioso, tranquilo","pos":"adjective","l":"1B","lv":2,"ex":"The library is a quiet place.","nota":""},{"w":"dangerous","uk":"","pt":"perigoso","pos":"adjective","l":"1B","lv":3,"ex":"Swimming here is dangerous.","nota":""},{"w":"exciting","uk":"","pt":"emocionante","pos":"adjective","l":"1B","lv":3,"ex":"The football game was very exciting.","nota":""},{"w":"expensive","uk":"","pt":"caro","pos":"adjective","l":"1B","lv":3,"ex":"That phone is too expensive.","nota":""},{"w":"polluted","uk":"","pt":"poluído","pos":"adjective","l":"1B","lv":3,"ex":"The river is polluted, so we can't swim.","nota":""},{"w":"neighborhood","uk":"neighbourhood","pt":"bairro, vizinhança","pos":"noun","l":"1B","lv":3,"ex":"My neighborhood is quiet and safe.","nota":""},{"w":"bus","uk":"","pt":"ônibus","pos":"noun","l":"1C","lv":1,"ex":"I usually go to school by bus.","nota":""},{"w":"bike","uk":"","pt":"bicicleta","pos":"noun","l":"1C","lv":1,"ex":"I go to school by bike.","nota":""},{"w":"taxi","uk":"","pt":"táxi","pos":"noun","l":"1C","lv":1,"ex":"We took a taxi to the airport.","nota":"Nos EUA também: cab."},{"w":"train","uk":"","pt":"trem","pos":"noun","l":"1C","lv":1,"ex":"The train leaves at nine o'clock.","nota":""},{"w":"metro","uk":"","pt":"metrô","pos":"noun","l":"1C","lv":1,"ex":"Take the metro to the city center.","nota":""},{"w":"foot","uk":"","pt":"pé","pos":"noun","l":"1C","lv":1,"ex":"I go to school on foot.","nota":""},{"w":"ferry","uk":"","pt":"balsa","pos":"noun","l":"1C","lv":2,"ex":"We took a ferry to the island.","nota":""},{"w":"subway","uk":"","pt":"metrô","pos":"noun","l":"1C","lv":2,"ex":"The subway is fast and cheap.","nota":"No Reino Unido: underground."},{"w":"walk","uk":"","pt":"andar, ir a pé","pos":"verb","l":"1C","lv":2,"ex":"I walk to school every day.","nota":""},{"w":"bicycle","uk":"","pt":"bicicleta","pos":"noun","l":"1C","lv":3,"ex":"I ride my bicycle in the park.","nota":""},{"w":"house","uk":"","pt":"casa","pos":"noun","l":"1D","lv":1,"ex":"My house has three bedrooms.","nota":""},{"w":"bedroom","uk":"","pt":"quarto","pos":"noun","l":"1D","lv":1,"ex":"My bedroom is small but nice.","nota":""},{"w":"sink","uk":"","pt":"pia","pos":"noun","l":"1D","lv":1,"ex":"Wash your hands in the sink.","nota":""},{"w":"oven","uk":"","pt":"forno","pos":"noun","l":"1D","lv":1,"ex":"The cake is in the oven.","nota":""},{"w":"bathroom","uk":"","pt":"banheiro","pos":"noun","l":"1D","lv":2,"ex":"The bathroom is next to my bedroom.","nota":""},{"w":"kitchen","uk":"","pt":"cozinha","pos":"noun","l":"1D","lv":2,"ex":"Mom is cooking in the kitchen.","nota":""},{"w":"fridge","uk":"","pt":"geladeira","pos":"noun","l":"1D","lv":2,"ex":"The milk is in the fridge.","nota":""},{"w":"toaster","uk":"","pt":"torradeira","pos":"noun","l":"1D","lv":2,"ex":"Put the bread in the toaster.","nota":""},{"w":"toilet","uk":"","pt":"vaso sanitário","pos":"noun","l":"1D","lv":2,"ex":"The toilet is in the bathroom.","nota":""},{"w":"cooker","uk":"","pt":"fogão","pos":"noun","l":"1D","lv":2,"ex":"There is a new cooker in the kitchen.","nota":"Nos EUA: stove."},{"w":"cupboard","uk":"","pt":"armário","pos":"noun","l":"1D","lv":3,"ex":"The plates are in the cupboard.","nota":""},{"w":"dishwasher","uk":"","pt":"lava-louças","pos":"noun","l":"1D","lv":3,"ex":"Put the dirty plates in the dishwasher.","nota":""},{"w":"microwave","uk":"","pt":"micro-ondas","pos":"noun","l":"1D","lv":3,"ex":"Heat the pizza in the microwave.","nota":""},{"w":"every","uk":"","pt":"todo, toda","pos":"adjective","l":"1E","lv":1,"ex":"I brush my teeth every day.","nota":""},{"w":"week","uk":"","pt":"semana","pos":"noun","l":"1E","lv":1,"ex":"There are seven days in a week.","nota":""},{"w":"month","uk":"","pt":"mês","pos":"noun","l":"1E","lv":1,"ex":"My birthday is next month.","nota":""},{"w":"once","uk":"","pt":"uma vez","pos":"adverb","l":"1E","lv":2,"ex":"I go to the dentist once a year.","nota":""},{"w":"twice","uk":"","pt":"duas vezes","pos":"adverb","l":"1E","lv":2,"ex":"We have English class twice a week.","nota":""},{"w":"often","uk":"","pt":"frequentemente","pos":"adverb","l":"1E","lv":2,"ex":"How often do you go to the cinema?","nota":""},{"w":"usually","uk":"","pt":"geralmente","pos":"adverb","l":"1E","lv":3,"ex":"I usually go to school by bus.","nota":""},{"w":"left","uk":"","pt":"esquerda","pos":"noun","l":"1F","lv":1,"ex":"Turn left at the supermarket.","nota":""},{"w":"near","uk":"","pt":"perto","pos":"preposition","l":"1F","lv":1,"ex":"My house is near the park.","nota":""},{"w":"block","uk":"","pt":"quarteirão","pos":"noun","l":"1F","lv":1,"ex":"The school is one block from here.","nota":""},{"w":"right","uk":"","pt":"direita","pos":"noun","l":"1F","lv":2,"ex":"The bank is on your right.","nota":""},{"w":"station","uk":"","pt":"estação","pos":"noun","l":"1F","lv":2,"ex":"The bakery is near the station.","nota":""},{"w":"straight","uk":"","pt":"reto, em frente","pos":"adverb","l":"1F","lv":3,"ex":"Go straight ahead for two blocks.","nota":""},{"w":"opposite","uk":"","pt":"em frente a, do outro lado","pos":"preposition","l":"1F","lv":3,"ex":"The bakery is opposite the station.","nota":""},{"w":"directions","uk":"","pt":"instruções de caminho","pos":"noun","l":"1F","lv":3,"ex":"Can you give me directions to the station?","nota":""},{"w":"party","uk":"","pt":"festa","pos":"noun","l":"2A","lv":1,"ex":"Are you going to the party?","nota":""},{"w":"teeth","uk":"","pt":"dentes","pos":"noun","l":"2A","lv":1,"ex":"Brush your teeth before bed.","nota":""},{"w":"dinner","uk":"","pt":"jantar","pos":"noun","l":"2A","lv":1,"ex":"We have dinner at seven.","nota":""},{"w":"wait","uk":"","pt":"esperar","pos":"verb","l":"2A","lv":1,"ex":"Wait for me at the bus stop.","nota":""},{"w":"keys","uk":"","pt":"chaves","pos":"noun","l":"2A","lv":1,"ex":"I'm looking for my keys.","nota":""},{"w":"dressed","uk":"","pt":"vestido (get dressed)","pos":"adjective","l":"2A","lv":2,"ex":"I get dressed after breakfast.","nota":""},{"w":"homework","uk":"","pt":"lição de casa","pos":"noun","l":"2A","lv":2,"ex":"I finish my homework before dinner.","nota":""},{"w":"birthday","uk":"","pt":"aniversário","pos":"noun","l":"2A","lv":2,"ex":"My birthday is in May.","nota":""},{"w":"concert","uk":"","pt":"show","pos":"noun","l":"2A","lv":2,"ex":"We are going to a concert tonight.","nota":""},{"w":"finish","uk":"","pt":"terminar","pos":"verb","l":"2A","lv":2,"ex":"Finish your homework, please.","nota":""},{"w":"first","uk":"","pt":"primeiro","pos":"number","l":"2B","lv":1,"ex":"January is the first month of the year.","nota":""},{"w":"March","uk":"","pt":"março","pos":"noun","l":"2B","lv":1,"ex":"Autumn starts in March in Brazil.","nota":""},{"w":"April","uk":"","pt":"abril","pos":"noun","l":"2B","lv":1,"ex":"It often rains in April.","nota":""},{"w":"May","uk":"","pt":"maio","pos":"noun","l":"2B","lv":1,"ex":"Mother's Day is in May.","nota":""},{"w":"June","uk":"","pt":"junho","pos":"noun","l":"2B","lv":1,"ex":"We have festa junina in June.","nota":""},{"w":"July","uk":"","pt":"julho","pos":"noun","l":"2B","lv":1,"ex":"We have a school break in July.","nota":""},{"w":"January","uk":"","pt":"janeiro","pos":"noun","l":"2B","lv":2,"ex":"The year starts in January.","nota":""},{"w":"August","uk":"","pt":"agosto","pos":"noun","l":"2B","lv":2,"ex":"My cousin's birthday is in August.","nota":""},{"w":"September","uk":"","pt":"setembro","pos":"noun","l":"2B","lv":2,"ex":"Spring starts in September in Brazil.","nota":""},{"w":"October","uk":"","pt":"outubro","pos":"noun","l":"2B","lv":2,"ex":"Children's Day is in October.","nota":""},{"w":"November","uk":"","pt":"novembro","pos":"noun","l":"2B","lv":2,"ex":"We are in November now.","nota":""},{"w":"December","uk":"","pt":"dezembro","pos":"noun","l":"2B","lv":2,"ex":"Christmas is in December.","nota":""},{"w":"second","uk":"","pt":"segundo","pos":"number","l":"2B","lv":2,"ex":"February is the second month of the year.","nota":""},{"w":"third","uk":"","pt":"terceiro","pos":"number","l":"2B","lv":2,"ex":"March is the third month of the year.","nota":""},{"w":"fourth","uk":"","pt":"quarto (4º)","pos":"number","l":"2B","lv":2,"ex":"I live on the fourth floor.","nota":""},{"w":"fifth","uk":"","pt":"quinto","pos":"number","l":"2B","lv":2,"ex":"Today is the fifth of May.","nota":""},{"w":"sixth","uk":"","pt":"sexto","pos":"number","l":"2B","lv":2,"ex":"My brother is in the sixth grade.","nota":""},{"w":"February","uk":"","pt":"fevereiro","pos":"noun","l":"2B","lv":3,"ex":"Carnival is usually in February.","nota":""},{"w":"eighth","uk":"","pt":"oitavo","pos":"number","l":"2B","lv":3,"ex":"August is the eighth month of the year.","nota":""},{"w":"ninth","uk":"","pt":"nono","pos":"number","l":"2B","lv":3,"ex":"September is the ninth month of the year.","nota":""},{"w":"twelfth","uk":"","pt":"décimo segundo","pos":"number","l":"2B","lv":3,"ex":"December is the twelfth month of the year.","nota":""},{"w":"twentieth","uk":"","pt":"vigésimo","pos":"number","l":"2B","lv":3,"ex":"Her birthday is on the twentieth of June.","nota":""},{"w":"hundredth","uk":"","pt":"centésimo","pos":"number","l":"2B","lv":3,"ex":"This is the hundredth time I tell you!","nota":""},{"w":"exam","uk":"","pt":"prova","pos":"noun","l":"2C","lv":1,"ex":"I have a math exam tomorrow.","nota":""},{"w":"pet","uk":"","pt":"animal de estimação","pos":"noun","l":"2C","lv":1,"ex":"Stroke a pet to feel calm.","nota":""},{"w":"crush","uk":"","pt":"paixonite","pos":"noun","l":"2C","lv":1,"ex":"Tom has a crush on a girl in his class.","nota":""},{"w":"relax","uk":"","pt":"relaxar","pos":"verb","l":"2C","lv":2,"ex":"I relax when I listen to music.","nota":""},{"w":"relaxed","uk":"","pt":"relaxado","pos":"adjective","l":"2C","lv":2,"ex":"I feel relaxed at the beach.","nota":""},{"w":"stressed","uk":"","pt":"estressado","pos":"adjective","l":"2C","lv":2,"ex":"I feel stressed when I have exams.","nota":""},{"w":"nature","uk":"","pt":"natureza","pos":"noun","l":"2C","lv":2,"ex":"I like to get in touch with nature.","nota":""},{"w":"secret","uk":"","pt":"segredo","pos":"noun","l":"2C","lv":2,"ex":"Can you keep a secret?","nota":""},{"w":"problem","uk":"","pt":"problema","pos":"noun","l":"2C","lv":2,"ex":"Talk to a friend about your problem.","nota":""},{"w":"breathe","uk":"","pt":"respirar","pos":"verb","l":"2C","lv":3,"ex":"Breathe in slowly and relax.","nota":""},{"w":"meditate","uk":"","pt":"meditar","pos":"verb","l":"2C","lv":3,"ex":"I meditate before I go to sleep.","nota":""},{"w":"energetic","uk":"","pt":"cheio de energia","pos":"adjective","l":"2C","lv":3,"ex":"My little brother is very energetic.","nota":""},{"w":"balloon","uk":"","pt":"balão, bexiga","pos":"noun","l":"2C","lv":3,"ex":"Fill the balloon with air.","nota":""},{"w":"dice","uk":"","pt":"dados","pos":"noun","l":"2D","lv":1,"ex":"Roll the dice and move your piece.","nota":""},{"w":"card","uk":"","pt":"carta","pos":"noun","l":"2D","lv":1,"ex":"Take a card from the pile.","nota":""},{"w":"turn","uk":"","pt":"vez, jogada","pos":"noun","l":"2D","lv":1,"ex":"It's your turn to play.","nota":""},{"w":"roll","uk":"","pt":"rolar, jogar (dados)","pos":"verb","l":"2D","lv":1,"ex":"It's your turn to roll.","nota":""},{"w":"board","uk":"","pt":"tabuleiro","pos":"noun","l":"2D","lv":2,"ex":"We play board games on Sundays.","nota":""},{"w":"button","uk":"","pt":"botão","pos":"noun","l":"2D","lv":2,"ex":"Press the yellow button.","nota":""},{"w":"playground","uk":"","pt":"parquinho","pos":"noun","l":"2D","lv":2,"ex":"The kids are playing in the playground.","nota":""},{"w":"forward","uk":"","pt":"para a frente","pos":"adverb","l":"2D","lv":3,"ex":"Go forward three spaces.","nota":""},{"w":"instructions","uk":"","pt":"instruções","pos":"noun","l":"2D","lv":3,"ex":"Read the instructions before you play.","nota":""},{"w":"alone","uk":"","pt":"sozinho","pos":"adjective","l":"2E","lv":1,"ex":"She doesn't like to play alone.","nota":""},{"w":"weekend","uk":"","pt":"fim de semana","pos":"noun","l":"2E","lv":2,"ex":"I visit my grandparents on the weekend.","nota":""},{"w":"because","uk":"","pt":"porque","pos":"conjunction","l":"2E","lv":2,"ex":"I go to the beach because I love swimming.","nota":""},{"w":"island","uk":"","pt":"ilha","pos":"noun","l":"2E","lv":3,"ex":"Tanya lives on a small island.","nota":""},{"w":"lighthouse","uk":"","pt":"farol","pos":"noun","l":"2E","lv":3,"ex":"Her father works in a lighthouse.","nota":""},{"w":"favorite","uk":"favourite","pt":"favorito","pos":"adjective","l":"2E","lv":3,"ex":"Pizza is my favorite food.","nota":""},{"w":"practice","uk":"practise","pt":"praticar","pos":"verb","l":"2E","lv":3,"ex":"Don't forget to practice every day!","nota":"No Reino Unido o verbo é practise e o substantivo é practice."},{"w":"idea","uk":"","pt":"ideia","pos":"noun","l":"2F","lv":1,"ex":"That's a great idea!","nota":""},{"w":"maybe","uk":"","pt":"talvez","pos":"adverb","l":"2F","lv":1,"ex":"Maybe later, I'm busy now.","nota":""},{"w":"movie","uk":"","pt":"filme","pos":"noun","l":"2F","lv":1,"ex":"Why don't we watch a movie?","nota":""},{"w":"perfect","uk":"","pt":"perfeito","pos":"adjective","l":"2F","lv":2,"ex":"Perfect! Let's meet at seven.","nota":""},{"w":"brilliant","uk":"","pt":"ótimo, brilhante","pos":"adjective","l":"2F","lv":3,"ex":"Brilliant! See you there.","nota":""},{"w":"seriously","uk":"","pt":"sério?","pos":"adverb","l":"2F","lv":3,"ex":"Seriously? I don't like horror movies.","nota":""},{"w":"theater","uk":"theatre","pt":"teatro","pos":"noun","l":"2F","lv":3,"ex":"Let's go to the theater tonight.","nota":""},{"w":"suggestion","uk":"","pt":"sugestão","pos":"noun","l":"2F","lv":3,"ex":"Do you have a suggestion for Friday?","nota":""},{"w":"fast","uk":"","pt":"rápido","pos":"adjective","l":"3A","lv":1,"ex":"Some dinosaurs were really fast.","nota":""},{"w":"slow","uk":"","pt":"lento","pos":"adjective","l":"3A","lv":1,"ex":"Turtles are slow animals.","nota":""},{"w":"strong","uk":"","pt":"forte","pos":"adjective","l":"3A","lv":1,"ex":"Elephants are very strong.","nota":""},{"w":"weak","uk":"","pt":"fraco","pos":"adjective","l":"3A","lv":1,"ex":"The baby bird is weak.","nota":""},{"w":"friendly","uk":"","pt":"amigável","pos":"adjective","l":"3A","lv":2,"ex":"My dog is very friendly.","nota":""},{"w":"gray","uk":"grey","pt":"cinza","pos":"adjective","l":"3A","lv":2,"ex":"Elephants are gray.","nota":""},{"w":"dinosaur","uk":"","pt":"dinossauro","pos":"noun","l":"3A","lv":3,"ex":"The T-rex was a huge dinosaur.","nota":""},{"w":"aggressive","uk":"","pt":"agressivo","pos":"adjective","l":"3A","lv":3,"ex":"Some dinosaurs were aggressive.","nota":""},{"w":"colorful","uk":"colourful","pt":"colorido","pos":"adjective","l":"3A","lv":3,"ex":"Many dinosaurs were colorful animals.","nota":""},{"w":"extinct","uk":"","pt":"extinto","pos":"adjective","l":"3A","lv":3,"ex":"Dinosaurs are extinct now.","nota":""},{"w":"kitten","uk":"","pt":"gatinho","pos":"noun","l":"3B","lv":2,"ex":"Oscar is a white kitten.","nota":""},{"w":"adopt","uk":"","pt":"adotar","pos":"verb","l":"3B","lv":2,"ex":"We want to adopt a dog.","nota":""},{"w":"beautiful","uk":"","pt":"bonito, lindo","pos":"adjective","l":"3B","lv":3,"ex":"What a beautiful cat!","nota":""},{"w":"intelligent","uk":"","pt":"inteligente","pos":"adjective","l":"3B","lv":3,"ex":"Dogs are intelligent animals.","nota":""},{"w":"difficult","uk":"","pt":"difícil","pos":"adjective","l":"3B","lv":3,"ex":"Math is difficult for me.","nota":""},{"w":"comfortable","uk":"","pt":"confortável","pos":"adjective","l":"3B","lv":3,"ex":"This armchair is very comfortable.","nota":""},{"w":"generous","uk":"","pt":"generoso","pos":"adjective","l":"3B","lv":3,"ex":"My grandma is very generous.","nota":""},{"w":"interesting","uk":"","pt":"interessante","pos":"adjective","l":"3B","lv":3,"ex":"This book is very interesting.","nota":""},{"w":"ant","uk":"","pt":"formiga","pos":"noun","l":"3C","lv":1,"ex":"An ant is a very small insect.","nota":""},{"w":"bear","uk":"","pt":"urso","pos":"noun","l":"3C","lv":1,"ex":"The bear lives in the forest.","nota":""},{"w":"cow","uk":"","pt":"vaca","pos":"noun","l":"3C","lv":1,"ex":"A cow gives us milk.","nota":""},{"w":"lion","uk":"","pt":"leão","pos":"noun","l":"3C","lv":1,"ex":"The lion is the king of the jungle.","nota":""},{"w":"shark","uk":"","pt":"tubarão","pos":"noun","l":"3C","lv":1,"ex":"A shark lives in the ocean.","nota":""},{"w":"snake","uk":"","pt":"cobra","pos":"noun","l":"3C","lv":1,"ex":"Be careful! There's a snake!","nota":""},{"w":"tiger","uk":"","pt":"tigre","pos":"noun","l":"3C","lv":1,"ex":"The tiger has orange and black stripes.","nota":""},{"w":"wolf","uk":"","pt":"lobo","pos":"noun","l":"3C","lv":1,"ex":"The wolf lives in the forest.","nota":""},{"w":"chicken","uk":"","pt":"galinha","pos":"noun","l":"3C","lv":2,"ex":"The chicken lives on a farm.","nota":""},{"w":"whale","uk":"","pt":"baleia","pos":"noun","l":"3C","lv":2,"ex":"The blue whale is the biggest animal in the world.","nota":""},{"w":"wolves","uk":"","pt":"lobos","pos":"noun","l":"3C","lv":2,"ex":"The wolves live in the forest.","nota":""},{"w":"butterfly","uk":"","pt":"borboleta","pos":"noun","l":"3C","lv":2,"ex":"A butterfly has beautiful wings.","nota":""},{"w":"elephant","uk":"","pt":"elefante","pos":"noun","l":"3C","lv":2,"ex":"The elephant has a long trunk.","nota":""},{"w":"hill","uk":"","pt":"morro, colina","pos":"noun","l":"3D","lv":1,"ex":"Our house is on a hill.","nota":""},{"w":"river","uk":"","pt":"rio","pos":"noun","l":"3D","lv":1,"ex":"We swim in the river in the summer.","nota":""},{"w":"hunt","uk":"","pt":"caçar","pos":"verb","l":"3D","lv":1,"ex":"Some people hunt wild animals.","nota":""},{"w":"desert","uk":"","pt":"deserto","pos":"noun","l":"3D","lv":2,"ex":"It's very hot in the desert.","nota":""},{"w":"field","uk":"","pt":"campo","pos":"noun","l":"3D","lv":2,"ex":"The cows are in the field.","nota":""},{"w":"forest","uk":"","pt":"floresta","pos":"noun","l":"3D","lv":2,"ex":"The Amazon is a big forest.","nota":""},{"w":"ocean","uk":"","pt":"oceano","pos":"noun","l":"3D","lv":2,"ex":"Whales live in the ocean.","nota":""},{"w":"mountain","uk":"","pt":"montanha","pos":"noun","l":"3D","lv":2,"ex":"There is snow on the mountain.","nota":""},{"w":"hot","uk":"","pt":"quente","pos":"adjective","l":"3E","lv":1,"ex":"It's very hot today.","nota":""},{"w":"cold","uk":"","pt":"frio","pos":"adjective","l":"3E","lv":1,"ex":"Put on a jacket. It's cold!","nota":""},{"w":"fall","uk":"","pt":"outono","pos":"noun","l":"3E","lv":1,"ex":"In the fall, the leaves turn red.","nota":"Nos EUA, fall; no Reino Unido, autumn."},{"w":"spring","uk":"","pt":"primavera","pos":"noun","l":"3E","lv":1,"ex":"There are lots of flowers in the spring.","nota":""},{"w":"summer","uk":"","pt":"verão","pos":"noun","l":"3E","lv":1,"ex":"We go to the beach in the summer.","nota":""},{"w":"winter","uk":"","pt":"inverno","pos":"noun","l":"3E","lv":1,"ex":"It snows in the winter in Canada.","nota":""},{"w":"rainy","uk":"","pt":"chuvoso","pos":"adjective","l":"3E","lv":1,"ex":"It's a rainy day. Take an umbrella!","nota":""},{"w":"sunny","uk":"","pt":"ensolarado","pos":"adjective","l":"3E","lv":1,"ex":"It's sunny, let's go to the beach!","nota":""},{"w":"snowy","uk":"","pt":"com neve","pos":"adjective","l":"3E","lv":1,"ex":"It's a snowy day in New York.","nota":""},{"w":"windy","uk":"","pt":"com vento","pos":"adjective","l":"3E","lv":1,"ex":"It's windy, so let's fly a kite.","nota":""},{"w":"season","uk":"","pt":"estação do ano","pos":"noun","l":"3E","lv":2,"ex":"My favorite season is spring.","nota":""},{"w":"autumn","uk":"","pt":"outono","pos":"noun","l":"3E","lv":3,"ex":"The leaves fall in autumn.","nota":"Nos EUA também se diz fall."},{"w":"weather","uk":"","pt":"tempo, clima","pos":"noun","l":"3E","lv":3,"ex":"The weather is nice today.","nota":""},{"w":"past","uk":"","pt":"passado","pos":"noun","l":"3F","lv":1,"ex":"There were lots of animals here in the past.","nota":""},{"w":"road","uk":"","pt":"estrada","pos":"noun","l":"3F","lv":1,"ex":"This road goes to the beach.","nota":""},{"w":"bridge","uk":"","pt":"ponte","pos":"noun","l":"3F","lv":2,"ex":"There is an old bridge over the river.","nota":""},{"w":"airport","uk":"","pt":"aeroporto","pos":"noun","l":"3F","lv":2,"ex":"We arrived at the airport early.","nota":""},{"w":"statue","uk":"","pt":"estátua","pos":"noun","l":"3F","lv":2,"ex":"There's a famous statue in the square.","nota":""},{"w":"building","uk":"","pt":"prédio","pos":"noun","l":"3F","lv":3,"ex":"That building is very tall.","nota":""},{"w":"skyscraper","uk":"","pt":"arranha-céu","pos":"noun","l":"3F","lv":3,"ex":"There is a tall skyscraper in the city.","nota":""},{"w":"exhibition","uk":"","pt":"exposição","pos":"noun","l":"3F","lv":3,"ex":"We went to a virtual reality exhibition.","nota":""}]},{"id":"7","nome":"7º ano","livro":"SmartGen 6B","unidades":"Units 1 a 3","temas":"Local action · Water Detectives · Animal rescue","palavras":[{"w":"waste","uk":"","pt":"desperdiçar","pos":"verb","l":"1A (Unit 1)","lv":1,"ex":"Don't waste water!","nota":""},{"w":"aware","uk":"","pt":"consciente","pos":"adjective","l":"1A (Unit 1)","lv":2,"ex":"We need to be aware of the problem.","nota":""},{"w":"recycle","uk":"","pt":"reciclar","pos":"verb","l":"1A (Unit 1)","lv":2,"ex":"We recycle paper and plastic at school.","nota":""},{"w":"reusable","uk":"","pt":"reutilizável","pos":"adjective","l":"1A (Unit 1)","lv":2,"ex":"Bring a reusable bag to the supermarket.","nota":""},{"w":"sort","uk":"","pt":"separar (o lixo)","pos":"verb","l":"1B (Unit 1)","lv":1,"ex":"Sort your rubbish into different bins.","nota":""},{"w":"reuse","uk":"","pt":"reutilizar","pos":"verb","l":"1B (Unit 1)","lv":1,"ex":"We reuse rainwater to water the plants.","nota":""},{"w":"tap","uk":"","pt":"torneira","pos":"noun","l":"1B (Unit 1)","lv":1,"ex":"Turn off the tap when you brush your teeth.","nota":"Nos EUA é mais comum faucet."},{"w":"compost","uk":"","pt":"fazer compostagem","pos":"verb","l":"1B (Unit 1)","lv":2,"ex":"You can compost food scraps.","nota":""},{"w":"air-dry","uk":"","pt":"secar ao ar livre","pos":"verb","l":"1B (Unit 1)","lv":2,"ex":"We air-dry our clothes on sunny days.","nota":"Com hífen."},{"w":"shower","uk":"","pt":"banho de chuveiro","pos":"noun","l":"1B (Unit 1)","lv":1,"ex":"Take a short shower to save water.","nota":""},{"w":"unplug","uk":"","pt":"tirar da tomada","pos":"verb","l":"1B (Unit 1)","lv":1,"ex":"Unplug the TV when you're not using it.","nota":""},{"w":"rainwater","uk":"","pt":"água da chuva","pos":"noun","l":"1B (Unit 1)","lv":1,"ex":"They collect rainwater for the garden.","nota":""},{"w":"electricity","uk":"","pt":"eletricidade","pos":"noun","l":"1B (Unit 1)","lv":3,"ex":"Turn off the lights to save electricity.","nota":""},{"w":"helmet","uk":"","pt":"capacete","pos":"noun","l":"2A (Unit 1)","lv":1,"ex":"You must wear a helmet when you ride a bike.","nota":""},{"w":"litter","uk":"","pt":"jogar lixo no chão","pos":"verb","l":"2A (Unit 1)","lv":1,"ex":"You mustn't litter in the park.","nota":""},{"w":"biodegradable","uk":"","pt":"biodegradável","pos":"adjective","l":"2A (Unit 1)","lv":3,"ex":"This bag is biodegradable.","nota":""},{"w":"volunteer","uk":"","pt":"voluntário","pos":"noun","l":"2B (Unit 1)","lv":3,"ex":"She is a volunteer at the animal shelter.","nota":""},{"w":"community","uk":"","pt":"comunidade","pos":"noun","l":"2B (Unit 1)","lv":3,"ex":"We can help our community.","nota":""},{"w":"neighborhood","uk":"neighbourhood","pt":"bairro, vizinhança","pos":"noun","l":"2B (Unit 1)","lv":3,"ex":"Let's clean our neighborhood!","nota":""},{"w":"climate","uk":"","pt":"clima","pos":"noun","l":"3A (Unit 1)","lv":2,"ex":"Climate change is a big problem.","nota":""},{"w":"weather","uk":"","pt":"tempo (condições do tempo)","pos":"noun","l":"3A (Unit 1)","lv":2,"ex":"The weather is hot today.","nota":""},{"w":"pollution","uk":"","pt":"poluição","pos":"noun","l":"3A (Unit 1)","lv":2,"ex":"Cars cause a lot of pollution.","nota":""},{"w":"environment","uk":"","pt":"meio ambiente","pos":"noun","l":"3A (Unit 1)","lv":3,"ex":"We must protect the environment.","nota":""},{"w":"sustainable","uk":"","pt":"sustentável","pos":"adjective","l":"3B (Unit 1)","lv":3,"ex":"Riding a bike is a sustainable choice.","nota":""},{"w":"vegetarian","uk":"","pt":"vegetariano","pos":"adjective","l":"3B (Unit 1)","lv":2,"ex":"I chose a vegetarian dish for lunch.","nota":""},{"w":"energetic","uk":"","pt":"cheio de energia","pos":"adjective","l":"4A (Unit 1)","lv":2,"ex":"Walking to school makes me feel energetic.","nota":""},{"w":"habit","uk":"","pt":"hábito","pos":"noun","l":"4B (Unit 1)","lv":1,"ex":"Recycling is a good habit.","nota":""},{"w":"conserve","uk":"","pt":"economizar, conservar","pos":"verb","l":"4B (Unit 1)","lv":2,"ex":"We need to conserve water.","nota":""},{"w":"poster","uk":"","pt":"cartaz","pos":"noun","l":"5A (Unit 1)","lv":1,"ex":"We made a poster about recycling.","nota":""},{"w":"kindness","uk":"","pt":"gentileza, bondade","pos":"noun","l":"5A (Unit 1)","lv":1,"ex":"Kindness can change the world.","nota":""},{"w":"campaign","uk":"","pt":"campanha","pos":"noun","l":"5A (Unit 1)","lv":2,"ex":"Our class made a campaign to save water.","nota":""},{"w":"draft","uk":"","pt":"rascunho","pos":"noun","l":"5B (Unit 1)","lv":1,"ex":"Write a draft before the final text.","nota":""},{"w":"spelling","uk":"","pt":"ortografia","pos":"noun","l":"5B (Unit 1)","lv":2,"ex":"Check your spelling before you hand in your text.","nota":""},{"w":"punctuation","uk":"","pt":"pontuação","pos":"noun","l":"5B (Unit 1)","lv":3,"ex":"Don't forget the punctuation at the end of the sentence.","nota":""},{"w":"charger","uk":"","pt":"carregador","pos":"noun","l":"6 (Unit 1)","lv":2,"ex":"Unplug the charger when the phone is full.","nota":""},{"w":"intonation","uk":"","pt":"entonação","pos":"noun","l":"6 (Unit 1)","lv":2,"ex":"Pay attention to your intonation when you speak.","nota":""},{"w":"malicious","uk":"","pt":"malicioso","pos":"adjective","l":"Digital literacy (Unit 1)","lv":3,"ex":"Don't click on malicious links.","nota":""},{"w":"coin","uk":"","pt":"moeda","pos":"noun","l":"1A (Unit 2)","lv":1,"ex":"I found a coin in the river.","nota":""},{"w":"foam","uk":"","pt":"espuma","pos":"noun","l":"1A (Unit 2)","lv":1,"ex":"There was white foam on the river.","nota":""},{"w":"germ","uk":"","pt":"germe","pos":"noun","l":"1A (Unit 2)","lv":1,"ex":"A germ is too small to see.","nota":""},{"w":"feather","uk":"","pt":"pena (de ave)","pos":"noun","l":"1A (Unit 2)","lv":2,"ex":"There is a bird feather in the water.","nota":""},{"w":"sludge","uk":"","pt":"lodo, lama","pos":"noun","l":"1A (Unit 2)","lv":2,"ex":"There was black sludge at the bottom of the river.","nota":""},{"w":"rubbish","uk":"","pt":"lixo","pos":"noun","l":"1A (Unit 2)","lv":2,"ex":"Put the rubbish in the bin.","nota":"Nos EUA é mais comum garbage ou trash."},{"w":"frog","uk":"","pt":"sapo","pos":"noun","l":"1B (Unit 2)","lv":1,"ex":"We saw a frog near the lake.","nota":""},{"w":"mission","uk":"","pt":"missão","pos":"noun","l":"1B (Unit 2)","lv":2,"ex":"Our mission is to clean the river.","nota":""},{"w":"wrapper","uk":"","pt":"embalagem","pos":"noun","l":"2A (Unit 2)","lv":2,"ex":"Throw the candy wrapper in the bin.","nota":""},{"w":"biscuit","uk":"","pt":"biscoito","pos":"noun","l":"2B (Unit 2)","lv":2,"ex":"Can I have a biscuit?","nota":"Nos EUA é mais comum cookie."},{"w":"favorite","uk":"favourite","pt":"favorito","pos":"adjective","l":"2B (Unit 2)","lv":2,"ex":"What's your favorite drink?","nota":""},{"w":"restaurant","uk":"","pt":"restaurante","pos":"noun","l":"2B (Unit 2)","lv":3,"ex":"The restaurant uses too many plastic bottles.","nota":""},{"w":"queue","uk":"","pt":"fila","pos":"noun","l":"3A (Unit 2)","lv":3,"ex":"There is a long queue in the canteen.","nota":"Nos EUA é mais comum line."},{"w":"hygiene","uk":"","pt":"higiene","pos":"noun","l":"3A (Unit 2)","lv":3,"ex":"Good hygiene keeps us healthy.","nota":""},{"w":"unhygienic","uk":"","pt":"anti-higiênico","pos":"adjective","l":"3A (Unit 2)","lv":3,"ex":"The old kitchen was unhygienic.","nota":""},{"w":"committee","uk":"","pt":"comitê","pos":"noun","l":"3A (Unit 2)","lv":3,"ex":"The student committee wants a new kitchen.","nota":""},{"w":"sink","uk":"","pt":"pia","pos":"noun","l":"3B (Unit 2)","lv":1,"ex":"Wash your hands at the sink.","nota":""},{"w":"bin","uk":"","pt":"lixeira","pos":"noun","l":"3B (Unit 2)","lv":1,"ex":"Put the paper in the bin.","nota":"Nos EUA é mais comum trash can."},{"w":"flush","uk":"","pt":"dar descarga","pos":"verb","l":"3B (Unit 2)","lv":1,"ex":"Don't forget to flush!","nota":""},{"w":"toilet","uk":"","pt":"vaso sanitário","pos":"noun","l":"3B (Unit 2)","lv":2,"ex":"The toilet in the school bathroom is broken.","nota":""},{"w":"neglect","uk":"","pt":"descaso","pos":"noun","l":"4A (Unit 2)","lv":3,"ex":"The park suffers from neglect.","nota":""},{"w":"courageous","uk":"","pt":"corajoso","pos":"adjective","l":"4A (Unit 2)","lv":3,"ex":"She was courageous and spoke to the mayor.","nota":""},{"w":"sanitation","uk":"","pt":"saneamento","pos":"noun","l":"4B (Unit 2)","lv":3,"ex":"Good sanitation protects people's health.","nota":""},{"w":"government","uk":"","pt":"governo","pos":"noun","l":"4B (Unit 2)","lv":3,"ex":"The government must clean the river.","nota":""},{"w":"sign","uk":"","pt":"placa, aviso","pos":"noun","l":"5A (Unit 2)","lv":2,"ex":"The sign says: No running.","nota":""},{"w":"wildlife","uk":"","pt":"vida selvagem","pos":"noun","l":"5A (Unit 2)","lv":1,"ex":"Protect the wildlife in the park.","nota":""},{"w":"canteen","uk":"","pt":"cantina","pos":"noun","l":"5A (Unit 2)","lv":2,"ex":"We eat lunch in the canteen.","nota":"Nos EUA é mais comum cafeteria."},{"w":"pedestrian","uk":"","pt":"pedestre","pos":"noun","l":"5A (Unit 2)","lv":3,"ex":"A pedestrian must use the crosswalk.","nota":""},{"w":"prohibited","uk":"","pt":"proibido","pos":"adjective","l":"5A (Unit 2)","lv":3,"ex":"Swimming is prohibited here.","nota":""},{"w":"quiet","uk":"","pt":"quieto, em silêncio","pos":"adjective","l":"5B (Unit 2)","lv":2,"ex":"Please be quiet in the library.","nota":""},{"w":"relative","uk":"","pt":"parente","pos":"noun","l":"6 (Unit 2)","lv":2,"ex":"A relative of mine lives near the river.","nota":""},{"w":"surroundings","uk":"","pt":"arredores","pos":"noun","l":"6 (Unit 2)","lv":3,"ex":"We must take care of our surroundings.","nota":""},{"w":"manipulative","uk":"","pt":"manipulador","pos":"adjective","l":"Digital literacy (Unit 2)","lv":3,"ex":"Some ads are manipulative.","nota":""},{"w":"advertisement","uk":"","pt":"anúncio, propaganda","pos":"noun","l":"Digital literacy (Unit 2)","lv":3,"ex":"I saw an advertisement for a new phone.","nota":""},{"w":"chase","uk":"","pt":"perseguir","pos":"verb","l":"1A (Unit 3)","lv":1,"ex":"The dog likes to chase cats.","nota":""},{"w":"feed","uk":"","pt":"alimentar","pos":"verb","l":"1A (Unit 3)","lv":1,"ex":"Don't feed the wild animals.","nota":""},{"w":"hunt","uk":"","pt":"caçar","pos":"verb","l":"1A (Unit 3)","lv":1,"ex":"Jaguars hunt at night.","nota":""},{"w":"scare","uk":"","pt":"assustar","pos":"verb","l":"1A (Unit 3)","lv":1,"ex":"Don't scare the animals.","nota":""},{"w":"sloth","uk":"","pt":"bicho-preguiça","pos":"noun","l":"1A (Unit 3)","lv":1,"ex":"The sloth moves very slowly.","nota":""},{"w":"observe","uk":"","pt":"observar","pos":"verb","l":"1A (Unit 3)","lv":2,"ex":"We observe the birds with binoculars.","nota":""},{"w":"rescue","uk":"","pt":"resgatar","pos":"verb","l":"1A (Unit 3)","lv":2,"ex":"They rescue injured animals.","nota":""},{"w":"deforestation","uk":"","pt":"desmatamento","pos":"noun","l":"1A (Unit 3)","lv":3,"ex":"Deforestation destroys the animals' homes.","nota":""},{"w":"save","uk":"","pt":"salvar","pos":"verb","l":"1B (Unit 3)","lv":1,"ex":"We can save the turtles.","nota":""},{"w":"protect","uk":"","pt":"proteger","pos":"verb","l":"1B (Unit 3)","lv":1,"ex":"We must protect the forest.","nota":""},{"w":"respect","uk":"","pt":"respeitar","pos":"verb","l":"1B (Unit 3)","lv":1,"ex":"Respect the animals and their homes.","nota":""},{"w":"habitat","uk":"","pt":"habitat","pos":"noun","l":"1B (Unit 3)","lv":2,"ex":"The forest is the jaguar's habitat.","nota":""},{"w":"species","uk":"","pt":"espécie","pos":"noun","l":"1B (Unit 3)","lv":3,"ex":"Many species live in the Amazon.","nota":""},{"w":"sanctuary","uk":"","pt":"santuário (de animais)","pos":"noun","l":"1B (Unit 3)","lv":3,"ex":"The animals live safely in a sanctuary.","nota":""},{"w":"tapir","uk":"","pt":"anta","pos":"noun","l":"2A (Unit 3)","lv":1,"ex":"The tapir lives in the forest.","nota":""},{"w":"endangered","uk":"","pt":"ameaçado de extinção","pos":"adjective","l":"2A (Unit 3)","lv":3,"ex":"The tapir is an endangered animal.","nota":""},{"w":"chimpanzee","uk":"","pt":"chimpanzé","pos":"noun","l":"2A (Unit 3)","lv":3,"ex":"The chimpanzee is very intelligent.","nota":""},{"w":"cave","uk":"","pt":"caverna","pos":"noun","l":"2B (Unit 3)","lv":1,"ex":"Bats live in a cave.","nota":""},{"w":"shelter","uk":"","pt":"abrigo","pos":"noun","l":"2B (Unit 3)","lv":1,"ex":"The dog lives in an animal shelter.","nota":""},{"w":"track","uk":"","pt":"rastro, pegada","pos":"noun","l":"3A (Unit 3)","lv":1,"ex":"We found a jaguar track in the mud.","nota":""},{"w":"tide","uk":"","pt":"maré","pos":"noun","l":"3A (Unit 3)","lv":1,"ex":"The tide is high in the afternoon.","nota":""},{"w":"hatchling","uk":"","pt":"filhote recém-saído do ovo","pos":"noun","l":"3A (Unit 3)","lv":3,"ex":"The turtle hatchling ran to the sea.","nota":""},{"w":"release","uk":"","pt":"soltar, libertar","pos":"verb","l":"3A (Unit 3)","lv":2,"ex":"They release the turtles into the ocean.","nota":""},{"w":"journal","uk":"","pt":"diário","pos":"noun","l":"3A (Unit 3)","lv":2,"ex":"I write about my day in my journal.","nota":""},{"w":"recover","uk":"","pt":"recuperar-se","pos":"verb","l":"3B (Unit 3)","lv":2,"ex":"The bird needs time to recover.","nota":""},{"w":"conservation","uk":"","pt":"conservação","pos":"noun","l":"3B (Unit 3)","lv":3,"ex":"Conservation projects protect wild animals.","nota":""},{"w":"turtle","uk":"","pt":"tartaruga","pos":"noun","l":"4A (Unit 3)","lv":2,"ex":"The sea turtle swims very far.","nota":""},{"w":"center","uk":"centre","pt":"centro","pos":"noun","l":"4A (Unit 3)","lv":2,"ex":"The turtles go to a rescue center.","nota":""},{"w":"activist","uk":"","pt":"ativista","pos":"noun","l":"4B (Unit 3)","lv":2,"ex":"She is an animal rights activist.","nota":""},{"w":"extinction","uk":"","pt":"extinção","pos":"noun","l":"4B (Unit 3)","lv":2,"ex":"Many animals are in danger of extinction.","nota":""},{"w":"practice","uk":"practise","pt":"praticar","pos":"verb","l":"4B (Unit 3)","lv":3,"ex":"I practice my English every day.","nota":"No Reino Unido o verbo é practise e o substantivo é practice."},{"w":"organize","uk":"organise","pt":"organizar","pos":"verb","l":"4B (Unit 3)","lv":3,"ex":"Let's organize a beach clean-up.","nota":""},{"w":"puppy","uk":"","pt":"filhote de cachorro","pos":"noun","l":"5A (Unit 3)","lv":1,"ex":"The puppy is very cute.","nota":""},{"w":"adopt","uk":"","pt":"adotar","pos":"verb","l":"5A (Unit 3)","lv":1,"ex":"We want to adopt a cat.","nota":""},{"w":"abandoned","uk":"","pt":"abandonado","pos":"adjective","l":"5A (Unit 3)","lv":2,"ex":"We found an abandoned puppy.","nota":""},{"w":"feedback","uk":"","pt":"retorno, comentários","pos":"noun","l":"5B (Unit 3)","lv":1,"ex":"My teacher gave me good feedback.","nota":""},{"w":"reflection","uk":"","pt":"reflexão","pos":"noun","l":"5B (Unit 3)","lv":3,"ex":"Write a short reflection about your day.","nota":""},{"w":"organization","uk":"organisation","pt":"organização","pos":"noun","l":"5B (Unit 3)","lv":3,"ex":"The organization takes care of stray dogs.","nota":""},{"w":"circus","uk":"","pt":"circo","pos":"noun","l":"6 (Unit 3)","lv":2,"ex":"Animals shouldn't work in a circus.","nota":""},{"w":"stressed","uk":"","pt":"estressado","pos":"adjective","l":"6 (Unit 3)","lv":2,"ex":"Animals in cages feel stressed.","nota":""},{"w":"aquarium","uk":"","pt":"aquário","pos":"noun","l":"6 (Unit 3)","lv":3,"ex":"We saw sharks at the aquarium.","nota":""},{"w":"respectful","uk":"","pt":"respeitoso","pos":"adjective","l":"Digital literacy (Unit 3)","lv":3,"ex":"Be respectful when you post online.","nota":""},{"w":"embarrassed","uk":"","pt":"envergonhado","pos":"adjective","l":"Digital literacy (Unit 3)","lv":3,"ex":"I felt embarrassed when I read the comment.","nota":""}]},{"id":"8","nome":"8º ano","livro":"Angles 6","unidades":"Units 1 a 3","temas":"Relationships · Tourism · Communication","palavras":[{"w":"habit","uk":"","pt":"hábito","pos":"noun","l":"1A","lv":1,"ex":"Eating fruit every day is a healthy habit.","nota":""},{"w":"unfair","uk":"","pt":"injusto","pos":"adjective","l":"1A","lv":1,"ex":"It's unfair that I can't go to the party.","nota":""},{"w":"babysit","uk":"","pt":"cuidar de criança (de babá)","pos":"verb","l":"1A","lv":1,"ex":"I used to babysit my little cousin.","nota":""},{"w":"chubby","uk":"","pt":"gordinho","pos":"adjective","l":"1A","lv":2,"ex":"I used to be a chubby baby.","nota":""},{"w":"favorite","uk":"favourite","pt":"favorito","pos":"adjective","l":"1A","lv":2,"ex":"My favorite subject is English.","nota":""},{"w":"relationship","uk":"","pt":"relacionamento","pos":"noun","l":"1A","lv":3,"ex":"She has a great relationship with her parents.","nota":""},{"w":"proud","uk":"","pt":"orgulhoso","pos":"adjective","l":"1B","lv":1,"ex":"Her parents were very proud of her.","nota":""},{"w":"stranger","uk":"","pt":"desconhecido, estranho","pos":"noun","l":"1B","lv":1,"ex":"Never get into a car with a stranger.","nota":""},{"w":"island","uk":"","pt":"ilha","pos":"noun","l":"1B","lv":2,"ex":"No man is an island.","nota":""},{"w":"racism","uk":"","pt":"racismo","pos":"noun","l":"1B","lv":2,"ex":"Ruby Bridges faced racism at school.","nota":""},{"w":"bravery","uk":"","pt":"bravura, coragem","pos":"noun","l":"1B","lv":2,"ex":"Ruby's bravery inspired many people.","nota":""},{"w":"prejudice","uk":"","pt":"preconceito","pos":"noun","l":"1B","lv":3,"ex":"We must fight against prejudice.","nota":""},{"w":"courage","uk":"","pt":"coragem","pos":"noun","l":"1B","lv":3,"ex":"It takes courage to be different.","nota":""},{"w":"attitude","uk":"","pt":"atitude","pos":"noun","l":"1B","lv":2,"ex":"She always has a positive attitude.","nota":""},{"w":"strength","uk":"","pt":"força, ponto forte","pos":"noun","l":"1B","lv":3,"ex":"Patience is my greatest strength.","nota":""},{"w":"shy","uk":"","pt":"tímido","pos":"adjective","l":"1C","lv":1,"ex":"I was very shy when I was a child.","nota":""},{"w":"scared","uk":"","pt":"assustado, com medo","pos":"adjective","l":"1C","lv":1,"ex":"My dog is scared of fireworks.","nota":""},{"w":"guilty","uk":"","pt":"culpado","pos":"adjective","l":"1C","lv":2,"ex":"I feel guilty when I lie to my mom.","nota":""},{"w":"wardrobe","uk":"","pt":"guarda-roupa","pos":"noun","l":"1C","lv":2,"ex":"My clothes are in the wardrobe.","nota":""},{"w":"similarity","uk":"","pt":"semelhança","pos":"noun","l":"1C","lv":3,"ex":"There is a big similarity between the twins.","nota":""},{"w":"difference","uk":"","pt":"diferença","pos":"noun","l":"1C","lv":2,"ex":"What's the difference between these two pictures?","nota":""},{"w":"mess","uk":"","pt":"bagunça","pos":"noun","l":"1D","lv":1,"ex":"Your bedroom is a mess!","nota":""},{"w":"mistake","uk":"","pt":"erro","pos":"noun","l":"1D","lv":1,"ex":"Everybody makes a mistake sometimes.","nota":""},{"w":"effort","uk":"","pt":"esforço","pos":"noun","l":"1D","lv":1,"ex":"I always make an effort to be patient.","nota":""},{"w":"housework","uk":"","pt":"tarefas domésticas","pos":"noun","l":"1D","lv":1,"ex":"I help my parents with the housework.","nota":""},{"w":"sibling","uk":"","pt":"irmão ou irmã","pos":"noun","l":"1D","lv":2,"ex":"My only sibling is my older sister.","nota":""},{"w":"sandwich","uk":"","pt":"sanduíche","pos":"noun","l":"1D","lv":2,"ex":"Can you make me a sandwich?","nota":""},{"w":"decision","uk":"","pt":"decisão","pos":"noun","l":"1D","lv":2,"ex":"It was a difficult decision.","nota":""},{"w":"activist","uk":"","pt":"ativista","pos":"noun","l":"1E","lv":1,"ex":"Malala is a famous activist.","nota":""},{"w":"greeting","uk":"","pt":"saudação","pos":"noun","l":"1E","lv":1,"ex":"Start your letter with a friendly greeting.","nota":""},{"w":"refugee","uk":"","pt":"refugiado","pos":"noun","l":"1E","lv":3,"ex":"Muzoon is a refugee from Syria.","nota":""},{"w":"encouragement","uk":"","pt":"incentivo, encorajamento","pos":"noun","l":"1E","lv":3,"ex":"Thanks for your encouragement!","nota":""},{"w":"organization","uk":"organisation","pt":"organização","pos":"noun","l":"1E","lv":3,"ex":"She works for an international organization.","nota":""},{"w":"summarize","uk":"summarise","pt":"resumir","pos":"verb","l":"1E","lv":3,"ex":"Can you summarize the story in two lines?","nota":""},{"w":"friendship","uk":"","pt":"amizade","pos":"noun","l":"OTY1","lv":2,"ex":"Our friendship is very important to me.","nota":""},{"w":"isolation","uk":"","pt":"isolamento","pos":"noun","l":"OTY1","lv":2,"ex":"Isolation can make people feel sad.","nota":""},{"w":"foreigner","uk":"","pt":"estrangeiro","pos":"noun","l":"OTY1","lv":3,"ex":"He is a foreigner, so he doesn't speak Portuguese.","nota":""},{"w":"advertise","uk":"","pt":"divulgar, anunciar","pos":"verb","l":"OTY1","lv":3,"ex":"We can advertise the event online.","nota":"Termina em -ise também nos EUA."},{"w":"unacceptable","uk":"","pt":"inaceitável","pos":"adjective","l":"OTY1","lv":3,"ex":"Bullying is unacceptable.","nota":""},{"w":"neighbor","uk":"neighbour","pt":"vizinho","pos":"noun","l":"REV1","lv":3,"ex":"My neighbor has a big dog.","nota":""},{"w":"voluntary","uk":"","pt":"voluntário","pos":"adjective","l":"REV1","lv":3,"ex":"I do voluntary work on Saturdays.","nota":""},{"w":"environment","uk":"","pt":"meio ambiente","pos":"noun","l":"REV1","lv":3,"ex":"We must protect the environment.","nota":""},{"w":"tourist","uk":"","pt":"turista","pos":"noun","l":"2A","lv":1,"ex":"The tourist took lots of photos.","nota":""},{"w":"festival","uk":"","pt":"festival","pos":"noun","l":"2A","lv":1,"ex":"We went to a music festival.","nota":""},{"w":"lantern","uk":"","pt":"lanterna, lampião","pos":"noun","l":"2A","lv":1,"ex":"They lit a paper lantern.","nota":""},{"w":"tourism","uk":"","pt":"turismo","pos":"noun","l":"2A","lv":2,"ex":"Tourism is important for our city.","nota":""},{"w":"graffiti","uk":"","pt":"grafite","pos":"noun","l":"2A","lv":3,"ex":"There is amazing graffiti on the walls.","nota":""},{"w":"colorful","uk":"colourful","pt":"colorido","pos":"adjective","l":"2A","lv":3,"ex":"The festival was very colorful.","nota":""},{"w":"geography","uk":"","pt":"geografia","pos":"noun","l":"2A","lv":3,"ex":"Geography is my favorite subject.","nota":""},{"w":"definitely","uk":"","pt":"com certeza","pos":"adverb","l":"2A","lv":3,"ex":"This place is definitely in Brazil.","nota":""},{"w":"been","uk":"","pt":"particípio de be (estado, ido)","pos":"verb","l":"2B","lv":1,"ex":"I've been to the Iguazu Falls.","nota":""},{"w":"seen","uk":"","pt":"particípio de see (visto)","pos":"verb","l":"2B","lv":1,"ex":"Have you ever seen a whale?","nota":""},{"w":"tried","uk":"","pt":"particípio de try (experimentado)","pos":"verb","l":"2B","lv":1,"ex":"I've never tried sushi.","nota":""},{"w":"abroad","uk":"","pt":"no exterior","pos":"adverb","l":"2B","lv":1,"ex":"Have you ever been abroad?","nota":""},{"w":"wildlife","uk":"","pt":"vida selvagem","pos":"noun","l":"2B","lv":1,"ex":"The Pantanal is famous for its wildlife.","nota":""},{"w":"waterfall","uk":"","pt":"cachoeira","pos":"noun","l":"2B","lv":1,"ex":"We swam under a waterfall.","nota":""},{"w":"scenery","uk":"","pt":"paisagem","pos":"noun","l":"2B","lv":3,"ex":"The scenery in the mountains is amazing.","nota":""},{"w":"cuisine","uk":"","pt":"culinária","pos":"noun","l":"2B","lv":3,"ex":"I love Japanese cuisine.","nota":""},{"w":"adrenaline","uk":"","pt":"adrenalina","pos":"noun","l":"2B","lv":3,"ex":"I love the rush of adrenaline!","nota":""},{"w":"spectacular","uk":"","pt":"espetacular","pos":"adjective","l":"2B","lv":3,"ex":"The view from the top is spectacular.","nota":""},{"w":"eaten","uk":"","pt":"particípio de eat (comido)","pos":"verb","l":"2C","lv":1,"ex":"Have you ever eaten sushi?","nota":""},{"w":"reserve","uk":"","pt":"reserva (natural)","pos":"noun","l":"2C","lv":2,"ex":"We visited a nature reserve.","nota":""},{"w":"adventurous","uk":"","pt":"aventureiro","pos":"adjective","l":"2C","lv":3,"ex":"My brother is very adventurous.","nota":""},{"w":"boring","uk":"","pt":"chato, entediante","pos":"adjective","l":"2D","lv":1,"ex":"That museum was boring.","nota":""},{"w":"pretty","uk":"","pt":"bonito","pos":"adjective","l":"2D","lv":1,"ex":"What a pretty village!","nota":""},{"w":"lively","uk":"","pt":"animado, cheio de vida","pos":"adjective","l":"2D","lv":1,"ex":"Salvador is a lively city.","nota":""},{"w":"magical","uk":"","pt":"mágico","pos":"adjective","l":"2D","lv":1,"ex":"This is such a magical place!","nota":""},{"w":"crowded","uk":"","pt":"lotado","pos":"adjective","l":"2D","lv":1,"ex":"The beach was too crowded.","nota":""},{"w":"elegant","uk":"","pt":"elegante","pos":"adjective","l":"2D","lv":2,"ex":"We stayed in an elegant hotel.","nota":""},{"w":"beautiful","uk":"","pt":"lindo","pos":"adjective","l":"2D","lv":3,"ex":"Brazil is a beautiful country.","nota":""},{"w":"incredible","uk":"","pt":"incrível","pos":"adjective","l":"2D","lv":2,"ex":"The view was incredible.","nota":""},{"w":"incredibly","uk":"","pt":"incrivelmente","pos":"adverb","l":"2D","lv":3,"ex":"The city is incredibly beautiful.","nota":""},{"w":"memorable","uk":"","pt":"memorável","pos":"adjective","l":"2D","lv":2,"ex":"It was a memorable trip.","nota":""},{"w":"stressful","uk":"","pt":"estressante","pos":"adjective","l":"2D","lv":2,"ex":"Traveling with small kids can be stressful.","nota":""},{"w":"traditional","uk":"","pt":"tradicional","pos":"adjective","l":"2D","lv":2,"ex":"We tried some traditional food.","nota":""},{"w":"world-famous","uk":"","pt":"mundialmente famoso","pos":"adjective","l":"2D","lv":2,"ex":"Rio de Janeiro is a world-famous city.","nota":"Com hífen."},{"w":"worth","uk":"","pt":"que vale (a pena)","pos":"adjective","l":"2E","lv":1,"ex":"The museum is worth a visit.","nota":""},{"w":"spicy","uk":"","pt":"apimentado","pos":"adjective","l":"2E","lv":1,"ex":"Mexican food is very spicy.","nota":""},{"w":"paradise","uk":"","pt":"paraíso","pos":"noun","l":"2E","lv":1,"ex":"This beach is a paradise!","nota":""},{"w":"must-see","uk":"","pt":"imperdível","pos":"noun","l":"2E","lv":2,"ex":"The Eiffel Tower is a must-see.","nota":"Com hífen."},{"w":"sightseeing","uk":"","pt":"passeio turístico","pos":"noun","l":"2E","lv":3,"ex":"We went sightseeing in London.","nota":""},{"w":"criticize","uk":"criticise","pt":"criticar","pos":"verb","l":"2E","lv":3,"ex":"Don't criticize other people's taste.","nota":""},{"w":"roller coaster","uk":"rollercoaster","pt":"montanha-russa","pos":"noun","l":"2E","lv":3,"ex":"The roller coaster was really scary!","nota":"Nos EUA, em duas palavras; no Reino Unido também aparece junto."},{"w":"habitat","uk":"","pt":"habitat","pos":"noun","l":"OTY2","lv":1,"ex":"The forest is the natural habitat of many animals.","nota":""},{"w":"tortoise","uk":"","pt":"tartaruga terrestre, jabuti","pos":"noun","l":"OTY2","lv":3,"ex":"The giant tortoise can live for 100 years.","nota":""},{"w":"gigantic","uk":"","pt":"gigantesco","pos":"adjective","l":"OTY2","lv":2,"ex":"We saw a gigantic turtle.","nota":""},{"w":"vegetation","uk":"","pt":"vegetação","pos":"noun","l":"OTY2","lv":2,"ex":"The island has very little vegetation.","nota":""},{"w":"destination","uk":"","pt":"destino","pos":"noun","l":"OTY2","lv":2,"ex":"Fernando de Noronha is a popular destination.","nota":""},{"w":"archipelago","uk":"","pt":"arquipélago","pos":"noun","l":"OTY2","lv":3,"ex":"The Galapagos is an archipelago in the Pacific.","nota":""},{"w":"exotic","uk":"","pt":"exótico","pos":"adjective","l":"REV2","lv":1,"ex":"They sell exotic fruit at the market.","nota":""},{"w":"smartphone","uk":"","pt":"celular","pos":"noun","l":"3A","lv":1,"ex":"I can't live without my smartphone.","nota":""},{"w":"battery","uk":"","pt":"bateria","pos":"noun","l":"3A","lv":2,"ex":"My phone battery is low.","nota":""},{"w":"afford","uk":"","pt":"ter dinheiro para","pos":"verb","l":"3A","lv":2,"ex":"I can't afford a new phone.","nota":""},{"w":"typewriter","uk":"","pt":"máquina de escrever","pos":"noun","l":"3A","lv":2,"ex":"My grandpa used to write on a typewriter.","nota":""},{"w":"accessories","uk":"","pt":"acessórios","pos":"noun","l":"3A","lv":3,"ex":"The store sells phone accessories.","nota":""},{"w":"consumerism","uk":"","pt":"consumismo","pos":"noun","l":"3A","lv":3,"ex":"I just can't stand this consumerism.","nota":""},{"w":"communication","uk":"","pt":"comunicação","pos":"noun","l":"3A","lv":3,"ex":"The internet made communication much faster.","nota":""},{"w":"useless","uk":"","pt":"inútil","pos":"adjective","l":"3B","lv":1,"ex":"This old phone is useless now.","nota":""},{"w":"survey","uk":"","pt":"pesquisa, enquete","pos":"noun","l":"3B","lv":2,"ex":"We did a survey about our classmates.","nota":""},{"w":"message","uk":"","pt":"mensagem","pos":"noun","l":"3B","lv":2,"ex":"Send me a message when you get home.","nota":""},{"w":"electricity","uk":"","pt":"eletricidade","pos":"noun","l":"3B","lv":3,"ex":"People had no electricity in the past.","nota":""},{"w":"old-fashioned","uk":"","pt":"antiquado","pos":"adjective","l":"3B","lv":3,"ex":"Letters are a bit old-fashioned.","nota":"Com hífen."},{"w":"infographic","uk":"","pt":"infográfico","pos":"noun","l":"3B","lv":2,"ex":"Read the infographic about communication tools.","nota":""},{"w":"telegraph","uk":"","pt":"telégrafo","pos":"noun","l":"3B","lv":3,"ex":"People used the telegraph to send messages.","nota":""},{"w":"telephone","uk":"","pt":"telefone","pos":"noun","l":"3B","lv":2,"ex":"The telephone was invented in 1876.","nota":""},{"w":"really","uk":"","pt":"realmente","pos":"adverb","l":"3C","lv":1,"ex":"I really like this song.","nota":""},{"w":"clearly","uk":"","pt":"claramente","pos":"adverb","l":"3C","lv":1,"ex":"Clearly, she doesn't want to talk.","nota":""},{"w":"totally","uk":"","pt":"totalmente","pos":"adverb","l":"3C","lv":2,"ex":"I totally agree with you.","nota":""},{"w":"obviously","uk":"","pt":"obviamente","pos":"adverb","l":"3C","lv":3,"ex":"Obviously, I'll help you!","nota":""},{"w":"seriously","uk":"","pt":"seriamente","pos":"adverb","l":"3C","lv":3,"ex":"I'm seriously worried about the test.","nota":""},{"w":"especially","uk":"","pt":"especialmente","pos":"adverb","l":"3C","lv":3,"ex":"I love fruit, especially mango.","nota":""},{"w":"completely","uk":"","pt":"completamente","pos":"adverb","l":"3C","lv":2,"ex":"The test was completely different.","nota":""},{"w":"particularly","uk":"","pt":"particularmente","pos":"adverb","l":"3C","lv":3,"ex":"Math is particularly difficult for me.","nota":""},{"w":"emphasize","uk":"emphasise","pt":"enfatizar","pos":"verb","l":"3C","lv":3,"ex":"Use adverbs to emphasize your ideas.","nota":""},{"w":"fake","uk":"","pt":"falso","pos":"adjective","l":"3D","lv":1,"ex":"That news story is fake.","nota":""},{"w":"trust","uk":"","pt":"confiar","pos":"verb","l":"3D","lv":1,"ex":"Don't trust everything you read online.","nota":""},{"w":"headline","uk":"","pt":"manchete","pos":"noun","l":"3D","lv":1,"ex":"Read the headline before the story.","nota":""},{"w":"doubt","uk":"","pt":"duvidar","pos":"verb","l":"3D","lv":2,"ex":"I doubt that story is true.","nota":""},{"w":"nonsense","uk":"","pt":"bobagem, absurdo","pos":"noun","l":"3D","lv":2,"ex":"That story is complete nonsense!","nota":""},{"w":"reliable","uk":"","pt":"confiável","pos":"adjective","l":"3D","lv":3,"ex":"Is this website reliable?","nota":""},{"w":"poisonous","uk":"","pt":"venenoso","pos":"adjective","l":"3D","lv":3,"ex":"Some mushrooms are poisonous.","nota":""},{"w":"suspicious","uk":"","pt":"suspeito","pos":"adjective","l":"3D","lv":3,"ex":"This post looks suspicious.","nota":""},{"w":"fact-check","uk":"","pt":"checar os fatos","pos":"verb","l":"3D","lv":2,"ex":"Always fact-check a story before you share it.","nota":"Com hífen."},{"w":"recognize","uk":"recognise","pt":"reconhecer","pos":"verb","l":"3D","lv":3,"ex":"Can you recognize fake news?","nota":""},{"w":"reporter","uk":"","pt":"repórter","pos":"noun","l":"3E","lv":1,"ex":"The reporter interviewed the students.","nota":""},{"w":"canteen","uk":"","pt":"cantina, refeitório","pos":"noun","l":"3E","lv":2,"ex":"We have lunch in the school canteen.","nota":"Nos EUA é mais comum cafeteria."},{"w":"journalist","uk":"","pt":"jornalista","pos":"noun","l":"3E","lv":2,"ex":"The journalist wrote about our school.","nota":""},{"w":"incident","uk":"","pt":"incidente","pos":"noun","l":"3E","lv":2,"ex":"There was an incident at school yesterday.","nota":""},{"w":"aggressive","uk":"","pt":"agressivo","pos":"adjective","l":"3E","lv":3,"ex":"Don't be aggressive with your classmates.","nota":""},{"w":"harmful","uk":"","pt":"prejudicial","pos":"adjective","l":"OTY3","lv":1,"ex":"Too much screen time is harmful.","nota":""},{"w":"resign","uk":"","pt":"renunciar","pos":"verb","l":"OTY3","lv":3,"ex":"The minister decided to resign.","nota":""},{"w":"protester","uk":"","pt":"manifestante","pos":"noun","l":"OTY3","lv":2,"ex":"A protester held a big sign.","nota":""},{"w":"technology","uk":"","pt":"tecnologia","pos":"noun","l":"OTY3","lv":3,"ex":"Technology changes very fast.","nota":""},{"w":"demonstration","uk":"","pt":"manifestação","pos":"noun","l":"OTY3","lv":3,"ex":"There was a demonstration downtown.","nota":""},{"w":"dessert","uk":"","pt":"sobremesa","pos":"noun","l":"REV3","lv":3,"ex":"We had ice cream for dessert.","nota":""}]},{"id":"9","nome":"9º ano","livro":"Mind Flow 2","unidades":"Units 1 a 4","temas":"Teenage World · Stories · Travelling · Culture","palavras":[{"w":"active","uk":"","pt":"ativo","pos":"adjective","l":"1A","lv":1,"ex":"My grandma is very active; she walks every day.","nota":""},{"w":"bold","uk":"","pt":"ousado, corajoso","pos":"adjective","l":"1A","lv":1,"ex":"She is bold and not afraid of challenges.","nota":""},{"w":"moody","uk":"","pt":"temperamental","pos":"adjective","l":"1A","lv":1,"ex":"Teenagers can be moody sometimes.","nota":""},{"w":"smart","uk":"","pt":"inteligente, esperto","pos":"adjective","l":"1A","lv":1,"ex":"She is a smart student.","nota":""},{"w":"trendy","uk":"","pt":"na moda, descolado","pos":"adjective","l":"1A","lv":1,"ex":"He always wears trendy clothes.","nota":""},{"w":"vain","uk":"","pt":"vaidoso","pos":"adjective","l":"1A","lv":1,"ex":"He's so vain! He looks in the mirror all the time.","nota":""},{"w":"cheeky","uk":"","pt":"atrevido, abusado","pos":"adjective","l":"1A","lv":2,"ex":"Don't be cheeky with your teacher!","nota":""},{"w":"cheerful","uk":"","pt":"alegre, animado","pos":"adjective","l":"1A","lv":2,"ex":"He is always cheerful in the morning.","nota":""},{"w":"outgoing","uk":"","pt":"extrovertido","pos":"adjective","l":"1A","lv":2,"ex":"She is outgoing and makes friends easily.","nota":""},{"w":"reserved","uk":"","pt":"reservado","pos":"adjective","l":"1A","lv":2,"ex":"My brother is quiet and reserved.","nota":""},{"w":"skinny","uk":"","pt":"justo (calça skinny)","pos":"adjective","l":"1B","lv":1,"ex":"I prefer skinny jeans.","nota":""},{"w":"baggy","uk":"","pt":"largo, folgado","pos":"adjective","l":"1B","lv":1,"ex":"Hip-hop fans love baggy clothes.","nota":""},{"w":"striped","uk":"","pt":"listrado","pos":"adjective","l":"1B","lv":1,"ex":"She's wearing a striped T-shirt.","nota":""},{"w":"denim","uk":"","pt":"brim, jeans","pos":"noun","l":"1B","lv":1,"ex":"I love my denim jacket.","nota":""},{"w":"flared","uk":"","pt":"boca de sino","pos":"adjective","l":"1B","lv":2,"ex":"My mom used to wear flared jeans.","nota":""},{"w":"leather","uk":"","pt":"couro","pos":"noun","l":"1B","lv":2,"ex":"He has a black leather jacket.","nota":""},{"w":"flannel","uk":"","pt":"flanela","pos":"noun","l":"1B","lv":2,"ex":"Grunge bands wore flannel shirts.","nota":""},{"w":"gorgeous","uk":"","pt":"lindo, maravilhoso","pos":"adjective","l":"1B","lv":3,"ex":"What a gorgeous dress!","nota":""},{"w":"hideous","uk":"","pt":"horroroso","pos":"adjective","l":"1B","lv":3,"ex":"That green jacket is hideous!","nota":""},{"w":"comfortable","uk":"","pt":"confortável","pos":"adjective","l":"1B","lv":3,"ex":"These sneakers are very comfortable.","nota":""},{"w":"colorful","uk":"colourful","pt":"colorido","pos":"adjective","l":"1B","lv":3,"ex":"Her clothes are always colorful.","nota":""},{"w":"selfie","uk":"","pt":"selfie","pos":"noun","l":"1C","lv":1,"ex":"Let's take a selfie!","nota":""},{"w":"download","uk":"","pt":"baixar","pos":"verb","l":"1C","lv":1,"ex":"Download the app on your phone.","nota":""},{"w":"texting","uk":"","pt":"troca de mensagens","pos":"noun","l":"1C","lv":1,"ex":"Texting while walking is dangerous.","nota":""},{"w":"browse","uk":"","pt":"navegar (na internet)","pos":"verb","l":"1C","lv":2,"ex":"I browse the internet every night.","nota":""},{"w":"smartphone","uk":"","pt":"celular","pos":"noun","l":"1C","lv":2,"ex":"Most teens have a smartphone.","nota":""},{"w":"rule","uk":"","pt":"regra","pos":"noun","l":"1D","lv":1,"ex":"That's the rule in our house.","nota":""},{"w":"strict","uk":"","pt":"rígido, severo","pos":"adjective","l":"1D","lv":1,"ex":"My parents are very strict.","nota":""},{"w":"allowed","uk":"","pt":"permitido","pos":"adjective","l":"1D","lv":2,"ex":"We aren't allowed to use phones in class.","nota":""},{"w":"liberal","uk":"","pt":"liberal, permissivo","pos":"adjective","l":"1D","lv":2,"ex":"Her parents are quite liberal.","nota":""},{"w":"permission","uk":"","pt":"permissão","pos":"noun","l":"1D","lv":3,"ex":"You need permission to leave the classroom.","nota":""},{"w":"mainly","uk":"","pt":"principalmente","pos":"adverb","l":"1E","lv":2,"ex":"Teens mainly use their phones to chat.","nota":""},{"w":"conclusion","uk":"","pt":"conclusão","pos":"noun","l":"1E","lv":3,"ex":"In conclusion, life today is easier.","nota":""},{"w":"civilization","uk":"civilisation","pt":"civilização","pos":"noun","l":"1E","lv":3,"ex":"The Roman civilization was very advanced.","nota":""},{"w":"especially","uk":"","pt":"especialmente","pos":"adverb","l":"1E","lv":3,"ex":"I love music, especially rock.","nota":""},{"w":"entertainment","uk":"","pt":"entretenimento","pos":"noun","l":"1E","lv":3,"ex":"The Romans loved entertainment at the Colosseum.","nota":""},{"w":"fable","uk":"","pt":"fábula","pos":"noun","l":"2A","lv":1,"ex":"In the fable, the tortoise wins the race.","nota":""},{"w":"fairy tale","uk":"","pt":"conto de fadas","pos":"noun","l":"2A","lv":2,"ex":"Cinderella is a famous fairy tale.","nota":"Duas palavras."},{"w":"fantasy","uk":"","pt":"fantasia","pos":"noun","l":"2A","lv":2,"ex":"I love fantasy stories with dragons.","nota":""},{"w":"horror","uk":"","pt":"terror","pos":"noun","l":"2A","lv":2,"ex":"I can't watch horror movies alone.","nota":""},{"w":"mystery","uk":"","pt":"mistério","pos":"noun","l":"2A","lv":2,"ex":"It's a mystery story about a missing ring.","nota":""},{"w":"storyteller","uk":"","pt":"contador de histórias","pos":"noun","l":"2A","lv":2,"ex":"The storyteller told us an old legend.","nota":""},{"w":"knight","uk":"","pt":"cavaleiro","pos":"noun","l":"2A","lv":3,"ex":"The knight saved the princess.","nota":""},{"w":"award","uk":"","pt":"prêmio","pos":"noun","l":"2B","lv":1,"ex":"She won an award for her story.","nota":""},{"w":"pitch","uk":"","pt":"campo (de futebol)","pos":"noun","l":"2B","lv":1,"ex":"The players ran onto the pitch.","nota":"Nos EUA é mais comum field."},{"w":"village","uk":"","pt":"vila, aldeia","pos":"noun","l":"2B","lv":2,"ex":"She grew up in a small village.","nota":""},{"w":"footballer","uk":"","pt":"jogador de futebol","pos":"noun","l":"2B","lv":2,"ex":"Neymar is a famous footballer.","nota":"Nos EUA: soccer player."},{"w":"community","uk":"","pt":"comunidade","pos":"noun","l":"2B","lv":3,"ex":"He helps people in his community.","nota":""},{"w":"competition","uk":"","pt":"competição, concurso","pos":"noun","l":"2B","lv":3,"ex":"She won a writing competition.","nota":""},{"w":"sail","uk":"","pt":"velejar","pos":"verb","l":"2C","lv":1,"ex":"She learned to sail when she was ten.","nota":""},{"w":"feat","uk":"","pt":"façanha","pos":"noun","l":"2C","lv":1,"ex":"Climbing Everest is an amazing feat.","nota":""},{"w":"journey","uk":"","pt":"jornada, viagem","pos":"noun","l":"2C","lv":2,"ex":"The journey around the world took two years.","nota":""},{"w":"voyage","uk":"","pt":"viagem (por mar)","pos":"noun","l":"2C","lv":2,"ex":"Their voyage across the ocean was dangerous.","nota":""},{"w":"achievement","uk":"","pt":"conquista","pos":"noun","l":"2C","lv":3,"ex":"Sailing around the world was a great achievement.","nota":""},{"w":"adventurer","uk":"","pt":"aventureiro","pos":"noun","l":"2C","lv":3,"ex":"The young adventurer sailed alone.","nota":""},{"w":"fulfill","uk":"fulfil","pt":"realizar, cumprir","pos":"verb","l":"2C","lv":3,"ex":"She wants to fulfill her dream.","nota":""},{"w":"itinerary","uk":"","pt":"roteiro, itinerário","pos":"noun","l":"2C","lv":3,"ex":"Our itinerary includes three cities.","nota":""},{"w":"spooky","uk":"","pt":"assustador","pos":"adjective","l":"2D","lv":1,"ex":"The old house is really spooky.","nota":""},{"w":"scream","uk":"","pt":"gritar","pos":"verb","l":"2D","lv":1,"ex":"I heard someone scream in the dark.","nota":""},{"w":"chime","uk":"","pt":"badalar","pos":"verb","l":"2D","lv":1,"ex":"The clock started to chime at midnight.","nota":""},{"w":"howl","uk":"","pt":"uivar","pos":"verb","l":"2D","lv":1,"ex":"The wolves howl at the moon.","nota":""},{"w":"gasp","uk":"","pt":"arfar (de susto)","pos":"verb","l":"2D","lv":1,"ex":"I heard a gasp in the dark room.","nota":""},{"w":"creak","uk":"","pt":"ranger","pos":"verb","l":"2D","lv":2,"ex":"The old floor began to creak.","nota":""},{"w":"gravestone","uk":"","pt":"lápide","pos":"noun","l":"2D","lv":2,"ex":"There was a name on the gravestone.","nota":""},{"w":"cemetery","uk":"","pt":"cemitério","pos":"noun","l":"2D","lv":3,"ex":"They walked past the old cemetery.","nota":""},{"w":"plot","uk":"","pt":"enredo","pos":"noun","l":"2E","lv":1,"ex":"The plot of this book is amazing.","nota":""},{"w":"climax","uk":"","pt":"clímax","pos":"noun","l":"2E","lv":2,"ex":"The climax is the most exciting part of the story.","nota":""},{"w":"conflict","uk":"","pt":"conflito","pos":"noun","l":"2E","lv":2,"ex":"Every good story has a conflict.","nota":""},{"w":"setting","uk":"","pt":"ambientação","pos":"noun","l":"2E","lv":2,"ex":"The setting of the story is a small town.","nota":""},{"w":"character","uk":"","pt":"personagem","pos":"noun","l":"2E","lv":3,"ex":"The main character is a brave girl.","nota":""},{"w":"exposition","uk":"","pt":"apresentação inicial da história","pos":"noun","l":"2E","lv":3,"ex":"The exposition introduces the characters.","nota":""},{"w":"resolution","uk":"","pt":"desfecho","pos":"noun","l":"2E","lv":3,"ex":"In the resolution, the problem is solved.","nota":""},{"w":"abroad","uk":"","pt":"no exterior","pos":"adverb","l":"3A","lv":2,"ex":"I'd love to study abroad.","nota":""},{"w":"nightlife","uk":"","pt":"vida noturna","pos":"noun","l":"3A","lv":2,"ex":"The city has a great nightlife.","nota":""},{"w":"traveler","uk":"traveller","pt":"viajante","pos":"noun","l":"3A","lv":3,"ex":"A traveler likes to meet local people.","nota":""},{"w":"attraction","uk":"","pt":"atração","pos":"noun","l":"3A","lv":3,"ex":"The Christ statue is Rio's main attraction.","nota":""},{"w":"destination","uk":"","pt":"destino","pos":"noun","l":"3A","lv":3,"ex":"Bahia is a popular destination.","nota":""},{"w":"sightseeing","uk":"","pt":"passeio turístico","pos":"noun","l":"3A","lv":3,"ex":"Tourists love sightseeing.","nota":""},{"w":"accommodation","uk":"","pt":"hospedagem","pos":"noun","l":"3A","lv":3,"ex":"We need to find accommodation in Paris.","nota":""},{"w":"coach","uk":"","pt":"ônibus de viagem","pos":"noun","l":"3B","lv":1,"ex":"We took a coach to the city.","nota":"Nos EUA é mais comum bus."},{"w":"ferry","uk":"","pt":"balsa","pos":"noun","l":"3B","lv":2,"ex":"The ferry leaves every hour.","nota":""},{"w":"seaplane","uk":"","pt":"hidroavião","pos":"noun","l":"3B","lv":2,"ex":"We flew over the islands in a seaplane.","nota":""},{"w":"haunted","uk":"","pt":"mal-assombrado","pos":"adjective","l":"3B","lv":2,"ex":"We went on a tour of a haunted castle.","nota":""},{"w":"underground","uk":"","pt":"metrô","pos":"noun","l":"3B","lv":2,"ex":"Take the underground to the museum.","nota":"Nos EUA: subway."},{"w":"reliable","uk":"","pt":"confiável","pos":"adjective","l":"3B","lv":3,"ex":"The trains here are very reliable.","nota":""},{"w":"reasonable","uk":"","pt":"razoável","pos":"adjective","l":"3B","lv":3,"ex":"The price of the tour is reasonable.","nota":""},{"w":"hostel","uk":"","pt":"albergue","pos":"noun","l":"3C","lv":1,"ex":"Backpackers often stay in a hostel.","nota":""},{"w":"resort","uk":"","pt":"resort","pos":"noun","l":"3C","lv":2,"ex":"The resort has three swimming pools.","nota":""},{"w":"superb","uk":"","pt":"excelente","pos":"adjective","l":"3C","lv":2,"ex":"The breakfast was superb.","nota":""},{"w":"hiccup","uk":"","pt":"contratempo","pos":"noun","l":"3C","lv":2,"ex":"There was a small hiccup with our booking.","nota":""},{"w":"guesthouse","uk":"","pt":"pousada","pos":"noun","l":"3C","lv":2,"ex":"We stayed at a small guesthouse by the beach.","nota":""},{"w":"facilities","uk":"","pt":"instalações","pos":"noun","l":"3C","lv":3,"ex":"The hotel has excellent facilities.","nota":""},{"w":"magnificent","uk":"","pt":"magnífico","pos":"adjective","l":"3C","lv":3,"ex":"The view from the room was magnificent.","nota":""},{"w":"luggage","uk":"","pt":"bagagem","pos":"noun","l":"3D","lv":2,"ex":"Don't forget your luggage!","nota":""},{"w":"backpacking","uk":"","pt":"mochilão","pos":"noun","l":"3D","lv":2,"ex":"We went backpacking in Chile.","nota":""},{"w":"program","uk":"programme","pt":"programa","pos":"noun","l":"3D","lv":3,"ex":"I want to join an exchange program.","nota":""},{"w":"advantage","uk":"","pt":"vantagem","pos":"noun","l":"3D","lv":3,"ex":"One advantage of camping is the price.","nota":""},{"w":"affordable","uk":"","pt":"acessível (preço)","pos":"adjective","l":"3D","lv":3,"ex":"This trip is affordable for students.","nota":""},{"w":"ecotourism","uk":"","pt":"ecoturismo","pos":"noun","l":"3D","lv":3,"ex":"Ecotourism helps protect nature.","nota":""},{"w":"voluntourism","uk":"","pt":"turismo voluntário","pos":"noun","l":"3D","lv":3,"ex":"Voluntourism mixes travel and volunteer work.","nota":""},{"w":"sunscreen","uk":"","pt":"protetor solar","pos":"noun","l":"3E","lv":1,"ex":"Put on sunscreen before you go out.","nota":""},{"w":"weird","uk":"","pt":"estranho, esquisito","pos":"adjective","l":"3E","lv":2,"ex":"That food tasted weird.","nota":""},{"w":"backpacker","uk":"","pt":"mochileiro","pos":"noun","l":"3E","lv":2,"ex":"The backpacker wrote emails to her mom.","nota":""},{"w":"guidebook","uk":"","pt":"guia de viagem","pos":"noun","l":"3E","lv":2,"ex":"The guidebook has a map of the city.","nota":""},{"w":"sunglasses","uk":"","pt":"óculos de sol","pos":"noun","l":"3E","lv":2,"ex":"I need my sunglasses at the beach.","nota":""},{"w":"flip-flops","uk":"","pt":"chinelos","pos":"noun","l":"3E","lv":2,"ex":"Don't forget your flip-flops!","nota":"Com hífen."},{"w":"scenery","uk":"","pt":"paisagem","pos":"noun","l":"3E","lv":3,"ex":"The scenery in Patagonia is breathtaking.","nota":""},{"w":"hilarious","uk":"","pt":"hilário","pos":"adjective","l":"3E","lv":3,"ex":"The movie was hilarious!","nota":""},{"w":"souvenir","uk":"","pt":"lembrancinha","pos":"noun","l":"3E","lv":3,"ex":"I bought a souvenir for my mom.","nota":""},{"w":"repellent","uk":"","pt":"repelente","pos":"noun","l":"3E","lv":3,"ex":"Bring insect repellent to the jungle.","nota":""},{"w":"German","uk":"","pt":"alemão","pos":"adjective","l":"4A","lv":1,"ex":"My neighbor is German.","nota":""},{"w":"Polish","uk":"","pt":"polonês","pos":"adjective","l":"4A","lv":1,"ex":"My grandparents are Polish.","nota":""},{"w":"Dutch","uk":"","pt":"holandês","pos":"adjective","l":"4A","lv":1,"ex":"The Dutch love riding bikes.","nota":""},{"w":"Irish","uk":"","pt":"irlandês","pos":"adjective","l":"4A","lv":1,"ex":"The Irish celebrate St. Patrick's Day.","nota":""},{"w":"Swiss","uk":"","pt":"suíço","pos":"adjective","l":"4A","lv":1,"ex":"The Swiss produce excellent chocolate.","nota":""},{"w":"French","uk":"","pt":"francês","pos":"adjective","l":"4A","lv":1,"ex":"The French love bread and cheese.","nota":""},{"w":"Spanish","uk":"","pt":"espanhol","pos":"adjective","l":"4A","lv":1,"ex":"Paella is a Spanish dish.","nota":""},{"w":"Chinese","uk":"","pt":"chinês","pos":"adjective","l":"4A","lv":2,"ex":"The Chinese are famous for their porcelain.","nota":""},{"w":"Chilean","uk":"","pt":"chileno","pos":"adjective","l":"4A","lv":2,"ex":"Chilean food is delicious.","nota":""},{"w":"Italian","uk":"","pt":"italiano","pos":"adjective","l":"4A","lv":2,"ex":"I love Italian food.","nota":""},{"w":"Turkish","uk":"","pt":"turco","pos":"adjective","l":"4A","lv":2,"ex":"Turkish coffee is very strong.","nota":""},{"w":"Brazilian","uk":"","pt":"brasileiro","pos":"adjective","l":"4A","lv":2,"ex":"Feijoada is a Brazilian dish.","nota":""},{"w":"Japanese","uk":"","pt":"japonês","pos":"adjective","l":"4A","lv":2,"ex":"Sushi is a Japanese dish.","nota":""},{"w":"Swedish","uk":"","pt":"sueco","pos":"adjective","l":"4A","lv":2,"ex":"IKEA is a Swedish company.","nota":""},{"w":"Korean","uk":"","pt":"coreano","pos":"adjective","l":"4A","lv":2,"ex":"K-pop is Korean music.","nota":""},{"w":"Australian","uk":"","pt":"australiano","pos":"adjective","l":"4A","lv":3,"ex":"The kangaroo is an Australian symbol.","nota":""},{"w":"Portuguese","uk":"","pt":"português","pos":"adjective","l":"4A","lv":3,"ex":"Brazilians speak Portuguese.","nota":""},{"w":"Argentinian","uk":"","pt":"argentino","pos":"adjective","l":"4A","lv":3,"ex":"Messi is Argentinian.","nota":"Nos EUA também se diz Argentine."},{"w":"Congolese","uk":"","pt":"congolês","pos":"adjective","l":"4A","lv":3,"ex":"Congolese music is popular all over Africa.","nota":""},{"w":"diversity","uk":"","pt":"diversidade","pos":"noun","l":"4A","lv":3,"ex":"Brazil is famous for its diversity.","nota":""},{"w":"tolerance","uk":"","pt":"tolerância","pos":"noun","l":"4A","lv":3,"ex":"We need more tolerance in the world.","nota":""},{"w":"unfair","uk":"","pt":"injusto","pos":"adjective","l":"4B","lv":1,"ex":"Stereotypes are often unfair.","nota":""},{"w":"label","uk":"","pt":"rótulo","pos":"noun","l":"4B","lv":1,"ex":"Don't put a label on people.","nota":""},{"w":"uncommon","uk":"","pt":"incomum","pos":"adjective","l":"4B","lv":2,"ex":"It's uncommon to see snow in Brazil.","nota":""},{"w":"stereotype","uk":"","pt":"estereótipo","pos":"noun","l":"4B","lv":3,"ex":"Not all Brazilians play football. That's a stereotype.","nota":""},{"w":"offensive","uk":"","pt":"ofensivo","pos":"adjective","l":"4B","lv":3,"ex":"Some jokes can be offensive.","nota":""},{"w":"generalization","uk":"generalisation","pt":"generalização","pos":"noun","l":"4B","lv":3,"ex":"That's an unfair generalization.","nota":""},{"w":"custom","uk":"","pt":"costume, tradição","pos":"noun","l":"4C","lv":1,"ex":"Taking off your shoes at home is a Japanese custom.","nota":""},{"w":"fussy","uk":"","pt":"exigente, fresco","pos":"adjective","l":"4C","lv":2,"ex":"He's very fussy about food.","nota":""},{"w":"weather","uk":"","pt":"clima, tempo","pos":"noun","l":"4C","lv":2,"ex":"The weather in London changes a lot.","nota":""},{"w":"language","uk":"","pt":"idioma, língua","pos":"noun","l":"4C","lv":3,"ex":"English is an international language.","nota":""},{"w":"behavior","uk":"behaviour","pt":"comportamento","pos":"noun","l":"4C","lv":3,"ex":"His behavior at the party was strange.","nota":""},{"w":"greet","uk":"","pt":"cumprimentar","pos":"verb","l":"4D","lv":1,"ex":"How do people greet each other in Japan?","nota":""},{"w":"bow","uk":"","pt":"fazer reverência","pos":"verb","l":"4D","lv":1,"ex":"In Japan, people bow to say hello.","nota":""},{"w":"cheek","uk":"","pt":"bochecha","pos":"noun","l":"4D","lv":1,"ex":"In Brazil, we kiss on the cheek.","nota":""},{"w":"stare","uk":"","pt":"encarar","pos":"verb","l":"4D","lv":1,"ex":"It's rude to stare at people.","nota":""},{"w":"gaffe","uk":"","pt":"gafe","pos":"noun","l":"4D","lv":3,"ex":"I made a gaffe at dinner with my host family.","nota":""},{"w":"advice","uk":"","pt":"conselho","pos":"noun","l":"4E","lv":2,"ex":"Can you give me some advice?","nota":""},{"w":"homesick","uk":"","pt":"com saudade de casa","pos":"adjective","l":"4E","lv":2,"ex":"I felt homesick during my exchange.","nota":""},{"w":"willing","uk":"","pt":"disposto","pos":"adjective","l":"4E","lv":2,"ex":"Are you willing to try new food?","nota":""},{"w":"lifesaver","uk":"","pt":"salvação, mão na roda","pos":"noun","l":"4E","lv":2,"ex":"This app was a lifesaver on my trip.","nota":""},{"w":"flexible","uk":"","pt":"flexível","pos":"adjective","l":"4E","lv":3,"ex":"You need to be flexible when you travel.","nota":""},{"w":"foreigner","uk":"","pt":"estrangeiro","pos":"noun","l":"4E","lv":3,"ex":"As a foreigner, I learned a lot.","nota":""},{"w":"insurance","uk":"","pt":"seguro","pos":"noun","l":"4E","lv":3,"ex":"Don't travel without travel insurance.","nota":""},{"w":"advise","uk":"","pt":"aconselhar","pos":"verb","l":"4E","lv":3,"ex":"I advise you to learn a few words in Japanese.","nota":""}]}]};
+</script>
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const NIV = {1:{nome:'Fácil',c:'n1'},2:{nome:'Médio',c:'n2'},3:{nome:'Difícil',c:'n3'}};
+const CLASSE = {noun:'substantivo',verb:'verbo',adjective:'adjetivo',adverb:'advérbio',preposition:'preposição',number:'numeral',conjunction:'conjunção',phrase:'expressão',pronoun:'pronome','phrasal verb':'phrasal verb'};
+const CHAVE = 'spellingbee-darwin-2026';
+const CORES_TURMA = {'6':'var(--c6)','7':'var(--c7)','8':'var(--c8)','9':'var(--c9)'};
+
+/* ---------- estado salvo ---------- */
+function carregar(){
+  try{ const t = JSON.parse(localStorage.getItem(CHAVE) || 'null'); if (t && t.v === 1) return t; }catch(e){}
+  return {v:1, prefs:{esconder:true, som:true}, sorteio:{}, hist:{}};
+}
+const S = carregar();
+function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(S)); }catch(e){} }
+
+let turma = null, nivel = 1, segs = [], theta = -Math.PI/2, girando = false, atual = null, vencedor = -1, luz = 0;
+
+function sorteioDe(t){ return S.sorteio[t.id] || (S.sorteio[t.id] = {}); }
+function histDe(t){ return S.hist[t.id] || (S.hist[t.id] = []); }
+function restantes(t, n){ const s = sorteioDe(t); return t.palavras.filter(p => p.lv === n && !s[p.w]); }
+function contar(t, n){ return t.palavras.filter(p => p.lv === n).length; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function embaralhar(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function toast(msg){ const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+
+/* ---------- sons ---------- */
+let AC = null;
+function audio(){ if (!S.prefs.som) return null; try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); return AC; }catch(e){ return null; } }
+function nota(freq, ini, dur, tipo, vol){
+  const a = audio(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + ini;
+  o.type = tipo || 'sine'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || .18, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+}
+const som = {
+  tique(){ nota(1500, 0, .035, 'square', .05); },
+  vitoria(){ [523, 659, 784, 1047].forEach((f, i) => nota(f, i * .09, .35, 'triangle', .16)); },
+  letra(i){ nota(620 + i * 28, 0, .09, 'sine', .08); },
+  certo(){ [784, 988, 1175, 1568].forEach((f, i) => nota(f, i * .07, .4, 'triangle', .15)); },
+  errado(){ nota(180, 0, .22, 'sawtooth', .09); nota(140, .2, .34, 'sawtooth', .09); },
+};
+
+/* ---------- voz ---------- */
+let VOZ = null;
+function escolherVoz(){
+  if (!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices(); if (!vs.length) return;
+  const pref = [/Google US English/i, /Aria.*Natural/i, /Jenny.*Natural/i, /Guy.*Natural/i, /Natural.*English \(United States\)/i, /Samantha/i, /Zira/i, /David/i];
+  const us = vs.filter(v => /en[-_]US/i.test(v.lang));
+  for (const re of pref){ const v = us.find(v => re.test(v.name)); if (v){ VOZ = v; return; } }
+  VOZ = us[0] || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+if ('speechSynthesis' in window){ escolherVoz(); speechSynthesis.onvoiceschanged = escolherVoz; }
+function falar(texto, rate){
+  if (!('speechSynthesis' in window)) { toast('Este navegador não tem voz em inglês.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto); u.lang = 'en-US'; if (VOZ) u.voice = VOZ; u.rate = rate || .9;
+  speechSynthesis.speak(u);
+}
+function soletrar(p){ falar(p.w.replace(/[^A-Za-z]/g, c => c === '-' ? ' hyphen ' : ' ').split('').filter(c => c.trim()).join(', ').replace(/ ,/g, ',').toUpperCase().replace(/H, Y, P, H, E, N/g, 'hyphen'), .7); }
+
+/* ---------- início ---------- */
+function montarInicio(){
+  const caixa = $('#lista-turmas'); caixa.innerHTML = '';
+  DADOS.turmas.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'cartao-turma'; b.style.setProperty('--cor', CORES_TURMA[t.id]);
+    b.innerHTML = `<div class="hexa">${esc(t.id)}º</div>
+      <div><h2>${esc(t.nome)}</h2><div class="livro">${esc(t.livro)} · ${esc(t.unidades)}</div><div class="temas">${esc(t.temas)}</div>
+      <div class="contagens"><span class="pilula n1">${contar(t,1)} fáceis</span><span class="pilula n2">${contar(t,2)} médias</span><span class="pilula n3">${contar(t,3)} difíceis</span></div></div>`;
+    b.onclick = () => abrirTurma(t.id);
+    caixa.appendChild(b);
+  });
+}
+function mostrarInicio(){
+  turma = null; $('#sala').classList.add('oculto'); $('#inicio').classList.remove('oculto');
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
+
+/* ---------- sala ---------- */
+function abrirTurma(id){
+  const t = DADOS.turmas.find(x => x.id === id); if (!t) return mostrarInicio();
+  turma = t; atual = null; vencedor = -1;
+  if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+  $('#inicio').classList.add('oculto'); $('#sala').classList.remove('oculto');
+  $('#sala-hexa').textContent = t.id + 'º'; $('#sala-hexa').style.background = CORES_TURMA[t.id];
+  $('#sala-nome').textContent = t.nome; $('#sala-livro').textContent = t.livro + ' · ' + t.unidades;
+  escolherNivel(nivel, true);
+  cartaoVazio();
+  montarHistorico();
+  requestAnimationFrame(dimensionar);
+  window.scrollTo({top:0});
+}
+function montarNiveis(){
+  const caixa = $('#niveis'); caixa.innerHTML = '';
+  [1,2,3].forEach(n => {
+    const r = restantes(turma, n).length, tot = contar(turma, n);
+    const b = document.createElement('button');
+    b.className = 'nivel ' + NIV[n].c; b.setAttribute('aria-pressed', n === nivel);
+    b.innerHTML = `<span class="favo">${n}</span><span><b>${NIV[n].nome}</b><small>${r} de ${tot} na roleta</small></span>`;
+    b.onclick = () => escolherNivel(n);
+    caixa.appendChild(b);
+  });
+}
+function escolherNivel(n, novo){
+  if (girando) return;
+  const mudou = n !== nivel || novo; nivel = n;
+  montarNiveis();
+  if (mudou){ segs = embaralhar(restantes(turma, nivel)).slice(0, 12); preencherSegs(); vencedor = -1; }
+  atualizarRestam(); desenhar();
+}
+function preencherSegs(){
+  if (segs.length && segs.length < 4){ const base = segs.slice(); while (segs.length < 4) segs.push(base[segs.length % base.length]); }
+}
+function atualizarRestam(){
+  const r = restantes(turma, nivel).length;
+  $('#restam').textContent = r ? `${r} ${r === 1 ? 'palavra' : 'palavras'} de nível ${NIV[nivel].nome.toLowerCase()} na roleta` : `Todas as palavras deste nível já saíram`;
+  $('#bt-girar').disabled = !r;
+}
+function prepararSegs(){
+  const pool = restantes(turma, nivel); if (!pool.length){ segs = []; return; }
+  const N = Math.min(12, pool.length);
+  const unicos = [...new Set(segs)].filter(p => pool.includes(p));
+  const resto = embaralhar(pool.filter(p => !unicos.includes(p)));
+  const novo = []; const usados = new Set();
+  for (const s of segs){
+    if (novo.length >= N) break;
+    if (pool.includes(s) && !usados.has(s)){ novo.push(s); usados.add(s); }
+    else if (resto.length){ const r = resto.shift(); novo.push(r); usados.add(r); }
+  }
+  while (novo.length < N && resto.length){ const r = resto.shift(); novo.push(r); usados.add(r); }
+  segs = novo; preencherSegs();
+}
+
+/* ---------- roleta ---------- */
+const cv = $('#roda'), ctx = cv.getContext('2d');
+const CORES_SEG = ['#FFC21A', '#FFF0C2', '#F7A51E', '#FFE08A'];
+function corSeg(i, n){ if (n > 1 && i === n - 1 && (n - 1) % CORES_SEG.length === 0) return CORES_SEG[2]; return CORES_SEG[i % CORES_SEG.length]; }
+function dimensionar(){
+  const box = cv.parentElement.getBoundingClientRect(); if (!box.width) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cv.width = Math.round(box.width * dpr); cv.height = Math.round(box.width * dpr);
+  desenhar();
+}
+function desenhar(){
+  const W = cv.width; if (!W) return;
+  const c = W / 2, R = W / 2 * .985;
+  ctx.clearRect(0, 0, W, W);
+  ctx.beginPath(); ctx.arc(c, c, R, 0, 2 * Math.PI); ctx.fillStyle = '#5B3A0E'; ctx.fill();
+  const nb = 28;
+  for (let i = 0; i < nb; i++){
+    const a = i / nb * 2 * Math.PI + (girando ? 0 : 0);
+    ctx.beginPath(); ctx.arc(c + Math.cos(a) * R * .948, c + Math.sin(a) * R * .948, R * .02, 0, 2 * Math.PI);
+    const acesa = girando ? ((i + luz) % 3 === 0) : (i % 2 === 0);
+    ctx.fillStyle = acesa ? '#FFF7D1' : '#E9A515'; ctx.fill();
+  }
+  const rr = R * .905, n = segs.length;
+  if (!n){
+    ctx.beginPath(); ctx.arc(c, c, rr, 0, 2 * Math.PI); ctx.fillStyle = '#FFF0C2'; ctx.fill();
+    ctx.fillStyle = '#9C8763'; ctx.font = `700 ${R * .075}px Fredoka, Nunito, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Nível completo!', c, c - R * .42); return;
+  }
+  const seg = 2 * Math.PI / n;
+  for (let i = 0; i < n; i++){
+    const a0 = theta + i * seg;
+    ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, rr, a0, a0 + seg); ctx.closePath();
+    ctx.fillStyle = corSeg(i, n); ctx.fill();
+    ctx.lineWidth = Math.max(1, R * .006); ctx.strokeStyle = 'rgba(91,58,14,.45)'; ctx.stroke();
+  }
+  if (vencedor >= 0 && vencedor < n && !girando){
+    const a0 = theta + vencedor * seg;
+    ctx.save(); ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, rr, a0, a0 + seg); ctx.closePath();
+    ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fill(); ctx.lineWidth = R * .022; ctx.strokeStyle = '#3A2A12'; ctx.stroke(); ctx.restore();
+  }
+  const esconder = S.prefs.esconder;
+  for (let i = 0; i < n; i++){
+    const a = theta + i * seg + seg / 2;
+    if (esconder){
+      const fs = Math.min(R * .1, 2 * Math.PI * rr * .7 / n * .7);
+      ctx.save(); ctx.fillStyle = '#3A2A12'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `700 ${fs}px Fredoka, Nunito, sans-serif`;
+      ctx.fillText('?', c + Math.cos(a) * rr * .7, c + Math.sin(a) * rr * .7 + fs * .04);
+      ctx.restore(); continue;
+    }
+    ctx.save(); ctx.translate(c, c); ctx.rotate(a);
+    ctx.fillStyle = '#3A2A12'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const txt = esconder ? '?' : segs[i].w;
+    const maxW = rr * .64, maxH = 2 * Math.PI * rr * .6 / n * .78;
+    let fs = Math.min(maxH, R * (esconder ? .11 : .078));
+    ctx.font = `700 ${fs}px Fredoka, Nunito, sans-serif`;
+    const w = ctx.measureText(txt).width; if (w > maxW){ fs *= maxW / w; ctx.font = `700 ${fs}px Fredoka, Nunito, sans-serif`; }
+    ctx.fillText(txt, rr * .93, 0);
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(c, c, R * .2, 0, 2 * Math.PI); ctx.fillStyle = '#FFFDF4'; ctx.fill();
+  ctx.lineWidth = R * .035; ctx.strokeStyle = '#5B3A0E'; ctx.stroke();
+}
+function idxSob(){
+  const n = segs.length, seg = 2 * Math.PI / n;
+  let a = (1.5 * Math.PI - theta) % (2 * Math.PI); if (a < 0) a += 2 * Math.PI;
+  return Math.floor(a / seg) % n;
+}
+function girar(){
+  if (girando || !turma) return;
+  if (!restantes(turma, nivel).length){ toast('Todas as palavras deste nível já saíram. Escolha outro nível ou reinicie.'); return; }
+  prepararSegs(); vencedor = -1;
+  const n = segs.length, seg = 2 * Math.PI / n, k = Math.floor(Math.random() * n);
+  const alvo = 1.5 * Math.PI - (k + .5) * seg + (Math.random() - .5) * seg * .6;
+  let delta = ((alvo - theta) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  delta += 2 * Math.PI * (5 + Math.floor(Math.random() * 3));
+  const t0 = performance.now(), dur = 5000 + Math.random() * 900, th0 = theta;
+  girando = true; let ultimo = idxSob();
+  $('#bt-girar').disabled = true; $('#bt-girar').classList.add('apertado'); $('#cubo').classList.add('voa');
+  cartaoGirando(); audio();
+  function passo(t){
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+    theta = th0 + delta * e; luz = Math.floor(t / 110);
+    const i = idxSob(); if (i !== ultimo){ ultimo = i; som.tique(); const pt = $('#ponteiro'); pt.classList.remove('mexe'); void pt.offsetWidth; pt.classList.add('mexe'); }
+    desenhar();
+    if (p < 1) requestAnimationFrame(passo);
+    else {
+      theta = ((theta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      girando = false; vencedor = k; desenhar();
+      $('#bt-girar').classList.remove('apertado'); $('#cubo').classList.remove('voa');
+      sortear(segs[k]);
+    }
+  }
+  requestAnimationFrame(passo);
+}
+function sortear(p){
+  const s = sorteioDe(turma); s[p.w] = S.prefs.esconder ? 'd' : 'r';
+  const h = histDe(turma); const i = h.indexOf(p.w); if (i >= 0) h.splice(i, 1); h.unshift(p.w);
+  salvar(); som.vitoria();
+  atual = p; montarCartao(p, true);
+  montarNiveis(); atualizarRestam(); montarHistorico();
+}
+
+/* ---------- cartão ---------- */
+function cartaoVazio(){
+  const c = $('#cartao'); c.className = 'cartao';
+  c.innerHTML = `<div class="vazio"><svg><use href="#abelha"/></svg><h3>Pronto para sortear!</h3><p>Escolha o nível e gire a roleta. A palavra sorteada aparece aqui.</p></div>`;
+}
+function cartaoGirando(){
+  const c = $('#cartao'); c.className = 'cartao';
+  c.innerHTML = `<div class="vazio"><svg><use href="#abelha"/></svg><h3>Girando...</h3><p>Quem será a próxima palavra?</p></div>`;
+}
+function status(p){ return (sorteioDe(turma))[p.w]; }
+function visivel(p){ const st = status(p); return !S.prefs.esconder || (st && st !== 'd'); }
+function lacuna(frase, palavra){
+  const re = new RegExp('\\b' + palavra.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+  return esc(frase).replace(re, '\u0000').split('\u0000');
+}
+function montarCartao(p, animar){
+  const c = $('#cartao'); const st = status(p); const ver = visivel(p);
+  c.className = 'cartao ' + NIV[p.lv].c + (animar ? ' entra' : '');
+  const partes = lacuna(p.ex, p.w);
+  const frase = ver ? partes.join(`<mark>${esc(p.w)}</mark>`) : partes.join('<span class="lacuna"></span>');
+  const grafias = p.uk
+    ? `<span class="grafia"><em>EUA</em>${esc(p.w)}</span><span class="grafia uk"><em>Reino Unido</em>${esc(p.uk)}</span>`
+    : `<span class="grafia igual">Mesma grafia no inglês americano e no britânico</span>`;
+  const mostrarDicas = ver;
+  let fim;
+  if (!ver) fim = `<button class="bt-grande bt-revelar" data-a="revelar"><svg><use href="#i-olho"/></svg>Revelar a palavra</button>`;
+  else if (st === 'ok') fim = `<span class="resultado ok"><svg width="26" height="26"><use href="#i-certo"/></svg>Acertou!</span><button class="bt-link" data-a="limpar">desfazer</button>`;
+  else if (st === 'x') fim = `<span class="resultado x"><svg width="26" height="26"><use href="#i-errado"/></svg>Errou</span><button class="bt-link" data-a="limpar">desfazer</button>`;
+  else fim = `<button class="bt-grande bt-certo" data-a="certo"><svg><use href="#i-certo"/></svg>Acertou</button><button class="bt-grande bt-errado" data-a="errado"><svg><use href="#i-errado"/></svg>Errou</button>`;
+  c.innerHTML = `
+    <div class="etiquetas"><span class="etq ${NIV[p.lv].c}">${NIV[p.lv].nome}</span><span class="etq">Lição ${esc(p.l)}</span><span class="etq">${esc(CLASSE[p.pos] || p.pos)}</span></div>
+    <div class="zona-palavra">${ver ? letrasHTML(p.w) : `<div class="escondida"><svg><use href="#i-cadeado"/></svg>Palavra escondida</div>`}</div>
+    ${ver ? `<div class="grafias">${grafias}</div>${p.nota ? `<p class="nota">${esc(p.nota)}</p>` : ''}` : ''}
+    <div class="audio">
+      <button class="bt-audio" data-a="ouvir"><svg><use href="#i-som"/></svg>Ouvir</button>
+      <button class="bt-audio" data-a="devagar"><svg><use href="#i-lento"/></svg>Devagar</button>
+      <button class="bt-audio" data-a="frase"><svg><use href="#i-frase"/></svg>Frase</button>
+      ${ver ? `<button class="bt-audio" data-a="soletrar"><svg><use href="#i-abc"/></svg>Soletrar</button>` : ''}
+    </div>
+    <div class="dicas">
+      <div class="dica"><b>Tradução</b>${mostrarDicas ? `<span>${esc(p.pt)}</span>` : `<button data-a="dica" data-d="pt">mostrar</button><span class="oculto" data-dica="pt">${esc(p.pt)}</span>`}</div>
+      <div class="dica"><b>Frase</b>${mostrarDicas ? `<span>${frase}</span>` : `<button data-a="dica" data-d="ex">mostrar</button><span class="oculto" data-dica="ex">${frase}</span>`}</div>
+    </div>
+    <div class="final">${fim}${!st || st === 'd' || st === 'r' ? `<button class="bt-link" data-a="devolver">devolver à roleta</button>` : ''}</div>`;
+  ajustarLetras();
+  if (animar && ver) animarLetras(false);
+}
+function letrasHTML(w){
+  return `<div class="letras">${[...w].map(ch => ch === ' ' ? '<span class="letra espaco"></span>' : `<span class="letra">${esc(ch)}</span>`).join('')}</div>`;
+}
+function ajustarLetras(){
+  const box = $('#cartao .letras'); if (!box) return;
+  const n = box.children.length, larg = box.clientWidth || 400;
+  const gap = n > 12 ? 4 : 8;
+  const tam = Math.max(22, Math.min(64, Math.floor((larg - gap * (n - 1)) / n)));
+  box.style.setProperty('--tam', tam + 'px'); box.style.setProperty('--gap', gap + 'px');
+}
+function animarLetras(comSom){
+  const ls = document.querySelectorAll('#cartao .letra');
+  ls.forEach((l, i) => { l.style.animationDelay = (i * 70) + 'ms'; l.classList.add('pop'); if (comSom) setTimeout(() => som.letra(i), i * 70); });
+}
+$('#cartao').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b || !atual) return;
+  const a = b.dataset.a;
+  if (a === 'ouvir') falar(atual.w, .85);
+  else if (a === 'devagar') falar(atual.w, .5);
+  else if (a === 'frase') falar(atual.ex, .85);
+  else if (a === 'soletrar') soletrar(atual);
+  else if (a === 'dica'){ const d = b.parentElement.querySelector('[data-dica]'); d.classList.remove('oculto'); b.remove(); }
+  else if (a === 'revelar') revelar();
+  else if (a === 'certo') marcar('ok');
+  else if (a === 'errado') marcar('x');
+  else if (a === 'limpar') marcar('r');
+  else if (a === 'devolver') devolver();
+});
+function revelar(){
+  if (!atual) return; const s = sorteioDe(turma);
+  if (s[atual.w] === 'd'){ s[atual.w] = 'r'; salvar(); }
+  montarCartao(atual, false); animarLetras(true); montarHistorico();
+}
+function marcar(r){
+  if (!atual) return; const s = sorteioDe(turma); if (!s[atual.w]) return;
+  s[atual.w] = r; salvar(); montarCartao(atual, false); montarHistorico();
+  if (r === 'ok'){ som.certo(); confete(); }
+  else if (r === 'x'){ som.errado(); const c = $('#cartao'); c.classList.remove('treme'); void c.offsetWidth; c.classList.add('treme'); }
+}
+function devolver(){
+  if (!atual) return; const s = sorteioDe(turma); delete s[atual.w];
+  const h = histDe(turma); const i = h.indexOf(atual.w); if (i >= 0) h.splice(i, 1);
+  salvar(); toast(`"${S.prefs.esconder ? 'A palavra' : atual.w}" voltou para a roleta.`);
+  atual = null; vencedor = -1; cartaoVazio(); montarNiveis(); atualizarRestam(); montarHistorico(); desenhar();
+}
+
+/* ---------- histórico ---------- */
+function montarHistorico(){
+  const h = histDe(turma), s = sorteioDe(turma), caixa = $('#fichas');
+  const porW = Object.fromEntries(turma.palavras.map(p => [p.w, p]));
+  const lista = h.map(w => porW[w]).filter(Boolean);
+  const ok = lista.filter(p => s[p.w] === 'ok').length, x = lista.filter(p => s[p.w] === 'x').length;
+  $('#hist-resumo').textContent = lista.length ? `${lista.length} ${lista.length === 1 ? 'palavra' : 'palavras'} · ${ok} acertos · ${x} erros` : '';
+  if (!lista.length){ caixa.innerHTML = '<p class="sem-hist">Nenhuma palavra sorteada ainda nesta turma.</p>'; return; }
+  caixa.innerHTML = lista.map(p => {
+    const st = s[p.w]; const ver = !S.prefs.esconder || st !== 'd';
+    const r = st === 'ok' ? '<b class="r-ok">✓</b>' : st === 'x' ? '<b class="r-x">✗</b>' : '';
+    return `<button class="ficha" data-w="${esc(p.w)}"><i class="${NIV[p.lv].c}"></i>${ver ? esc(p.w) : '? ? ?'}${r}</button>`;
+  }).join('');
+}
+$('#fichas').addEventListener('click', e => {
+  const b = e.target.closest('.ficha'); if (!b || girando) return;
+  const p = turma.palavras.find(x => x.w === b.dataset.w); if (!p) return;
+  atual = p; vencedor = segs.indexOf(p); desenhar(); montarCartao(p, true);
+  if (window.innerWidth < 980) $('#cartao').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+/* ---------- reiniciar ---------- */
+let confirmaTimer = null;
+$('#bt-reiniciar').onclick = () => {
+  const b = $('#bt-reiniciar');
+  if (!b.classList.contains('perigo')){
+    b.classList.add('perigo'); b.querySelector('span').textContent = 'Clique de novo para confirmar';
+    confirmaTimer = setTimeout(() => { b.classList.remove('perigo'); b.querySelector('span').textContent = 'Reiniciar sorteio'; }, 3500);
+    return;
+  }
+  clearTimeout(confirmaTimer); b.classList.remove('perigo'); b.querySelector('span').textContent = 'Reiniciar sorteio';
+  S.sorteio[turma.id] = {}; S.hist[turma.id] = []; salvar();
+  atual = null; vencedor = -1; cartaoVazio(); escolherNivel(nivel, true); montarHistorico();
+  toast('Todas as palavras desta turma voltaram para a roleta.');
+};
+
+/* ---------- lista ---------- */
+let filtroNivel = 0;
+function abrirLista(){
+  $('#modal').classList.remove('oculto'); $('#modal-titulo').textContent = `Lista de palavras · ${turma.nome} (${turma.livro})`;
+  const f = $('#filtros');
+  f.innerHTML = [[0,'Todas'],[1,'Fácil'],[2,'Médio'],[3,'Difícil']].map(([n, r]) => `<button class="filtro" data-n="${n}" aria-pressed="${n === filtroNivel}">${r}</button>`).join('')
+    + `<button class="filtro" data-n="uk" aria-pressed="${filtroNivel === 'uk'}">Grafia britânica diferente</button><input class="busca" id="busca" type="search" placeholder="Procurar palavra ou tradução">`;
+  $('#busca').oninput = montarTabela; montarTabela();
+  $('#bt-fechar').focus();
+}
+$('#filtros').addEventListener('click', e => {
+  const b = e.target.closest('.filtro'); if (!b) return;
+  filtroNivel = b.dataset.n === 'uk' ? 'uk' : +b.dataset.n;
+  document.querySelectorAll('.filtro').forEach(x => x.setAttribute('aria-pressed', x === b)); montarTabela();
+});
+function montarTabela(){
+  const q = ($('#busca') && $('#busca').value || '').trim().toLowerCase(); const s = sorteioDe(turma);
+  const linhas = turma.palavras.filter(p => (filtroNivel === 0 || (filtroNivel === 'uk' ? p.uk : p.lv === filtroNivel)) && (!q || (p.w + ' ' + p.uk + ' ' + p.pt).toLowerCase().includes(q)));
+  $('#tabela').innerHTML = linhas.map(p => `<tr class="${s[p.w] ? 'saiu' : ''}"><td class="pal">${esc(p.w)}</td><td class="uk">${esc(p.uk || '')}</td><td>${esc(p.pt)}${p.nota ? `<br><small>${esc(p.nota)}</small>` : ''}</td><td>${esc(p.l)}</td><td><span class="etq ${NIV[p.lv].c}">${NIV[p.lv].nome}</span></td></tr>`).join('')
+    || '<tr><td colspan="5">Nenhuma palavra encontrada.</td></tr>';
+}
+function fecharLista(){ $('#modal').classList.add('oculto'); }
+$('#bt-lista').onclick = abrirLista; $('#bt-fechar').onclick = fecharLista;
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') fecharLista(); });
+
+/* ---------- confete ---------- */
+const cf = $('#confete'), cfx = cf.getContext('2d'); let parts = [], cfAnim = null;
+function confete(){
+  cf.width = innerWidth; cf.height = innerHeight;
+  const cores = ['#FFC21A', '#F7A51E', '#16904B', '#2C82EE', '#FF7340', '#7B5CF5', '#FFE08A'];
+  for (let i = 0; i < 160; i++) parts.push({x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .45, vx: (Math.random() - .5) * 16, vy: -Math.random() * 15 - 5, g: .35 + Math.random() * .2, r: 5 + Math.random() * 7, a: Math.random() * 6, va: (Math.random() - .5) * .3, c: cores[i % cores.length], hex: Math.random() < .35, vida: 0});
+  if (!cfAnim) cfAnim = requestAnimationFrame(passoConfete);
+}
+function passoConfete(){
+  cfx.clearRect(0, 0, cf.width, cf.height);
+  parts.forEach(p => { p.vy += p.g; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.va; p.vida++;
+    cfx.save(); cfx.translate(p.x, p.y); cfx.rotate(p.a); cfx.fillStyle = p.c;
+    if (p.hex){ cfx.beginPath(); for (let k = 0; k < 6; k++){ const an = k * Math.PI / 3; cfx.lineTo(Math.cos(an) * p.r, Math.sin(an) * p.r); } cfx.closePath(); cfx.fill(); }
+    else cfx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2);
+    cfx.restore(); });
+  parts = parts.filter(p => p.y < cf.height + 40 && p.vida < 260);
+  cfAnim = parts.length ? requestAnimationFrame(passoConfete) : (cfx.clearRect(0, 0, cf.width, cf.height), null);
+}
+
+/* ---------- chaves e teclado ---------- */
+function aplicarPrefs(){
+  $('#chave-esconder').setAttribute('aria-pressed', S.prefs.esconder);
+  $('#chave-som').setAttribute('aria-pressed', S.prefs.som);
+}
+$('#chave-esconder').onclick = () => {
+  S.prefs.esconder = !S.prefs.esconder; salvar(); aplicarPrefs();
+  if (turma){ desenhar(); montarHistorico(); if (atual) montarCartao(atual, false); }
+  toast(S.prefs.esconder ? 'Modo projetor: a palavra só aparece quando você revelar.' : 'A palavra aparece assim que a roleta para.');
+};
+$('#chave-som').onclick = () => { S.prefs.som = !S.prefs.som; salvar(); aplicarPrefs(); };
+function telaCheia(){
+  const d = document;
+  if (!d.fullscreenElement) (d.documentElement.requestFullscreen || d.documentElement.webkitRequestFullscreen || (() => {})).call(d.documentElement);
+  else (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+}
+$('#bt-tela').onclick = telaCheia;
+$('#ir-inicio').onclick = mostrarInicio; $('#bt-voltar').onclick = mostrarInicio;
+$('#bt-girar').onclick = girar;
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea') || e.ctrlKey || e.metaKey || e.altKey) return;
+  const modalAberto = !$('#modal').classList.contains('oculto');
+  if (e.key === 'Escape'){ if (modalAberto) fecharLista(); return; }
+  if (e.key === 'f' || e.key === 'F'){ telaCheia(); return; }
+  if (!turma || modalAberto) return;
+  const k = e.key.toLowerCase();
+  if (e.key === ' ' || e.key === 'Enter'){ if (e.target.closest && e.target.closest('button') && e.key === 'Enter') return; e.preventDefault(); girar(); }
+  else if (k === 'r') revelar();
+  else if (k === 'o' && atual) falar(atual.w, .85);
+  else if (k === 'd' && atual) falar(atual.w, .5);
+  else if (k === 'c' && atual && visivel(atual)) marcar('ok');
+  else if (k === 'x' && atual && visivel(atual)) marcar('x');
+  else if (['1', '2', '3'].includes(e.key)) escolherNivel(+e.key);
+});
+addEventListener('resize', () => { if (turma){ dimensionar(); ajustarLetras(); } });
+addEventListener('hashchange', () => { const id = location.hash.slice(1); if (id && (!turma || turma.id !== id)) abrirTurma(id); });
+
+/* ---------- partida ---------- */
+aplicarPrefs(); montarInicio();
+const inicial = location.hash.slice(1); if (inicial) abrirTurma(inicial);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (turma) desenhar(); });
+})();
+</script>
+</body>
+</html>
