@@ -1,809 +1,290 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My English Content - Materiais de Ensino</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My English Content</title>
+<meta name="description" content="Materiais de Ensino de Inglês">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --tinta:#131B35; --tinta-2:#4A5575; --tinta-3:#6E7A99;
+  --fundo:#F5F6FB; --papel:#FFFFFF; --linha:#E2E6F1;
+  --darwin:#2B59E6; --darwin-esc:#1B3DB0; --darwin-claro:#E8EEFF;
+  --curso:#D43C25; --curso-esc:#A92A17; --curso-claro:#FFEAE4;
+  --alea:#087F6C; --alea-esc:#05604F; --alea-claro:#DDF5EF;
+  --sol:#FFB81F;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh;color:var(--tinta);font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500;line-height:1.45;
+  background:
+    radial-gradient(760px 380px at 4% -80px,#DFE8FF 0,transparent 70%),
+    radial-gradient(680px 360px at 96% -60px,#FFE3DA 0,transparent 70%),
+    var(--fundo);
+  background-repeat:no-repeat;
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+.oculto{display:none!important}
+.pagina{max-width:1160px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(16px,3vw,28px) 40px}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+/* cabeçalho */
+.cabeca{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-bottom:22px}
+.marca{display:flex;align-items:center;gap:16px;min-width:0}
+.logo{width:60px;height:60px;flex:none}
+.cabeca h1{font-family:Sora,"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:clamp(30px,4.6vw,46px);line-height:1.05;letter-spacing:-.025em;margin:0}
+.cabeca p{margin:6px 0 0;color:var(--tinta-2);font-size:clamp(15px,1.6vw,17px);font-weight:600}
+.busca{position:relative;flex:1 1 300px;max-width:400px}
+.busca svg{position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%);color:var(--tinta-3);pointer-events:none}
+.busca input{width:100%;height:52px;border:1.5px solid var(--linha);border-radius:16px;background:var(--papel);padding:0 44px 0 46px;font-size:16px;font-weight:600;box-shadow:0 6px 18px rgba(30,45,90,.06);outline:none;transition:border-color .15s,box-shadow .15s}
+.busca input::placeholder{color:var(--tinta-3);font-weight:500}
+.busca input:focus{border-color:var(--darwin);box-shadow:0 0 0 4px rgba(43,89,230,.14)}
+.busca input::-webkit-search-cancel-button{display:none}
+.limpar{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:var(--tinta-3);cursor:pointer;display:grid;place-items:center}
+.limpar:hover{background:var(--fundo);color:var(--tinta)}
+.limpar svg{position:static;transform:none;width:16px;height:16px}
 
-        .container { max-width: 1200px; margin: 0 auto; }
+/* novidades */
+.novos{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;margin-bottom:26px}
+.novos b{font-size:13px;font-weight:800;color:var(--tinta-2);margin-right:2px}
+.novo{display:inline-flex;align-items:center;gap:8px;background:var(--papel);border:1.5px solid var(--linha);border-radius:999px;padding:6px 14px 6px 10px;font-size:14px;font-weight:700;transition:border-color .15s,transform .15s}
+.novo i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.novo:hover{border-color:var(--c);transform:translateY(-1px)}
 
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 0.8s ease;
-        }
+/* divisões */
+.divisoes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:30px}
+.divisao{position:relative;overflow:hidden;text-align:left;border:0;border-radius:24px;padding:24px 24px 22px;background:var(--t);color:var(--tinta);cursor:pointer;display:flex;flex-direction:column;gap:18px;min-height:176px;transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.divisao:hover{transform:translateY(-3px)}
+.divisao:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+.divisao[aria-selected="true"]{background:var(--c);color:#fff;box-shadow:0 18px 36px -12px var(--c)}
+.divisao::after{content:"";position:absolute;right:-46px;top:-46px;width:170px;height:170px;border-radius:50%;background:var(--c);opacity:.08}
+.divisao[aria-selected="true"]::after{background:#fff;opacity:.12}
+.divisao::before{content:"";position:absolute;right:46px;bottom:-62px;width:118px;height:118px;border-radius:50%;background:var(--c);opacity:.06}
+.divisao[aria-selected="true"]::before{background:#fff;opacity:.08}
+.topo-div{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.icone-div{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--papel);color:var(--c)}
+.icone-div svg{width:25px;height:25px}
+.num-div{font-family:Sora,sans-serif;font-weight:800;font-size:34px;line-height:1;letter-spacing:-.02em;color:var(--c)}
+.divisao[aria-selected="true"] .num-div{color:#fff}
+.texto-div{position:relative;z-index:1}
+.divisao h2{font-family:Sora,sans-serif;font-weight:700;font-size:clamp(20px,2.3vw,25px);line-height:1.15;letter-spacing:-.015em;margin:0}
+.divisao span.sub{display:block;margin-top:5px;font-size:14px;font-weight:600;color:var(--tinta-2)}
+.divisao[aria-selected="true"] span.sub{color:rgba(255,255,255,.86)}
 
-        h1 {
-            color: white;
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+/* conteúdo */
+.grupo{margin-bottom:30px}
+.cab-grupo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cab-grupo h3{font-family:Sora,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.01em;margin:0}
+.cont{font-size:12.5px;font-weight:800;border-radius:999px;padding:2px 9px;background:var(--t);color:var(--e)}
+.cab-grupo::after{content:"";flex:1;height:1.5px;background:var(--linha)}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.item{display:flex;align-items:center;gap:14px;background:var(--papel);border:1.5px solid var(--linha);border-radius:18px;padding:14px 16px;transition:transform .15s,border-color .15s,box-shadow .15s;min-width:0}
+.item:hover{transform:translateY(-2px);border-color:var(--c);box-shadow:0 12px 24px -14px rgba(30,45,90,.35)}
+.item:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.icone-item{width:46px;height:46px;border-radius:14px;background:var(--t);color:var(--c);display:grid;place-items:center;flex:none}
+.icone-item svg{width:23px;height:23px}
+.corpo-item{min-width:0;flex:1}
+.corpo-item strong{display:block;font-weight:800;font-size:16px;line-height:1.28}
+.corpo-item small{display:block;margin-top:3px;color:var(--tinta-3);font-size:13px;font-weight:600}
+.seta{width:20px;height:20px;color:var(--c);flex:none;opacity:0;transform:translateX(-5px);transition:.15s}
+.item:hover .seta{opacity:1;transform:none}
+.selo-novo{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:7px;background:var(--sol);color:#402A00;font-size:11px;font-weight:800;vertical-align:2px}
+.embreve{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;color:var(--tinta-3);font-size:13.5px;font-weight:700}
+.embreve span{border:1.5px dashed #CBD2E3;border-radius:999px;padding:4px 12px;color:var(--tinta-2)}
+.vazio{background:var(--papel);border:1.5px dashed #CBD2E3;border-radius:18px;padding:30px 20px;text-align:center;color:var(--tinta-2);font-weight:600}
+.onde{font-size:12px;font-weight:800;color:var(--e);background:var(--t);border-radius:7px;padding:2px 8px;margin-right:6px}
+.titulo-busca{font-family:Sora,sans-serif;font-weight:700;font-size:18px;margin:0 0 14px}
 
-        .subtitle {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.2em;
-            font-weight: 300;
-        }
+footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);color:var(--tinta-3);font-size:13.5px;font-weight:600;text-align:center}
 
-        /* ── SECTION BLOCK ── */
-        .section-block {
-            margin-bottom: 60px;
-            animation: fadeIn 0.8s ease both;
-        }
-
-        .section-label {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        .section-label h2 {
-            color: white;
-            font-size: 1.6em;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
-        }
-
-        .section-line {
-            flex: 1;
-            height: 2px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-        }
-
-        /* ── COURSE FOLDERS ── */
-        .folders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        .folder-card {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 18px;
-            padding: 28px 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .folder-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
-            border-radius: 18px 18px 0 0;
-        }
-
-        .folder-card:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateY(-6px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-        }
-
-        .folder-icon { font-size: 2.4em; margin-bottom: 12px; display: block; }
-
-        .folder-name {
-            color: white;
-            font-size: 1.15em;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .folder-count {
-            color: rgba(255,255,255,0.75);
-            font-size: 0.88em;
-        }
-
-        /* ── SUBFOLDER PANEL (shown on click) ── */
-        .subfolder-panel {
-            display: none;
-            background: rgba(255,255,255,0.08);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 16px;
-            animation: fadeInUp 0.35s ease;
-        }
-
-        .subfolder-panel.open { display: block; }
-
-        .subfolder-title {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-        }
-
-        /* ── NESTED SUBFOLDER CARDS ── */
-        .nested-folders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
-        }
-
-        .nested-folder-card {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 14px;
-            padding: 20px 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nested-folder-card:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .nested-folder-card .folder-icon { font-size: 1.8em; margin-bottom: 8px; }
-        .nested-folder-card .folder-name { font-size: 1em; }
-        .nested-folder-card .folder-count { font-size: 0.82em; }
-
-        /* ── NESTED SUBFOLDER PANEL (level 3) ── */
-        .nested-subfolder-panel {
-            display: none;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 12px;
-            animation: fadeInUp 0.35s ease;
-        }
-
-        .nested-subfolder-panel.open { display: block; }
-
-        /* ── MATERIALS GRID (inside folder) ── */
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .material-card {
-            background: white;
-            border-radius: 18px;
-            padding: 26px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease both;
-        }
-
-        .material-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .material-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 14px 36px rgba(0,0,0,0.28);
-        }
-
-        .material-icon { font-size: 2.6em; margin-bottom: 12px; display: block; }
-
-        .material-title {
-            color: #333;
-            font-size: 1.15em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .material-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .material-link:hover .material-title { color: #667eea; }
-
-        /* ── EMPTY FOLDER ── */
-        .empty-folder {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.95em;
-            font-style: italic;
-            padding: 12px 0;
-        }
-
-        /* ── TAGS ── */
-        .category-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.82em;
-            font-weight: bold;
-            margin-top: 8px;
-            margin-right: 4px;
-        }
-        .tag-grammar    { background: #e3f2fd; color: #1976d2; }
-        .tag-conversation { background: #f3e5f5; color: #7b1fa2; }
-        .tag-game       { background: #fff3e0; color: #f57c00; }
-        .tag-spelling   { background: #e8f5e9; color: #388e3c; }
-        .tag-lesson     { background: #fce4ec; color: #c2185b; }
-        .tag-activity   { background: #e0f2f1; color: #00796b; }
-        .tag-review     { background: #fff9c4; color: #f9a825; }
-        .tag-app        { background: #fbe9e7; color: #d84315; }
-
-        /* ── STATS ── */
-        .stats {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            color: white;
-            margin-bottom: 44px;
-            animation: fadeIn 0.8s ease 0.3s both;
-        }
-        .stats h2 { font-size: 2.4em; margin-bottom: 4px; }
-        .stats p   { font-size: 1.05em; opacity: 0.9; }
-
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            color: white;
-            opacity: 0.8;
-            animation: fadeIn 1s ease 0.5s both;
-        }
-
-        /* ── ANIMATIONS ── */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-
-        .material-card:nth-child(1)  { animation-delay: 0.05s; }
-        .material-card:nth-child(2)  { animation-delay: 0.10s; }
-        .material-card:nth-child(3)  { animation-delay: 0.15s; }
-        .material-card:nth-child(4)  { animation-delay: 0.20s; }
-        .material-card:nth-child(5)  { animation-delay: 0.25s; }
-        .material-card:nth-child(6)  { animation-delay: 0.30s; }
-        .material-card:nth-child(7)  { animation-delay: 0.35s; }
-        .material-card:nth-child(8)  { animation-delay: 0.40s; }
-        .material-card:nth-child(9)  { animation-delay: 0.45s; }
-        .material-card:nth-child(10) { animation-delay: 0.50s; }
-        .material-card:nth-child(11) { animation-delay: 0.55s; }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2em; }
-            .folders-grid { grid-template-columns: 1fr 1fr; }
-            .materials-grid { grid-template-columns: 1fr; }
-            .nested-folders-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 480px) {
-            .folders-grid { grid-template-columns: 1fr; }
-            .nested-folders-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+@media (max-width:760px){
+  .cabeca{align-items:stretch}
+  .busca{max-width:none;flex-basis:100%}
+  .divisoes{grid-template-columns:1fr;gap:10px}
+  .divisao{flex-direction:row;align-items:center;gap:14px;min-height:0;padding:14px 16px;border-radius:18px}
+  .topo-div{display:contents}
+  .icone-div{order:0;width:44px;height:44px;flex:none}
+  .texto-div{order:1;flex:1;min-width:0}
+  .num-div{order:2;font-size:26px;position:relative;z-index:1}
+  .divisao::before{display:none}
+  .logo{width:50px;height:50px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
-<div class="container">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="grad-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B59E6"/><stop offset="1" stop-color="#D43C25"/></linearGradient>
+  </defs>
+  <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-escola" viewBox="0 0 24 24"><path d="M12 4L2 9l10 5 10-5-10-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 11.5V16c0 1.5 2.8 3 6 3s6-1.5 6-3v-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-curso" viewBox="0 0 24 24"><path d="M4 5h11a3 3 0 0 1 3 3v12H7a3 3 0 0 1-3-3V5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 17a3 3 0 0 1 3-3h11M8.5 9h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20.5 4v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-caixa" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-roda" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-abc" viewBox="0 0 24 24"><path d="M3 17l3.6-10L10.2 17M4.2 13.6h4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 10.5h3.2a2.2 2.2 0 0 1 0 4.4H14zM14 14.9h3.8a2.2 2.2 0 0 1 0 4.1H14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" transform="translate(0 -2)"/></symbol>
+  <symbol id="i-guia" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 3.5 5v13.5C7 18 10 18.5 12 20c2-1.500 5-2 8.500-1.500V5C17 4.500 14 5 12 6.500z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 6.500V20" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12.500" rx="2.500" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 16.500V20M8 20h8M7.500 12l3-3 2.500 2 3.500-3.500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-revisao" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.700-5.600L20 8.500M20 4v4.500h-4.500M20 12a8 8 0 0 1-13.700 5.600L4 15.500M4 20v-4.500h4.500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lapis" viewBox="0 0 24 24"><path d="M4 20l1-4.500L16.500 4a2.100 2.100 0 0 1 3 0l.5.500a2.100 2.100 0 0 1 0 3L8.500 19 4 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14.500 6l3.500 3.500" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-gram" viewBox="0 0 24 24"><path d="M3 18l4.500-12L12 18M4.700 14h5.600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.500" cy="15" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20.500 12v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-fala" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 9h8M8 12.500h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-dado" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.500" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="9" r="1.500" fill="currentColor"/><circle cx="15" cy="15" r="1.500" fill="currentColor"/><circle cx="15" cy="9" r="1.500" fill="currentColor"/><circle cx="9" cy="15" r="1.500" fill="currentColor"/></symbol>
+  <symbol id="i-quiz" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.300 9.300a2.800 2.800 0 1 1 4.200 2.400c-1 .6-1.500 1.200-1.500 2.300" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.200" fill="currentColor"/></symbol>
+  <symbol id="i-foto" viewBox="0 0 24 24"><path d="M3.500 8.500A1.500 1.500 0 0 1 5 7h2.500L9 4.500h6L16.500 7H19a1.500 1.500 0 0 1 1.500 1.500V18a1.500 1.500 0 0 1-1.500 1.500H5A1.500 1.500 0 0 1 3.500 18z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.500" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+</svg>
 
-    <header>
-        <h1>📚 My English Content</h1>
-        <p class="subtitle">Materiais de Ensino de Inglês</p>
-    </header>
-
-    <div class="stats">
-        <h2>21</h2>
-        <p>Materiais Disponíveis</p>
+<div class="pagina">
+  <header class="cabeca">
+    <div class="marca">
+      <svg class="logo" viewBox="0 0 60 60" aria-hidden="true">
+        <rect width="60" height="60" rx="18" fill="url(#grad-logo)"/>
+        <path d="M15 16h30a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H28l-9 7v-7h-4a3 3 0 0 1-3-3V19a3 3 0 0 1 3-3z" fill="#fff"/>
+        <path d="M22 23h16M22 28h16M22 33h10" stroke="#2B59E6" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>My English Content</h1>
+        <p>Materiais de Ensino de Inglês · <span id="total"></span> materiais</p>
+      </div>
     </div>
+    <label class="busca">
+      <svg><use href="#i-busca"/></svg>
+      <input id="busca" type="search" placeholder="Procurar material" aria-label="Procurar material" autocomplete="off">
+      <button class="limpar oculto" id="limpar" type="button" aria-label="Limpar busca"><svg><use href="#i-x"/></svg></button>
+    </label>
+  </header>
 
-    <!-- ══════════════════════════════════
-         ENGLISH COURSE
-    ═══════════════════════════════════ -->
-    <div class="section-block">
-        <div class="section-label">
-            <h2>🎓 English Course</h2>
-            <div class="section-line"></div>
-        </div>
+  <div class="novos" id="novos"></div>
 
-        <div class="folders-grid">
+  <div class="divisoes" id="divisoes" role="tablist" aria-label="Divisões"></div>
 
-            <!-- English 1-2 -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('en12')">
-                    <span class="folder-icon">📂</span>
-                    <div class="folder-name">English 1-2</div>
-                    <div class="folder-count">2 materiais</div>
-                </div>
-                <div class="subfolder-panel" id="en12">
-                    <div class="subfolder-title">📄 Materiais — English 1-2</div>
-                    <div class="materials-grid">
-                        <div class="material-card">
-                            <a href="English%201-2%2C%20Lesson%209.html" class="material-link">
-                                <span class="material-icon">✏️</span>
-                                <h2 class="material-title">Online English 1-2 · Lesson 9 Activity</h2>
-                                <span class="category-tag tag-activity">Atividade</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                            </a>
-                        </div>
-                        <div class="material-card">
-                            <a href="English%201-2%2C%20Lesson%2010.html" class="material-link">
-                                <span class="material-icon">✏️</span>
-                                <h2 class="material-title">Online English 1-2 · Lesson 10 Activity</h2>
-                                <span class="category-tag tag-activity">Atividade</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <main id="conteudo"></main>
 
-            <!-- English 3 -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('en3')">
-                    <span class="folder-icon">📂</span>
-                    <div class="folder-name">English 3</div>
-                    <div class="folder-count">2 materiais</div>
-                </div>
-                <div class="subfolder-panel" id="en3">
-                    <div class="subfolder-title">📄 Materiais — English 3</div>
-                    <div class="materials-grid">
-                        <div class="material-card">
-                            <a href="https://rodrigomariani-bit.github.io/online-english-3/lesson-8/" class="material-link">
-                                <span class="material-icon">✏️</span>
-                                <h2 class="material-title">Online English 3 · Lesson 8 Activity</h2>
-                                <span class="category-tag tag-activity">Atividade</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                                <span class="category-tag tag-review">Revisão</span>
-                            </a>
-                        </div>
-                        <div class="material-card">
-                            <a href="https://rodrigomariani-bit.github.io/online-english-3/lesson-9/" class="material-link">
-                                <span class="material-icon">✏️</span>
-                                <h2 class="material-title">Online English 3 · Lesson 9 Activity</h2>
-                                <span class="category-tag tag-activity">Atividade</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- English 4 -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('en4')">
-                    <span class="folder-icon">📁</span>
-                    <div class="folder-name">English 4</div>
-                    <div class="folder-count">Em breve</div>
-                </div>
-                <div class="subfolder-panel" id="en4">
-                    <div class="subfolder-title">📄 Materiais — English 4</div>
-                    <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                </div>
-            </div>
-
-            <!-- English 5 -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('en5')">
-                    <span class="folder-icon">📁</span>
-                    <div class="folder-name">English 5</div>
-                    <div class="folder-count">Em breve</div>
-                </div>
-                <div class="subfolder-panel" id="en5">
-                    <div class="subfolder-title">📄 Materiais — English 5</div>
-                    <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         GUIAS DE ESTUDO — PROVAS
-    ═══════════════════════════════════ -->
-    <div class="section-block">
-        <div class="section-label">
-            <h2>📝 Guias de Estudo — Provas</h2>
-            <div class="section-line"></div>
-        </div>
-
-        <div class="folders-grid">
-
-            <!-- 6º Ano -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('ano6')">
-                    <span class="folder-icon">📂</span>
-                    <div class="folder-name">6º Ano</div>
-                    <div class="folder-count">1 material</div>
-                </div>
-                <div class="subfolder-panel" id="ano6">
-                    <div class="subfolder-title">📄 Materiais — 6º Ano</div>
-                    <div class="materials-grid">
-                        <div class="material-card">
-                            <a href="Study_Guide_6Ano_AV1_2Tri.html" class="material-link">
-                                <span class="material-icon">📗</span>
-                                <h2 class="material-title">Study Guide — AV1 · 2º Trimestre</h2>
-                                <span class="category-tag tag-review">Revisão</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                                <span class="category-tag tag-activity">Quiz</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 9º Ano -->
-            <div>
-                <div class="folder-card" onclick="toggleFolder('ano9')">
-                    <span class="folder-icon">📂</span>
-                    <div class="folder-name">9º Ano</div>
-                    <div class="folder-count">1 material</div>
-                </div>
-                <div class="subfolder-panel" id="ano9">
-                    <div class="subfolder-title">📄 Materiais — 9º Ano</div>
-                    <div class="materials-grid">
-                        <div class="material-card">
-                            <a href="Study_Guide_9Ano_AV1_2Tri.html" class="material-link">
-                                <span class="material-icon">📘</span>
-                                <h2 class="material-title">Study Guide — AV1 · 2º Trimestre</h2>
-                                <span class="category-tag tag-review">Revisão</span>
-                                <span class="category-tag tag-grammar">Gramática</span>
-                                <span class="category-tag tag-activity">Quiz</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         DARWIN
-    ═══════════════════════════════════ -->
-    <div class="section-block">
-        <div class="section-label">
-            <h2>🧬 Darwin</h2>
-            <div class="section-line"></div>
-        </div>
-
-        <div>
-            <div class="folder-card" onclick="toggleFolder('darwin-reviews')">
-                <span class="folder-icon">📂</span>
-                <div class="folder-name">Revisões de Materiais</div>
-                <div class="folder-count">1 material</div>
-            </div>
-
-            <div class="subfolder-panel" id="darwin-reviews">
-                <div class="subfolder-title">📁 Subpastas — Revisões de Materiais</div>
-
-                <div class="nested-folders-grid">
-
-                    <!-- Angles 1 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles1')">
-                            <span class="folder-icon">📁</span>
-                            <div class="folder-name">Angles 1</div>
-                            <div class="folder-count">Em breve</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="angles1">
-                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Angles 2 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles2')">
-                            <span class="folder-icon">📁</span>
-                            <div class="folder-name">Angles 2</div>
-                            <div class="folder-count">Em breve</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="angles2">
-                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Smartgen 6A -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'smartgen6a')">
-                            <span class="folder-icon">📂</span>
-                            <div class="folder-name">Smartgen 6A</div>
-                            <div class="folder-count">1 material</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="smartgen6a">
-                            <div class="materials-grid">
-                                <div class="material-card">
-                                    <a href="Grammar_Review_SmartGen6A_Unit1.html" class="material-link">
-                                        <span class="material-icon">📝</span>
-                                        <h2 class="material-title">SmartGen 6A — Grammar Review Unit 1</h2>
-                                        <span class="category-tag tag-review">Revisão</span>
-                                        <span class="category-tag tag-grammar">Gramática</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Smartgen 6B -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'smartgen6b')">
-                            <span class="folder-icon">📁</span>
-                            <div class="folder-name">Smartgen 6B</div>
-                            <div class="folder-count">Em breve</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="smartgen6b">
-                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Angles 5 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles5')">
-                            <span class="folder-icon">📂</span>
-                            <div class="folder-name">Angles 5</div>
-                            <div class="folder-count">1 material</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="angles5">
-                            <div class="materials-grid">
-                                <div class="material-card">
-                                    <a href="Angles5_Unit1_Study_Guide.html" class="material-link">
-                                        <span class="material-icon">📝</span>
-                                        <h2 class="material-title">Angles 5 — Unit 1 Study Guide</h2>
-                                        <span class="category-tag tag-review">Revisão</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Angles 6 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'angles6')">
-                            <span class="folder-icon">📁</span>
-                            <div class="folder-name">Angles 6</div>
-                            <div class="folder-count">Em breve</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="angles6">
-                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Mindflow 1 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'mindflow1')">
-                            <span class="folder-icon">📂</span>
-                            <div class="folder-name">Mindflow 1</div>
-                            <div class="folder-count">1 material</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="mindflow1">
-                            <div class="materials-grid">
-                                <div class="material-card">
-                                    <a href="MindFlow_1_Review_Uni1.html" class="material-link">
-                                        <span class="material-icon">📝</span>
-                                        <h2 class="material-title">MindFlow 1 — Review Unit 1</h2>
-                                        <span class="category-tag tag-review">Revisão</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Mindflow 2 -->
-                    <div>
-                        <div class="nested-folder-card" onclick="toggleNested(event, 'mindflow2')">
-                            <span class="folder-icon">📁</span>
-                            <div class="folder-name">Mindflow 2</div>
-                            <div class="folder-count">Em breve</div>
-                        </div>
-                        <div class="nested-subfolder-panel" id="mindflow2">
-                            <p class="empty-folder">Nenhum material adicionado ainda.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         ARQUIVOS ALEATÓRIOS
-    ═══════════════════════════════════ -->
-    <div class="section-block">
-        <div class="section-label">
-            <h2>🗂️ Arquivos Aleatórios</h2>
-            <div class="section-line"></div>
-        </div>
-
-        <div>
-            <div class="folder-card" onclick="toggleFolder('misc')">
-                <span class="folder-icon">📂</span>
-                <div class="folder-name">Arquivos Aleatórios</div>
-                <div class="folder-count">11 materiais</div>
-            </div>
-
-            <div class="subfolder-panel" id="misc">
-                <div class="subfolder-title">📄 Todos os materiais</div>
-                <div class="materials-grid">
-
-                    <div class="material-card">
-                        <a href="speaking_board_game.html" class="material-link">
-                            <span class="material-icon">🎲</span>
-                            <h2 class="material-title">Speaking Board Game</h2>
-                            <span class="category-tag tag-game">Jogo</span>
-                            <span class="category-tag tag-conversation">Conversação</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="if_clauses.html" class="material-link">
-                            <span class="material-icon">📝</span>
-                            <h2 class="material-title">If Clauses</h2>
-                            <span class="category-tag tag-grammar">Gramática</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Reported_Speech_and_Embedded_Questions" class="material-link">
-                            <span class="material-icon">💬</span>
-                            <h2 class="material-title">Reported Speech and Embedded Questions</h2>
-                            <span class="category-tag tag-grammar">Gramática</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="feels_and_looks.html" class="material-link">
-                            <span class="material-icon">👀</span>
-                            <h2 class="material-title">Looks and Feels</h2>
-                            <span class="category-tag tag-grammar">Gramática</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="EXP_Pack_Lesson6.html" class="material-link">
-                            <span class="material-icon">📖</span>
-                            <h2 class="material-title">EXP. Pack Lesson 6</h2>
-                            <span class="category-tag tag-lesson">Lição</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Conversation_Can_You_Tell.html" class="material-link">
-                            <span class="material-icon">🗣️</span>
-                            <h2 class="material-title">Conversation: Can You Tell...</h2>
-                            <span class="category-tag tag-conversation">Conversação</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Airport_Conversartion.html" class="material-link">
-                            <span class="material-icon">✈️</span>
-                            <h2 class="material-title">Airport Conversation - Davi</h2>
-                            <span class="category-tag tag-conversation">Conversação</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Soletrando_6ºAno.html" class="material-link">
-                            <span class="material-icon">🔤</span>
-                            <h2 class="material-title">Soletrando 6º Ano</h2>
-                            <span class="category-tag tag-spelling">Spelling</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Soletrando_7ºAno.html" class="material-link">
-                            <span class="material-icon">🔠</span>
-                            <h2 class="material-title">Soletrando 7º Ano</h2>
-                            <span class="category-tag tag-spelling">Spelling</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="Soletrando_8ºAno.html" class="material-link">
-                            <span class="material-icon">🔡</span>
-                            <h2 class="material-title">Soletrando 8º Ano</h2>
-                            <span class="category-tag tag-spelling">Spelling</span>
-                        </a>
-                    </div>
-
-                    <div class="material-card">
-                        <a href="english-pronouns-guide.html" class="material-link">
-                            <span class="material-icon">👤</span>
-                            <h2 class="material-title">Pronouns &amp; WH Question Words</h2>
-                            <span class="category-tag tag-grammar">Gramática</span>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         APPS & FERRAMENTAS
-    ═══════════════════════════════════ -->
-    <div class="section-block">
-        <div class="section-label">
-            <h2>🎞️ Apps &amp; Ferramentas</h2>
-            <div class="section-line"></div>
-        </div>
-
-        <div>
-            <div class="folder-card" onclick="toggleFolder('apps')">
-                <span class="folder-icon">📂</span>
-                <div class="folder-name">Apps &amp; Ferramentas</div>
-                <div class="folder-count">1 material</div>
-            </div>
-
-            <div class="subfolder-panel" id="apps">
-                <div class="subfolder-title">📄 Materiais — Apps &amp; Ferramentas</div>
-                <div class="materials-grid">
-
-                    <div class="material-card">
-                        <a href="Film_Lab.html" class="material-link">
-                            <span class="material-icon">🎞️</span>
-                            <h2 class="material-title">Film Lab — A Pocket Darkroom</h2>
-                            <span class="category-tag tag-app">App</span>
-                            <span class="category-tag tag-game">Fotografia</span>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>✨ Desenvolvido para ensino de inglês • 2025</p>
-    </footer>
-
+  <footer>Desenvolvido para o ensino de inglês · 2026</footer>
 </div>
 
 <script>
-    function toggleFolder(id) {
-        const panel = document.getElementById(id);
-        const isOpen = panel.classList.contains('open');
+/* Para acrescentar um material: copiar uma linha do grupo certo e trocar título, link, ícone e etiquetas.
+   "data" (AAAA-MM-DD) faz o material aparecer em Novos. Os contadores se atualizam sozinhos. */
+const SECOES = [
+  { id: 'darwin', nome: 'Darwin', sub: 'Spelling, provas e revisões por livro', icone: 'escola', grupos: [
+    { titulo: 'Spelling', itens: [
+      { t: 'Spelling Bee', h: 'Spelling_Bee.html', i: 'roda', e: ['Jogo', '6º ao 9º ano'], data: '2026-11-09' },
+      { t: 'Soletrando 6º Ano', h: 'Soletrando_6%C2%BAAno.html', i: 'abc', e: ['Spelling'] },
+      { t: 'Soletrando 7º Ano', h: 'Soletrando_7%C2%BAAno.html', i: 'abc', e: ['Spelling'] },
+      { t: 'Soletrando 8º Ano', h: 'Soletrando_8%C2%BAAno.html', i: 'abc', e: ['Spelling'] },
+    ]},
+    { titulo: 'Provas e guias de estudo', itens: [
+      { t: 'Revisão ENEM 2026', h: 'Revisao_ENEM_2026_Ingles.html', i: 'slides', e: ['Revisão', '3ª série'], data: '2026-11-05' },
+      { t: 'Study Guide 6º Ano', h: 'Study_Guide_6Ano_AV1_2Tri.html', i: 'guia', e: ['AV1, 2º Trimestre', 'Revisão', 'Quiz'] },
+      { t: 'Study Guide 9º Ano', h: 'Study_Guide_9Ano_AV1_2Tri.html', i: 'guia', e: ['AV1, 2º Trimestre', 'Revisão', 'Quiz'] },
+    ]},
+    { titulo: 'Revisões por livro', embreve: ['Angles 1', 'Angles 2', 'Angles 6', 'Smartgen 6B', 'Mindflow 2'], itens: [
+      { t: 'SmartGen 6A · Grammar Review Unit 1', h: 'Grammar_Review_SmartGen6A_Unit1.html', i: 'revisao', e: ['Revisão', 'Gramática'] },
+      { t: 'Angles 5 · Unit 1 Study Guide', h: 'Angles5_Unit1_Study_Guide.html', i: 'revisao', e: ['Revisão'] },
+      { t: 'MindFlow 1 · Review Unit 1', h: 'MindFlow_1_Review_Uni1.html', i: 'revisao', e: ['Revisão'] },
+    ]},
+  ]},
+  { id: 'curso', nome: 'Meu curso', sub: 'Online English, lição por lição', icone: 'curso', grupos: [
+    { titulo: 'English 1-2', itens: [
+      { t: 'Online English 1-2 · Lesson 9 Activity', h: 'English%201-2%2C%20Lesson%209.html', i: 'lapis', e: ['Atividade', 'Gramática'] },
+      { t: 'Online English 1-2 · Lesson 10 Activity', h: 'English%201-2%2C%20Lesson%2010.html', i: 'lapis', e: ['Atividade', 'Gramática'] },
+    ]},
+    { titulo: 'English 3', itens: [
+      { t: 'Online English 3 · Lesson 8 Activity', h: 'https://rodrigomariani-bit.github.io/online-english-3/lesson-8/', i: 'lapis', e: ['Atividade', 'Gramática', 'Revisão'], data: '2026-10-27' },
+      { t: 'Online English 3 · Lesson 9 Activity', h: 'https://rodrigomariani-bit.github.io/online-english-3/lesson-9/', i: 'lapis', e: ['Atividade', 'Gramática'], data: '2026-10-26' },
+    ]},
+    { titulo: 'Próximos níveis', embreve: ['English 4', 'English 5'], itens: [] },
+  ]},
+  { id: 'aleatorios', nome: 'Materiais aleatórios', sub: 'Gramática, conversação e outros', icone: 'caixa', grupos: [
+    { titulo: 'Gramática', itens: [
+      { t: 'If Clauses', h: 'if_clauses.html', i: 'gram', e: ['Gramática'] },
+      { t: 'Reported Speech and Embedded Questions', h: 'Reported_Speech_and_Embedded_Questions.html', i: 'gram', e: ['Gramática'] },
+      { t: 'Looks and Feels', h: 'feels_and_looks.html', i: 'gram', e: ['Gramática'] },
+      { t: 'Pronouns & WH Question Words', h: 'english-pronouns-guide.html', i: 'gram', e: ['Gramática'] },
+    ]},
+    { titulo: 'Conversação e jogos', itens: [
+      { t: 'Speaking Board Game', h: 'speaking_board_game.html', i: 'dado', e: ['Jogo', 'Conversação'] },
+      { t: 'Conversation: Can You Tell...', h: 'Conversation_Can_You_Tell.html', i: 'fala', e: ['Conversação'] },
+      { t: 'Airport Conversation · Davi', h: 'Airport_Conversartion.html', i: 'fala', e: ['Conversação'] },
+    ]},
+    { titulo: 'Outros', itens: [
+      { t: 'EXP. Pack Lesson 6', h: 'EXP_Pack_Lesson6.html', i: 'quiz', e: ['Lição', 'Quiz'] },
+      { t: 'Film Lab: A Pocket Darkroom', h: 'Film_Lab.html', i: 'foto', e: ['App', 'Fotografia'] },
+    ]},
+  ]},
+];
 
-        // Fecha todos os painéis de nível 1
-        document.querySelectorAll('.subfolder-panel.open').forEach(p => p.classList.remove('open'));
-        // Fecha todos os painéis aninhados
-        document.querySelectorAll('.nested-subfolder-panel.open').forEach(p => p.classList.remove('open'));
+(function(){
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const CORES = {
+    darwin: { c: 'var(--darwin)', e: 'var(--darwin-esc)', t: 'var(--darwin-claro)' },
+    curso: { c: 'var(--curso)', e: 'var(--curso-esc)', t: 'var(--curso-claro)' },
+    aleatorios: { c: 'var(--alea)', e: 'var(--alea-esc)', t: 'var(--alea-claro)' },
+  };
+  const estilo = id => `--c:${CORES[id].c};--e:${CORES[id].e};--t:${CORES[id].t}`;
+  const todos = SECOES.flatMap(s => s.grupos.flatMap(g => g.itens.map(i => ({...i, secao: s, grupo: g.titulo}))));
+  const contar = s => s.grupos.reduce((n, g) => n + g.itens.length, 0);
+  const recentes = todos.filter(i => i.data).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 3);
+  const maisNovo = new Set(recentes.slice(0, 2).map(i => i.h));
+  let atual = SECOES[0].id;
 
-        if (!isOpen) panel.classList.add('open');
-    }
+  $('#total').textContent = todos.length;
+  $('#novos').innerHTML = '<b>Novos</b>' + recentes.map(i => `<a class="novo" style="${estilo(i.secao.id)}" href="${esc(i.h)}"><i></i>${esc(i.t)}</a>`).join('');
 
-    function toggleNested(event, id) {
-        event.stopPropagation();
-        const panel = document.getElementById(id);
-        const isOpen = panel.classList.contains('open');
+  const caixa = $('#divisoes');
+  caixa.innerHTML = SECOES.map(s => `<button class="divisao" role="tab" data-id="${s.id}" style="${estilo(s.id)}" aria-selected="false" aria-controls="conteudo">
+    <span class="topo-div"><span class="icone-div"><svg><use href="#i-${s.icone}"/></svg></span><span class="num-div">${contar(s)}</span></span>
+    <span class="texto-div"><h2>${esc(s.nome)}</h2><span class="sub">${esc(s.sub)}</span></span></button>`).join('');
+  caixa.addEventListener('click', e => { const b = e.target.closest('.divisao'); if (b) abrir(b.dataset.id, true); });
 
-        // Fecha todos os painéis aninhados
-        document.querySelectorAll('.nested-subfolder-panel.open').forEach(p => p.classList.remove('open'));
-
-        if (!isOpen) panel.classList.add('open');
-    }
+  function cartao(i, comLocal){
+    const local = comLocal ? `<span class="onde">${esc(i.secao.nome)}</span>` : '';
+    const selo = maisNovo.has(i.h) ? '<span class="selo-novo">Novo</span>' : '';
+    return `<a class="item" style="${estilo(i.secao.id)}" href="${esc(i.h)}">
+      <span class="icone-item"><svg><use href="#i-${i.i}"/></svg></span>
+      <span class="corpo-item"><strong>${esc(i.t)}${selo}</strong><small>${local}${esc(i.e.join(' · '))}</small></span>
+      <svg class="seta"><use href="#i-seta"/></svg></a>`;
+  }
+  function mostrarSecao(){
+    const s = SECOES.find(x => x.id === atual);
+    $('#conteudo').innerHTML = s.grupos.map(g => `<section class="grupo" style="${estilo(s.id)}">
+      <div class="cab-grupo"><h3>${esc(g.titulo)}</h3>${g.itens.length ? `<span class="cont">${g.itens.length}</span>` : ''}</div>
+      ${g.itens.length ? `<div class="grade">${g.itens.map(i => cartao({...i, secao: s})).join('')}</div>` : ''}
+      ${g.embreve ? `<div class="embreve">Em breve: ${g.embreve.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
+    </section>`).join('');
+  }
+  function abrir(id, gravar){
+    atual = SECOES.some(s => s.id === id) ? id : SECOES[0].id;
+    document.querySelectorAll('.divisao').forEach(b => b.setAttribute('aria-selected', b.dataset.id === atual));
+    if ($('#busca').value){ $('#busca').value = ''; $('#limpar').classList.add('oculto'); }
+    mostrarSecao();
+    if (gravar) history.replaceState(null, '', '#' + atual);
+  }
+  function buscar(){
+    const bruto = $('#busca').value.trim();
+    $('#limpar').classList.toggle('oculto', !bruto);
+    if (!bruto) return mostrarSecao();
+    const partes = norm(bruto).split(/\s+/);
+    const achados = todos.filter(i => { const alvo = norm([i.t, i.secao.nome, i.grupo, ...i.e].join(' ')); return partes.every(p => alvo.includes(p)); });
+    $('#conteudo').innerHTML = achados.length
+      ? `<h3 class="titulo-busca">${achados.length} ${achados.length === 1 ? 'resultado' : 'resultados'}</h3><div class="grade">${achados.map(i => cartao(i, true)).join('')}</div>`
+      : '<div class="vazio">Nenhum material encontrado.</div>';
+  }
+  $('#busca').addEventListener('input', buscar);
+  $('#limpar').addEventListener('click', () => { $('#busca').value = ''; buscar(); $('#busca').focus(); });
+  addEventListener('hashchange', () => abrir(location.hash.slice(1)));
+  abrir(location.hash.slice(1));
+})();
 </script>
 </body>
 </html>
