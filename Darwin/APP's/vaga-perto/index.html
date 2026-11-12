@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Vaga Perto</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: faixa azul "carteira de trabalho" com uma placa PRECISA-SE colada; abaixo, painel de busca à esquerda e resultados à direita (uma coluna no celular) */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --surface-2: #f5f7fb;
+  --ink: #131c33;
+  --muted: #56627a;
+  --line: #d5dbe6;
+  --accent: #1c3d8c;
+  --accent-soft: #e2e9f8;
+  --accent-ink: #ffffff;
+  --band: #1c3d8c;
+  --band-ink: #ffffff;
+  --band-muted: #c3d0f0;
+  --paper: #fbf8ef;
+  --paper-shadow: rgba(8, 18, 48, .35);
+  --marker-red: #c9271f;
+  --marker-ink: #1b2440;
+  --tape: rgba(255, 233, 150, .78);
+  --near: #146c43;
+  --near-soft: #dcf2e5;
+  --warn: #7a4a00;
+  --warn-soft: #fff1d4;
+  --warn-line: #f0d39a;
+  --danger: #b3261e;
+
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-marker: "Permanent Marker", "Comic Sans MS", "Chalkboard SE", cursive;
+
+  --t-xs: .8125rem;  /* 13 */
+  --t-sm: .9375rem;  /* 15 */
+  --t-md: 1rem;      /* 16 */
+  --t-lg: 1.1875rem; /* 19 */
+  --t-xl: 1.375rem;  /* 22 */
+  --t-2xl: clamp(1.75rem, 4.6vw, 2.75rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1320; --surface: #141c2c; --surface-2: #19233a; --ink: #e7ecf6; --muted: #9ca9c1;
+    --line: #2a3651; --accent: #8fb0ff; --accent-soft: #1d2b4d; --accent-ink: #0d1320;
+    --band: #142a62; --band-ink: #f2f5ff; --band-muted: #aebde8;
+    --paper: #f1ecdc; --paper-shadow: rgba(0, 0, 0, .55); --marker-red: #c22a21; --marker-ink: #1b2440; --tape: rgba(255, 233, 150, .62);
+    --near: #74d6a2; --near-soft: #123324; --warn: #f2c06e; --warn-soft: #2e2410; --warn-line: #5a4519; --danger: #ff8f86;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1320; --surface: #141c2c; --surface-2: #19233a; --ink: #e7ecf6; --muted: #9ca9c1;
+  --line: #2a3651; --accent: #8fb0ff; --accent-soft: #1d2b4d; --accent-ink: #0d1320;
+  --band: #142a62; --band-ink: #f2f5ff; --band-muted: #aebde8;
+  --paper: #f1ecdc; --paper-shadow: rgba(0, 0, 0, .55); --marker-red: #c22a21; --marker-ink: #1b2440; --tape: rgba(255, 233, 150, .62);
+  --near: #74d6a2; --near-soft: #123324; --warn: #f2c06e; --warn-soft: #2e2410; --warn-line: #5a4519; --danger: #ff8f86;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+p { margin: 0; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- faixa do topo ---------- */
+.band { background: var(--band); color: var(--band-ink); }
+.band-in {
+  max-width: 1120px; margin: 0 auto;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "logo sign" "intro sign";
+  column-gap: 32px; row-gap: 18px;
+  align-items: start;
+}
+.logo {
+  grid-area: logo;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 900; font-stretch: 125%;
+  font-size: var(--t-lg); letter-spacing: .02em; text-transform: uppercase;
+}
+.logo svg { width: 20px; height: 20px; flex: none; }
+.logo span { color: var(--band-muted); }
+.intro { grid-area: intro; display: grid; gap: 12px; max-width: 40rem; }
+.intro h1 { font-size: var(--t-2xl); font-weight: 800; font-stretch: 112%; line-height: 1.04; }
+.lede { color: var(--band-muted); font-size: var(--t-lg); line-height: 1.45; max-width: 34rem; }
+
+.sign {
+  grid-area: sign; align-self: center;
+  position: relative; width: 228px;
+  background: var(--paper);
+  padding: 22px 16px 16px;
+  text-align: center;
+  transform: rotate(-3deg);
+  box-shadow: 0 1px 0 rgba(0,0,0,.08), 6px 10px 22px var(--paper-shadow);
+}
+.sign::before, .sign::after {
+  content: ""; position: absolute; top: -10px; width: 64px; height: 22px; background: var(--tape);
+}
+.sign::before { left: 14px; transform: rotate(-8deg); }
+.sign::after { right: 14px; transform: rotate(7deg); }
+.sign p { font-family: var(--font-marker); text-transform: uppercase; line-height: 1.05; }
+.sign-top { color: var(--marker-red); font-size: 1.6rem; letter-spacing: .01em; white-space: nowrap; }
+.sign-job { color: var(--marker-ink); font-size: 1.5rem; margin-top: 10px; overflow-wrap: anywhere; min-height: 1.6rem; }
+.sign-job.long { font-size: 1.15rem; }
+.sign-foot { color: var(--marker-ink); font-size: .95rem; margin-top: 12px; opacity: .8; }
+.sign.bump { animation: bump .45s ease; }
+@keyframes bump { 0% { transform: rotate(-3deg) scale(1); } 40% { transform: rotate(-1deg) scale(1.04); } 100% { transform: rotate(-3deg) scale(1); } }
+
+@media (max-width: 640px) {
+  .band-in { grid-template-areas: "logo sign" "intro intro"; padding-block: 20px 28px; column-gap: 12px; }
+  .logo { align-self: center; }
+  .sign { width: 128px; padding: 14px 8px 10px; }
+  .sign::before, .sign::after { width: 40px; height: 16px; top: -7px; }
+  .sign-top { font-size: .95rem; }
+  .sign-job { font-size: .95rem; margin-top: 6px; min-height: 1rem; }
+  .sign-job.long { font-size: .8rem; }
+  .sign-foot { font-size: .7rem; margin-top: 6px; }
+  .lede { font-size: var(--t-md); }
+}
+
+/* ---------- área principal ---------- */
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-block: 24px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+
+/* painel de busca */
+.search {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  display: grid; gap: 18px;
+  margin-top: -44px; /* sobe sobre a faixa azul */
+  box-shadow: 0 8px 24px rgba(10, 25, 60, .08);
+}
+@media (max-width: 640px) { .search { margin-top: -20px; padding: 16px; } }
+.panel-title { font-size: var(--t-lg); font-weight: 800; font-stretch: 110%; }
+.field { display: grid; gap: 6px; min-width: 0; border: 0; padding: 0; margin: 0; }
+.field label, .field legend { font-weight: 700; font-size: var(--t-sm); padding: 0; }
+.opt { font-weight: 400; color: var(--muted); }
+.hint { font-size: var(--t-xs); color: var(--muted); min-height: 1em; }
+.hint.err { color: var(--danger); }
+input[type="text"], input[type="tel"], input[type="email"], select, textarea {
+  width: 100%; min-width: 0;
+  font: inherit; font-size: 1rem; color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px;
+  padding: 11px 12px;
+}
+textarea { resize: vertical; min-height: 96px; line-height: 1.45; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: .8; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.combo { position: relative; }
+.combo ul {
+  position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px);
+  list-style: none; margin: 0; padding: 4px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(10, 25, 60, .18);
+  max-height: 300px; overflow-y: auto;
+}
+.combo li { padding: 9px 10px; border-radius: 7px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+.combo li small { color: var(--muted); }
+.combo li[aria-selected="true"], .combo li:hover { background: var(--accent-soft); }
+.combo li.none { cursor: default; color: var(--muted); }
+.combo li.none:hover { background: transparent; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip {
+  font: inherit; font-size: var(--t-xs); color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 11px; cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg label { position: relative; text-align: center; padding: 10px 4px; cursor: pointer; font-weight: 700; font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.seg label + label { border-left: 1px solid var(--line); }
+.seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: -3px; }
+
+.btn {
+  font: inherit; font-weight: 700; font-size: var(--t-sm);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 10px; padding: 10px 16px; cursor: pointer;
+  border: 1.5px solid var(--accent); background: transparent; color: var(--accent);
+  text-decoration: none;
+}
+.btn:hover { background: var(--accent-soft); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { padding: 6px 10px; font-size: var(--t-xs); border-radius: 8px; }
+.btn.quiet { border-color: var(--line); color: var(--ink); }
+.btn.danger { border-color: var(--danger); color: var(--danger); }
+.btn[disabled] { opacity: .55; cursor: progress; }
+.search .btn.primary { width: 100%; padding-block: 13px; font-size: var(--t-md); }
+@media (min-width: 901px) { .search .go { display: none; } }
+
+/* ---------- resultados ---------- */
+.results { display: flex; flex-direction: column; gap: 40px; min-width: 0; scroll-margin-top: 16px; }
+.results > section { min-width: 0; display: grid; gap: 14px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 16px; }
+.sec-head h2 { font-size: var(--t-xl); font-weight: 800; font-stretch: 108%; line-height: 1.15; }
+.sec-sub { color: var(--muted); font-size: var(--t-sm); margin-top: 3px; max-width: 40rem; }
+
+.summary { display: grid; gap: 8px; padding-top: 4px; }
+.summary .what { font-family: var(--font-display); font-size: clamp(1.35rem, 3vw, 1.75rem); font-weight: 800; font-stretch: 105%; line-height: 1.15; text-wrap: balance; }
+.summary .what em { font-style: normal; color: var(--accent); }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.facts b { color: var(--ink); }
+.example-note { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-sm); background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn-line); border-radius: 8px; padding: 6px 10px; justify-self: start; }
+
+/* lista em grupo (sites, lugares) */
+.group { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.group li + li { border-top: 1px solid var(--line); }
+.row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; align-items: center;
+  padding: 14px 16px; color: inherit; text-decoration: none;
+}
+a.row:hover { background: var(--surface-2); }
+a.row:hover .go-arrow { transform: translate(2px, -2px); }
+.row-title { font-weight: 700; font-size: var(--t-md); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.row-desc { color: var(--muted); font-size: var(--t-sm); grid-column: 1; }
+.row-side { grid-column: 2; grid-row: 1 / span 2; display: flex; align-items: center; gap: 10px; color: var(--accent); font-weight: 700; font-size: var(--t-sm); white-space: nowrap; }
+.go-arrow { width: 18px; height: 18px; transition: transform .15s ease; }
+.tag {
+  display: inline-block; font-size: var(--t-xs); font-weight: 700; font-family: var(--font-body);
+  padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tag.plain { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.tag.near { background: var(--near-soft); color: var(--near); }
+@media (max-width: 520px) {
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row-side { grid-column: 1; grid-row: auto; }
+}
+
+/* cidades vizinhas */
+.towns { display: flex; flex-wrap: wrap; gap: 8px; }
+.town {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); text-decoration: none; font-size: var(--t-sm);
+}
+.town:hover { border-color: var(--accent); }
+.town .km { color: var(--muted); font-variant-numeric: tabular-nums; font-size: var(--t-xs); }
+.town.here { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.fine { color: var(--muted); font-size: var(--t-xs); }
+
+/* mural */
+.mural { display: grid; gap: 12px; }
+.vaga {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; display: grid; gap: 10px; min-width: 0;
+}
+.vaga-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; }
+.vaga-top time { color: var(--muted); font-size: var(--t-xs); }
+.vaga h3 { font-size: var(--t-lg); font-weight: 800; font-stretch: 104%; line-height: 1.2; overflow-wrap: anywhere; }
+.vaga-where { color: var(--muted); font-size: var(--t-sm); overflow-wrap: anywhere; }
+.vaga-where b { color: var(--ink); font-weight: 700; }
+.vaga-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.vaga-desc { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--t-sm); max-width: 62ch; }
+.contacts { display: grid; gap: 0; background: var(--surface-2); border-radius: 10px; border: 1px solid var(--line); }
+.contact { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; padding: 10px 12px; }
+.contact + .contact { border-top: 1px solid var(--line); }
+.contact .k { color: var(--muted); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.contact .v { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; user-select: all; }
+.contact .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: end; }
+@media (max-width: 520px) {
+  .contact { grid-template-columns: minmax(0, 1fr); }
+  .contact .acts { justify-content: start; }
+}
+.vaga-own { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 4px; border-top: 1px dashed var(--line); }
+.vaga-own .note { color: var(--muted); font-size: var(--t-xs); margin-right: auto; }
+.vaga.inactive { opacity: .7; }
+
+.empty {
+  border: 1.5px dashed var(--line); border-radius: 12px; padding: 18px;
+  display: grid; gap: 10px; justify-items: start; background: var(--surface);
+}
+.empty p { max-width: 52ch; }
+.empty .muted { color: var(--muted); font-size: var(--t-sm); }
+.mine { border-top: 1px solid var(--line); padding-top: 12px; }
+.mine summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+.mine .mural { margin-top: 10px; }
+
+/* vagas coletadas dos sites */
+.jobs-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.jobs-count { font-size: var(--t-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
+.jobs-count b { color: var(--ink); }
+.sort { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.sort button { font: inherit; font-size: var(--t-xs); font-weight: 700; padding: 6px 10px; border: 0; background: var(--surface); color: var(--muted); cursor: pointer; }
+.sort button + button { border-left: 1px solid var(--line); }
+.sort button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.job {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; align-items: start;
+  padding: 14px 16px; color: inherit; text-decoration: none;
+}
+a.job:hover { background: var(--surface-2); }
+a.job:hover .go-arrow { transform: translate(2px, -2px); }
+.job-title { font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.job-meta { grid-column: 1; color: var(--muted); font-size: var(--t-sm); overflow-wrap: anywhere; }
+.job-meta b { color: var(--ink); font-weight: 700; }
+.job-tags { grid-column: 1; display: flex; flex-wrap: wrap; gap: 6px; }
+.job-side { grid-column: 2; grid-row: 1 / span 3; display: flex; flex-direction: column; align-items: end; gap: 8px; color: var(--accent); font-weight: 700; font-size: var(--t-xs); white-space: nowrap; }
+.job-side .go { display: inline-flex; align-items: center; gap: 4px; }
+.more { justify-self: start; }
+@media (max-width: 520px) {
+  .job { grid-template-columns: minmax(0, 1fr); }
+  .job-side { grid-column: 1; grid-row: auto; flex-direction: row; align-items: center; }
+}
+
+/* dicas */
+.tips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .tips { grid-template-columns: minmax(0, 1fr); } }
+.tip { border-radius: 12px; padding: 16px; display: grid; gap: 10px; align-content: start; background: var(--surface); border: 1px solid var(--line); }
+.tip.warn { background: var(--warn-soft); border-color: var(--warn-line); }
+.tip h3 { font-size: var(--t-md); font-weight: 800; font-stretch: 105%; }
+.tip.warn h3 { color: var(--warn); }
+.tip ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 7px; font-size: var(--t-sm); }
+.tip li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; }
+.tip li::before { content: "✓"; color: var(--near); font-weight: 700; }
+.tip.warn li::before { content: "!"; color: var(--warn); text-align: center; }
+
+.foot { grid-column: 1 / -1; color: var(--muted); font-size: var(--t-xs); border-top: 1px solid var(--line); padding-top: 16px; max-width: 70ch; }
+
+/* diálogo de anúncio */
+dialog {
+  width: min(600px, calc(100% - 24px)); max-height: calc(100% - 24px);
+  padding: 0; border: 1px solid var(--line); border-radius: 16px;
+  background: var(--surface); color: var(--ink);
+  box-shadow: 0 30px 80px rgba(5, 12, 30, .35);
+}
+dialog::backdrop { background: rgba(8, 14, 30, .55); }
+.dlg { display: grid; gap: 16px; padding: 20px; }
+.dlg-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.dlg-head h2 { font-size: var(--t-xl); font-weight: 800; font-stretch: 108%; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 560px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.dlg fieldset.box { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 14px; display: grid; gap: 12px; margin: 0; }
+.dlg fieldset.box legend { font-weight: 700; font-size: var(--t-sm); padding: 0 6px; }
+.dlg-actions { display: flex; justify-content: end; gap: 10px; flex-wrap: wrap; position: sticky; bottom: 0; background: var(--surface); padding-top: 12px; border-top: 1px solid var(--line); }
+.form-err { color: var(--danger); font-size: var(--t-sm); font-weight: 700; }
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px;
+  font-weight: 700; font-size: var(--t-sm); z-index: 50; max-width: calc(100% - 32px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sign.bump { animation: none; }
+  .go-arrow { transition: none; }
+}
+</style>
+
+<header class="band">
+  <div class="band-in">
+    <p class="logo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2Z"/></svg>
+      Vaga<span>Perto</span>
+    </p>
+    <div class="sign" id="sign" aria-hidden="true">
+      <p class="sign-top">Precisa-se</p>
+      <p class="sign-job" id="signJob">Atendente</p>
+      <p class="sign-foot">Tratar aqui</p>
+    </div>
+    <div class="intro">
+      <h1>Encontre trabalho perto de casa.</h1>
+      <p class="lede">Diga onde você mora e o que procura. O Vaga Perto mostra as vagas abertas perto de você, com link direto para se candidatar, e os lugares para levar seu currículo.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="search" id="searchForm" autocomplete="off" novalidate>
+    <h2 class="panel-title">Sua busca</h2>
+
+    <div class="field">
+      <label for="cidade">Cidade onde você mora</label>
+      <div class="combo">
+        <input id="cidade" type="text" role="combobox" aria-expanded="false" aria-controls="cidadeList" aria-autocomplete="list" aria-describedby="cidadeHint" placeholder="Ex.: Campinas" spellcheck="false">
+        <ul id="cidadeList" role="listbox" aria-label="Cidades" hidden></ul>
+      </div>
+      <p class="hint" id="cidadeHint">Digite e escolha na lista.</p>
+    </div>
+
+    <div class="field">
+      <label for="bairro">Bairro <span class="opt">(opcional)</span></label>
+      <input id="bairro" type="text" placeholder="Ex.: Centro" maxlength="60">
+    </div>
+
+    <div class="field">
+      <label for="cargo">Que trabalho você procura?</label>
+      <input id="cargo" type="text" placeholder="Ex.: atendente, motorista" maxlength="60">
+      <div class="chips" id="cargoChips" role="group" aria-label="Sugestões de trabalho"></div>
+    </div>
+
+    <fieldset class="field">
+      <legend>Até que distância?</legend>
+      <div class="seg" id="raio">
+        <label><input type="radio" name="raio" id="raio5" value="5">5 km</label>
+        <label><input type="radio" name="raio" id="raio10" value="10" checked>10 km</label>
+        <label><input type="radio" name="raio" id="raio25" value="25">25 km</label>
+        <label><input type="radio" name="raio" id="raio50" value="50">50 km</label>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn primary go">Ver resultados</button>
+  </form>
+
+  <div class="results" id="results">
+    <section class="summary" id="secSummary" style="order:0" aria-live="polite"></section>
+
+    <section id="secOfertas" style="order:1" hidden>
+      <div class="sec-head">
+        <div>
+          <h2>Vagas abertas perto de você</h2>
+          <p class="sec-sub">Anúncios da Catho, InfoJobs e LinkedIn. Toque numa vaga para ver os detalhes e se candidatar no site do anúncio.</p>
+        </div>
+      </div>
+      <div id="ofertasBody"></div>
+    </section>
+
+    <section id="secMural" style="order:5">
+      <div class="sec-head">
+        <div>
+          <h2>Mural de vagas</h2>
+          <p class="sec-sub">Vagas que empresas e pessoas da região publicaram aqui.</p>
+        </div>
+        <button type="button" class="btn" id="btnAnunciar" hidden>+ Anunciar vaga</button>
+      </div>
+      <div id="muralBody"><div class="empty"><p class="muted">Carregando o mural…</p></div></div>
+    </section>
+
+    <section id="secSites" style="order:3">
+      <div class="sec-head">
+        <div>
+          <h2>Sites de vagas com a busca pronta</h2>
+          <p class="sec-sub">Cada link abre o site já com o trabalho e a cidade preenchidos.</p>
+        </div>
+      </div>
+      <ul class="group" id="sitesList"></ul>
+    </section>
+
+    <section id="secTowns" style="order:4">
+      <div class="sec-head">
+        <div>
+          <h2 id="townsTitle">Cidades perto de você</h2>
+          <p class="sec-sub">Dá para trabalhar numa cidade vizinha. Toque numa cidade para ver as vagas de lá.</p>
+        </div>
+      </div>
+      <div class="towns" id="townsList"></div>
+      <p class="fine">Distâncias em linha reta entre os centros das cidades. Pela estrada costuma ser um pouco mais.</p>
+    </section>
+
+    <section id="secPlaces" style="order:6">
+      <div class="sec-head">
+        <div>
+          <h2>Onde ir pessoalmente</h2>
+          <p class="sec-sub">Muita vaga não chega à internet. Estes lugares abrem no mapa, perto de onde você mora.</p>
+        </div>
+      </div>
+      <ul class="group" id="placesList"></ul>
+    </section>
+
+    <section id="secTips" style="order:7">
+      <div class="sec-head"><h2>Antes de sair de casa</h2></div>
+      <div class="tips">
+        <div class="tip">
+          <h3>Leve com você</h3>
+          <ul>
+            <li>RG e CPF</li>
+            <li>Carteira de Trabalho Digital no celular (app gratuito do governo)</li>
+            <li>Comprovante de residência</li>
+            <li>Algumas cópias do currículo, com telefone e WhatsApp atualizados</li>
+            <li>Caneta, para preencher ficha na hora</li>
+          </ul>
+        </div>
+        <div class="tip warn">
+          <h3>Cuidado com golpes</h3>
+          <ul>
+            <li>Empresa séria não cobra taxa de cadastro, curso, exame ou uniforme para contratar.</li>
+            <li>Desconfie de salário muito alto para pouca exigência.</li>
+            <li>Não mande foto de documento nem código que chegou por SMS para quem você não conhece.</li>
+            <li>Entrevista é na empresa ou em lugar público.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot">Lista de cidades e coordenadas baseada nos dados de municípios do IBGE. Os links levam para sites de vagas e para o mapa; o Vaga Perto não tem ligação com esses sites e não cobra nada de ninguém.</p>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form class="dlg" id="vagaForm" novalidate autocomplete="off">
+    <div class="dlg-head">
+      <div>
+        <h2 id="dlgTitle">Anunciar uma vaga</h2>
+        <p class="sec-sub">A vaga fica no mural por 60 dias e aparece para quem procura trabalho perto dela.</p>
+      </div>
+      <button type="button" class="btn small quiet" id="dlgClose" aria-label="Fechar">Fechar</button>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="vCargo">Cargo</label>
+        <input id="vCargo" type="text" maxlength="80" placeholder="Ex.: Auxiliar de cozinha" required>
+      </div>
+      <div class="field">
+        <label for="vEmpresa">Empresa ou contratante</label>
+        <input id="vEmpresa" type="text" maxlength="80" placeholder="Ex.: Padaria Pão Quente" required>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="vCidade">Cidade da vaga</label>
+        <div class="combo">
+          <input id="vCidade" type="text" role="combobox" aria-expanded="false" aria-controls="vCidadeList" aria-autocomplete="list" placeholder="Ex.: Campinas" spellcheck="false" required>
+          <ul id="vCidadeList" role="listbox" aria-label="Cidades" hidden></ul>
+        </div>
+      </div>
+      <div class="field">
+        <label for="vBairro">Bairro</label>
+        <input id="vBairro" type="text" maxlength="60" placeholder="Ex.: Centro">
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="vContrato">Tipo de contrato</label>
+        <select id="vContrato">
+          <option value="CLT">Carteira assinada (CLT)</option>
+          <option value="Temporário">Temporário</option>
+          <option value="Meio período">Meio período</option>
+          <option value="Freelance / bico">Freelance / bico</option>
+          <option value="Estágio">Estágio</option>
+          <option value="Jovem aprendiz">Jovem aprendiz</option>
+          <option value="Autônomo / PJ">Autônomo / PJ</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="vSalario">Salário e benefícios <span class="opt">(opcional)</span></label>
+        <input id="vSalario" type="text" maxlength="80" placeholder="Ex.: R$ 1.900 + vale-transporte">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="vDescricao">O que a pessoa vai fazer e o que precisa ter</label>
+      <textarea id="vDescricao" maxlength="800" placeholder="Ex.: Preparar lanches e cuidar da limpeza da cozinha. Horário das 7h às 15h, de segunda a sábado. Não precisa de experiência."></textarea>
+    </div>
+
+    <fieldset class="box">
+      <legend>Como se candidatar (preencha pelo menos um)</legend>
+      <div class="grid2">
+        <div class="field">
+          <label for="vWhats">WhatsApp</label>
+          <input id="vWhats" type="tel" inputmode="tel" maxlength="20" placeholder="(19) 99999-0000">
+        </div>
+        <div class="field">
+          <label for="vEmail">E-mail</label>
+          <input id="vEmail" type="email" inputmode="email" maxlength="100" placeholder="rh@empresa.com.br">
+        </div>
+      </div>
+      <div class="field">
+        <label for="vEndereco">Endereço para entregar currículo</label>
+        <input id="vEndereco" type="text" maxlength="120" placeholder="Ex.: Rua Barão de Jaguara, 1000 – das 9h às 17h">
+      </div>
+    </fieldset>
+
+    <p class="form-err" id="formErr" role="alert" hidden></p>
+
+    <div class="dlg-actions">
+      <button type="button" class="btn quiet" id="dlgCancel">Cancelar</button>
+      <button type="submit" class="btn primary" id="dlgSubmit">Publicar vaga</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="municipios.js"></script>
+<script src="ofertas.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  // ---------- utilidades ----------
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    for (const kid of kids.flat()) {
+      if (kid == null || kid === false) continue;
+      el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    }
+    return el;
+  }
+  const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const slug = (s) => norm(s).replace(/ /g, '-');
+  const enc = encodeURIComponent;
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const ARROW = () => {
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('viewBox', '0 0 20 20'); s.setAttribute('class', 'go-arrow'); s.setAttribute('aria-hidden', 'true');
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', 'M6 14 14 6M8 6h6v6'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor');
+    p.setAttribute('stroke-width', '2'); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+    s.append(p); return s;
+  };
+  let toastTimer;
+  function toast(msg) {
+    const t = $('#toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
+  }
+  async function copy(text, btn) {
+    try { await navigator.clipboard.writeText(text); btn.textContent = 'Copiado'; }
+    catch {
+      const v = btn.closest('.contact')?.querySelector('.v');
+      if (v) { const r = document.createRange(); r.selectNodeContents(v); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+      btn.textContent = 'Selecionado';
+    }
+    setTimeout(() => { btn.textContent = 'Copiar'; }, 1800);
+  }
+
+  // ---------- municípios ----------
+  const UF_NOME = window.VP_UF || {};
+  const M = { code: [], name: [], uf: [], lat: [], lon: [], key: [], cap: [] };
+  const byCode = new Map();
+  (window.VP_MUN || '').split(';').forEach((row) => {
+    const [c, n, u, la, lo, cap] = row.split('|');
+    if (!n) return;
+    const i = M.code.length;
+    M.code.push(+c); M.name.push(n); M.uf.push(u); M.lat.push(+la); M.lon.push(+lo);
+    M.key.push(norm(n)); M.cap.push(cap === '1');
+    byCode.set(+c, i);
+  });
+  const N = M.code.length;
+  const label = (i) => `${M.name[i]} – ${M.uf[i]}`;
+  const RAD = Math.PI / 180;
+  function km(a, b) {
+    if (a === b) return 0;
+    const dLat = (M.lat[b] - M.lat[a]) * RAD, dLon = (M.lon[b] - M.lon[a]) * RAD;
+    const s = Math.sin(dLat / 2) ** 2 + Math.cos(M.lat[a] * RAD) * Math.cos(M.lat[b] * RAD) * Math.sin(dLon / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(s));
+  }
+  function findCities(q) {
+    let words = norm(q).split(' ').filter(Boolean);
+    if (!words.length) return [];
+    let uf = null;
+    const last = words[words.length - 1].toUpperCase();
+    if (words.length > 1 && last.length === 2 && UF_NOME[last]) { uf = last; words = words.slice(0, -1); }
+    const qq = words.join(' ');
+    const scored = [];
+    for (let i = 0; i < N; i++) {
+      if (uf && M.uf[i] !== uf) continue;
+      const k = M.key[i];
+      let s = -1;
+      if (k === qq) s = 0;
+      else if (k.startsWith(qq)) s = 1;
+      else if (k.includes(' ' + qq)) s = 2;
+      else if (k.includes(qq)) s = 3;
+      if (s >= 0) scored.push([s - (M.cap[i] ? .5 : 0), k.length, i]);
+    }
+    scored.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    return scored.slice(0, 8).map((x) => x[2]);
+  }
+
+  // combobox de cidade (usado na busca e no anúncio)
+  function makeCombo(input, list, onPick) {
+    let items = [], active = -1;
+    const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; };
+    const pick = (i) => { input.value = label(i); input.dataset.code = M.code[i]; close(); onPick(i); };
+    function paint() {
+      list.replaceChildren();
+      if (!items.length) {
+        list.append(h('li', { class: 'none', role: 'option', 'aria-disabled': 'true', text: 'Nenhuma cidade com esse nome' }));
+      }
+      items.forEach((i, n) => {
+        list.append(h('li', {
+          id: `${list.id}-${n}`, role: 'option', 'aria-selected': n === active ? 'true' : 'false',
+          onmousedown: (e) => e.preventDefault(), onclick: () => pick(i),
+        }, h('span', { text: M.name[i] }), h('small', { text: UF_NOME[M.uf[i]] || M.uf[i] })));
+      });
+      list.hidden = false; input.setAttribute('aria-expanded', 'true');
+      if (active >= 0) input.setAttribute('aria-activedescendant', `${list.id}-${active}`);
+      else input.removeAttribute('aria-activedescendant');
+    }
+    input.addEventListener('input', () => {
+      delete input.dataset.code;
+      if (!input.value.trim()) { close(); return; }
+      items = findCities(input.value); active = items.length ? 0 : -1; paint();
+    });
+    input.addEventListener('focus', () => { if (!input.dataset.code && input.value.trim()) { items = findCities(input.value); active = items.length ? 0 : -1; paint(); } else input.select(); });
+    input.addEventListener('keydown', (e) => {
+      if (list.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(items.length - 1, active + 1); paint(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); paint(); }
+      else if (e.key === 'Enter') { if (active >= 0 && items[active] != null) { e.preventDefault(); pick(items[active]); } }
+      else if (e.key === 'Escape') { close(); }
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!input.dataset.code && items.length && norm(input.value) === M.key[items[0]]) pick(items[0]);
+        close();
+      }, 120);
+    });
+    return { set(i) { if (i == null) { input.value = ''; delete input.dataset.code; return; } input.value = label(i); input.dataset.code = M.code[i]; } };
+  }
+
+  // ---------- estado da busca ----------
+  const SAVE_KEY = 'vagaperto:busca';
+  const saved = store.get(SAVE_KEY);
+  const EXEMPLO = byCode.get(3205309) ?? 0; // Vitória – ES
+  const state = {
+    city: saved && byCode.has(saved.code) ? byCode.get(saved.code) : EXEMPLO,
+    example: !(saved && byCode.has(saved.code)),
+    bairro: saved?.bairro || '',
+    cargo: saved?.cargo || '',
+    raio: [5, 10, 25, 50].includes(saved?.raio) ? saved.raio : 10,
+  };
+  const persist = () => { if (!state.example) store.set(SAVE_KEY, { code: M.code[state.city], bairro: state.bairro, cargo: state.cargo, raio: state.raio }); };
+
+  const CARGOS = ['Atendente', 'Vendedor', 'Operador de caixa', 'Repositor', 'Auxiliar de limpeza', 'Ajudante geral',
+    'Auxiliar de cozinha', 'Garçom', 'Motorista', 'Entregador', 'Recepcionista', 'Auxiliar administrativo',
+    'Cuidador de idosos', 'Pedreiro', 'Jovem aprendiz', 'Estágio'];
+
+  const cityCombo = makeCombo($('#cidade'), $('#cidadeList'), (i) => {
+    state.city = i; state.example = false; persist(); renderAll();
+    $('#cidadeHint').textContent = 'Digite e escolha na lista.'; $('#cidadeHint').classList.remove('err');
+  });
+  $('#cidade').addEventListener('input', () => {
+    const hint = $('#cidadeHint');
+    hint.textContent = 'Escolha a cidade na lista para atualizar a busca.'; hint.classList.remove('err');
+  });
+  if (!state.example) cityCombo.set(state.city);
+  $('#bairro').value = state.bairro;
+  $('#cargo').value = state.cargo;
+  $(`#raio${state.raio}`).checked = true;
+
+  let typeTimer;
+  $('#bairro').addEventListener('input', (e) => { clearTimeout(typeTimer); typeTimer = setTimeout(() => { state.bairro = e.target.value.trim(); persist(); renderAll(); }, 350); });
+  $('#cargo').addEventListener('input', (e) => { clearTimeout(typeTimer); typeTimer = setTimeout(() => { state.cargo = e.target.value.trim(); persist(); renderAll(); }, 350); });
+  $('#raio').addEventListener('change', (e) => { state.raio = +e.target.value; persist(); renderAll(); });
+  $('#searchForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    state.bairro = $('#bairro').value.trim(); state.cargo = $('#cargo').value.trim(); persist(); renderAll();
+    if (!$('#cidade').dataset.code && !state.example) { $('#cidadeHint').textContent = 'Escolha a cidade na lista.'; $('#cidadeHint').classList.add('err'); }
+    $('#results').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  CARGOS.forEach((c) => $('#cargoChips').append(h('button', {
+    type: 'button', class: 'chip', 'data-cargo': c, text: c,
+    onclick: () => { state.cargo = norm(c) === norm(state.cargo) ? '' : c; $('#cargo').value = state.cargo; persist(); renderAll(); },
+  })));
+  function renderChips() {
+    const cur = norm(state.cargo);
+    for (const b of $('#cargoChips').children) b.setAttribute('aria-pressed', norm(b.dataset.cargo) === cur ? 'true' : 'false');
+  }
+
+  let lastSign = '';
+  function renderSign() {
+    const txt = state.cargo || 'Atendente';
+    const el = $('#signJob');
+    el.textContent = txt; el.classList.toggle('long', txt.length > 14);
+    if (lastSign && lastSign !== txt) { const s = $('#sign'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump'); }
+    lastSign = txt;
+  }
+
+  // ---------- links externos ----------
+  function linkedinMiles(kmv) { const mi = kmv / 1.609; return [5, 10, 25, 50, 100].reduce((a, b) => Math.abs(b - mi) < Math.abs(a - mi) ? b : a); }
+  const googleJobs = (cargo, i) => `https://www.google.com/search?q=${enc(`vagas de ${cargo || 'emprego'} em ${M.name[i]} ${M.uf[i]}`)}&ibp=htl;jobs`;
+  const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${enc(q)}`;
+
+  function sites() {
+    const i = state.city, cidade = M.name[i], uf = M.uf[i], q = state.cargo, r = state.raio;
+    const cs = slug(cidade), qs = slug(q), u = uf.toLowerCase();
+    const lmi = linkedinMiles(r);
+    return [
+      { t: 'Google Vagas', d: 'Junta anúncios de vários sites num lugar só. Bom para começar.', side: 'na cidade', url: googleJobs(q, i) },
+      { t: 'Indeed', d: 'Um dos maiores sites de vagas do Brasil. Busca por distância.', side: `até ${r} km`, near: true,
+        url: `https://br.indeed.com/jobs?q=${enc(q)}&l=${enc(`${cidade}, ${uf}`)}&radius=${r}` },
+      { t: 'Catho', d: 'Muitas vagas de comércio, vendas e escritório.', side: 'na cidade',
+        url: qs ? `https://www.catho.com.br/vagas/${qs}/${cs}-${u}/` : `https://www.catho.com.br/vagas/${cs}-${u}/` },
+      { t: 'InfoJobs', d: 'Vagas de indústria, logística e atendimento.', side: 'na cidade',
+        url: qs ? `https://www.infojobs.com.br/vagas-de-emprego-${qs}-em-${cs},-${u}.aspx` : `https://www.infojobs.com.br/vagas-de-emprego-em-${cs},-${u}.aspx` },
+      { t: 'BNE – Banco Nacional de Empregos', d: 'Forte em vagas operacionais e de primeiro emprego.', side: 'na cidade',
+        url: qs ? `https://www.bne.com.br/vagas-de-emprego-para-${qs}-em-${cs}-${u}` : `https://www.bne.com.br/vagas-de-emprego-em-${cs}-${u}` },
+      { t: 'Vagas.com', d: 'Vagas de empresas médias e grandes.', side: 'na cidade',
+        url: qs ? `https://www.vagas.com.br/vagas-de-${qs}-em-${cs}` : `https://www.vagas.com.br/vagas-em-${cs}` },
+      { t: 'LinkedIn', d: 'Melhor para vagas de escritório e nível técnico ou superior.', side: `até ${Math.round(lmi * 1.609)} km`, near: true,
+        url: `https://www.linkedin.com/jobs/search/?keywords=${enc(q)}&location=${enc(`${cidade}, ${UF_NOME[uf] || uf}, Brasil`)}&distance=${lmi}` },
+      { t: 'Emprega Brasil (SINE)', d: 'Vagas do SINE, do governo federal. Entre com sua conta gov.br. Também pelo app Carteira de Trabalho Digital.', side: 'gov.br',
+        url: 'https://empregabrasil.mte.gov.br/' },
+      { t: 'CIEE', d: 'Estágio e jovem aprendiz, para quem ainda estuda.', side: 'estágio',
+        url: 'https://portal.ciee.org.br/' },
+    ];
+  }
+
+  function places() {
+    const i = state.city, cidade = M.name[i], uf = M.uf[i];
+    const area = state.bairro ? `${state.bairro}, ${cidade} - ${uf}` : `${cidade} - ${uf}`;
+    const mes = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    return [
+      { t: 'Posto do SINE', d: 'Atendimento público e gratuito. Cadastra seu currículo, indica vagas da região e cuida do seguro-desemprego.', url: mapsUrl(`SINE ${cidade} ${uf}`), side: 'Ver no mapa' },
+      { t: 'Agências de emprego', d: 'Muitas vagas de comércio, indústria e logística passam por agências. Agência séria não cobra de quem procura emprego.', url: mapsUrl(`agência de empregos perto de ${area}`), side: 'Ver no mapa' },
+      { t: 'Supermercados e atacarejos', d: 'Contratam o ano todo: caixa, repositor, açougue, padaria. Peça para falar com o RH ou deixe o currículo no balcão.', url: mapsUrl(`supermercado perto de ${area}`), side: 'Ver no mapa' },
+      { t: 'Lojas e shoppings', d: 'Repare nas placas de "Precisa-se" nas vitrines. No fim do ano abrem muitas vagas temporárias.', url: mapsUrl(`shopping ${cidade} ${uf}`), side: 'Ver no mapa' },
+      { t: 'Restaurantes, bares e lanchonetes', d: 'Procuram garçom, auxiliar de cozinha, chapeiro e atendente, muitas vezes para fim de semana. Vá fora do horário de almoço.', url: mapsUrl(`restaurante perto de ${area}`), side: 'Ver no mapa' },
+      { t: 'Feirões e mutirões de emprego', d: 'Prefeituras, SINE e sindicatos fazem mutirões com muitas vagas num dia só. Veja se tem algum marcado.', url: `https://www.google.com/search?q=${enc(`feirão de empregos ${cidade} ${uf} ${mes}`)}`, side: 'Pesquisar' },
+    ];
+  }
+
+  function nearbyTowns() {
+    const out = [];
+    for (let j = 0; j < N; j++) {
+      if (j === state.city) continue;
+      if (Math.abs(M.lat[j] - M.lat[state.city]) > 1) continue;
+      const d = km(state.city, j);
+      if (d <= state.raio) out.push([d, j]);
+    }
+    return out.sort((a, b) => a[0] - b[0]);
+  }
+
+  // ---------- render da busca ----------
+  function renderSummary(townCount, muralCount, ofertasCount) {
+    const s = $('#secSummary'); s.replaceChildren();
+    const what = h('p', { class: 'what' },
+      state.cargo ? h('em', { text: state.cargo }) : 'Vagas',
+      ' perto de ', h('em', { text: state.bairro ? `${state.bairro}, ${label(state.city)}` : label(state.city) }));
+    const facts = h('p', { class: 'facts' },
+      h('span', {}, 'até ', h('b', { text: `${state.raio} km` })),
+      ofertasCount ? h('span', {}, h('b', { text: ofertasCount.toLocaleString('pt-BR') }), ofertasCount === 1 ? ' vaga aberta' : ' vagas abertas') : null,
+      h('span', {}, h('b', { text: String(townCount) }), townCount === 1 ? ' cidade vizinha' : ' cidades vizinhas'),
+      muralCount != null ? h('span', {}, h('b', { text: String(muralCount) }), muralCount === 1 ? ' vaga no mural' : ' vagas no mural') : null);
+    s.append(what, facts);
+    if (state.example) s.append(h('p', { class: 'example-note', text: 'Exemplo em Vitória. Digite a sua cidade na busca para ver o que tem perto de você.' }));
+  }
+
+  function renderSites() {
+    const ul = $('#sitesList'); ul.replaceChildren();
+    sites().forEach((s) => ul.append(h('li', {}, h('a', { class: 'row', href: s.url, target: '_blank', rel: 'noopener' },
+      h('span', { class: 'row-title' }, s.t),
+      h('span', { class: 'row-desc', text: s.d }),
+      h('span', { class: 'row-side' }, h('span', { class: s.near ? 'tag near' : 'tag plain', text: s.side }), ARROW())))));
+  }
+
+  function renderTowns(towns) {
+    $('#townsTitle').textContent = `Cidades a até ${state.raio} km`;
+    const box = $('#townsList'); box.replaceChildren();
+    box.append(h('a', { class: 'town here', href: googleJobs(state.cargo, state.city), target: '_blank', rel: 'noopener' },
+      M.name[state.city], h('span', { class: 'km', text: 'sua cidade' })));
+    const MAX = 24;
+    towns.slice(0, MAX).forEach(([d, j]) => box.append(h('a', { class: 'town', href: googleJobs(state.cargo, j), target: '_blank', rel: 'noopener', title: `Vagas em ${label(j)}` },
+      M.name[j], h('span', { class: 'km', text: `${Math.round(d)} km` }))));
+    if (towns.length > MAX) box.append(h('span', { class: 'town', text: `+ ${towns.length - MAX} cidades` }));
+    if (!towns.length) box.append(h('span', { class: 'fine', text: `Nenhuma outra cidade a até ${state.raio} km. Aumente a distância para ver as vizinhas.` }));
+  }
+
+  function renderPlaces() {
+    const ul = $('#placesList'); ul.replaceChildren();
+    places().forEach((p) => ul.append(h('li', {}, h('a', { class: 'row', href: p.url, target: '_blank', rel: 'noopener' },
+      h('span', { class: 'row-title', text: p.t }),
+      h('span', { class: 'row-desc', text: p.d }),
+      h('span', { class: 'row-side' }, p.side, ARROW())))));
+  }
+
+  // ---------- vagas coletadas dos sites (ofertas.js) ----------
+  const FONTE_NOME = ['Catho', 'InfoJobs', 'LinkedIn'];
+  const FONTE_BASE = ['https://www.catho.com.br', 'https://www.infojobs.com.br'];
+  function ofertaUrl(f, u) {
+    u = String(u || '');
+    if (f === 2) return /^\d+$/.test(u) ? `https://www.linkedin.com/jobs/view/${u}/` : null;
+    if ((f === 0 || f === 1) && u.startsWith('/')) {
+      try { const x = new URL(u, FONTE_BASE[f]); return x.origin === FONTE_BASE[f] ? x.href : null; } catch { return null; }
+    }
+    return null;
+  }
+  const OF = (() => {
+    const raw = window.VP_OFERTAS;
+    if (!raw || !Array.isArray(raw.itens)) return null;
+    const items = [];
+    for (const r of raw.itens) {
+      if (!Array.isArray(r)) continue;
+      const [t, e, c, s, d, f, u] = r;
+      const ci = byCode.get(c), url = ofertaUrl(f, u);
+      if (ci == null || !url) continue;
+      const ts = Date.parse(`${d}T12:00:00-03:00`);
+      items.push({ t: String(t || 'Vaga'), e: String(e || ''), ci, s: String(s || ''), ts: Number.isFinite(ts) ? ts : 0, f, url, key: norm(`${t} ${e}`) });
+    }
+    const cities = new Set(items.map((x) => x.ci));
+    return { items, cities, at: Date.parse(raw.atualizadoEm), uf: String(raw.estado || '') };
+  })();
+  const ofView = { limit: 25, sort: 'perto', sig: '' };
+
+  function diasAtras(ts) {
+    if (!ts) return '';
+    const d = Math.round((Date.now() - ts) / DAY);
+    if (d <= 0) return 'hoje';
+    if (d === 1) return 'ontem';
+    return `há ${d} dias`;
+  }
+
+  function renderOfertas() {
+    const sec = $('#secOfertas'), body = $('#ofertasBody');
+    if (!OF || !OF.items.length) { sec.hidden = true; return null; }
+    sec.hidden = false;
+    const sig = `${state.city}|${state.raio}|${norm(state.cargo)}`;
+    if (sig !== ofView.sig) { ofView.sig = sig; ofView.limit = 25; }
+
+    // distância de cada cidade com vagas até a cidade da pessoa
+    const dist = new Map();
+    for (const ci of OF.cities) { const d = km(state.city, ci); if (d <= state.raio) dist.set(ci, d); }
+    body.replaceChildren();
+    const ufNome = UF_NOME[OF.uf] || OF.uf;
+    if (!dist.size) {
+      body.append(h('div', { class: 'empty' },
+        h('p', {}, h('b', { text: `Por enquanto o Vaga Perto reúne as vagas dos sites só no ${ufNome}.` })),
+        h('p', { class: 'muted', text: `Para ${label(state.city)}, use os sites de vagas logo abaixo: os links já abrem com sua busca pronta.` })));
+      sec.style.order = 1;
+      return 0;
+    }
+    const words = norm(state.cargo).split(' ').filter((w) => w.length > 2);
+    let list = OF.items.filter((x) => dist.has(x.ci) && words.every((w) => x.key.includes(w)));
+    if (ofView.sort === 'perto') list.sort((a, b) => dist.get(a.ci) - dist.get(b.ci) || b.ts - a.ts);
+    else list.sort((a, b) => b.ts - a.ts || dist.get(a.ci) - dist.get(b.ci));
+
+    const sortBtn = (val, txt) => h('button', { type: 'button', 'aria-pressed': ofView.sort === val ? 'true' : 'false', text: txt,
+      onclick: () => { ofView.sort = val; renderOfertas(); $('#ofertasBody .sort [aria-pressed="true"]')?.focus(); } });
+    body.append(h('div', { class: 'jobs-bar' },
+      h('p', { class: 'jobs-count' }, h('b', { text: list.length.toLocaleString('pt-BR') }),
+        list.length === 1 ? ' vaga' : ' vagas', state.cargo ? ` de "${state.cargo}"` : '', ` a até ${state.raio} km`),
+      list.length > 1 ? h('div', { class: 'sort', role: 'group', 'aria-label': 'Ordenar vagas' }, sortBtn('perto', 'Mais perto'), sortBtn('recentes', 'Mais recentes')) : null));
+
+    if (!list.length) {
+      body.append(h('div', { class: 'empty' },
+        h('p', {}, h('b', { text: `Nenhuma vaga de "${state.cargo}" a até ${state.raio} km.` })),
+        h('p', { class: 'muted', text: 'Tente aumentar a distância, escrever o cargo de outro jeito (por exemplo "vendedor" em vez de "vendedora") ou apagar o cargo para ver todas.' })));
+    } else {
+      const ul = h('ul', { class: 'group' });
+      list.slice(0, ofView.limit).forEach((x) => {
+        const d = dist.get(x.ci);
+        const tags = h('span', { class: 'job-tags' },
+          h('span', { class: x.ci === state.city ? 'tag near' : 'tag', text: x.ci === state.city ? 'Na sua cidade' : `${Math.round(d)} km` }),
+          x.s ? h('span', { class: 'tag plain', text: x.s }) : null,
+          x.ts ? h('span', { class: 'tag plain', text: diasAtras(x.ts) }) : null);
+        ul.append(h('li', {}, h('a', { class: 'job', href: x.url, target: '_blank', rel: 'noopener' },
+          h('span', { class: 'job-title', text: x.t }),
+          h('span', { class: 'job-meta' }, x.e ? h('b', { text: x.e }) : 'Empresa não informada', ' · ', M.name[x.ci]),
+          tags,
+          h('span', { class: 'job-side' }, h('span', { class: 'tag plain', text: FONTE_NOME[x.f] }), h('span', { class: 'go' }, 'Ver vaga', ARROW())))));
+      });
+      body.append(ul);
+      const rest = list.length - ofView.limit;
+      if (rest > 0) body.append(h('button', { type: 'button', class: 'btn more', text: `Mostrar mais ${Math.min(25, rest)} vagas (faltam ${rest.toLocaleString('pt-BR')})`,
+        onclick: () => { const first = ofView.limit; ofView.limit += 25; renderOfertas(); $$('#ofertasBody a.job')[first]?.focus(); } }));
+    }
+    const quando = Number.isFinite(OF.at) ? new Date(OF.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }) : '';
+    body.append(h('p', { class: 'fine', text: `Lista atualizada ${quando ? `em ${quando}` : 'todo dia'}, com ${OF.items.length.toLocaleString('pt-BR')} vagas no ${ufNome}. A vaga abre no site do anúncio, onde você se candidata. Alguns sites pedem um cadastro gratuito.` }));
+    sec.style.order = 1;
+    return list.length;
+  }
+
+  // ---------- mural (db compartilhado) ----------
+  const DIAS = 60, DAY = 86400000;
+  const mural = { status: 'loading', docs: [], db: null, me: null, owner: false, canWrite: null, busy: false };
+
+  function allItems() {
+    const out = [];
+    for (const d of mural.docs) {
+      const its = d.data()?.itens;
+      if (!Array.isArray(its)) continue;
+      for (const it of its) {
+        if (!it || typeof it !== 'object' || !byCode.has(it.cidade)) continue;
+        const s = (k) => (typeof it[k] === 'string' ? it[k] : '');
+        const ts = Number(it.criadaEm);
+        out.push({
+          id: s('id'), cargo: s('cargo'), empresa: s('empresa'), cidade: it.cidade, bairro: s('bairro'),
+          contrato: s('contrato'), salario: s('salario'), descricao: s('descricao'),
+          whatsapp: s('whatsapp'), email: s('email'), endereco: s('endereco'),
+          criadaEm: Number.isFinite(ts) && ts > 0 ? ts : 0, preenchida: it.preenchida === true, autor: d.id,
+        });
+      }
+    }
+    return out;
+  }
+  const isActive = (it) => !it.preenchida && Date.now() - (it.criadaEm || 0) < DIAS * DAY;
+  function ago(ms) {
+    const d = Math.floor((Date.now() - ms) / DAY);
+    if (d <= 0) return 'publicada hoje';
+    if (d === 1) return 'publicada ontem';
+    return `publicada há ${d} dias`;
+  }
+  function fmtPhone(dg) {
+    let d = dg.startsWith('55') && dg.length >= 12 ? dg.slice(2) : dg;
+    if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return dg;
+  }
+  const waNumber = (dg) => (dg.startsWith('55') && dg.length >= 12 ? dg : '55' + dg);
+
+  function distLabel(it) {
+    const ci = byCode.get(it.cidade);
+    if (ci === state.city) {
+      if (state.bairro && it.bairro && norm(it.bairro) === norm(state.bairro)) return { text: 'No seu bairro', near: true, d: -1 };
+      return { text: 'Na sua cidade', near: true, d: 0 };
+    }
+    const d = km(state.city, ci);
+    return { text: `${Math.round(d)} km · ${M.name[ci]}`, near: false, d };
+  }
+
+  function vagaCard(it, opts = {}) {
+    const ci = byCode.get(it.cidade);
+    const dl = distLabel(it);
+    const card = h('article', { class: 'vaga' + (opts.inactive ? ' inactive' : '') });
+    card.append(h('div', { class: 'vaga-top' },
+      h('span', { class: dl.near ? 'tag near' : 'tag', text: dl.text }),
+      h('time', { datetime: new Date(it.criadaEm || 0).toISOString(), text: ago(it.criadaEm || 0) })));
+    card.append(h('h3', { text: it.cargo || 'Vaga' }));
+    card.append(h('p', { class: 'vaga-where' }, h('b', { text: it.empresa || '' }), ' · ', [it.bairro, label(ci)].filter(Boolean).join(', ')));
+    const tags = h('div', { class: 'vaga-tags' });
+    if (it.contrato) tags.append(h('span', { class: 'tag plain', text: it.contrato }));
+    if (it.salario) tags.append(h('span', { class: 'tag plain', text: it.salario }));
+    if (tags.childNodes.length) card.append(tags);
+    if (it.descricao) card.append(h('p', { class: 'vaga-desc', text: it.descricao }));
+
+    const contacts = h('div', { class: 'contacts' });
+    const wa = String(it.whatsapp || '').replace(/\D/g, '');
+    if (wa.length >= 10) {
+      const msg = `Olá! Vi a vaga de ${it.cargo} (${it.empresa}) no Vaga Perto e tenho interesse.`;
+      contacts.append(h('div', { class: 'contact' },
+        h('span', { class: 'k', text: 'WhatsApp' }), h('span', { class: 'v', text: fmtPhone(wa) }),
+        h('span', { class: 'acts' },
+          h('button', { type: 'button', class: 'btn small quiet', text: 'Copiar', onclick: (e) => copy(fmtPhone(wa), e.currentTarget) }),
+          h('a', { class: 'btn small', href: `https://wa.me/${waNumber(wa)}?text=${enc(msg)}`, target: '_blank', rel: 'noopener', text: 'Abrir WhatsApp' }))));
+    }
+    if (it.email) {
+      contacts.append(h('div', { class: 'contact' },
+        h('span', { class: 'k', text: 'E-mail' }), h('span', { class: 'v', text: it.email }),
+        h('span', { class: 'acts' }, h('button', { type: 'button', class: 'btn small quiet', text: 'Copiar', onclick: (e) => copy(it.email, e.currentTarget) }))));
+    }
+    if (it.endereco) {
+      contacts.append(h('div', { class: 'contact' },
+        h('span', { class: 'k', text: 'Ir até lá' }), h('span', { class: 'v', text: it.endereco }),
+        h('span', { class: 'acts' }, h('a', { class: 'btn small', href: mapsUrl(`${it.endereco}, ${M.name[ci]} - ${M.uf[ci]}`), target: '_blank', rel: 'noopener', text: 'Ver no mapa' }))));
+    }
+    if (contacts.childNodes.length) card.append(contacts);
+
+    const mine = mural.me && it.autor === mural.me;
+    if (mine || mural.owner) {
+      const own = h('div', { class: 'vaga-own' });
+      if (mine) {
+        const status = it.preenchida ? 'Marcada como preenchida. Só você vê.' : !isActive(it) ? `Saiu do mural depois de ${DIAS} dias.` : 'Você publicou esta vaga.';
+        own.append(h('span', { class: 'note', text: status }));
+        if (it.preenchida || !isActive(it)) own.append(h('button', { type: 'button', class: 'btn small', text: 'Voltar ao mural', onclick: () => editMine(it.id, (x) => ({ ...x, preenchida: false, criadaEm: Date.now() }), 'A vaga voltou para o mural.') }));
+        else own.append(h('button', { type: 'button', class: 'btn small', text: 'Vaga preenchida', onclick: () => editMine(it.id, (x) => ({ ...x, preenchida: true }), 'Vaga marcada como preenchida.') }));
+        own.append(confirmBtn('Apagar', () => editMine(it.id, () => null, 'Vaga apagada.')));
+      } else {
+        own.append(h('span', { class: 'note', text: 'Você administra esta página.' }));
+        own.append(confirmBtn('Remover do mural', () => moderate(it.autor, it.id)));
+      }
+      card.append(own);
+    }
+    return card;
+  }
+
+  function confirmBtn(text, action) {
+    let armed = false, t;
+    const b = h('button', { type: 'button', class: 'btn small danger', text });
+    b.addEventListener('click', () => {
+      if (!armed) { armed = true; b.textContent = 'Toque de novo para confirmar'; t = setTimeout(() => { armed = false; b.textContent = text; }, 4000); return; }
+      clearTimeout(t); action();
+    });
+    return b;
+  }
+
+  function myItems() {
+    const d = mural.docs.find((x) => x.id === mural.me);
+    const its = d?.data()?.itens;
+    return Array.isArray(its) ? JSON.parse(JSON.stringify(its)) : [];
+  }
+  async function writeMine(items) {
+    await mural.db.doc('vagas/' + mural.me).set({ itens: items, atualizadoEm: Date.now() });
+  }
+  async function editMine(id, fn, okMsg) {
+    if (mural.busy) return;
+    mural.busy = true;
+    try {
+      const items = myItems().map((x) => (x.id === id ? fn(x) : x)).filter(Boolean);
+      await writeMine(items); toast(okMsg);
+    } catch (e) { toast(writeErrorText(e)); }
+    finally { mural.busy = false; }
+  }
+  async function moderate(autor, id) {
+    if (mural.busy) return;
+    mural.busy = true;
+    try {
+      const d = mural.docs.find((x) => x.id === autor);
+      const items = JSON.parse(JSON.stringify(d?.data()?.itens || [])).filter((x) => x.id !== id);
+      await mural.db.doc('vagas/' + autor).set({ itens: items, atualizadoEm: Date.now() });
+      toast('Vaga removida do mural.');
+    } catch (e) { toast(writeErrorText(e)); }
+    finally { mural.busy = false; }
+  }
+  function writeErrorText(e) {
+    if (e?.code === 'invalid_argument') return 'Você não tem permissão para anunciar vagas nesta página.';
+    if (e?.code === 'quota_exceeded') return 'O mural está cheio. Apague vagas antigas e tente de novo.';
+    return 'Não foi possível salvar agora. Tente de novo em alguns segundos.';
+  }
+
+  function renderMural() {
+    const sec = $('#secMural'), body = $('#muralBody');
+    if (mural.status === 'off') { sec.hidden = true; return null; }
+    sec.hidden = false;
+    $('#btnAnunciar').hidden = !(mural.status === 'ready' && mural.me && mural.canWrite !== false);
+    if (mural.status === 'loading') { sec.style.order = 5; return null; }
+
+    const items = allItems();
+    const active = items.filter(isActive);
+    const near = active.map((it) => ({ it, dl: distLabel(it) })).filter((x) => x.dl.d <= state.raio);
+    near.sort((a, b) => a.dl.d - b.dl.d || (b.it.criadaEm || 0) - (a.it.criadaEm || 0));
+    const words = norm(state.cargo).split(' ').filter((w) => w.length > 2);
+    const matchesCargo = (it) => { const hay = norm(`${it.cargo} ${it.descricao} ${it.empresa}`); return words.every((w) => hay.includes(w)); };
+    const matched = words.length ? near.filter((x) => matchesCargo(x.it)) : near;
+
+    body.replaceChildren();
+    const list = h('div', { class: 'mural' });
+    if (matched.length) {
+      matched.forEach((x) => list.append(vagaCard(x.it)));
+      body.append(list);
+    } else if (near.length) {
+      body.append(h('p', { class: 'sec-sub', text: `Nenhuma vaga de "${state.cargo}" no mural. Estas são as outras vagas a até ${state.raio} km:` }));
+      near.forEach((x) => list.append(vagaCard(x.it)));
+      body.append(list);
+    } else {
+      const empty = h('div', { class: 'empty' },
+        h('p', {}, h('b', { text: `Ainda não há vagas no mural a até ${state.raio} km de ${M.name[state.city]}.` })),
+        h('p', { class: 'muted', text: mural.me && mural.canWrite !== false
+          ? 'Conhece uma empresa contratando? Anuncie a vaga aqui. É de graça e aparece para quem mora perto.'
+          : 'Quando alguém publicar uma vaga perto de você, ela aparece aqui. Enquanto isso, use os sites e lugares abaixo.' }));
+      if (mural.me && mural.canWrite !== false) empty.append(h('button', { type: 'button', class: 'btn', text: '+ Anunciar vaga', onclick: openDialog }));
+      body.append(empty);
+    }
+
+    const mine = mural.me ? items.filter((it) => it.autor === mural.me).sort((a, b) => (b.criadaEm || 0) - (a.criadaEm || 0)) : [];
+    if (mine.length) {
+      const det = h('details', { class: 'mine' }, h('summary', { text: `Suas vagas (${mine.length})` }));
+      const l = h('div', { class: 'mural' });
+      mine.forEach((it) => l.append(vagaCard(it, { inactive: !isActive(it) })));
+      det.append(l);
+      if (mural.mineOpen) det.open = true;
+      det.addEventListener('toggle', () => { mural.mineOpen = det.open; });
+      body.append(det);
+    }
+    sec.style.order = matched.length || near.length ? 2 : 5;
+    return near.length;
+  }
+
+  function renderAll() {
+    renderChips(); renderSign();
+    const towns = nearbyTowns();
+    renderSites(); renderTowns(towns); renderPlaces();
+    const n = renderMural();
+    const o = renderOfertas();
+    renderSummary(towns.length, n, o);
+  }
+
+  // ---------- anunciar vaga ----------
+  const dlg = $('#dlg');
+  let vCity = null;
+  const vCombo = makeCombo($('#vCidade'), $('#vCidadeList'), (i) => { vCity = i; });
+  $('#vCidade').addEventListener('input', () => { vCity = null; });
+  function openDialog() {
+    $('#formErr').hidden = true;
+    if (vCity == null && !state.example) { vCity = state.city; vCombo.set(state.city); }
+    if (!$('#vBairro').value && state.bairro) $('#vBairro').value = state.bairro;
+    try { dlg.showModal(); } catch { dlg.setAttribute('open', ''); }
+    $('#vCargo').focus();
+  }
+  const closeDialog = () => dlg.close();
+  $('#btnAnunciar').addEventListener('click', openDialog);
+  $('#dlgClose').addEventListener('click', closeDialog);
+  $('#dlgCancel').addEventListener('click', closeDialog);
+
+  $('#vagaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = $('#formErr');
+    const val = (id) => $(id).value.trim();
+    const it = {
+      cargo: val('#vCargo'), empresa: val('#vEmpresa'), bairro: val('#vBairro'),
+      contrato: $('#vContrato').value, salario: val('#vSalario'), descricao: val('#vDescricao'),
+      whatsapp: val('#vWhats').replace(/\D/g, ''), email: val('#vEmail'), endereco: val('#vEndereco'),
+    };
+    const fail = (msg, focus) => { err.textContent = msg; err.hidden = false; if (focus) $(focus).focus(); };
+    if (!it.cargo) return fail('Escreva o cargo da vaga.', '#vCargo');
+    if (!it.empresa) return fail('Escreva o nome da empresa ou de quem está contratando.', '#vEmpresa');
+    if (vCity == null) return fail('Escolha a cidade da vaga na lista.', '#vCidade');
+    if (it.whatsapp && (it.whatsapp.length < 10 || it.whatsapp.length > 13)) return fail('O WhatsApp precisa ter DDD e número, por exemplo (19) 99999-0000.', '#vWhats');
+    if (it.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(it.email)) return fail('Confira o e-mail: ele precisa ter @ e um domínio, como rh@empresa.com.br.', '#vEmail');
+    if (!it.whatsapp && !it.email && !it.endereco) return fail('Coloque pelo menos um jeito de se candidatar: WhatsApp, e-mail ou endereço.', '#vWhats');
+    if (!mural.db || !mural.me || mural.busy) return fail('O mural não está disponível agora. Tente de novo em alguns segundos.');
+    err.hidden = true;
+    const btn = $('#dlgSubmit'); btn.disabled = true; btn.textContent = 'Publicando…';
+    mural.busy = true;
+    try {
+      let items = myItems();
+      if (items.length >= 30) {
+        const old = items.filter((x) => !isActive(x)).sort((a, b) => (a.criadaEm || 0) - (b.criadaEm || 0));
+        if (!old.length) throw { code: 'too_many' };
+        items = items.filter((x) => x !== old[0]);
+      }
+      items.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ...it, cidade: M.code[vCity], criadaEm: Date.now(), preenchida: false });
+      await writeMine(items);
+      dlg.close();
+      ['#vCargo', '#vSalario', '#vDescricao'].forEach((id) => { $(id).value = ''; });
+      toast('Vaga publicada no mural.');
+    } catch (e2) {
+      fail(e2?.code === 'too_many' ? 'Você já tem 30 vagas no mural. Apague ou marque como preenchida alguma antes de publicar outra.' : writeErrorText(e2));
+      if (e2?.code === 'invalid_argument') { mural.canWrite = false; renderAll(); }
+    } finally {
+      mural.busy = false; btn.disabled = false; btn.textContent = 'Publicar vaga';
+    }
+  });
+
+  // ---------- inicialização ----------
+  renderAll();
+
+  (async () => {
+    const [db, user] = await Promise.all([
+      window.claude?.use ? window.claude.use('db').catch(() => null) : null,
+      window.claude?.use ? window.claude.use('user').catch(() => null) : null,
+    ]);
+    if (!db) { mural.status = 'off'; renderAll(); return; }
+    mural.db = db;
+    if (user) {
+      const [id, owner, can] = await Promise.all([user.id(), user.isOwner(), user.can('data.write')]);
+      mural.me = id; mural.owner = owner; mural.canWrite = can;
+    }
+    db.collection('vagas').onSnapshot((snap) => {
+      mural.docs = snap.docs.filter((d) => d.exists);
+      mural.status = 'ready';
+      renderAll();
+    }, () => { mural.status = 'off'; renderAll(); });
+  })();
+})();
+</script>
+
+</body>
+</html>
