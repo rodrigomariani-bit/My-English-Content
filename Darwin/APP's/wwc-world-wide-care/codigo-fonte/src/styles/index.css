@@ -1,0 +1,494 @@
+@import "tailwindcss" source(none);
+@source "../";
+
+/*
+  WWC – World Wide Care · sistema visual
+  Layout: "guia de campo" — trilho lateral no computador, barra de abas no celular,
+  conteúdo numa coluna de 1160px feita de cartões arredondados.
+  Cores: verde-copa (marca), folha (ação), céu e oceano (azuis suaves), ouro-moeda (doações).
+*/
+:root {
+  --bg: #f1f7f4;
+  --surface: #ffffff;
+  --surface-2: #e7f2ed;
+  --surface-3: #e2eff7;
+  --ink: #0f241d;
+  --ink-soft: #46605a;
+  --ink-faint: #748983;
+  --line: #d3e4dd;
+  --brand: #11734f;
+  --brand-strong: #0a5239;
+  --brand-ink: #ffffff;
+  --leaf: #2fae6d;
+  --leaf-soft: #d5f1e1;
+  --ocean: #2672ad;
+  --sky: #d4eaf7;
+  --sky-strong: #8cc3e2;
+  --coin: #d99a16;
+  --coin-soft: #fbefd0;
+  --danger: #c0392f;
+  --danger-soft: #f9e0dd;
+  --shadow: 16 52 40;
+  --land: #ffffff;
+  --sea: #d4eaf7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #09150f;
+    --surface: #102019;
+    --surface-2: #152b22;
+    --surface-3: #12283a;
+    --ink: #e3f1eb;
+    --ink-soft: #a2bab1;
+    --ink-faint: #6e857d;
+    --line: #22392f;
+    --brand: #43c98f;
+    --brand-strong: #74dcae;
+    --brand-ink: #05231a;
+    --leaf: #4fd08e;
+    --leaf-soft: #173d2b;
+    --ocean: #6db4e4;
+    --sky: #163449;
+    --sky-strong: #2f6e98;
+    --coin: #f2c14e;
+    --coin-soft: #3a2e10;
+    --danger: #f07a72;
+    --danger-soft: #3d1a18;
+    --shadow: 0 0 0;
+    --land: #1d3a2e;
+    --sea: #0f2738;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"],
+:root[data-app-theme="dark"] {
+  --bg: #09150f;
+  --surface: #102019;
+  --surface-2: #152b22;
+  --surface-3: #12283a;
+  --ink: #e3f1eb;
+  --ink-soft: #a2bab1;
+  --ink-faint: #6e857d;
+  --line: #22392f;
+  --brand: #43c98f;
+  --brand-strong: #74dcae;
+  --brand-ink: #05231a;
+  --leaf: #4fd08e;
+  --leaf-soft: #173d2b;
+  --ocean: #6db4e4;
+  --sky: #163449;
+  --sky-strong: #2f6e98;
+  --coin: #f2c14e;
+  --coin-soft: #3a2e10;
+  --danger: #f07a72;
+  --danger-soft: #3d1a18;
+  --shadow: 0 0 0;
+  --land: #1d3a2e;
+  --sea: #0f2738;
+  color-scheme: dark;
+}
+
+/* Escolha feita dentro do app vence a preferência do sistema. */
+:root[data-app-theme="light"] {
+  --bg: #f1f7f4;
+  --surface: #ffffff;
+  --surface-2: #e7f2ed;
+  --surface-3: #e2eff7;
+  --ink: #0f241d;
+  --ink-soft: #46605a;
+  --ink-faint: #748983;
+  --line: #d3e4dd;
+  --brand: #11734f;
+  --brand-strong: #0a5239;
+  --brand-ink: #ffffff;
+  --leaf: #2fae6d;
+  --leaf-soft: #d5f1e1;
+  --ocean: #2672ad;
+  --sky: #d4eaf7;
+  --sky-strong: #8cc3e2;
+  --coin: #d99a16;
+  --coin-soft: #fbefd0;
+  --danger: #c0392f;
+  --danger-soft: #f9e0dd;
+  --shadow: 16 52 40;
+  --land: #ffffff;
+  --sea: #d4eaf7;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-ink: var(--brand-ink);
+  --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
+  --color-ocean: var(--ocean);
+  --color-sky: var(--sky);
+  --color-sky-strong: var(--sky-strong);
+  --color-coin: var(--coin);
+  --color-coin-soft: var(--coin-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --shadow-soft: 0 1px 2px rgb(var(--shadow) / 0.06), 0 8px 24px -12px rgb(var(--shadow) / 0.18);
+  --shadow-lift: 0 2px 4px rgb(var(--shadow) / 0.06), 0 18px 40px -18px rgb(var(--shadow) / 0.35);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Faixa atrás da área segura do topo (celulares com notch). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 60;
+  background: var(--surface);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  letter-spacing: -0.015em;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--ocean);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--leaf-soft);
+  color: var(--ink);
+}
+
+@layer components {
+  .gutter {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  @media (min-width: 768px) {
+    .gutter {
+      padding-left: max(28px, env(safe-area-inset-left, 0px));
+      padding-right: max(28px, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    font-weight: 650;
+    font-size: 0.95rem;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease,
+      box-shadow 0.18s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-sm {
+    min-height: 2.25rem;
+    padding: 0 0.95rem;
+    font-size: 0.85rem;
+  }
+  .btn-lg {
+    min-height: 3.25rem;
+    padding: 0 1.6rem;
+    font-size: 1rem;
+  }
+  .btn-icon {
+    padding: 0;
+    width: 2.75rem;
+  }
+  .btn-icon.btn-sm {
+    width: 2.25rem;
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: var(--brand-ink);
+    box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--brand) 70%, transparent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--brand-strong);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+  .btn-soft {
+    background: var(--leaf-soft);
+    color: var(--brand);
+  }
+  .btn-soft:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--leaf-soft) 70%, var(--leaf) 30%);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+  .btn-coin {
+    background: var(--coin);
+    color: #2b1d00;
+    box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--coin) 80%, transparent);
+  }
+  .btn-coin:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--coin) 85%, #000 15%);
+  }
+  .btn-danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.1rem;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    transition: all 0.16s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chip:hover {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+  .chip[aria-pressed="true"],
+  .chip[aria-selected="true"] {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 650;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 650;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .input {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.65rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.95rem;
+    transition:
+      border-color 0.16s ease,
+      box-shadow 0.16s ease;
+  }
+  .input::placeholder {
+    color: var(--ink-faint);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--ocean);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--ocean) 18%, transparent);
+  }
+  .input[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+  textarea.input {
+    min-height: 7rem;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  select.input {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%),
+      linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+    background-position:
+      calc(100% - 20px) 55%,
+      calc(100% - 15px) 55%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Animações leves */
+@keyframes coin-drop {
+  0% {
+    transform: translateY(-9px);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  62% {
+    transform: translateY(2px);
+  }
+  74% {
+    transform: translateY(-1px);
+  }
+  86%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.coin-drop {
+  animation: coin-drop 2.6s cubic-bezier(0.3, 0.7, 0.4, 1) infinite;
+  transform-box: fill-box;
+}
+
+@keyframes pin-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.pin-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pin-pulse 1.8s ease-out infinite;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+.float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.map-country {
+  fill: var(--land);
+  stroke: color-mix(in srgb, var(--brand) 22%, var(--line));
+  stroke-width: 0.5;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.15s ease;
+}
+.map-pickable .map-country:hover {
+  fill: var(--leaf-soft);
+}
+.map-country.is-picked {
+  fill: color-mix(in srgb, var(--leaf-soft) 60%, var(--leaf) 40%);
+}
