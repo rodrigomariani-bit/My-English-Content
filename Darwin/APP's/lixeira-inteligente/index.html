@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#fafaf7" />
+  <title>Lixeira Inteligente — Classificador de Resíduos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Lixeira Inteligente</h1>
+        <p>Classificador de resíduos</p>
+      </div>
+    </div>
+    <button id="settingsBtn" class="icon-btn" aria-label="Configurações">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="app">
+    <section class="camera-card">
+      <div class="camera-stage" id="cameraStage">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas" hidden></canvas>
+
+        <div class="overlay" id="overlay">
+          <div class="frame" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="camera-empty" id="cameraEmpty">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <p>Toque em <strong>Ligar câmera</strong> para começar</p>
+        </div>
+
+        <div class="camera-busy" id="cameraBusy" hidden>
+          <div class="spinner"></div>
+          <p>Identificando…</p>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Pronto.</span>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="startBtn" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.7"/></svg>
+        <span id="startBtnLabel">Ligar câmera</span>
+      </button>
+      <button id="captureBtn" class="btn btn-accent" disabled>
+        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg>
+        Identificar
+      </button>
+      <button id="switchBtn" class="btn btn-ghost" disabled aria-label="Trocar câmera">
+        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8m0 0V3m0 5h-5M21 12a9 9 0 0 1-15.5 6.3L3 16m0 0v5m0-5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <section class="legend">
+      <h3>Categorias</h3>
+      <div class="legend-grid">
+        <div class="legend-card" data-category="organico">
+          <span class="legend-emoji" aria-hidden="true">🌱</span>
+          <strong>Orgânico</strong>
+          <p>Restos de comida, cascas, folhas, borra de café</p>
+        </div>
+        <div class="legend-card" data-category="papel">
+          <span class="legend-emoji" aria-hidden="true">📰</span>
+          <strong>Papel</strong>
+          <p>Livros, jornais, papelão, embalagens secas</p>
+        </div>
+        <div class="legend-card" data-category="metal">
+          <span class="legend-emoji" aria-hidden="true">🥫</span>
+          <strong>Metal</strong>
+          <p>Latas, talheres, panelas, ferragens</p>
+        </div>
+        <div class="legend-card" data-category="vidro">
+          <span class="legend-emoji" aria-hidden="true">🍾</span>
+          <strong>Vidro</strong>
+          <p>Garrafas, potes, frascos, copos</p>
+        </div>
+        <div class="legend-card" data-category="plastico">
+          <span class="legend-emoji" aria-hidden="true">🧴</span>
+          <strong>Plástico</strong>
+          <p>Garrafas PET, sacolas, potes, embalagens</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Reconhecimento por IA visual do Google (Gemini). A imagem é enviada apenas para a API e não fica armazenada.</p>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+      <header class="modal-head">
+        <h2 id="modalTitle">Configurações</h2>
+        <button class="icon-btn" data-close-modal aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <label class="field">
+          <span class="field-label">Chave da API Google AI Studio</span>
+          <div class="field-input">
+            <input id="apiKeyInput" type="password" placeholder="AIza..." autocomplete="off" spellcheck="false" />
+            <button class="show-toggle" id="showKeyBtn" type="button" aria-label="Mostrar/ocultar chave">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <small class="field-hint">
+            A chave fica salva apenas neste navegador. Não enviamos para nenhum servidor além do Google. Pegue a sua em <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>.
+          </small>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Modelo</span>
+          <select id="modelSelect">
+            <option value="gemini-2.5-pro">Gemini 2.5 Pro — máxima precisão</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash — equilibrado (recomendado)</option>
+            <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite — mais rápido e leve</option>
+          </select>
+          <small class="field-hint">
+            Para sala de aula, o <strong>Flash</strong> é o melhor equilíbrio. O <strong>Flash-Lite</strong> tem o limite gratuito mais alto. O <strong>Pro</strong> é o mais preciso, mas o limite gratuito é menor.
+          </small>
+        </label>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="btn btn-ghost" data-close-modal>Cancelar</button>
+        <button class="btn btn-primary" id="saveSettingsBtn">Salvar</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Onboarding (first run) -->
+  <div class="modal" id="onboardingModal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Bem-vindo!</h2>
+      </header>
+      <div class="modal-body">
+        <p class="onboard-text">
+          Para classificar resíduos com a IA do Google (Gemini), você precisa de uma <strong>chave de API</strong>. É grátis com qualquer conta Google:
+        </p>
+        <ol class="onboard-steps">
+          <li>Acesse <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a> com sua conta Google</li>
+          <li>Clique em <em>Create API key</em></li>
+          <li>Copie a chave (começa com <code>AIza</code>) e cole na próxima tela</li>
+        </ol>
+        <p class="onboard-text">A chave fica salva só no seu navegador. O Google AI Studio tem cota grátis suficiente para uso em sala de aula.</p>
+      </div>
+      <footer class="modal-foot">
+        <button class="btn btn-primary" id="onboardOpenSettings">Inserir minha chave</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Result modal — popup with captured photo + identification -->
+  <div class="modal result-modal" id="resultModal" hidden>
+    <div class="modal-backdrop" data-close-result></div>
+    <div class="result-card" data-category="indefinido" role="dialog" aria-modal="true" aria-labelledby="resultObject">
+      <button class="result-close" data-close-result aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+
+      <div class="result-photo-wrap">
+        <div class="result-photo">
+          <img id="resultPhoto" alt="Item identificado" />
+          <div class="result-photo-shade" aria-hidden="true"></div>
+        </div>
+        <div class="result-photo-badge-anchor">
+          <div class="result-photo-badge" id="resultBadge">
+            <span class="result-emoji" id="resultEmoji" aria-hidden="true">❓</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-body">
+        <div class="result-meta">
+          <span class="result-category-label" id="resultCategory">Categoria</span>
+          <span class="result-confidence" id="resultConfidence">—</span>
+        </div>
+        <h2 class="result-object" id="resultObject">Objeto</h2>
+        <p class="result-explanation" id="resultExplanation"></p>
+        <div class="result-bin">
+          <span class="bin-pill"></span>
+          <span class="bin-text" id="resultBinText">Lixeira</span>
+        </div>
+      </div>
+
+      <footer class="result-foot">
+        <button class="btn btn-primary" data-close-result>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Identificar outro
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="gemini-api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
