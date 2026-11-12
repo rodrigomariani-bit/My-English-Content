@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Protótipo Recolhe</title>
+<meta name="description" content="Protótipo navegável de um app que envia sacos de coleta, rastreia a limpeza fora de casa e paga por quilo entregue à recicladora.">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: o celular com o app navegável à esquerda; à direita, a etapa atual do fluxo e a regra que impede fraude. Em telas estreitas, empilha. */
+:root{
+  --bg:#EDF1EC; --app-bg:#F6F8F5; --surface:#FFFFFF; --surface-2:#E6ECE6; --line:#D2DBD3;
+  --ink:#13221A; --ink-2:#4D6155;
+  --leaf:#1E6A44; --on-leaf:#FFFFFF; --leaf-soft:#D7EBDD; --leaf-ink:#155233;
+  --gari:#E8590C; --on-gari:#1F0E03; --gari-soft:#FDE4D3; --gari-ink:#97390A;
+  --danger:#BF3328; --on-danger:#FFFFFF; --danger-soft:#F8DEDA;
+  --bezel:#18231D; --toast-bg:#13221A; --toast-fg:#F6F8F5;
+  --map-block:#E2E9E2; --map-street:#FFFFFF; --map-park:#C3DFCB; --map-label:#6A7E71; --fence-fill:rgba(191,51,40,.08);
+  --display:"Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1410; --app-bg:#0A100C; --surface:#151F19; --surface-2:#1E2A23; --line:#2A3830;
+    --ink:#E4EEE7; --ink-2:#9AAFA2;
+    --leaf:#58C185; --on-leaf:#06150C; --leaf-soft:#173323; --leaf-ink:#8EDDB0;
+    --gari:#FF8A3D; --on-gari:#1F0E03; --gari-soft:#3A2214; --gari-ink:#FFB582;
+    --danger:#FF7468; --on-danger:#2A0603; --danger-soft:#3A1916;
+    --bezel:#26332B; --toast-bg:#E4EEE7; --toast-fg:#0A100C;
+    --map-block:#18231D; --map-street:#2C3B33; --map-park:#1C3A28; --map-label:#88A091; --fence-fill:rgba(255,116,104,.10);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1410; --app-bg:#0A100C; --surface:#151F19; --surface-2:#1E2A23; --line:#2A3830;
+  --ink:#E4EEE7; --ink-2:#9AAFA2;
+  --leaf:#58C185; --on-leaf:#06150C; --leaf-soft:#173323; --leaf-ink:#8EDDB0;
+  --gari:#FF8A3D; --on-gari:#1F0E03; --gari-soft:#3A2214; --gari-ink:#FFB582;
+  --danger:#FF7468; --on-danger:#2A0603; --danger-soft:#3A1916;
+  --bezel:#26332B; --toast-bg:#E4EEE7; --toast-fg:#0A100C;
+  --map-block:#18231D; --map-street:#2C3B33; --map-park:#1C3A28; --map-label:#88A091; --fence-fill:rgba(255,116,104,.10);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gari);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.page{max-width:1060px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.wordmark{display:flex;align-items:center;gap:10px;font-family:var(--display);font-stretch:118%;font-weight:800;font-size:24px;letter-spacing:-.01em;line-height:1}
+.wordmark svg{width:30px;height:30px;color:var(--leaf)}
+.wordmark small{font-family:var(--mono);font-stretch:100%;font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-left:4px}
+.reset{background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:600;font-size:13px;cursor:pointer}
+.reset:hover{border-color:var(--ink-2)}
+
+.layout{display:grid;grid-template-columns:390px minmax(0,1fr);gap:56px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr);gap:32px}}
+
+/* Celular */
+.phone{width:390px;max-width:100%;height:790px;margin:0 auto;border-radius:48px;background:var(--bezel);padding:10px;box-shadow:0 30px 60px -30px rgba(10,30,20,.45)}
+.screen{height:100%;border-radius:38px;background:var(--app-bg);overflow:hidden;display:flex;flex-direction:column;position:relative}
+@media (max-width:460px){.phone{padding:6px;border-radius:36px;height:740px}.screen{border-radius:30px}}
+.statusbar{flex:none;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
+.battery{width:24px;height:11px;border:1.5px solid currentColor;border-radius:3px;position:relative;opacity:.8}
+.battery::after{content:"";position:absolute;inset:1.5px 6px 1.5px 1.5px;background:currentColor;border-radius:1px}
+.app-header{flex:none;display:flex;align-items:center;justify-content:space-between;padding:2px 18px 10px}
+.app-header .wordmark{font-size:19px}
+.app-header .wordmark svg{width:24px;height:24px}
+.saldo-chip{border:none;background:var(--leaf-soft);color:var(--leaf-ink);border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px;cursor:pointer;font-variant-numeric:tabular-nums}
+.app-content{flex:1;overflow-y:auto;padding:4px 14px 22px;display:flex;flex-direction:column;gap:12px;font-size:14.5px;overscroll-behavior:contain}
+.app-content > *{flex-shrink:0}
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--surface);padding:6px 8px 16px}
+.tab{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:600;color:var(--ink-2);padding:6px 0;cursor:pointer;border-radius:10px}
+.tab svg{width:24px;height:24px}
+.tab[aria-current="page"]{color:var(--leaf)}
+
+/* Componentes do app */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card.hero{background:var(--leaf);color:var(--on-leaf);border:none}
+.card.hero p{margin:0;opacity:.9}
+.card h2,.note h2{font-family:var(--display);font-stretch:110%;font-weight:750;font-size:22px;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.card h3{font-family:var(--display);font-stretch:105%;font-weight:700;font-size:16px;margin:0}
+.card p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.hero .eyebrow{color:inherit;opacity:.8}
+.big{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:44px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hint{font-size:13px;color:var(--ink-2);margin:0}
+.center{text-align:center}
+.mono{font-family:var(--mono)}
+.small{font-size:12px;color:var(--ink-2)}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:13px 16px;background:var(--leaf);color:var(--on-leaf);font-weight:700;font-size:15px;cursor:pointer;text-align:center}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.secondary{background:var(--surface-2);color:var(--ink)}
+.btn.sim{background:transparent;border:1.5px dashed var(--ink-2);color:var(--ink-2);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:12px}
+.btn.sim:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.link{background:none;border:none;padding:4px 0 0;color:var(--leaf);font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+.label{font-weight:600;font-size:13px}
+.input{width:100%;border:1.5px solid var(--line);background:var(--app-bg);border-radius:12px;padding:11px 12px;font-size:15px}
+.input:focus{border-color:var(--leaf);outline:none}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.consent input{margin-top:3px;width:18px;height:18px;accent-color:var(--leaf);flex:none}
+
+.howto{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:passo}
+.howto li{counter-increment:passo;display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}
+.howto li::before{content:counter(passo);width:24px;height:24px;border-radius:50%;background:var(--leaf-soft);color:var(--leaf-ink);font-family:var(--mono);font-size:12px;font-weight:600;display:grid;place-items:center}
+.howto b{display:block}
+.howto span{color:var(--ink-2);font-size:13.5px}
+
+.timeline{list-style:none;margin:4px 0 0;padding:0}
+.timeline li{display:grid;grid-template-columns:18px 1fr;gap:10px;position:relative;padding-bottom:14px}
+.timeline li:last-child{padding-bottom:0}
+.timeline li:not(:last-child)::before{content:"";position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--line)}
+.timeline li.done:not(:last-child)::before{background:var(--leaf)}
+.tl-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:var(--surface);margin-top:2px}
+.timeline li.done .tl-dot{background:var(--leaf);border-color:var(--leaf)}
+.timeline li.current .tl-dot{border-color:var(--gari);background:var(--gari-soft)}
+.timeline b{display:block;font-weight:600}
+.timeline small{color:var(--ink-2);font-size:12.5px}
+.timeline li.todo{color:var(--ink-2)}
+
+.lacre{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--gari-soft);color:var(--gari-ink);border-radius:12px;padding:12px 14px}
+.lacre small{display:block;font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.lacre strong{font-family:var(--mono);font-size:22px;letter-spacing:.06em}
+.lacre svg{width:46px;height:46px;flex:none}
+.lacre .q{fill:currentColor}
+
+.safety{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px}
+
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;line-height:1.3}
+.pill.track{background:var(--gari-soft);color:var(--gari-ink)}
+.pill.ok{background:var(--leaf-soft);color:var(--leaf-ink)}
+.pill.warn{background:var(--danger-soft);color:var(--danger)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--gari);animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+
+.map{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--map-block)}
+.map svg{display:block;width:100%;height:auto}
+.m-block{fill:var(--map-block)}
+.m-park{fill:var(--map-park)}
+.m-street{stroke:var(--map-street);stroke-width:11;stroke-linecap:square}
+.m-label{fill:var(--map-label);font-family:var(--body);font-size:7px;font-weight:600}
+.m-park-label{fill:var(--leaf-ink);font-family:var(--body);font-size:8px;font-weight:700}
+.m-fence{fill:var(--fence-fill);stroke:var(--danger);stroke-width:1.2;stroke-dasharray:3 3}
+.m-fence-label{fill:var(--danger);font-family:var(--mono);font-size:6.5px;font-weight:600}
+.m-house{fill:var(--ink)}
+.m-plan{fill:none;stroke:var(--ink-2);stroke-width:1.5;stroke-dasharray:2 4;opacity:.55}
+.m-walk{fill:none;stroke:var(--leaf);stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
+.m-pt{fill:var(--leaf);stroke:var(--surface);stroke-width:1.5}
+.m-pt-bad{fill:var(--danger);stroke:var(--surface);stroke-width:1.5}
+.m-me{fill:var(--gari);stroke:var(--surface);stroke-width:2}
+.m-halo{fill:var(--gari);opacity:.35;transform-box:fill-box;transform-origin:center;animation:halo 1.6s ease-out infinite}
+@keyframes halo{from{transform:scale(.6);opacity:.5}to{transform:scale(2.2);opacity:0}}
+.m-scale{stroke:var(--map-label);stroke-width:1.5}
+
+.ctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ctrl .btn{padding:12px 8px;font-size:14px}
+.ctrl .btn.sim{font-size:11px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;display:flex;flex-direction:column}
+.stat b{font-family:var(--display);font-stretch:108%;font-size:20px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat b small{font-size:14px;color:var(--ink-2);font-weight:600}
+.stat span{font-size:12px;color:var(--ink-2)}
+
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.slot{width:100%;aspect-ratio:3/2;border-radius:12px;border:1.5px dashed var(--line);background:var(--surface-2);display:grid;place-items:center;position:relative;overflow:hidden;cursor:pointer;color:var(--ink-2);font-size:12.5px;text-align:center;line-height:1.35}
+.slot:hover{border-color:var(--ink-2)}
+.slot b{color:var(--ink)}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slot .geo{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:6px}
+.photos-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.checks{list-style:none;margin:0;padding:0}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.checks li:first-child{border-top:none;padding-top:2px}
+.checks small{display:block;color:var(--ink-2);font-size:12px}
+.tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px}
+.checks li.ok .tick{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf)}
+.checks li.bad .tick{background:var(--danger);border-color:var(--danger);color:var(--on-danger)}
+.checks li.bad{color:var(--danger)}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface-2);border-radius:12px;padding:4px}
+.seg label{position:relative;text-align:center;padding:9px 6px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--ink-2)}
+.seg label:has(input:checked){background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg label:has(input:focus-visible){outline:3px solid var(--gari);outline-offset:1px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.options{display:grid;gap:8px}
+.option{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:start;padding:12px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer}
+.option:has(input:checked){border-color:var(--leaf);background:var(--leaf-soft)}
+.option input{margin:3px 0 0;width:18px;height:18px;accent-color:var(--leaf)}
+.option b{display:block}
+.option small{display:block;color:var(--ink-2);font-size:12.5px}
+.option .dist{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:2px}
+.summary div{display:flex;flex-direction:column}
+.summary b{font-family:var(--display);font-stretch:108%;font-size:18px;font-weight:750;font-variant-numeric:tabular-nums}
+.summary span{font-size:12px;color:var(--ink-2)}
+
+.breakdown{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+.breakdown td{padding:7px 0;vertical-align:top;border-bottom:1px solid var(--line)}
+.breakdown td:last-child{text-align:right;white-space:nowrap;padding-left:10px}
+.breakdown small{display:block;color:var(--ink-2);font-size:12px}
+.breakdown tr.neg td:last-child{color:var(--danger)}
+.breakdown tr.total td{border-bottom:none;border-top:2px solid var(--ink);font-weight:700;font-size:15px;padding-top:10px}
+
+.chip{align-self:flex-start;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--surface-2);color:var(--ink-2);border-radius:6px;padding:3px 7px}
+.place{display:grid;gap:4px}
+.place b{font-size:15.5px}
+.place .meta{display:flex;justify-content:space-between;gap:8px;color:var(--ink-2);font-size:13px;flex-wrap:wrap}
+
+.history{list-style:none;margin:0;padding:0}
+.history li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.history li:first-child{border-top:none;padding-top:0}
+.history small{display:block;color:var(--ink-2);font-size:12.5px}
+.history .v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.history .v.pos{color:var(--leaf)}
+.tag-ex{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--gari-ink);background:var(--gari-soft);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.notice{background:var(--leaf-soft);color:var(--leaf-ink);border-radius:12px;padding:10px 12px;font-size:13.5px;margin:0}
+
+.toast{position:absolute;left:16px;right:16px;bottom:84px;background:var(--toast-bg);color:var(--toast-fg);border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;box-shadow:0 10px 24px -10px rgba(0,0,0,.4);z-index:5}
+
+/* Painel de notas */
+.notes{display:flex;flex-direction:column;gap:28px;position:sticky;top:24px;min-width:0}
+@media (max-width:860px){.notes{position:static}}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 16px}
+.flow li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:center;color:var(--ink-2);font-size:14px}
+.flow .n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);font-family:var(--mono);font-size:11.5px;font-weight:600;display:grid;place-items:center}
+.flow li.done .n{background:var(--leaf-soft);border-color:transparent;color:var(--leaf-ink)}
+.flow li.current{color:var(--ink);font-weight:700}
+.flow li.current .n{background:var(--gari);border-color:var(--gari);color:var(--on-gari)}
+.note{display:flex;flex-direction:column;gap:12px;max-width:62ch}
+.note h2{font-size:clamp(26px, 3.4vw, 34px)}
+.note p{margin:0;font-size:16px;line-height:1.6}
+.rule{display:flex;flex-direction:column;gap:6px;padding-top:14px;border-top:1.5px solid var(--line);margin-top:4px}
+.rule .eyebrow{color:var(--gari-ink)}
+.rule p{font-size:15px}
+.foot{font-size:13px;color:var(--ink-2);max-width:62ch;margin:0}
+
+@media (prefers-reduced-motion:reduce){.m-halo,.pill .dot{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="topbar">
+    <div class="wordmark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.2 2.8 12 5.6l3.8-2.8-.9 4.1c3.3 2 5 5.3 4.4 9.6-.4 3-3.2 4.8-7.3 4.8s-6.9-1.8-7.3-4.8c-.6-4.3 1.1-7.6 4.4-9.6z"/></svg>
+      Recolhe <small>protótipo v0.1</small>
+    </div>
+    <button class="reset" data-action="reset">Recomeçar do zero</button>
+  </header>
+
+  <div class="layout">
+    <div class="phone">
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span class="battery" aria-hidden="true"></span></div>
+        <div class="app-header">
+          <div class="wordmark">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.2 2.8 12 5.6l3.8-2.8-.9 4.1c3.3 2 5 5.3 4.4 9.6-.4 3-3.2 4.8-7.3 4.8s-6.9-1.8-7.3-4.8c-.6-4.3 1.1-7.6 4.4-9.6z"/></svg>
+            Recolhe
+          </div>
+          <button class="saldo-chip" id="hdr-saldo" data-action="tab" data-tab="carteira" aria-label="Ver carteira"></button>
+        </div>
+        <main class="app-content" id="app-content"></main>
+        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+        <nav class="tabbar" aria-label="Seções do app">
+          <button class="tab" data-action="tab" data-tab="coleta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 3.3 12 6l3.8-2.7-.9 4c3.2 2 4.8 5.1 4.2 9.2-.4 2.8-3 4.5-7.1 4.5s-6.7-1.7-7.1-4.5c-.6-4.1 1-7.2 4.2-9.2z"/></svg>
+            Coleta
+          </button>
+          <button class="tab" data-action="tab" data-tab="pontos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Pontos
+          </button>
+          <button class="tab" data-action="tab" data-tab="carteira">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6.5" width="18" height="13" rx="2.5"/><path d="M5 6.5 15 3.5l1.2 3"/><path d="M16 13h3"/></svg>
+            Carteira
+          </button>
+        </nav>
+        <input type="file" accept="image/*" capture="environment" id="file-antes" class="photos-input" tabindex="-1">
+        <input type="file" accept="image/*" capture="environment" id="file-depois" class="photos-input" tabindex="-1">
+      </div>
+    </div>
+
+    <aside class="notes">
+      <ol class="flow" id="flow" aria-label="Etapas do fluxo"></ol>
+      <div class="note" id="note"></div>
+      <p class="foot">Protótipo de demonstração. O GPS, os locais parceiros e os valores por quilo são simulados. Nada do que você digita ou envia sai desta página.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+(() => {
+  // Mapa: 1 px do desenho ≈ 4,5 m
+  const HOME = { x: 75, y: 216 };
+  const FENCE = 44;
+  const M_PER_PX = 4.5;
+  const PATH = [[75,216],[75,200],[130,200],[130,120],[220,120],[220,40],[310,40],[310,120],[310,200],[220,200]];
+  const SEG = [];
+  let TOTAL = 0;
+  for (let i = 1; i < PATH.length; i++) {
+    const [x1, y1] = PATH[i - 1], [x2, y2] = PATH[i];
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    SEG.push({ x1, y1, x2, y2, len, start: TOTAL });
+    TOTAL += len;
+  }
+
+  const PONTOS = [
+    { id: 'p3', nome: 'Mercado Bom Preço', tipo: 'Mercado parceiro', end: 'Rua das Flores, 410', horario: 'Todos os dias · 8h às 21h', dist: '600 m' },
+    { id: 'p1', nome: 'Ecoponto Vila Nova', tipo: 'Ecoponto', end: 'Rua do Córrego, 45', horario: 'Seg a sáb · 7h às 19h', dist: '1,2 km' },
+    { id: 'p2', nome: 'Cooperativa Recicla Mais', tipo: 'Cooperativa de catadores', end: 'Av. Brasil, 980', horario: 'Seg a sex · 8h às 17h', dist: '2,8 km' },
+  ];
+  const DIAS = [
+    { id: 'd1', t: 'Amanhã', h: '8h às 12h' },
+    { id: 'd2', t: 'Sábado', h: '8h às 12h' },
+    { id: 'd3', t: 'Segunda', h: '13h às 17h' },
+  ];
+  const RATE = { rec: 1.20, rej: 0.40, bonus: 3.00, retirada: 1.50 };
+  const STAGES = ['semKit', 'aCaminho', 'pronto', 'coletando', 'entrega', 'triagem', 'recompensa'];
+  const STEP_LABELS = ['Pedir o kit', 'Receber o kit', 'Preparar', 'Coletar', 'Entregar', 'Pesagem', 'Recompensa'];
+
+  const NOTES = {
+    semKit: { t: 'Pedido do kit', p: 'A pessoa se cadastra e pede o kit. O endereço informado vira o centro do raio de casa, uma área de 200 m em que o lixo recolhido não é pago. É isso que impede alguém de encher o saco com o lixo da própria cozinha.', r: 'Um saco ativo por pessoa. Cada lacre tem um código único ligado ao CPF de quem pediu.' },
+    aCaminho: { t: 'Envio do kit', p: 'O kit é leve e barato de enviar: saco de 100 L, luvas e lacre. Para cortar frete, ele também pode ser retirado nos mesmos pontos parceiros que recebem os sacos cheios.', r: 'O kit só vai para endereço confirmado. Pedidos repetidos para o mesmo endereço passam por revisão.' },
+    pronto: { t: 'Preparação', p: 'O GPS ainda está desligado. Ele liga quando a pessoa toca em Iniciar coleta e desliga ao encerrar. Rastrear só durante a coleta é o que a LGPD exige e é o que deixa as pessoas confortáveis para usar o app.', r: 'As orientações de segurança aparecem antes da primeira coleta: luvas sempre, e nada de seringas, vidro quebrado ou pilhas.' },
+    coletando: { t: 'Coleta com rastreamento', p: 'O percurso mostra que a pessoa saiu de casa para recolher. Cada ponto marcado também vira um registro no mapa de lixo da cidade, um dado útil para a prefeitura e para patrocinadores. Teste: marque um ponto antes de sair de casa, depois use Simular caminhada e marque pontos pelo caminho.', r: 'Pontos dentro do círculo vermelho não contam. Fotos de antes e depois, com hora e GPS, liberam um bônus.' },
+    entrega: { t: 'Entrega do saco', p: 'Mandar o saco cheio pelo correio custaria mais do que a recompensa, porque lixo é pesado, volumoso e sujo. Pontos parceiros como ecopontos, cooperativas e mercados recebem sem custo de frete. A retirada em casa existe, mas desconta o frete.', r: 'O ponto parceiro lê o código do lacre na entrega. Saco sem lacre ou com lacre rompido não é aceito.' },
+    triagem: { t: 'Pesagem e triagem', p: 'Na recicladora, o saco é pesado e separado em reciclável e rejeito. O rejeito também é pago, com valor menor, porque o objetivo é limpar a rua. Se só latinha valesse dinheiro, o resto ficaria no chão.', r: 'O peso precisa combinar com o tempo de coleta. Trinta quilos em dez minutos levanta suspeita e vai para revisão manual.' },
+    recompensa: { t: 'Recompensa', p: 'O dinheiro vem de três fontes: a venda do material reciclável, empresas que precisam comprovar a logística reversa das embalagens que vendem (Lei 12.305/2010) e patrocínio de marcas ou da prefeitura. Os valores por quilo deste protótipo são exemplos.', r: 'O pagamento é proporcional aos pontos fora do raio de casa, e a pessoa vê o cálculo inteiro.' },
+    carteira: { t: 'Carteira', p: 'O saldo acumula as recompensas e sai via Pix. Um saque mínimo evita o custo de muitas transferências pequenas.', r: 'A chave Pix precisa estar no mesmo CPF da conta que pediu o kit.' },
+    pontos: { t: 'Pontos de entrega', p: 'Os pontos parceiros resolvem a parte mais cara do negócio, que é transportar o lixo. Cooperativas de catadores são parceiras naturais: já sabem separar e vender o material, e passam a receber mais volume.', r: 'Cada ponto confere o lacre e registra a entrega no app antes de o saco seguir para a recicladora.' },
+  };
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const num1 = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const kg = v => num1(v) + ' kg';
+  const dist = m => m < 1000 ? (Math.round(m / 10) * 10) + ' m' : num1(m / 1000) + ' km';
+  const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const hoje = () => { const d = new Date(); return d.getDate() + ' ' + MESES[d.getMonth()]; };
+  const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const newBag = () => 'RC-' + String(Math.floor(10000 + Math.random() * 89999));
+  const r1 = v => Math.round(v * 10) / 10;
+  const r2 = v => Math.round(v * 100) / 100;
+
+  let state, timer = null, toastTimer = null;
+
+  function collectFresh() {
+    return { d: 0, walking: false, maxFromHome: 0, points: [], photos: { antes: null, depois: null },
+      delivery: { mode: 'ponto', ponto: PONTOS[0].id, dia: DIAS[0].id }, triage: null };
+  }
+  function fresh() {
+    return Object.assign({
+      tab: 'coleta', stage: 'semKit', address: 'Rua das Flores, 120 · Vila Nova', consent: false,
+      bag: newBag(), pixKey: '', pixMsg: '',
+      wallet: { saldo: 9.10, history: [{ label: 'Coleta de exemplo', date: '12 out', detail: '6,4 kg · Ecoponto Vila Nova', value: 9.10, kg: 6.4, example: true }] },
+    }, collectFresh());
+  }
+
+  // Geometria do percurso
+  function pointAt(d) {
+    d = Math.max(0, Math.min(TOTAL, d));
+    for (const s of SEG) {
+      if (d <= s.start + s.len) {
+        const t = (d - s.start) / s.len;
+        return { x: s.x1 + (s.x2 - s.x1) * t, y: s.y1 + (s.y2 - s.y1) * t };
+      }
+    }
+    const s = SEG[SEG.length - 1];
+    return { x: s.x2, y: s.y2 };
+  }
+  function walkedPts(d) {
+    const pts = [PATH[0]];
+    for (const s of SEG) {
+      if (d >= s.start + s.len) pts.push([s.x2, s.y2]);
+      else { const p = pointAt(d); pts.push([p.x, p.y]); break; }
+    }
+    return pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  }
+  const pxFromHome = p => Math.hypot(p.x - HOME.x, p.y - HOME.y);
+  const walkedM = () => state.d * M_PER_PX;
+  const minutes = () => Math.max(1, Math.round(walkedM() / 70 + state.points.length * 1.5));
+  function totals() {
+    const valid = state.points.filter(p => !p.inside);
+    return {
+      all: r1(state.points.reduce((a, p) => a + p.kg, 0)),
+      valid: r1(valid.reduce((a, p) => a + p.kg, 0)),
+      nValid: valid.length, n: state.points.length,
+    };
+  }
+  const canFinish = () => walkedM() >= 300 && totals().nValid > 0;
+
+  function qr(code) {
+    let h = 2166136261;
+    for (const c of code) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+    const N = 11, finder = (x, y) => (x < 3 && y < 3) || (x > N - 4 && y < 3) || (x < 3 && y > N - 4);
+    let out = '';
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (finder(x, y)) continue;
+      h ^= h << 13; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
+      if (h & 1) out += `<rect x="${x}" y="${y}" width="1" height="1" class="q"/>`;
+    }
+    [[0, 0], [N - 3, 0], [0, N - 3]].forEach(([x, y]) => { out += `<rect x="${x}" y="${y}" width="3" height="3" class="q"/>`; });
+    return `<svg viewBox="-.5 -.5 12 12" shape-rendering="crispEdges" aria-hidden="true">${out}</svg>`;
+  }
+
+  function examplePhoto(kind) {
+    const c = document.createElement('canvas');
+    c.width = 300; c.height = 200;
+    const g = c.getContext('2d');
+    g.fillStyle = '#8f9891'; g.fillRect(0, 0, 300, 200);
+    g.fillStyle = '#cfc9bc'; g.fillRect(0, 0, 300, 96);
+    g.strokeStyle = '#b8b2a4'; g.lineWidth = 1.5;
+    for (let x = 0; x < 300; x += 42) { g.beginPath(); g.moveTo(x, 18); g.lineTo(x, 96); g.stroke(); }
+    g.fillStyle = '#6e9a5c'; g.fillRect(0, 0, 300, 18);
+    g.fillStyle = '#737c75'; g.fillRect(0, 94, 300, 9);
+    let s = 11;
+    const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    if (kind === 'antes') {
+      const cores = ['#efe9d8', '#3d7fc0', '#d4493a', '#f0c04c', '#4f9d63', '#ffffff', '#8a5b3a', '#2b2b2b'];
+      for (let i = 0; i < 30; i++) {
+        g.save();
+        g.translate(14 + rnd() * 272, 24 + rnd() * 166);
+        g.rotate(rnd() * Math.PI);
+        g.fillStyle = cores[Math.floor(rnd() * cores.length)];
+        if (rnd() > 0.45) g.fillRect(-9, -4, 14 + rnd() * 12, 8);
+        else { g.beginPath(); g.ellipse(0, 0, 5 + rnd() * 7, 4 + rnd() * 3, 0, 0, Math.PI * 2); g.fill(); }
+        g.restore();
+      }
+    } else {
+      g.fillStyle = '#5c8a4b';
+      g.beginPath(); g.ellipse(210, 150, 9, 4, 0.6, 0, Math.PI * 2); g.fill();
+    }
+    return c.toDataURL('image/jpeg', 0.85);
+  }
+
+  // Componentes
+  const timeline = items => `<ol class="timeline">${items.map(([cls, t, sub]) =>
+    `<li class="${cls}"><span class="tl-dot" aria-hidden="true"></span><div><b>${t}</b>${sub ? `<small>${sub}</small>` : ''}</div></li>`).join('')}</ol>`;
+  const lacre = () => `<div class="lacre"><div><small>Lacre do saco</small><strong>${state.bag}</strong></div>${qr(state.bag)}</div>`;
+  const checkList = items => items.map(([ok, label, sub, cls]) => {
+    const c = cls || (ok ? 'ok' : '');
+    return `<li class="${c}"><span class="tick" aria-hidden="true">${ok ? '✓' : c === 'bad' ? '!' : ''}</span><div><span>${label}</span>${sub ? `<small>${sub}</small>` : ''}<span class="sr">${ok ? ' (concluído)' : ' (pendente)'}</span></div></li>`;
+  }).join('');
+  const deliveryLabel = () => state.delivery.mode === 'ponto'
+    ? PONTOS.find(p => p.id === state.delivery.ponto).nome
+    : 'Retirada em casa, ' + DIAS.find(d => d.id === state.delivery.dia).t.toLowerCase();
+
+  function screenColeta() {
+    switch (state.stage) {
+      case 'semKit': return `
+        <section class="card hero">
+          <span class="eyebrow">Kit grátis</span>
+          <h2>Limpe a rua e receba por quilo</h2>
+          <p>A gente manda o saco. Você recolhe lixo fora de casa, entrega num ponto parceiro e recebe via Pix.</p>
+        </section>
+        <section class="card">
+          <h3>Como funciona</h3>
+          <ol class="howto">
+            <li><div><b>Peça o kit</b><span>Saco de 100 L, luvas e lacre com código.</span></div></li>
+            <li><div><b>Colete fora de casa</b><span>O GPS registra o percurso só durante a coleta.</span></div></li>
+            <li><div><b>Entregue o saco</b><span>Em um ponto parceiro ou com retirada agendada.</span></div></li>
+            <li><div><b>Receba</b><span>A recicladora pesa, separa e paga na sua carteira.</span></div></li>
+          </ol>
+        </section>
+        <section class="card">
+          <label for="addr" class="label">Endereço para receber o kit</label>
+          <input id="addr" class="input" value="${esc(state.address)}" autocomplete="street-address">
+          <p class="hint">Este endereço também define o seu raio de casa, de 200 m. Lixo recolhido ali dentro não é pago.</p>
+          <label class="consent"><input type="checkbox" id="consent" ${state.consent ? 'checked' : ''}><span>Autorizo o uso da minha localização somente enquanto uma coleta estiver ativa.</span></label>
+          <button class="btn" id="btn-kit" data-action="pedir-kit" ${state.consent ? '' : 'disabled'}>Pedir kit grátis</button>
+        </section>`;
+
+      case 'aCaminho': return `
+        <section class="card">
+          <span class="eyebrow">Pedido ${state.bag}</span>
+          <h2>Seu kit está a caminho</h2>
+          ${timeline([
+            ['done', 'Pedido recebido', hoje()],
+            ['done', 'Kit separado', 'Lacre ' + state.bag + ' ligado à sua conta'],
+            ['current', 'Saiu para entrega', esc(state.address)],
+            ['todo', 'Entregue', ''],
+          ])}
+        </section>
+        <button class="btn sim" data-action="kit-entregue">Simular: o kit chegou</button>`;
+
+      case 'pronto': return `
+        <section class="card">
+          <span class="eyebrow">Kit recebido</span>
+          <h2>Tudo pronto para a primeira coleta</h2>
+          ${lacre()}
+          <p class="hint">O código do lacre liga este saco à sua conta. A recicladora lê o código na pesagem.</p>
+        </section>
+        <section class="card">
+          <h3>Antes de sair</h3>
+          <ul class="safety">
+            <li>Use as luvas do kit o tempo todo.</li>
+            <li>Não recolha seringas, vidro quebrado, pilhas, remédios ou entulho. Marque o local e siga em frente.</li>
+            <li>Menores de 16 anos só com um adulto responsável.</li>
+          </ul>
+        </section>
+        <button class="btn" data-action="iniciar">Iniciar coleta</button>`;
+
+      case 'coletando': return `
+        <div class="row-between"><span class="pill track"><span class="dot"></span>Rastreando percurso</span><span class="mono small">Saco ${state.bag}</span></div>
+        <div class="map">${mapSVG()}</div>
+        <div id="where"></div>
+        <div class="ctrl">
+          <button class="btn sim" id="btn-walk" data-action="walk">Simular caminhada</button>
+          <button class="btn" data-action="marcar">Marcar lixo aqui</button>
+        </div>
+        <div class="stats" id="stats"></div>
+        <section class="card">
+          <h3>Fotos do local</h3>
+          <p class="hint">Saem com data, hora e GPS. Antes e depois liberam bônus de ${brl(RATE.bonus)}.</p>
+          <div class="photos" id="photos"></div>
+        </section>
+        <section class="card">
+          <h3>Validação da coleta</h3>
+          <ul class="checks" id="checks"></ul>
+        </section>
+        <button class="btn" id="btn-end" data-action="encerrar">Encerrar coleta</button>
+        <p class="hint center" id="end-hint"></p>`;
+
+      case 'entrega': {
+        const t = totals();
+        const opts = state.delivery.mode === 'ponto'
+          ? PONTOS.map(p => `<label class="option"><input type="radio" name="ponto" value="${p.id}" ${state.delivery.ponto === p.id ? 'checked' : ''}><div><b>${p.nome}</b><small>${p.end} · ${p.horario}</small></div><span class="dist">${p.dist}</span></label>`).join('')
+          : DIAS.map(d => `<label class="option"><input type="radio" name="dia" value="${d.id}" ${state.delivery.dia === d.id ? 'checked' : ''}><div><b>${d.t}</b><small>${d.h}</small></div><span class="dist"></span></label>`).join('');
+        return `
+        <section class="card">
+          <span class="eyebrow">Coleta encerrada</span>
+          <h2>Agora é só entregar o saco</h2>
+          <div class="summary">
+            <div><b>${kg(t.all)}</b><span>estimados</span></div>
+            <div><b>${dist(walkedM())}</b><span>percorridos</span></div>
+            <div><b>${t.nValid}/${t.n}</b><span>pontos válidos</span></div>
+          </div>
+        </section>
+        <div class="seg" role="radiogroup" aria-label="Forma de entrega">
+          <label><input type="radio" name="mode" value="ponto" ${state.delivery.mode === 'ponto' ? 'checked' : ''}>Ponto parceiro</label>
+          <label><input type="radio" name="mode" value="retirada" ${state.delivery.mode === 'retirada' ? 'checked' : ''}>Retirada em casa</label>
+        </div>
+        <div class="options" role="radiogroup" aria-label="${state.delivery.mode === 'ponto' ? 'Ponto de entrega' : 'Dia da retirada'}">${opts}</div>
+        <p class="hint">${state.delivery.mode === 'ponto'
+          ? 'Leve o saco fechado com o lacre. O ponto lê o código e manda para a recicladora.'
+          : `A retirada desconta ${brl(RATE.retirada)} da recompensa para cobrir o frete.`}</p>
+        <button class="btn" data-action="confirmar-entrega">Confirmar entrega</button>`;
+      }
+
+      case 'triagem': return `
+        <section class="card">
+          <span class="eyebrow">Saco ${state.bag}</span>
+          <h2>Seu saco está na recicladora</h2>
+          ${timeline([
+            ['done', 'Entregue', deliveryLabel()],
+            ['current', 'Pesagem', 'Lacre conferido'],
+            ['todo', 'Triagem do material', 'Reciclável e rejeito'],
+            ['todo', 'Pagamento na carteira', ''],
+          ])}
+        </section>
+        <button class="btn sim" data-action="pesar">Simular: recicladora pesou e separou</button>`;
+
+      case 'recompensa': {
+        const tr = state.triage;
+        const rows = [
+          ['Reciclável', `${kg(tr.rec)} × ${brl(RATE.rec)}`, tr.rec * RATE.rec],
+          ['Rejeito', `${kg(tr.rej)} × ${brl(RATE.rej)}`, tr.rej * RATE.rej],
+        ];
+        if (tr.share < 1) rows.push(['Pontos dentro do raio de casa', `${Math.round((1 - tr.share) * 100)}% do peso não é pago`, tr.adj]);
+        if (tr.bonus) rows.push(['Bônus de fotos', 'Antes e depois aprovadas', tr.bonus]);
+        if (tr.frete) rows.push(['Retirada em casa', 'Custo do frete', tr.frete]);
+        return `
+        <section class="card hero">
+          <span class="eyebrow">Recompensa</span>
+          <div class="big">${brl(tr.value)}</div>
+          <p>${kg(tr.total)} tirados da rua</p>
+        </section>
+        <section class="card">
+          <h3>Como chegamos nesse valor</h3>
+          <table class="breakdown"><tbody>
+            ${rows.map(([a, b, v]) => `<tr class="${v < 0 ? 'neg' : ''}"><td>${a}<small>${b}</small></td><td>${brl(r2(v))}</td></tr>`).join('')}
+            <tr class="total"><td>Total</td><td>${brl(tr.value)}</td></tr>
+          </tbody></table>
+          <p class="hint">Valores por quilo de exemplo.</p>
+        </section>
+        <section class="card">
+          <h3>Conferência</h3>
+          <ul class="checks">${checkList([
+            [true, 'Lacre conferido na pesagem', state.bag],
+            [tr.okPace, 'Peso compatível com o tempo', `${kg(tr.total)} em ${tr.min} min`, tr.okPace ? '' : 'bad'],
+            [tr.share === 1, tr.share === 1 ? 'Todos os pontos fora do raio de casa' : 'Parte dos pontos dentro do raio de casa', `${tr.nValid} de ${tr.n} pontos válidos`, tr.share === 1 ? '' : 'bad'],
+            [tr.bonus > 0, 'Fotos antes e depois', tr.bonus ? 'Bônus liberado' : 'Sem bônus nesta coleta'],
+          ])}</ul>
+        </section>
+        <button class="btn" data-action="receber">Receber na carteira</button>`;
+      }
+    }
+    return '';
+  }
+
+  function screenPontos() {
+    return `
+      <section class="card">
+        <span class="eyebrow">Locais de exemplo</span>
+        <h2>Onde entregar o saco</h2>
+        <p class="hint">Leve o saco fechado com o lacre. O ponto confere o código e registra a entrega.</p>
+      </section>
+      ${PONTOS.map(p => `
+        <section class="card place">
+          <span class="chip">${p.tipo}</span>
+          <b>${p.nome}</b>
+          <div class="meta"><span>${p.end}</span><span class="mono">${p.dist}</span></div>
+          <div class="meta"><span>${p.horario}</span></div>
+        </section>`).join('')}`;
+  }
+
+  function screenCarteira() {
+    const w = state.wallet;
+    const totalKg = w.history.reduce((a, h) => a + (h.kg || 0), 0);
+    return `
+      <section class="card hero">
+        <span class="eyebrow">Saldo disponível</span>
+        <div class="big">${brl(w.saldo)}</div>
+        <p>${kg(totalKg)} tirados da rua até agora</p>
+      </section>
+      <section class="card">
+        <label for="pix-key" class="label">Chave Pix</label>
+        <input id="pix-key" class="input" placeholder="CPF, e-mail ou celular" value="${esc(state.pixKey)}">
+        <button class="btn" data-action="sacar" ${w.saldo > 0 ? '' : 'disabled'}>Sacar ${brl(w.saldo)}</button>
+        <p class="hint">Saque mínimo de R$ 5,00.</p>
+        ${state.pixMsg ? `<p class="notice">${esc(state.pixMsg)}</p>` : ''}
+      </section>
+      <section class="card">
+        <h3>Histórico</h3>
+        <ul class="history">${w.history.map(h => `
+          <li><div>${h.label}${h.example ? '<span class="tag-ex">exemplo</span>' : ''}<small>${h.date} · ${esc(h.detail)}</small></div>
+          <span class="v ${h.value > 0 ? 'pos' : ''}">${h.value > 0 ? '+' : ''}${brl(h.value)}</span></li>`).join('')}
+        </ul>
+      </section>`;
+  }
+
+  function mapSVG() {
+    const plan = PATH.map(p => p.join(',')).join(' ');
+    return `<svg viewBox="0 0 340 250" id="map-svg" role="img" aria-label="Mapa do percurso da coleta">
+      <rect width="340" height="250" class="m-block"/>
+      <rect x="226" y="46" width="78" height="68" rx="6" class="m-park"/>
+      <text x="265" y="83" class="m-park-label" text-anchor="middle">Praça</text>
+      ${[40, 120, 200].map(y => `<line x1="0" y1="${y}" x2="340" y2="${y}" class="m-street"/>`).join('')}
+      ${[40, 130, 220, 310].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="250" class="m-street"/>`).join('')}
+      <text x="175" y="202.5" class="m-label" text-anchor="middle">R. das Flores</text>
+      <text x="265" y="122.5" class="m-label" text-anchor="middle">Av. Brasil</text>
+      <circle cx="${HOME.x}" cy="${HOME.y}" r="${FENCE}" class="m-fence"/>
+      <text x="${HOME.x}" y="${HOME.y - FENCE - 4}" class="m-fence-label" text-anchor="middle">raio de casa · 200 m</text>
+      <path d="M${HOME.x - 6} ${HOME.y + 6}v-6l6-5 6 5v6z" class="m-house"/>
+      <polyline points="${plan}" class="m-plan"/>
+      <polyline points="" id="m-walk" class="m-walk"/>
+      <g id="m-pts"></g>
+      <g id="m-me"><circle r="6" class="m-halo"/><circle r="5.5" class="m-me"/></g>
+      <g transform="translate(250,236)"><line x1="0" y1="0" x2="22.2" y2="0" class="m-scale"/><text x="27" y="2.5" class="m-label">100 m</text></g>
+    </svg>`;
+  }
+
+  function updateCollect() {
+    if (state.tab !== 'coleta' || state.stage !== 'coletando' || !$('map-svg')) return;
+    const p = pointAt(state.d);
+    const t = totals();
+    $('m-walk').setAttribute('points', walkedPts(state.d));
+    $('m-me').setAttribute('transform', `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`);
+    $('m-pts').innerHTML = state.points.map(q => `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="4.5" class="${q.inside ? 'm-pt-bad' : 'm-pt'}"/>`).join('');
+
+    const inside = pxFromHome(p) <= FENCE;
+    $('where').innerHTML = inside
+      ? '<span class="pill warn">Dentro do raio de casa: lixo daqui não conta</span>'
+      : `<span class="pill ok">A ${dist(pxFromHome(p) * M_PER_PX)} de casa: lixo daqui conta</span>`;
+
+    $('stats').innerHTML = `
+      <div class="stat"><b>${dist(walkedM())}</b><span>percorridos</span></div>
+      <div class="stat"><b>${minutes()} min</b><span>de coleta</span></div>
+      <div class="stat"><b>${t.nValid}<small> / ${t.n}</small></b><span>pontos válidos</span></div>
+      <div class="stat"><b>${kg(t.all)}</b><span>peso estimado</span></div>`;
+
+    const nBad = t.n - t.nValid;
+    const items = [
+      [true, `Lacre ${state.bag} lido no início`],
+      [state.maxFromHome > FENCE * M_PER_PX, 'Saiu do raio de casa'],
+      [walkedM() >= 300, 'Percurso de pelo menos 300 m', dist(walkedM()) + ' até agora'],
+      [t.nValid > 0, 'Pelo menos 1 ponto fora de casa', `${t.nValid} marcado${t.nValid === 1 ? '' : 's'}`],
+      [!!state.photos.antes, 'Foto antes', 'Vale bônus'],
+      [!!state.photos.depois, 'Foto depois', 'Vale bônus'],
+    ];
+    if (nBad) items.push([false, `${nBad} ponto${nBad === 1 ? '' : 's'} dentro do raio de casa`, 'Não entram no pagamento', 'bad']);
+    $('checks').innerHTML = checkList(items);
+
+    const walkBtn = $('btn-walk');
+    walkBtn.disabled = state.d >= TOTAL;
+    walkBtn.textContent = state.d >= TOTAL ? 'Fim do percurso' : state.walking ? 'Pausar caminhada' : (state.d > 0 ? 'Continuar caminhada' : 'Simular caminhada');
+    const ok = canFinish();
+    $('btn-end').disabled = !ok;
+    $('end-hint').textContent = ok ? '' : 'Para encerrar, percorra 300 m e marque pelo menos 1 ponto fora de casa.';
+  }
+
+  function renderPhotos() {
+    const el = $('photos');
+    if (!el) return;
+    el.innerHTML = ['antes', 'depois'].map(k => {
+      const ph = state.photos[k];
+      return `<div class="photo">
+        <label for="file-${k}" class="slot">${ph
+          ? `<img src="${ph.src}" alt="Foto ${k} do local"><span class="geo">${ph.time} · GPS ok</span>`
+          : `<span><b>Foto ${k}</b><br>Toque para fotografar</span>`}</label>
+        ${ph ? '' : `<button class="link" data-action="foto-exemplo" data-key="${k}">Usar foto de exemplo</button>`}
+      </div>`;
+    }).join('');
+  }
+
+  function renderNotes() {
+    const idx = STAGES.indexOf(state.stage);
+    $('flow').innerHTML = STEP_LABELS.map((l, i) =>
+      `<li class="${i < idx ? 'done' : i === idx ? 'current' : ''}"${i === idx ? ' aria-current="step"' : ''}><span class="n">${i < idx ? '✓' : i + 1}</span><span>${l}</span></li>`).join('');
+    const key = state.tab === 'coleta' ? state.stage : state.tab;
+    const n = NOTES[key];
+    const eyebrow = state.tab === 'coleta' ? `Etapa ${idx + 1} de ${STAGES.length}` : (state.tab === 'carteira' ? 'Aba Carteira' : 'Aba Pontos');
+    $('note').innerHTML = `<span class="eyebrow">${eyebrow}</span><h2>${n.t}</h2><p>${n.p}</p>
+      <div class="rule"><span class="eyebrow">Regra contra fraude</span><p>${n.r}</p></div>`;
+  }
+
+  function render() {
+    const app = $('app-content');
+    app.innerHTML = state.tab === 'coleta' ? screenColeta() : state.tab === 'carteira' ? screenCarteira() : screenPontos();
+    document.querySelectorAll('.tab').forEach(b => b.toggleAttribute('aria-current', false));
+    const cur = document.querySelector(`.tab[data-tab="${state.tab}"]`);
+    if (cur) cur.setAttribute('aria-current', 'page');
+    $('hdr-saldo').textContent = brl(state.wallet.saldo);
+    if (state.tab === 'coleta' && state.stage === 'coletando') { renderPhotos(); updateCollect(); }
+    renderNotes();
+  }
+  function go(stage) { state.stage = stage; state.tab = 'coleta'; render(); $('app-content').scrollTop = 0; }
+  function setTab(t) { state.tab = t; render(); $('app-content').scrollTop = 0; }
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+
+  function tick() {
+    state.d = Math.min(TOTAL, state.d + 2.4);
+    state.maxFromHome = Math.max(state.maxFromHome, pxFromHome(pointAt(state.d)) * M_PER_PX);
+    if (state.d >= TOTAL) { stopWalk(); toast('Fim do percurso de exemplo'); }
+    updateCollect();
+  }
+  function startWalk() { if (timer) return; state.walking = true; timer = setInterval(tick, 90); }
+  function stopWalk() { clearInterval(timer); timer = null; state.walking = false; }
+
+  const actions = {
+    'pedir-kit'() {
+      state.address = $('addr').value.trim();
+      if (!state.address) { toast('Informe o endereço para receber o kit'); return; }
+      go('aCaminho');
+    },
+    'kit-entregue'() { go('pronto'); },
+    'iniciar'() { stopWalk(); Object.assign(state, collectFresh()); go('coletando'); toast('Rastreamento ligado até você encerrar a coleta'); },
+    'walk'() { state.walking ? stopWalk() : startWalk(); updateCollect(); },
+    'marcar'() {
+      const p = pointAt(state.d);
+      const last = state.points[state.points.length - 1];
+      if (last && Math.hypot(last.x - p.x, last.y - p.y) < 8) { toast('Ande um pouco antes de marcar outro ponto'); return; }
+      const inside = pxFromHome(p) <= FENCE;
+      const w = r1(0.4 + Math.random() * 1.1);
+      state.points.push({ x: p.x, y: p.y, kg: w, inside });
+      toast(inside ? 'Ponto dentro do raio de casa: não conta' : `Ponto marcado, cerca de ${kg(w)}`);
+      updateCollect();
+    },
+    'foto-exemplo'(b) {
+      state.photos[b.dataset.key] = { src: examplePhoto(b.dataset.key), time: hora() };
+      renderPhotos(); updateCollect();
+    },
+    'encerrar'() { if (!canFinish()) return; stopWalk(); go('entrega'); },
+    'confirmar-entrega'() { go('triagem'); },
+    'pesar'() {
+      const t = totals();
+      const rec = r1(t.all * (0.55 + Math.random() * 0.2));
+      const rej = r1(t.all - rec);
+      const share = t.all ? t.valid / t.all : 0;
+      const base = rec * RATE.rec + rej * RATE.rej;
+      const adj = -base * (1 - share);
+      const bonus = state.photos.antes && state.photos.depois ? RATE.bonus : 0;
+      const frete = state.delivery.mode === 'retirada' ? -RATE.retirada : 0;
+      const min = minutes();
+      state.triage = {
+        total: r1(rec + rej), rec, rej, share, adj, bonus, frete, min,
+        value: Math.max(0, r2(base + adj + bonus + frete)),
+        okPace: (rec + rej) / min < 1.2, nValid: t.nValid, n: t.n, local: deliveryLabel(),
+      };
+      go('recompensa');
+    },
+    'receber'() {
+      const tr = state.triage;
+      state.wallet.saldo = r2(state.wallet.saldo + tr.value);
+      state.wallet.history.unshift({ label: 'Coleta ' + state.bag, date: hoje(), detail: kg(tr.total) + ' · ' + tr.local, value: tr.value, kg: tr.total });
+      Object.assign(state, collectFresh(), { stage: 'semKit', bag: newBag(), pixMsg: '' });
+      setTab('carteira');
+      toast(brl(tr.value) + ' na sua carteira');
+    },
+    'sacar'() {
+      const key = state.pixKey.trim();
+      if (!key) { toast('Informe sua chave Pix'); $('pix-key').focus(); return; }
+      if (state.wallet.saldo < 5) { state.pixMsg = 'O saque mínimo é de R$ 5,00. Faça mais uma coleta para liberar.'; render(); return; }
+      const v = state.wallet.saldo;
+      state.wallet.history.unshift({ label: 'Saque via Pix', date: hoje(), detail: key, value: -v });
+      state.wallet.saldo = 0;
+      state.pixMsg = `Saque de ${brl(v)} solicitado para ${key}. Simulação: nenhum dinheiro foi enviado.`;
+      render();
+    },
+    'tab'(b) { setTab(b.dataset.tab); },
+    'reset'() { stopWalk(); state = fresh(); render(); $('app-content').scrollTop = 0; toast('Protótipo reiniciado'); },
+  };
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-action]');
+    if (!b || b.disabled) return;
+    const fn = actions[b.dataset.action];
+    if (fn) { e.preventDefault(); fn(b); }
+  });
+  document.addEventListener('input', e => {
+    if (e.target.id === 'addr') state.address = e.target.value;
+    if (e.target.id === 'pix-key') state.pixKey = e.target.value;
+  });
+  document.addEventListener('change', e => {
+    const el = e.target;
+    if (el.id === 'consent') { state.consent = el.checked; $('btn-kit').disabled = !el.checked; }
+    else if (el.name === 'mode') { state.delivery.mode = el.value; render(); }
+    else if (el.name === 'ponto') state.delivery.ponto = el.value;
+    else if (el.name === 'dia') state.delivery.dia = el.value;
+  });
+  ['antes', 'depois'].forEach(k => $('file-' + k).addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    state.photos[k] = { src: URL.createObjectURL(f), time: hora() };
+    e.target.value = '';
+    renderPhotos(); updateCollect();
+  }));
+
+  state = fresh();
+  render();
+})();
+</script>
+</body>
+</html>
