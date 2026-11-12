@@ -1,0 +1,579 @@
+<title>StillUp</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app shell, top bar with role switch, segmented tabs, cards for challenges, sheet-style modals */
+:root{
+  --bg:#F3F4F8; --surface:#FFFFFF; --surface-2:#E9EBF3; --line:#D7DAE6;
+  --ink:#141833; --muted:#5B6180;
+  --accent:#2C3FD6; --accent-ink:#FFFFFF; --accent-soft:#E2E6FF;
+  --gold:#E8A317; --gold-soft:#FFF1D1; --gold-ink:#6B4600;
+  --ok:#1E8A55; --ok-soft:#DDF3E7; --warn:#B4610A; --warn-soft:#FDEBD6; --bad:#B42318;
+  --ai:#7A3FD1; --ai-soft:#F0E7FD;
+  --shadow:0 1px 2px rgba(20,24,51,.06),0 6px 20px rgba(20,24,51,.06);
+  --f-display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1022; --surface:#171A33; --surface-2:#20243F; --line:#2E3354;
+  --ink:#ECEEFA; --muted:#A1A6C6;
+  --accent:#7D8CFF; --accent-ink:#0E1022; --accent-soft:#252B5C;
+  --gold:#F2B940; --gold-soft:#3A2E12; --gold-ink:#FFD98A;
+  --ok:#4CC98A; --ok-soft:#163626; --warn:#F0A04B; --warn-soft:#3B2711; --bad:#FF7A6E;
+  --ai:#B993FF; --ai-soft:#2C2148;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1022; --surface:#171A33; --surface-2:#20243F; --line:#2E3354;
+  --ink:#ECEEFA; --muted:#A1A6C6;
+  --accent:#7D8CFF; --accent-ink:#0E1022; --accent-soft:#252B5C;
+  --gold:#F2B940; --gold-soft:#3A2E12; --gold-ink:#FFD98A;
+  --ok:#4CC98A; --ok-soft:#163626; --warn:#F0A04B; --warn-soft:#3B2711; --bad:#FF7A6E;
+  --ai:#B993FF; --ai-soft:#2C2148;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1040px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center}
+.logo-mark svg{display:block}
+.logo b{color:var(--accent)}
+.demo{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-ink);background:var(--gold-soft);padding:3px 8px;border-radius:99px}
+.spacer{flex:1}
+.role{display:flex;background:var(--surface-2);border-radius:12px;padding:3px}
+.role button{border:0;background:transparent;padding:7px 12px;border-radius:9px;font-weight:600;color:var(--muted);font-size:14px}
+.role button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+.wrap{max-width:1040px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.who{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:18px;color:#fff;flex:none}
+.who h1{font-family:var(--f-display);font-size:24px;line-height:1.15;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.who p{margin:0;color:var(--muted);font-size:14px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--accent);border-color:var(--accent)}
+.tabs .count{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:99px;background:var(--surface-2);font-size:12px;color:var(--muted)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:var(--f-display);font-size:19px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:16px;margin:0;line-height:1.3;text-wrap:balance}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 14px;border-radius:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ai{background:var(--ai-soft);border-color:transparent;color:var(--ai)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.pill.open{background:var(--accent-soft);color:var(--accent)}
+.pill.done{background:var(--ok-soft);color:var(--ok)}
+.pill.wait{background:var(--warn-soft);color:var(--warn)}
+.pill.lost{background:var(--surface-2);color:var(--muted)}
+.pill.cat{background:var(--surface-2);color:var(--ink);font-weight:600}
+.pill.ai{background:var(--ai-soft);color:var(--ai)}
+
+.ch{display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s;text-align:left;width:100%}
+.ch:hover{border-color:var(--accent)}
+.ch .co{font-size:13px;color:var(--muted);font-weight:600}
+.money{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;border-top:1px dashed var(--line);padding-top:10px;margin-top:auto}
+.money .big{font-family:var(--f-display);font-size:22px;font-weight:800;line-height:1}
+.money .you{font-size:12px;color:var(--ok);font-weight:700}
+
+.sub-banner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.sub-banner .dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft)}
+.sub-banner.off .dot{background:var(--bad);box-shadow:0 0 0 4px var(--warn-soft)}
+
+.stats{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:620px){.stats{gap:8px}.stats .card{padding:12px}.stat .v{font-size:17px!important}.stat .label{font-size:10px;letter-spacing:.04em}}
+.stat .v{font-family:var(--f-display);font-size:24px;font-weight:800}
+
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
+input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px}
+textarea{min-height:140px;resize:vertical;line-height:1.5}
+.two{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+.form-layout{display:grid;gap:18px;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start}
+@media (max-width:820px){.form-layout{grid-template-columns:1fr}}
+
+.breakdown{display:flex;flex-direction:column;gap:8px}
+.breakdown .ln{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.breakdown .ln.total{border-top:1px solid var(--line);padding-top:8px;font-weight:700;font-size:16px}
+.breakdown .ln .k{color:var(--muted)}
+.split{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--surface-2)}
+.split span{display:block;height:100%}
+
+.ai-box{border:1px solid transparent;background:var(--ai-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.ai-box .hd{display:flex;align-items:center;gap:6px;color:var(--ai);font-weight:700;font-size:14px}
+.ai-box ul{margin:0;padding-left:18px}
+.typing::after{content:"▍";animation:blink 1s steps(1) infinite;color:var(--ai)}
+@keyframes blink{50%{opacity:0}}
+
+.subm{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--surface)}
+.subm.win{border-color:var(--ok);background:var(--ok-soft)}
+.thumb{width:56px;height:56px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;color:#fff;font-size:20px}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:99px;font-size:13px;font-weight:600;color:var(--muted)}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+
+table{width:100%;min-width:560px;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+.tbl{overflow-x:auto}
+.pos{color:var(--ok);font-weight:700}
+.neg{color:var(--ink)}
+
+.empty{text-align:center;padding:30px 16px;color:var(--muted)}
+
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(10,12,30,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+.sheet{background:var(--surface);border-radius:20px;max-width:620px;width:100%;max-height:calc(100% - 20px);overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.sheet .x{margin-left:auto;border:0;background:var(--surface-2);width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1}
+@media (max-width:560px){.scrim{align-items:flex-end;padding:0}.sheet{border-radius:20px 20px 0 0;max-height:92%;padding-bottom:max(20px,env(safe-area-inset-bottom,0px))}}
+.desc{white-space:pre-wrap;background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:14px}
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pay-methods button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;font-weight:700;text-align:left}
+.pay-methods button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--accent-soft);border-top-color:var(--accent);animation:sp 0.8s linear infinite;margin:10px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.check{width:56px;height:56px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center;margin:4px auto;font-size:28px;font-weight:800}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:60;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.how{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.how .step{display:flex;gap:10px;align-items:flex-start}
+.how .n{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-weight:800;display:grid;place-items:center;flex:none;font-size:13px}
+.foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top"><div class="top-in">
+  <div class="logo"><span class="logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 13 L8 8 L11 11 L15 5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 5 H15 V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Still<b>Up</b></span></div>
+  <span class="demo">Demonstração</span>
+  <span class="spacer"></span>
+  <div class="role" role="group" aria-label="Escolha o lado">
+    <button id="role-empresa" data-action="role" data-role="empresa">Sou empresa</button>
+    <button id="role-solver" data-action="role" data-role="solver">Quero resolver</button>
+  </div>
+</div></header>
+
+<main class="wrap" id="app"></main>
+<div id="modal-root"></div>
+
+<script>
+(function(){
+const COMPANY = "Café Linhares";
+const SOLVER = "Ana Souza";
+const FEE = 0.10, SUB_PRICE = 150, POST_PRICE = 60;
+const CATS = ["Design","Marketing","Tecnologia","Redação","Vídeo"];
+const CAT_COLORS = {Design:"#2C3FD6",Marketing:"#D1495B",Tecnologia:"#1E8A55",Redação:"#B4610A",Vídeo:"#7A3FD1"};
+const AI_RANGE = {Design:[400,1200],Marketing:[250,700],Tecnologia:[600,2000],Redação:[150,500],Vídeo:[400,1500]};
+
+const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today = () => new Date().toISOString().slice(0,10);
+const addDays = (n) => { const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+const fmtDate = s => { const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; };
+const daysLeft = s => Math.ceil((new Date(s+"T23:59:59")-new Date())/864e5);
+const uid = () => Math.random().toString(36).slice(2,9);
+const initials = n => n.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const hue = s => { let h=0; for(const c of s) h=(h*31+c.charCodeAt(0))%360; return `hsl(${h} 55% 45%)`; };
+const aiScore = s => { let h=7; for(const c of s.text+s.title) h=(h*17+c.charCodeAt(0))%1000; const len=Math.min(s.text.length,400)/400; return Math.min(9.8,(5.5+len*2.5+(h%15)/10)).toFixed(1).replace(".",","); };
+
+function seed(){
+  return {
+    role:"empresa", tab:{empresa:"desafios",solver:"explorar"}, filter:"Todos", q:"",
+    sub:{active:true, renews:addDays(27)},
+    challenges:[
+      {id:"c1",company:COMPANY,mine:true,title:"Logomarca nova para a Café Linhares",cat:"Design",reward:800,deadline:addDays(9),status:"aberto",created:addDays(-5),
+       desc:"Somos uma cafeteria no centro de Linhares (ES), aberta desde 2019. Queremos uma logomarca moderna que lembre café coado e o Rio Doce.\n\nEntregáveis: logo principal, versão em uma cor e ícone para redes sociais (PNG e SVG).\nCritérios: fácil de ler na fachada e no copo; cores quentes.",
+       subs:[
+        {id:"s1",author:"Lucas Ferreira",title:"Xícara + onda do rio",text:"A xícara vista de cima forma uma onda, ligando o café ao Rio Doce. Tipografia arredondada em marrom e laranja. Envio versão colorida, preta e ícone redondo.",file:"logo-cafe-linhares-lucas.pdf",date:addDays(-3)},
+        {id:"s2",author:"Beatriz Nunes",title:"Selo artesanal",text:"Selo circular com grão de café ao centro e o nome em letras serifadas, estilo carimbo artesanal. Bom para adesivos e embalagens.",file:"selo-artesanal.png",date:addDays(-2)},
+        {id:"s3",author:"Rafael Costa",title:"Letra L em grão",text:"Monograma minimalista: a letra L desenhada dentro de um grão de café.",file:"monograma-L.svg",date:addDays(-1)}
+       ]},
+      {id:"c2",company:COMPANY,mine:true,title:"5 posts de Instagram para o bolo de pote",cat:"Marketing",reward:350,deadline:addDays(4),status:"aberto",created:addDays(-3),
+       desc:"Vamos lançar o bolo de pote de cenoura com chocolate. Precisamos de 5 artes e legendas para o Instagram, com chamada para o delivery.",
+       subs:[{id:"s4",author:"Marina Lopes",title:"Campanha 'Pote da Felicidade'",text:"Série de 5 posts com contagem regressiva para o lançamento, fotos em fundo amarelo e legendas curtas com chamada para o WhatsApp do delivery.",file:"posts-bolo-de-pote.zip",date:addDays(-1)}]},
+      {id:"c3",company:COMPANY,mine:true,title:"Cardápio digital com QR Code",cat:"Tecnologia",reward:1200,deadline:addDays(-6),status:"concluido",created:addDays(-25),winner:"s5",
+       desc:"Cardápio online que abra pelo QR Code na mesa, com fotos e preços fáceis de atualizar.",
+       subs:[{id:"s5",author:"Pedro Henrique",title:"Cardápio em página única",text:"Página leve, abre rápido no 4G, com categorias e painel simples para editar preços.",file:"cardapio-link.txt",date:addDays(-12)},
+             {id:"s6",author:"Júlia Martins",title:"Cardápio com pedidos",text:"Cardápio com carrinho e envio do pedido para o caixa.",file:"prototipo.fig",date:addDays(-10)}]},
+      {id:"c4",company:"Ótica Visão Clara",title:"Slogan para a campanha de volta às aulas",cat:"Redação",reward:250,deadline:addDays(6),status:"aberto",created:addDays(-2),
+       desc:"Queremos um slogan curto para a campanha de exames de vista gratuitos para estudantes em fevereiro.\n\nEntregáveis: 3 opções de slogan com uma frase explicando cada uma.",subs:[{id:"s7",author:"Carlos Dias",title:"Enxergue seu futuro",text:"Três opções focadas em estudo e futuro.",file:"slogans.docx",date:addDays(-1)}]},
+      {id:"c5",company:"AutoPeças Rio Doce",title:"Vídeo de 30 segundos para Reels",cat:"Vídeo",reward:600,deadline:addDays(12),status:"aberto",created:addDays(-1),
+       desc:"Vídeo vertical mostrando a loja e a promoção de troca de óleo. Pode usar imagens que vamos enviar.",subs:[]},
+      {id:"c6",company:"Academia Força Total",title:"Mascote para a academia",cat:"Design",reward:900,deadline:addDays(8),status:"aberto",created:addDays(-4),
+       desc:"Mascote simpático para camisetas e redes sociais. Público: jovens e famílias.\n\nEntregáveis: personagem em 3 poses, arquivos PNG e vetor.",
+       subs:[{id:"s8",author:SOLVER,mine:true,title:"Tatu Fortão",text:"Um tatu-bola musculoso (animal da Mata Atlântica capixaba) usando faixa na cabeça. Três poses: acenando, levantando peso e comemorando.",file:"tatu-fortao.pdf",date:addDays(-2)},
+             {id:"s9",author:"Diego Alves",title:"Leão Força",text:"Leão com regata da academia.",file:"leao.png",date:addDays(-1)}]},
+      {id:"c7",company:"Mercadinho Bom Preço",title:"Planilha de controle de estoque",cat:"Tecnologia",reward:400,deadline:addDays(10),status:"aberto",created:addDays(-1),
+       desc:"Planilha no Google Sheets que avise quando um produto estiver acabando e mostre o que mais vende no mês.",subs:[]}
+    ],
+    ledger:[
+      {date:addDays(-25),desc:"Publicação: Cardápio digital com QR Code",amount:-60},
+      {date:addDays(-12),desc:"Pagamento ao vencedor: Cardápio digital",amount:-1200},
+      {date:addDays(-5),desc:"Publicação: Logomarca nova",amount:-60},
+      {date:addDays(-3),desc:"Publicação: Posts do bolo de pote",amount:-60},
+      {date:addDays(-3),desc:"Assinatura StillUp (mensal)",amount:-150}
+    ],
+    wallet:[{date:addDays(-15),desc:"Banner da Feira de Ciências · Colégio Aurora",gross:300}]
+  };
+}
+const KEY="stillup-demo-v1";
+let S;
+try{ S=JSON.parse(localStorage.getItem(KEY)) }catch(e){}
+if(!S||!S.challenges) S=seed();
+const save=()=>{ try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} };
+
+const app=document.getElementById("app"), modalRoot=document.getElementById("modal-root");
+let draft={title:"",cat:"Design",desc:"",reward:500,days:7};
+let aiState=null; // for company description ai
+let solverAi=null;
+
+/* ---------- shared pieces ---------- */
+function feeSplit(reward){ const fee=Math.round(reward*FEE*100)/100; return {fee, net:reward-fee}; }
+function statusPill(c){
+  if(c.status==="concluido") return `<span class="pill done">Concluído</span>`;
+  const d=daysLeft(c.deadline);
+  if(d<0) return `<span class="pill wait">Escolha a vencedora</span>`;
+  return `<span class="pill open">Aberto · ${d} ${d===1?"dia":"dias"}</span>`;
+}
+function catPill(cat){ return `<span class="pill cat"><span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLORS[cat]}"></span>${cat}</span>`; }
+function splitBar(reward){ const {fee,net}=feeSplit(reward); return `<div class="split" aria-hidden="true"><span style="width:90%;background:var(--ok)"></span><span style="width:10%;background:var(--gold)"></span></div>
+ <div class="row small" style="justify-content:space-between"><span><b class="num" style="color:var(--ok)">${brl(net)}</b> para quem resolver (90%)</span><span><b class="num" style="color:var(--gold-ink)">${brl(fee)}</b> StillUp (10%)</span></div>`; }
+
+function render(){
+  document.getElementById("role-empresa").setAttribute("aria-pressed",S.role==="empresa");
+  document.getElementById("role-solver").setAttribute("aria-pressed",S.role==="solver");
+  app.innerHTML = S.role==="empresa" ? renderCompany() : renderSolver();
+  app.insertAdjacentHTML("beforeend",`<div class="foot"><span>StillUp · protótipo escolar com dados e pagamentos simulados. Nenhum valor é cobrado de verdade.</span><button class="btn ghost small" data-action="reset">Reiniciar demonstração</button></div>`);
+  save();
+}
+
+/* ---------- COMPANY ---------- */
+function renderCompany(){
+  const mine=S.challenges.filter(c=>c.mine);
+  const t=S.tab.empresa;
+  const pendingSubs=mine.filter(c=>c.status!=="concluido").reduce((a,c)=>a+c.subs.length,0);
+  let h=`<section class="who"><div class="avatar" style="background:#8A4B22">CL</div><div><h1>${COMPANY}</h1><p>Cafeteria · Linhares, ES · conta empresa</p></div></section>`;
+  h+= S.sub.active
+    ? `<div class="sub-banner"><span class="dot"></span><div style="flex:1;min-width:200px"><b>Assinatura ativa</b> <span class="muted">· ${brl(SUB_PRICE)}/mês · renova em ${fmtDate(S.sub.renews)}</span><div class="small muted">Com a assinatura você publica desafios por ${brl(POST_PRICE)} cada.</div></div><button class="btn" data-action="manage-sub">Gerenciar</button></div>`
+    : `<div class="sub-banner off"><span class="dot"></span><div style="flex:1;min-width:200px"><b>Assinatura inativa</b><div class="small muted">Assine para publicar desafios e escolher soluções.</div></div><button class="btn primary" data-action="subscribe">Assinar por ${brl(SUB_PRICE)}/mês</button></div>`;
+  h+=`<nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="${t==="desafios"}" data-action="tab" data-tab="desafios">Meus desafios<span class="count">${mine.length}</span></button>
+    <button role="tab" aria-selected="${t==="novo"}" data-action="tab" data-tab="novo">Publicar desafio</button>
+    <button role="tab" aria-selected="${t==="financeiro"}" data-action="tab" data-tab="financeiro">Financeiro</button></nav>`;
+  if(t==="desafios"){
+    const open=mine.filter(c=>c.status!=="concluido").length;
+    const paid=mine.filter(c=>c.status==="concluido").reduce((a,c)=>a+c.reward,0);
+    h+=`<div class="stats">
+      <div class="card stat"><div class="label">Desafios abertos</div><div class="v num">${open}</div></div>
+      <div class="card stat"><div class="label">Soluções para avaliar</div><div class="v num">${pendingSubs}</div></div>
+      <div class="card stat"><div class="label">Pago em remunerações</div><div class="v num">${brl(paid)}</div></div></div>`;
+    h+= mine.length ? `<div class="grid">${mine.slice().sort((a,b)=>(a.status==="concluido")-(b.status==="concluido")).map(c=>companyCard(c)).join("")}</div>`
+      : `<div class="card empty">Você ainda não publicou desafios. <button class="btn primary" data-action="tab" data-tab="novo">Publicar o primeiro</button></div>`;
+  } else if(t==="novo"){ h+=renderNewForm(); }
+  else h+=renderFinance();
+  return h;
+}
+function companyCard(c){
+  return `<button class="card ch" data-action="open-company" data-id="${c.id}">
+    <div class="row" style="justify-content:space-between">${catPill(c.cat)}${statusPill(c)}</div>
+    <h3>${esc(c.title)}</h3>
+    <div class="small muted">${c.subs.length} ${c.subs.length===1?"solução enviada":"soluções enviadas"} · prazo ${fmtDate(c.deadline)}</div>
+    <div class="money"><div><div class="label">Remuneração</div><div class="big num">${brl(c.reward)}</div></div>
+    <span class="btn small">${c.status==="concluido"?"Ver resultado":"Avaliar soluções"}</span></div></button>`;
+}
+
+function renderNewForm(){
+  if(!S.sub.active) return `<div class="card empty stack" style="align-items:center"><h2>Assine para publicar</h2><p>Empresas assinantes publicam desafios por ${brl(POST_PRICE)} cada.</p><button class="btn primary" data-action="subscribe">Assinar por ${brl(SUB_PRICE)}/mês</button></div>`;
+  const r=Number(draft.reward)||0; const {fee,net}=feeSplit(r);
+  const [lo,hi]=AI_RANGE[draft.cat];
+  return `<div class="form-layout">
+   <form class="card stack" id="new-form" autocomplete="off">
+    <h2>Novo desafio</h2>
+    <label class="f">Título do desafio<input type="text" id="f-title" maxlength="90" placeholder="Ex.: Logomarca para a minha loja" value="${esc(draft.title)}" required></label>
+    <div class="two">
+      <label class="f">Categoria<select id="f-cat">${CATS.map(c=>`<option ${c===draft.cat?"selected":""}>${c}</option>`).join("")}</select></label>
+      <label class="f">Prazo para envios<select id="f-days">${[3,5,7,10,15,30].map(d=>`<option value="${d}" ${d==draft.days?"selected":""}>${d} dias</option>`).join("")}</select></label>
+    </div>
+    <label class="f"><span class="row" style="justify-content:space-between">Descrição <button type="button" class="btn ai small" data-action="ai-improve" ${aiState==="typing"?"disabled":""}>✦ Melhorar com IA</button></span>
+      <textarea id="f-desc" placeholder="Conte o que sua empresa precisa, o que deve ser entregue e como você vai escolher a melhor solução.">${esc(draft.desc)}</textarea></label>
+    <div id="ai-out">${aiTipsHTML()}</div>
+    <label class="f">Remuneração para a solução vencedora (R$)<input type="number" id="f-reward" min="50" step="10" value="${esc(draft.reward)}"></label>
+    <div class="small muted">✦ A IA sugere entre <b class="num">${brl(lo)}</b> e <b class="num">${brl(hi)}</b> para desafios de ${draft.cat} na sua região. <button type="button" class="btn ghost small" data-action="ai-price" style="padding:2px 6px;color:var(--ai)">Usar ${brl(Math.round((lo+hi)/2/10)*10)}</button></div>
+   </form>
+   <aside class="card stack" style="position:sticky;top:80px">
+    <div class="label">Resumo do pagamento</div>
+    <div class="breakdown" id="breakdown">${breakdownHTML(r)}</div>
+    <div class="stack" style="gap:6px"><div class="label">Para onde vai a remuneração</div><div id="splitbar">${splitBar(r)}</div></div>
+    <button class="btn primary block" data-action="publish">Pagar e publicar</button>
+    <p class="small muted" style="margin:0">A remuneração fica reservada com a StillUp e só é liberada quando você escolher a solução vencedora.</p>
+   </aside></div>`;
+}
+function breakdownHTML(r){
+  return `<div class="ln"><span class="k">Taxa de publicação</span><span class="num">${brl(POST_PRICE)}</span></div>
+   <div class="ln"><span class="k">Remuneração reservada</span><span class="num">${brl(r)}</span></div>
+   <div class="ln total"><span>Total agora</span><span class="num">${brl(POST_PRICE+r)}</span></div>`;
+}
+function aiTipsHTML(){
+  if(aiState==="typing") return `<div class="ai-box"><div class="hd">✦ A IA está reescrevendo sua descrição…</div></div>`;
+  if(aiState==="done") return `<div class="ai-box"><div class="hd">✦ O que a IA melhorou</div><ul class="small"><li>Separou objetivo, entregáveis e critérios de avaliação.</li><li>Listou os arquivos esperados para ${esc(draft.cat)}.</li><li>Deixou claro o prazo e como a vencedora será escolhida.</li></ul><div class="row"><button type="button" class="btn small" data-action="ai-undo">Desfazer</button></div></div>`;
+  return "";
+}
+function aiRewrite(){
+  const t=draft.title.trim()||"Desafio da "+COMPANY;
+  const base=draft.desc.trim();
+  const deliver={Design:"- Arquivo principal em PNG (fundo transparente) e SVG\n- Versão em uma cor\n- Ícone quadrado para redes sociais",
+    Marketing:"- Artes prontas no formato das redes (1080×1080 e 1080×1920)\n- Legendas com chamada para ação\n- Sugestão de dias e horários de postagem",
+    Tecnologia:"- Link funcionando para testar\n- Instruções simples de uso\n- Código ou arquivo editável",
+    Redação:"- Pelo menos 3 opções de texto\n- Uma frase explicando a ideia de cada opção",
+    Vídeo:"- Vídeo vertical (9:16) de até 30 segundos\n- Versão com e sem legenda\n- Arquivo MP4 em alta qualidade"}[draft.cat];
+  return `Objetivo\n${t}. ${base?base.replace(/\s+/g," "):`A ${COMPANY} quer uma solução criativa e fácil de usar no dia a dia.`}\n\nSobre a empresa\n${COMPANY} é uma cafeteria em Linhares (ES) com clientes de todas as idades.\n\nO que deve ser entregue\n${deliver}\n\nComo vamos escolher a vencedora\n- Clareza e originalidade da ideia\n- Combina com a identidade da empresa\n- Pronta para usar sem grandes ajustes\n\nPrazo\nEnvios aceitos por ${draft.days} dias. A vencedora recebe a remuneração pela StillUp.`;
+}
+let prevDesc="";
+function runAiImprove(){
+  syncDraft(); prevDesc=draft.desc; aiState="typing"; render();
+  const target=aiRewrite(); const ta=document.getElementById("f-desc");
+  ta.value=""; ta.classList.add("typing"); let i=0;
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=()=>{ const el=document.getElementById("f-desc"); if(!el){aiState="done";draft.desc=target;return;}
+    i=reduce?target.length:Math.min(target.length,i+9); el.value=target.slice(0,i); el.scrollTop=el.scrollHeight;
+    if(i<target.length) setTimeout(step,16); else { draft.desc=target; aiState="done"; render(); } };
+  setTimeout(step,500);
+}
+function syncDraft(){
+  const g=id=>document.getElementById(id);
+  if(!g("f-title")) return;
+  draft.title=g("f-title").value; draft.cat=g("f-cat").value; draft.desc=g("f-desc").value; draft.reward=g("f-reward").value; draft.days=Number(g("f-days").value);
+}
+
+function renderFinance(){
+  const total=S.ledger.reduce((a,l)=>a+l.amount,0);
+  const won=S.challenges.filter(c=>c.mine&&c.status==="concluido");
+  const fees=won.reduce((a,c)=>a+feeSplit(c.reward).fee,0);
+  const posts=S.ledger.filter(l=>l.desc.startsWith("Publicação")).length;
+  const rows=S.ledger.slice().reverse().map(l=>`<tr><td class="num">${fmtDate(l.date)}</td><td>${esc(l.desc)}</td><td class="r num neg">${brl(l.amount)}</td></tr>`).join("");
+  return `<div class="stats">
+    <div class="card stat"><div class="label">Total investido</div><div class="v num">${brl(-total)}</div></div>
+    <div class="card stat"><div class="label">Desafios publicados</div><div class="v num">${posts}</div></div>
+    <div class="card stat"><div class="label">Taxa StillUp (10%) nas vitórias</div><div class="v num">${brl(fees)}</div></div></div>
+   <div class="card stack"><h2>Como a StillUp cobra</h2>
+    <div class="how">
+     <div class="step"><span class="n">1</span><div><b>Assinatura · ${brl(SUB_PRICE)}/mês</b><div class="small muted">Dá acesso à plataforma e às ferramentas de IA.</div></div></div>
+     <div class="step"><span class="n">2</span><div><b>Publicação · ${brl(POST_PRICE)} por desafio</b><div class="small muted">Pago na hora de colocar o desafio no ar.</div></div></div>
+     <div class="step"><span class="n">3</span><div><b>Taxa de 10% da remuneração</b><div class="small muted">Descontada quando a vencedora é escolhida. Quem resolve recebe 90%.</div></div></div>
+    </div></div>
+   <div class="card stack"><h2>Extrato</h2><div class="tbl"><table><thead><tr><th>Data</th><th>Descrição</th><th class="r">Valor</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function openCompanyChallenge(id){
+  const c=S.challenges.find(x=>x.id===id);
+  const subs=c.subs.slice().sort((a,b)=>parseFloat(aiScore(b).replace(",","."))-parseFloat(aiScore(a).replace(",",".")));
+  const best=subs[0];
+  const {fee,net}=feeSplit(c.reward);
+  let h=`<div class="row"><div class="row">${catPill(c.cat)}${statusPill(c)}</div><button class="x" data-action="close" aria-label="Fechar">×</button></div>
+   <h2>${esc(c.title)}</h2>
+   <div class="row small muted"><span>Remuneração <b class="num" style="color:var(--ink)">${brl(c.reward)}</b></span><span>·</span><span>Prazo ${fmtDate(c.deadline)}</span></div>
+   <div class="desc">${esc(c.desc)}</div>`;
+  if(c.status!=="concluido" && best) h+=`<div class="ai-box"><div class="hd">✦ Pré-análise da IA</div><div class="small">Com base nos critérios do desafio, a solução <b>“${esc(best.title)}”</b> de ${esc(best.author)} está mais completa (nota ${aiScore(best)}). A decisão final é sua.</div></div>`;
+  h+=`<div class="label">Soluções enviadas (${c.subs.length})</div>`;
+  if(!subs.length) h+=`<div class="empty card">Nenhuma solução ainda. Os solucionadores costumam enviar nos primeiros dias.</div>`;
+  h+=subs.map(s=>{
+    const win=c.winner===s.id;
+    return `<div class="subm ${win?"win":""}"><div class="row" style="align-items:flex-start;flex-wrap:nowrap">
+      <div class="thumb" style="background:${hue(s.author)}">${initials(s.author)}</div>
+      <div style="flex:1;min-width:0"><div class="row" style="justify-content:space-between"><b>${esc(s.title)}</b>${win?`<span class="pill done">Vencedora</span>`:`<span class="pill ai">IA ${aiScore(s)}</span>`}</div>
+      <div class="small muted">${esc(s.author)} · enviada em ${fmtDate(s.date)}</div></div></div>
+      <div class="small">${esc(s.text)}</div>
+      <div class="row small muted" style="justify-content:space-between"><span>📎 ${esc(s.file)}</span>
+      ${c.status!=="concluido"?`<button class="btn primary small" data-action="pick" data-c="${c.id}" data-s="${s.id}">Escolher como vencedora</button>`:""}</div></div>`;}).join("");
+  if(c.status==="concluido"){ h+=`<div class="card stack" style="gap:8px"><div class="label">Pagamento realizado</div>${splitBar(c.reward)}</div>`; }
+  openModal(h);
+}
+function confirmPick(cid,sid){
+  const c=S.challenges.find(x=>x.id===cid), s=c.subs.find(x=>x.id===sid); const {fee,net}=feeSplit(c.reward);
+  openModal(`<div class="row"><h2>Confirmar vencedora</h2><button class="x" data-action="close" aria-label="Fechar">×</button></div>
+   <p style="margin:0">Você vai escolher <b>“${esc(s.title)}”</b>, de ${esc(s.author)}, para o desafio <b>${esc(c.title)}</b>. A remuneração reservada será liberada.</p>
+   <div class="card breakdown"><div class="ln"><span class="k">Remuneração reservada</span><span class="num">${brl(c.reward)}</span></div>
+    <div class="ln"><span class="k">Taxa StillUp (10%)</span><span class="num">− ${brl(fee)}</span></div>
+    <div class="ln total"><span>${esc(s.author)} recebe</span><span class="num" style="color:var(--ok)">${brl(net)}</span></div></div>
+   <p class="small muted" style="margin:0">Essa escolha não pode ser desfeita. As outras soluções serão marcadas como não selecionadas.</p>
+   <div class="row" style="justify-content:flex-end"><button class="btn" data-action="open-company" data-id="${c.id}">Voltar</button><button class="btn primary" data-action="confirm-pick" data-c="${c.id}" data-s="${s.id}">Confirmar e pagar</button></div>`);
+}
+function doPick(cid,sid){
+  const c=S.challenges.find(x=>x.id===cid), s=c.subs.find(x=>x.id===sid);
+  c.status="concluido"; c.winner=sid;
+  S.ledger.push({date:today(),desc:`Pagamento ao vencedor: ${c.title}`,amount:-c.reward});
+  if(s.mine) S.wallet.push({date:today(),desc:`${c.title} · ${c.company}`,gross:c.reward});
+  const {net}=feeSplit(c.reward);
+  openModal(`<div class="check">✓</div><h2 style="text-align:center">Vencedora escolhida</h2><p style="text-align:center;margin:0">${esc(s.author)} recebeu <b class="num">${brl(net)}</b> e a StillUp ficou com <b class="num">${brl(c.reward-net)}</b> (10%).${s.mine?"<br><span class='small muted'>Troque para “Quero resolver” para ver o valor na carteira da Ana.</span>":""}</p><button class="btn primary block" data-action="close">Fechar</button>`);
+  render();
+}
+
+/* ---------- SOLVER ---------- */
+function renderSolver(){
+  const t=S.tab.solver;
+  const mySubs=[]; S.challenges.forEach(c=>c.subs.forEach(s=>{ if(s.mine) mySubs.push({c,s}); }));
+  const bal=S.wallet.reduce((a,w)=>a+feeSplit(w.gross).net,0);
+  let h=`<section class="who"><div class="avatar" style="background:${hue(SOLVER)}">AS</div><div><h1>Olá, ${SOLVER.split(" ")[0]}</h1><p>Designer e redatora · Linhares, ES · saldo <b class="num" style="color:var(--ok)">${brl(bal)}</b></p></div></section>`;
+  h+=`<nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="${t==="explorar"}" data-action="tab" data-tab="explorar">Explorar desafios</button>
+    <button role="tab" aria-selected="${t==="minhas"}" data-action="tab" data-tab="minhas">Minhas soluções<span class="count">${mySubs.length}</span></button>
+    <button role="tab" aria-selected="${t==="carteira"}" data-action="tab" data-tab="carteira">Carteira</button></nav>`;
+  if(t==="explorar"){
+    const list=S.challenges.filter(c=>c.status!=="concluido"&&daysLeft(c.deadline)>=0&&(S.filter==="Todos"||c.cat===S.filter)&&(!S.q||(c.title+c.company+c.desc).toLowerCase().includes(S.q.toLowerCase())));
+    h+=`<div class="row" style="justify-content:space-between"><div class="chips">${["Todos",...CATS].map(c=>`<button aria-pressed="${S.filter===c}" data-action="filter" data-cat="${c}">${c}</button>`).join("")}</div>
+      <input type="text" id="search" placeholder="Buscar desafios" value="${esc(S.q)}" style="max-width:260px"></div>`;
+    h+= list.length?`<div class="grid">${list.map(solverCard).join("")}</div>`:`<div class="card empty">Nenhum desafio aberto nessa categoria agora.</div>`;
+  } else if(t==="minhas"){
+    h+= mySubs.length? `<div class="stack">${mySubs.reverse().map(({c,s})=>{
+      const st=c.status!=="concluido"?`<span class="pill wait">Em avaliação</span>`:c.winner===s.id?`<span class="pill done">Vencedora · ${brl(feeSplit(c.reward).net)}</span>`:`<span class="pill lost">Não selecionada</span>`;
+      return `<div class="card row" style="justify-content:space-between"><div style="min-width:0;flex:1"><div class="small muted">${esc(c.company)} · ${esc(c.title)}</div><b>${esc(s.title)}</b><div class="small muted">Enviada em ${fmtDate(s.date)}</div></div>${st}</div>`;}).join("")}</div>`
+      : `<div class="card empty">Você ainda não enviou soluções. Explore os desafios abertos.</div>`;
+  } else {
+    const rows=S.wallet.slice().reverse().map(w=>{const {fee,net}=feeSplit(w.gross);return `<tr><td class="num">${fmtDate(w.date)}</td><td>${esc(w.desc)}</td><td class="r num">${brl(w.gross)}</td><td class="r num">− ${brl(fee)}</td><td class="r num pos">${brl(net)}</td></tr>`}).join("");
+    h+=`<div class="stats"><div class="card stat"><div class="label">Saldo disponível</div><div class="v num" style="color:var(--ok)">${brl(bal)}</div></div>
+      <div class="card stat"><div class="label">Desafios vencidos</div><div class="v num">${S.wallet.length}</div></div>
+      <div class="card stat"><div class="label">Soluções em avaliação</div><div class="v num">${mySubs.filter(x=>x.c.status!=="concluido").length}</div></div></div>
+     <div class="card stack"><div class="row" style="justify-content:space-between"><h2>Ganhos</h2><button class="btn" data-action="withdraw" ${bal<=0?"disabled":""}>Sacar via Pix</button></div>
+     <div class="tbl"><table><thead><tr><th>Data</th><th>Desafio</th><th class="r">Remuneração</th><th class="r">Taxa 10%</th><th class="r">Você recebeu</th></tr></thead><tbody>${rows||`<tr><td colspan="5" class="empty">Sem ganhos ainda.</td></tr>`}</tbody></table></div></div>`;
+  }
+  return h;
+}
+function solverCard(c){
+  const d=daysLeft(c.deadline); const {net}=feeSplit(c.reward); const sent=c.subs.some(s=>s.mine);
+  return `<button class="card ch" data-action="open-solver" data-id="${c.id}">
+   <div class="row" style="justify-content:space-between">${catPill(c.cat)}${sent?`<span class="pill done">Você enviou</span>`:`<span class="pill open">${d} ${d===1?"dia":"dias"}</span>`}</div>
+   <div class="co">${esc(c.company)}</div><h3>${esc(c.title)}</h3>
+   <div class="small muted">${c.subs.length} ${c.subs.length===1?"solução":"soluções"} até agora</div>
+   <div class="money"><div><div class="label">Remuneração</div><div class="big num">${brl(c.reward)}</div></div><div class="you num">você recebe ${brl(net)}</div></div></button>`;
+}
+function openSolverChallenge(id){
+  const c=S.challenges.find(x=>x.id===id); const sent=c.subs.find(s=>s.mine);
+  solverAi=null;
+  let h=`<div class="row"><div class="row">${catPill(c.cat)}<span class="pill open">Prazo ${fmtDate(c.deadline)}</span></div><button class="x" data-action="close" aria-label="Fechar">×</button></div>
+   <div><div class="small muted" style="font-weight:600">${esc(c.company)}</div><h2>${esc(c.title)}</h2></div>
+   <div class="desc">${esc(c.desc)}</div>
+   <div class="card stack" style="gap:8px"><div class="row" style="justify-content:space-between"><span class="label">Remuneração</span><b class="num">${brl(c.reward)}</b></div>${splitBar(c.reward)}</div>`;
+  if(sent) h+=`<div class="subm"><div class="row" style="justify-content:space-between"><b>Sua solução: ${esc(sent.title)}</b><span class="pill wait">Em avaliação</span></div><div class="small">${esc(sent.text)}</div></div>`;
+  else h+=`<form class="stack" id="sub-form" data-c="${c.id}"><div class="label">Enviar minha solução</div>
+    <label class="f">Nome da solução<input type="text" id="s-title" maxlength="60" placeholder="Ex.: Logo com xícara e rio" required></label>
+    <label class="f">Explique sua ideia<textarea id="s-text" placeholder="Conte o que você criou, por que combina com a empresa e o que está incluído." required></textarea></label>
+    <label class="f">Arquivo (simulado)<input type="file" id="s-file"></label>
+    <div id="s-ai"></div>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn ai" data-action="ai-review" data-c="${c.id}">✦ Revisar com IA</button><button class="btn primary" type="submit">Enviar solução</button></div></form>`;
+  openModal(h);
+}
+function aiReview(cid){
+  const c=S.challenges.find(x=>x.id===cid);
+  const title=document.getElementById("s-title").value.trim(), text=document.getElementById("s-text").value.trim(), file=document.getElementById("s-file").files[0];
+  const tips=[], good=[];
+  if(text.length<60) tips.push("Sua explicação está curta. Descreva a ideia em 2 ou 3 frases e diga o que a empresa vai receber."); else good.push("A explicação tem um bom tamanho.");
+  if(!/(png|svg|pdf|mp4|arquivo|vers[aã]o|link|planilha|legenda)/i.test(text)) tips.push(`Liste os entregáveis pedidos. Para ${c.cat}, cite os formatos dos arquivos.`); else good.push("Você citou o que será entregue.");
+  const brand=c.company.split(" ")[0].toLowerCase();
+  if(!text.toLowerCase().includes(brand)) tips.push(`Mencione a ${c.company} e explique por que a ideia combina com ela.`); else good.push("A proposta fala diretamente com a empresa.");
+  if(!file) tips.push("Anexe um arquivo para a empresa visualizar sua solução.");
+  if(!title) tips.push("Dê um nome curto e marcante para a sua solução.");
+  const score=Math.max(3,Math.min(10,10-tips.length*1.5)).toFixed(1).replace(".",",");
+  document.getElementById("s-ai").innerHTML=`<div class="ai-box"><div class="hd">✦ Revisão da IA · clareza ${score}/10</div>${good.length?`<div class="small">${good.map(esc).join(" ")}</div>`:""}${tips.length?`<ul class="small">${tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:`<div class="small"><b>Pronta para enviar!</b></div>`}</div>`;
+}
+
+/* ---------- payments & modals ---------- */
+function openModal(html){ modalRoot.innerHTML=`<div class="scrim" data-action="scrim"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; const f=modalRoot.querySelector(".sheet button, .sheet input"); f&&f.focus({preventScroll:true}); }
+function closeModal(){ modalRoot.innerHTML=""; }
+let payCtx=null;
+function payModal(title,lines,total,onPaid){
+  payCtx={onPaid,method:"pix"};
+  openModal(`<div class="row"><h2>${esc(title)}</h2><button class="x" data-action="close" aria-label="Fechar">×</button></div>
+   <div class="card breakdown">${lines.map(([k,v])=>`<div class="ln"><span class="k">${esc(k)}</span><span class="num">${brl(v)}</span></div>`).join("")}<div class="ln total"><span>Total</span><span class="num">${brl(total)}</span></div></div>
+   <div class="label">Forma de pagamento</div>
+   <div class="pay-methods"><button aria-pressed="true" data-action="method" data-m="pix">Pix<div class="small muted" style="font-weight:500">Aprovação na hora</div></button><button aria-pressed="false" data-action="method" data-m="card">Cartão<div class="small muted" style="font-weight:500">final 4021</div></button></div>
+   <button class="btn primary block" data-action="pay">Pagar ${brl(total)}</button>
+   <p class="small muted" style="margin:0;text-align:center">Pagamento simulado. Nenhum valor é cobrado.</p>`);
+}
+function doPay(){
+  const sheet=modalRoot.querySelector(".sheet"); sheet.innerHTML=`<div class="spin"></div><p style="text-align:center;margin:0">Processando pagamento…</p>`;
+  setTimeout(()=>{ const cb=payCtx.onPaid; payCtx=null; cb(); },1100);
+}
+function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2600); }
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-action]"); if(!el) return;
+  const a=el.dataset.action;
+  if(a==="scrim"){ if(e.target===el) closeModal(); return; }
+  if(a==="role"){ syncDraft(); S.role=el.dataset.role; render(); scrollTo({top:0}); }
+  else if(a==="tab"){ syncDraft(); S.tab[S.role]=el.dataset.tab; render(); }
+  else if(a==="close") closeModal();
+  else if(a==="reset"){ try{localStorage.removeItem(KEY)}catch(_){} S=seed(); draft={title:"",cat:"Design",desc:"",reward:500,days:7}; aiState=null; closeModal(); render(); toast("Demonstração reiniciada"); }
+  else if(a==="manage-sub"){ openModal(`<div class="row"><h2>Sua assinatura</h2><button class="x" data-action="close" aria-label="Fechar">×</button></div>
+     <div class="card breakdown"><div class="ln"><span class="k">Plano</span><span>StillUp Empresa</span></div><div class="ln"><span class="k">Valor</span><span class="num">${brl(SUB_PRICE)}/mês</span></div><div class="ln"><span class="k">Próxima cobrança</span><span class="num">${fmtDate(S.sub.renews)}</span></div></div>
+     <ul class="small" style="margin:0;padding-left:18px"><li>Publique desafios por ${brl(POST_PRICE)} cada</li><li>IA para melhorar descrições e pré-analisar soluções</li><li>Remuneração protegida até você escolher a vencedora</li></ul>
+     <div class="row" style="justify-content:flex-end"><button class="btn" data-action="cancel-sub">Cancelar assinatura</button><button class="btn primary" data-action="close">Manter</button></div>`); }
+  else if(a==="cancel-sub"){ S.sub.active=false; closeModal(); render(); toast("Assinatura cancelada"); }
+  else if(a==="subscribe"){ payModal("Assinar a StillUp",[["Plano Empresa (mensal)",SUB_PRICE]],SUB_PRICE,()=>{ S.sub={active:true,renews:addDays(30)}; S.ledger.push({date:today(),desc:"Assinatura StillUp (mensal)",amount:-SUB_PRICE}); render(); openModal(`<div class="check">✓</div><h2 style="text-align:center">Assinatura ativa</h2><p style="text-align:center;margin:0">Agora você pode publicar desafios.</p><button class="btn primary block" data-action="close">Começar</button>`); }); }
+  else if(a==="ai-improve"){ runAiImprove(); }
+  else if(a==="ai-undo"){ draft.desc=prevDesc; aiState=null; render(); }
+  else if(a==="ai-price"){ syncDraft(); const [lo,hi]=AI_RANGE[draft.cat]; draft.reward=Math.round((lo+hi)/2/10)*10; render(); }
+  else if(a==="publish"){
+    syncDraft(); const r=Number(draft.reward);
+    if(!draft.title.trim()){ toast("Dê um título ao desafio"); document.getElementById("f-title").focus(); return; }
+    if(!draft.desc.trim()){ toast("Escreva a descrição ou use “Melhorar com IA”"); document.getElementById("f-desc").focus(); return; }
+    if(!(r>=50)){ toast("A remuneração mínima é R$ 50,00"); document.getElementById("f-reward").focus(); return; }
+    payModal("Publicar desafio",[["Taxa de publicação",POST_PRICE],["Remuneração reservada",r]],POST_PRICE+r,()=>{
+      const c={id:uid(),company:COMPANY,mine:true,title:draft.title.trim(),cat:draft.cat,desc:draft.desc.trim(),reward:r,deadline:addDays(draft.days),status:"aberto",created:today(),subs:[]};
+      S.challenges.unshift(c); S.ledger.push({date:today(),desc:`Publicação: ${c.title}`,amount:-POST_PRICE});
+      draft={title:"",cat:"Design",desc:"",reward:500,days:7}; aiState=null; S.tab.empresa="desafios"; render();
+      openModal(`<div class="check">✓</div><h2 style="text-align:center">Desafio publicado</h2><p style="text-align:center;margin:0">“${esc(c.title)}” já aparece para quem resolve. Troque para “Quero resolver” para ver como fica.</p><button class="btn primary block" data-action="close">Ok</button>`);
+    });
+  }
+  else if(a==="method"){ modalRoot.querySelectorAll("[data-action=method]").forEach(b=>b.setAttribute("aria-pressed",b===el)); payCtx.method=el.dataset.m; }
+  else if(a==="pay"){ doPay(); }
+  else if(a==="open-company") openCompanyChallenge(el.dataset.id);
+  else if(a==="pick") confirmPick(el.dataset.c,el.dataset.s);
+  else if(a==="confirm-pick") doPick(el.dataset.c,el.dataset.s);
+  else if(a==="open-solver") openSolverChallenge(el.dataset.id);
+  else if(a==="filter"){ S.filter=el.dataset.cat; render(); }
+  else if(a==="ai-review") aiReview(el.dataset.c);
+  else if(a==="withdraw"){ const bal=S.wallet.reduce((x,w)=>x+feeSplit(w.gross).net,0); openModal(`<div class="check">✓</div><h2 style="text-align:center">Saque solicitado</h2><p style="text-align:center;margin:0">${brl(bal)} enviados para a chave Pix ana.souza@email.com (simulado).</p><button class="btn primary block" data-action="close">Fechar</button>`); }
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="search"){ S.q=e.target.value; const pos=e.target.selectionStart; render(); const s=document.getElementById("search"); s.focus(); s.setSelectionRange(pos,pos); }
+  if(e.target.id==="f-reward"){ const r=Number(e.target.value)||0; draft.reward=e.target.value; document.getElementById("breakdown").innerHTML=breakdownHTML(r); document.getElementById("splitbar").innerHTML=splitBar(r); }
+});
+document.addEventListener("change",e=>{ if(e.target.id==="f-cat"){ syncDraft(); render(); } });
+document.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(e.target.id==="sub-form"){
+    const c=S.challenges.find(x=>x.id===e.target.dataset.c);
+    const title=document.getElementById("s-title").value.trim(), text=document.getElementById("s-text").value.trim(), f=document.getElementById("s-file").files[0];
+    if(!title||!text){ toast("Preencha o nome e a explicação"); return; }
+    c.subs.push({id:uid(),author:SOLVER,mine:true,title,text,file:f?f.name:"sem-arquivo",date:today()});
+    render();
+    openModal(`<div class="check">✓</div><h2 style="text-align:center">Solução enviada</h2><p style="text-align:center;margin:0">A ${esc(c.company)} vai avaliar até ${fmtDate(c.deadline)}. Se for escolhida, você recebe <b class="num">${brl(feeSplit(c.reward).net)}</b>.</p><button class="btn primary block" data-action="close">Ok</button>`);
+  }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&modalRoot.innerHTML) closeModal(); });
+render();
+})();
+</script>

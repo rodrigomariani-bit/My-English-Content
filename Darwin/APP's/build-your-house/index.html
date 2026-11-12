@@ -1,0 +1,505 @@
+<title>Build Your House</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a planning table. Big room stage on the left, catalog + shopping list on the right; stacks on phones. Masking-tape yellow marks what you picked. */
+:root{
+  --bg:#eef1f6;
+  --surface:#ffffff;
+  --ink:#1b2440;
+  --muted:#5d6784;
+  --line:#d5dbe8;
+  --accent:#2f4fd8;
+  --accent-ink:#ffffff;
+  --tape:#ffd24a;
+  --tape-ink:#2a2306;
+  --danger:#c8372d;
+  --chip:#e3e8f4;
+  --font-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11152a;--surface:#1a2038;--ink:#e9ecf7;--muted:#a3abc6;--line:#2d3556;--accent:#7f97ff;--accent-ink:#0d1230;--tape:#ffd24a;--tape-ink:#2a2306;--danger:#ff7a6e;--chip:#252c4a;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11152a;--surface:#1a2038;--ink:#e9ecf7;--muted:#a3abc6;--line:#2d3556;--accent:#7f97ff;--accent-ink:#0d1230;--tape:#ffd24a;--tape-ink:#2a2306;--danger:#ff7a6e;--chip:#252c4a;color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(28px,4.5vw,44px);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
+h1 .tape{background:var(--tape);color:var(--tape-ink);padding:0 .18em;display:inline-block;transform:rotate(-2deg);border-radius:2px}
+.sub{color:var(--muted);margin:6px 0 0;max-width:60ch}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--muted)}
+.steps b{color:var(--ink)}
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+
+/* Stage */
+.stage-card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.btn{font:inherit;font-weight:600;font-size:14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;line-height:1.2}
+button:hover,.btn:hover{border-color:var(--accent)}
+button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-danger{color:var(--danger)}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.stage{position:relative;width:100%;max-width:100%;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#cfc6b8;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 1px 0 var(--line),0 12px 30px -18px rgba(20,30,70,.45)}
+.stage .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.sample-room{position:absolute;inset:0;pointer-events:none}
+.sample-tag{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.88);color:#1b2440;font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;z-index:1;pointer-events:none}
+.item{position:absolute;cursor:grab;touch-action:none}
+.item:active{cursor:grabbing}
+.item svg{display:block;width:100%;height:auto;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.28))}
+.item.sel{outline:2px dashed var(--tape);outline-offset:3px}
+.item .handle{display:none;position:absolute;right:-12px;bottom:-12px;width:24px;height:24px;border-radius:50%;background:var(--tape);border:2px solid #1b2440;cursor:nwse-resize;touch-action:none}
+.item.sel .handle{display:block}
+.hint{font-size:13px;color:var(--muted);margin:0}
+
+.selbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;min-height:52px}
+.selbar .name{font-weight:700;margin-right:auto;min-width:0}
+.selbar label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.selbar input[type=range]{width:110px;accent-color:var(--accent)}
+
+/* Side panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-width:0}
+.tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-radius:0;background:transparent;padding:13px;justify-content:center;color:var(--muted);border-bottom:3px solid transparent}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.count{background:var(--tape);color:var(--tape-ink);border-radius:999px;font-size:12px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.tabpane{padding:14px;display:flex;flex-direction:column;gap:12px}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cats button{padding:5px 11px;border-radius:999px;font-size:13px;background:var(--chip);border-color:transparent}
+.cats button[aria-pressed=true]{background:var(--ink);color:var(--surface)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.prod{display:flex;flex-direction:column;gap:6px;text-align:left;padding:10px;border-radius:12px;align-items:stretch;height:100%}
+.prod .thumb{background:var(--chip);border-radius:8px;height:86px;display:flex;align-items:center;justify-content:center;padding:8px}
+.prod .thumb svg{max-height:70px;max-width:100%;width:auto;height:70px}
+.prod .pname{font-weight:600;font-size:14px;line-height:1.25}
+.prod .meta{display:flex;justify-content:space-between;gap:6px;font-size:12.5px;color:var(--muted);margin-top:auto}
+.prod .price{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.prod .add{font-size:12px;color:var(--accent);font-weight:700}
+
+.budget{display:flex;flex-direction:column;gap:6px}
+.budget label{font-size:13px;color:var(--muted);font-weight:600}
+.budget input{font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:999px;background:var(--chip);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
+.bar.over span{background:var(--danger)}
+.bnote{font-size:13px;margin:0}
+.bnote.over{color:var(--danger);font-weight:600}
+
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.list li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.list .lt{width:44px;height:44px;background:var(--chip);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px}
+.list .lt svg{width:100%;height:100%}
+.list .ln{font-weight:600;font-size:14px;line-height:1.25}
+.list .ls{font-size:12.5px;color:var(--muted)}
+.list .ls a{color:var(--accent);font-weight:600}
+.list .lp{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:14px}
+.list .lq{font-size:12px;color:var(--muted);font-weight:500}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:6px}
+.total span{color:var(--muted);font-weight:600}
+.total strong{font-family:var(--font-display);font-size:28px;font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);text-align:center;padding:24px 8px;border:2px dashed var(--line);border-radius:12px;margin:0}
+.fine{font-size:12px;color:var(--muted);margin:0}
+.stores{display:flex;flex-direction:column;gap:6px}
+.stores h3{font-size:13px;margin:6px 0 0;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.store-row{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Build Your <span class="tape">House</span></h1>
+      <p class="sub">Monte o quarto dos seus sonhos. Tire uma foto do seu quarto, escolha os móveis e arraste cada um para o lugar. No fim você vê quanto custa e onde comprar.</p>
+    </div>
+    <ol class="steps" aria-label="Como usar">
+      <li><b>1.</b> Foto do quarto</li>
+      <li><b>2.</b> Escolha os móveis</li>
+      <li><b>3.</b> Arraste e ajuste</li>
+      <li><b>4.</b> Veja a lista de compras</li>
+    </ol>
+  </header>
+
+  <div class="main">
+    <section class="stage-card" aria-label="Seu quarto">
+      <div class="toolbar">
+        <label class="btn btn-primary" for="photo-input">📷 Tirar ou enviar foto</label>
+        <input id="photo-input" type="file" accept="image/*" capture="environment">
+        <button id="btn-sample" type="button">Usar quarto de exemplo</button>
+        <button id="btn-clear" type="button" class="btn-danger">Tirar todos os móveis</button>
+      </div>
+      <div class="stage" id="stage">
+        <div class="sample-room" id="sample-room"></div>
+        <span class="sample-tag" id="sample-tag">Quarto de exemplo</span>
+        <img class="photo" id="photo" alt="Foto do seu quarto" hidden>
+      </div>
+      <div class="selbar" id="selbar">
+        <p class="hint" id="sel-hint">Toque em um móvel do quarto para mexer nele. Arraste para mover e puxe a bolinha amarela para mudar o tamanho.</p>
+        <span class="name" id="sel-name" hidden></span>
+        <label id="sel-color-wrap" hidden>Cor <input id="sel-color" type="range" min="0" max="360" value="0"></label>
+        <button id="sel-flip" type="button" hidden>↔ Espelhar</button>
+        <button id="sel-front" type="button" hidden>Trazer pra frente</button>
+        <button id="sel-back" type="button" hidden>Mandar pra trás</button>
+        <button id="sel-del" type="button" class="btn-danger" hidden>Remover</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="tabs" role="tablist">
+        <button id="tab-cat" role="tab" aria-selected="true" aria-controls="pane-cat" type="button">Catálogo</button>
+        <button id="tab-list" role="tab" aria-selected="false" aria-controls="pane-list" type="button">Minha lista <span class="count" id="count">0</span></button>
+      </div>
+      <div class="tabpane" id="pane-cat" role="tabpanel" aria-labelledby="tab-cat">
+        <div class="cats" id="cats"></div>
+        <div class="grid" id="grid"></div>
+        <p class="fine">Preços e lojas são exemplos para o projeto. Confira o valor real no site da loja.</p>
+      </div>
+      <div class="tabpane" id="pane-list" role="tabpanel" aria-labelledby="tab-list" hidden>
+        <div class="budget">
+          <label for="budget">Quanto eu tenho para gastar (R$)</label>
+          <input id="budget" type="number" min="0" step="50" value="3000" inputmode="numeric">
+          <div class="bar" id="bar"><span id="bar-fill"></span></div>
+          <p class="bnote" id="bnote"></p>
+        </div>
+        <ul class="list" id="list"></ul>
+        <div class="total"><span>Total</span><strong id="total">R$ 0</strong></div>
+        <div class="stores" id="stores"></div>
+        <p class="fine">Os links abrem uma busca pelo produto na loja. Preços são de exemplo.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ---------- Furniture drawings (SVG) ----------
+const SVG = {
+cama:`<svg viewBox="0 0 220 130"><rect x="6" y="8" width="208" height="70" rx="12" fill="#6b4a33"/><rect x="14" y="16" width="192" height="56" rx="8" fill="#80593d"/><rect x="4" y="62" width="212" height="44" rx="8" fill="#f4f1ea"/><rect x="24" y="48" width="58" height="24" rx="10" fill="#ffffff" stroke="#ddd6c8"/><rect x="138" y="48" width="58" height="24" rx="10" fill="#ffffff" stroke="#ddd6c8"/><path d="M60 70h156v38H60z" fill="#3e63c9"/><path d="M60 70h156v8H60z" fill="#5a7ee0"/><rect x="2" y="104" width="216" height="14" rx="4" fill="#5a3d2a"/><rect x="10" y="118" width="10" height="10" fill="#3b281c"/><rect x="200" y="118" width="10" height="10" fill="#3b281c"/></svg>`,
+escrivaninha:`<svg viewBox="0 0 170 110"><rect x="4" y="34" width="162" height="10" rx="3" fill="#e9d8bd"/><rect x="10" y="44" width="8" height="62" fill="#2b2b2b"/><rect x="152" y="44" width="8" height="62" fill="#2b2b2b"/><rect x="104" y="44" width="48" height="40" fill="#d8c3a2"/><rect x="104" y="62" width="48" height="2" fill="#bfa67f"/><circle cx="128" cy="54" r="2.5" fill="#6b5b45"/><circle cx="128" cy="73" r="2.5" fill="#6b5b45"/><rect x="30" y="2" width="56" height="34" rx="3" fill="#1d2233"/><rect x="34" y="6" width="48" height="24" fill="#4a7cff"/><rect x="54" y="30" width="8" height="4" fill="#1d2233"/></svg>`,
+gamer:`<svg viewBox="0 0 90 140"><rect x="16" y="4" width="58" height="72" rx="18" fill="#1b1b1f"/><rect x="34" y="10" width="22" height="62" rx="8" fill="#e23b3b"/><rect x="10" y="70" width="70" height="20" rx="8" fill="#26262c"/><rect x="2" y="56" width="12" height="28" rx="4" fill="#303038"/><rect x="76" y="56" width="12" height="28" rx="4" fill="#303038"/><rect x="41" y="90" width="8" height="26" fill="#55555f"/><path d="M12 124 45 114 78 124" stroke="#55555f" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="12" cy="128" r="5" fill="#222"/><circle cx="78" cy="128" r="5" fill="#222"/><circle cx="45" cy="128" r="5" fill="#222"/></svg>`,
+guardaroupa:`<svg viewBox="0 0 130 180"><rect x="4" y="4" width="122" height="166" rx="4" fill="#f2ede4" stroke="#cbbfa9" stroke-width="2"/><line x1="45" y1="6" x2="45" y2="168" stroke="#cbbfa9" stroke-width="2"/><line x1="85" y1="6" x2="85" y2="168" stroke="#cbbfa9" stroke-width="2"/><rect x="49" y="12" width="32" height="120" rx="2" fill="#c9d6e8"/><rect x="37" y="80" width="3" height="20" rx="1" fill="#9a8c74"/><rect x="90" y="80" width="3" height="20" rx="1" fill="#9a8c74"/><rect x="8" y="140" width="34" height="2" fill="#cbbfa9"/><rect x="88" y="140" width="34" height="2" fill="#cbbfa9"/><rect x="10" y="170" width="8" height="8" fill="#9a8c74"/><rect x="112" y="170" width="8" height="8" fill="#9a8c74"/></svg>`,
+estante:`<svg viewBox="0 0 100 170"><rect x="4" y="4" width="92" height="162" fill="#8a6446"/><rect x="10" y="10" width="80" height="150" fill="#5e4230"/><g fill="#8a6446"><rect x="10" y="44" width="80" height="5"/><rect x="10" y="83" width="80" height="5"/><rect x="10" y="122" width="80" height="5"/></g><rect x="14" y="16" width="8" height="28" fill="#e55a4e"/><rect x="23" y="20" width="7" height="24" fill="#f2c14e"/><rect x="31" y="14" width="9" height="30" fill="#3f8efc"/><rect x="41" y="22" width="6" height="22" fill="#55b37a"/><circle cx="72" cy="34" r="9" fill="#77c27b"/><rect x="66" y="34" width="12" height="10" fill="#c9764a"/><rect x="14" y="62" width="34" height="21" fill="#ece3d1"/><rect x="58" y="56" width="8" height="27" fill="#9b6dd6"/><rect x="67" y="60" width="8" height="23" fill="#e55a4e"/><rect x="76" y="58" width="9" height="25" fill="#f2c14e"/><rect x="14" y="98" width="10" height="24" fill="#3f8efc"/><rect x="25" y="102" width="8" height="20" fill="#ece3d1"/><rect x="58" y="108" width="26" height="14" rx="3" fill="#2d2d36"/><rect x="14" y="134" width="72" height="26" fill="#4a3324"/></svg>`,
+luminaria:`<svg viewBox="0 0 60 170"><path d="M10 40 18 6h24l8 34z" fill="#f6e3b0"/><path d="M10 40 18 6h24l8 34z" fill="none" stroke="#d9be7c" stroke-width="2"/><ellipse cx="30" cy="42" rx="22" ry="5" fill="#fff4cc" opacity=".8"/><rect x="28" y="40" width="4" height="118" fill="#2b2b2b"/><ellipse cx="30" cy="162" rx="18" ry="5" fill="#2b2b2b"/></svg>`,
+tapete:`<svg viewBox="0 0 200 70"><ellipse cx="100" cy="35" rx="98" ry="33" fill="#e98a6d"/><ellipse cx="100" cy="35" rx="80" ry="26" fill="#f4b393"/><ellipse cx="100" cy="35" rx="58" ry="18" fill="#f6d6b8"/><ellipse cx="100" cy="35" rx="34" ry="10" fill="#e98a6d"/></svg>`,
+planta:`<svg viewBox="0 0 80 120"><path d="M40 70C20 60 6 40 10 20c14 4 26 22 30 50z" fill="#3f9a5b"/><path d="M40 70c20-10 34-30 30-52-14 6-26 24-30 52z" fill="#56b878"/><path d="M40 72C34 50 32 26 40 4c8 22 6 46 0 68z" fill="#2f8a4c"/><path d="M40 72c-16-2-30-8-36-20 14-4 28 4 36 20z" fill="#68c486"/><path d="M18 76h44l-6 40H24z" fill="#d9774f"/><rect x="15" y="70" width="50" height="10" rx="2" fill="#c4643f"/></svg>`,
+puff:`<svg viewBox="0 0 100 80"><ellipse cx="50" cy="66" rx="46" ry="12" fill="#6f42c1"/><path d="M6 32c0-16 88-16 88 0v34c0 8-88 8-88 0z" fill="#8a5cf5"/><ellipse cx="50" cy="30" rx="44" ry="14" fill="#a07bff"/><circle cx="50" cy="30" r="3" fill="#6f42c1"/></svg>`,
+criado:`<svg viewBox="0 0 80 80"><rect x="4" y="10" width="72" height="56" rx="4" fill="#f3efe7" stroke="#cdbfa6" stroke-width="2"/><rect x="10" y="16" width="60" height="20" rx="2" fill="#e9e1d2"/><rect x="10" y="40" width="60" height="20" rx="2" fill="#e9e1d2"/><rect x="33" y="24" width="14" height="3" rx="1.5" fill="#b49c74"/><rect x="33" y="48" width="14" height="3" rx="1.5" fill="#b49c74"/><rect x="8" y="66" width="6" height="12" fill="#b49c74"/><rect x="66" y="66" width="6" height="12" fill="#b49c74"/><rect x="46" y="0" width="16" height="10" rx="2" fill="#2f4fd8"/></svg>`,
+espelho:`<svg viewBox="0 0 60 160"><rect x="2" y="2" width="56" height="156" rx="28" fill="#c9a76a"/><rect x="8" y="8" width="44" height="144" rx="22" fill="#cfe3f0"/><path d="M16 30 30 16M16 50 42 24" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".8"/></svg>`,
+quadro:`<svg viewBox="0 0 90 110"><rect x="2" y="2" width="86" height="106" fill="#1f1f24"/><rect x="9" y="9" width="72" height="92" fill="#fbf6ec"/><circle cx="56" cy="36" r="13" fill="#f2b84b"/><path d="M9 101 36 58l18 26 12-14 15 31z" fill="#2f4fd8"/><path d="M9 101 36 70l25 31z" fill="#5e7ef0"/></svg>`,
+luzes:`<svg viewBox="0 0 220 60"><path d="M4 10Q57 44 110 12T216 10" stroke="#3b3b3b" stroke-width="2" fill="none"/><g><circle cx="20" cy="22" r="6" fill="#ffd24a"/><circle cx="42" cy="31" r="6" fill="#ffe28a"/><circle cx="66" cy="34" r="6" fill="#ffd24a"/><circle cx="90" cy="26" r="6" fill="#ffe28a"/><circle cx="112" cy="14" r="6" fill="#ffd24a"/><circle cx="134" cy="22" r="6" fill="#ffe28a"/><circle cx="158" cy="28" r="6" fill="#ffd24a"/><circle cx="182" cy="24" r="6" fill="#ffe28a"/><circle cx="204" cy="14" r="6" fill="#ffd24a"/></g><g fill="#fff3b0" opacity=".35"><circle cx="20" cy="22" r="11"/><circle cx="66" cy="34" r="11"/><circle cx="112" cy="14" r="11"/><circle cx="158" cy="28" r="11"/><circle cx="204" cy="14" r="11"/></g></svg>`,
+cortina:`<svg viewBox="0 0 150 180"><rect x="0" y="4" width="150" height="6" rx="3" fill="#3b3b3b"/><path d="M6 10h50c-6 60 4 120 -8 166H6z" fill="#2c7a7b"/><path d="M18 10v166M32 10c2 60-2 110 2 166" stroke="#246567" stroke-width="3" fill="none"/><path d="M144 10H94c6 60-4 120 8 166h42z" fill="#2c7a7b"/><path d="M132 10v166M118 10c-2 60 2 110-2 166" stroke="#246567" stroke-width="3" fill="none"/></svg>`,
+nicho:`<svg viewBox="0 0 130 50"><rect x="2" y="2" width="126" height="44" fill="#ffffff" stroke="#c8cbd6" stroke-width="2"/><rect x="8" y="8" width="114" height="32" fill="#eef0f5"/><rect x="14" y="16" width="7" height="24" fill="#e55a4e"/><rect x="22" y="12" width="7" height="28" fill="#3f8efc"/><rect x="30" y="18" width="6" height="22" fill="#f2c14e"/><circle cx="96" cy="28" r="9" fill="#56b878"/><rect x="90" y="30" width="12" height="10" fill="#d9774f"/><rect x="56" y="26" width="18" height="14" rx="2" fill="#1f1f24"/></svg>`,
+poltrona:`<svg viewBox="0 0 120 110"><rect x="18" y="6" width="84" height="60" rx="20" fill="#e2a33b"/><rect x="4" y="44" width="26" height="46" rx="10" fill="#cf8f2a"/><rect x="90" y="44" width="26" height="46" rx="10" fill="#cf8f2a"/><rect x="24" y="58" width="72" height="30" rx="10" fill="#f0b85a"/><rect x="14" y="90" width="6" height="16" fill="#5a3d2a" transform="rotate(8 17 98)"/><rect x="100" y="90" width="6" height="16" fill="#5a3d2a" transform="rotate(-8 103 98)"/></svg>`
+};
+
+// ---------- Catalog (example prices and stores) ----------
+const CATALOG = [
+ {id:'cama',  name:'Cama de solteiro com cabeceira', cat:'Dormir', price:899,  store:'Mobly',          w:46},
+ {id:'criado',name:'Criado-mudo com 2 gavetas',     cat:'Dormir', price:199,  store:'MadeiraMadeira', w:13},
+ {id:'guardaroupa',name:'Guarda-roupa 3 portas',    cat:'Guardar',price:1199, store:'Casas Bahia',    w:24},
+ {id:'estante',name:'Estante de livros',            cat:'Guardar',price:329,  store:'Tok&Stok',       w:18},
+ {id:'nicho', name:'Prateleira nicho',              cat:'Guardar',price:79,   store:'Leroy Merlin',   w:20},
+ {id:'escrivaninha',name:'Escrivaninha com gavetas',cat:'Estudar',price:459, store:'Magalu',         w:32},
+ {id:'gamer', name:'Cadeira gamer',                 cat:'Estudar',price:799,  store:'Magalu',         w:14},
+ {id:'poltrona',name:'Poltrona de leitura',         cat:'Relaxar',price:649, store:'Tok&Stok',       w:22},
+ {id:'puff',  name:'Puff redondo',                  cat:'Relaxar',price:119,  store:'Shopee',         w:15},
+ {id:'tapete',name:'Tapete redondo',                cat:'Decorar',price:149,  store:'Camicado',       w:34},
+ {id:'luminaria',name:'Luminária de chão',          cat:'Decorar',price:189,  store:'Tok&Stok',       w:9},
+ {id:'luzes', name:'Varal de luzes LED',            cat:'Decorar',price:39,   store:'Shopee',         w:40},
+ {id:'quadro',name:'Quadro decorativo',             cat:'Decorar',price:59,   store:'Americanas',     w:12},
+ {id:'espelho',name:'Espelho de corpo inteiro',     cat:'Decorar',price:249,  store:'Mobly',          w:10},
+ {id:'planta',name:'Planta artificial com vaso',    cat:'Decorar',price:89,   store:'Leroy Merlin',   w:11},
+ {id:'cortina',name:'Cortina blackout',             cat:'Decorar',price:129,  store:'Camicado',       w:26},
+];
+const BY_ID = Object.fromEntries(CATALOG.map(p=>[p.id,p]));
+const CATS = ['Todos', ...new Set(CATALOG.map(p=>p.cat))];
+const brl = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const storeLink = p => 'https://www.google.com/search?q=' + encodeURIComponent(p.name + ' ' + p.store);
+
+// ---------- State ----------
+let placed = [];   // {uid,id,x,y,w,flip,hue,z}  x,y,w in % of the stage
+let selected = null;
+let uidSeq = 1;
+let zSeq = 1;
+let catFilter = 'Todos';
+
+const $ = id => document.getElementById(id);
+const stage = $('stage');
+
+function save(){
+  try{ localStorage.setItem('qds-state', JSON.stringify({placed, budget:$('budget').value})); }catch(e){}
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem('qds-state')||'null');
+    if(s && Array.isArray(s.placed)){
+      placed = s.placed.filter(it=>BY_ID[it.id]);
+      if(s.budget) $('budget').value = s.budget;
+      uidSeq = placed.reduce((m,i)=>Math.max(m,i.uid),0)+1;
+      zSeq = placed.reduce((m,i)=>Math.max(m,i.z),0)+1;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+// ---------- Sample room (drawn) ----------
+function drawSampleRoom(){
+  $('sample-room').innerHTML = `<svg viewBox="0 0 400 300" preserveAspectRatio="none" width="100%" height="100%">
+    <rect width="400" height="190" fill="#d9d2c5"/>
+    <rect y="186" width="400" height="114" fill="#b58c62"/>
+    <g stroke="#a27a52" stroke-width="1">${Array.from({length:12},(_,i)=>`<line x1="${i*36}" y1="190" x2="${i*36-30}" y2="300"/>`).join('')}</g>
+    <rect y="182" width="400" height="8" fill="#ece6da"/>
+    <rect x="232" y="30" width="110" height="92" fill="#eaf3fb" stroke="#f5f2ec" stroke-width="6"/>
+    <line x1="287" y1="30" x2="287" y2="122" stroke="#f5f2ec" stroke-width="4"/>
+    <rect x="40" y="70" width="2" height="2" fill="#c9c1b2"/>
+  </svg>`;
+}
+
+// ---------- Rendering ----------
+function renderStage(){
+  stage.querySelectorAll('.item').forEach(n=>n.remove());
+  [...placed].sort((a,b)=>a.z-b.z).forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'item' + (selected===it.uid?' sel':'');
+    el.dataset.uid = it.uid;
+    el.style.left = it.x+'%';
+    el.style.top = it.y+'%';
+    el.style.width = it.w+'%';
+    el.style.zIndex = 2 + it.z;
+    el.innerHTML = SVG[it.id] + '<span class="handle" aria-hidden="true"></span>';
+    const svg = el.querySelector('svg');
+    svg.style.transform = it.flip ? 'scaleX(-1)' : '';
+    if(it.hue) svg.style.filter = `drop-shadow(0 6px 6px rgba(0,0,0,.28)) hue-rotate(${it.hue}deg)`;
+    el.tabIndex = 0;
+    el.setAttribute('role','button');
+    el.setAttribute('aria-label', BY_ID[it.id].name);
+    stage.appendChild(el);
+  });
+  renderSelbar();
+}
+
+function renderSelbar(){
+  const it = placed.find(i=>i.uid===selected);
+  const show = !!it;
+  $('sel-hint').hidden = show;
+  ['sel-name','sel-color-wrap','sel-flip','sel-front','sel-back','sel-del'].forEach(id=>$(id).hidden=!show);
+  if(it){
+    $('sel-name').textContent = BY_ID[it.id].name;
+    $('sel-color').value = it.hue||0;
+  }
+}
+
+function renderCats(){
+  $('cats').innerHTML = CATS.map(c=>`<button type="button" aria-pressed="${c===catFilter}" data-cat="${c}">${c}</button>`).join('');
+}
+function renderGrid(){
+  const items = CATALOG.filter(p=>catFilter==='Todos'||p.cat===catFilter);
+  $('grid').innerHTML = items.map(p=>`
+    <button type="button" class="prod" data-add="${p.id}" aria-label="Colocar ${p.name} no quarto">
+      <span class="thumb">${SVG[p.id]}</span>
+      <span class="pname">${p.name}</span>
+      <span class="meta"><span>${p.store}</span><span class="price">${brl(p.price)}</span></span>
+      <span class="add">+ Colocar no quarto</span>
+    </button>`).join('');
+}
+
+function renderList(){
+  const groups = {};
+  placed.forEach(it=>{ groups[it.id]=(groups[it.id]||0)+1; });
+  const ids = Object.keys(groups);
+  $('count').textContent = placed.length;
+  let total = 0;
+  const byStore = {};
+  if(!ids.length){
+    $('list').innerHTML = `<li style="display:block;border:0"><p class="empty">Sua lista está vazia. Escolha móveis no catálogo e eles aparecem aqui.</p></li>`;
+  } else {
+    $('list').innerHTML = ids.map(id=>{
+      const p = BY_ID[id], q = groups[id], sub = p.price*q;
+      total += sub;
+      byStore[p.store] = (byStore[p.store]||0) + sub;
+      return `<li>
+        <span class="lt">${SVG[id]}</span>
+        <span><span class="ln">${p.name}</span><br>
+          <span class="ls">${p.store} · <a href="${storeLink(p)}" target="_blank" rel="noopener">buscar na loja ↗</a></span></span>
+        <span class="lp">${brl(sub)}${q>1?`<br><span class="lq">${q} × ${brl(p.price)}</span>`:''}</span>
+      </li>`;
+    }).join('');
+  }
+  $('total').textContent = brl(total);
+  const stores = Object.entries(byStore).sort((a,b)=>b[1]-a[1]);
+  $('stores').innerHTML = stores.length ? `<h3>Por loja</h3>` + stores.map(([s,v])=>`<div class="store-row"><span>${s}</span><span>${brl(v)}</span></div>`).join('') : '';
+  // budget
+  const budget = Math.max(0, Number($('budget').value)||0);
+  const pct = budget ? Math.min(100, total/budget*100) : (total?100:0);
+  const over = total > budget;
+  $('bar').classList.toggle('over', over);
+  $('bar-fill').style.width = pct+'%';
+  $('bnote').className = 'bnote' + (over?' over':'');
+  $('bnote').textContent = over
+    ? `Passou ${brl(total-budget)} do orçamento. Tente trocar ou tirar algum item.`
+    : `Sobram ${brl(budget-total)} do seu orçamento.`;
+}
+
+function renderAll(){ renderStage(); renderList(); save(); }
+
+// ---------- Actions ----------
+let toastTimer;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1600);
+}
+
+function addItem(id){
+  const p = BY_ID[id];
+  const jitter = () => (Math.random()*10-5);
+  const it = {uid:uidSeq++, id, w:p.w, x:Math.max(0,50-p.w/2+jitter()), y:30+jitter(), flip:false, hue:0, z:zSeq++};
+  placed.push(it);
+  selected = it.uid;
+  renderAll();
+  toast(`${p.name} foi para o quarto`);
+}
+
+$('grid').addEventListener('click', e=>{
+  const b = e.target.closest('[data-add]'); if(b) addItem(b.dataset.add);
+});
+$('cats').addEventListener('click', e=>{
+  const b = e.target.closest('[data-cat]'); if(!b) return;
+  catFilter = b.dataset.cat; renderCats(); renderGrid();
+});
+
+function selItem(){ return placed.find(i=>i.uid===selected); }
+$('sel-flip').onclick = ()=>{ const it=selItem(); if(it){it.flip=!it.flip; renderAll();} };
+$('sel-front').onclick = ()=>{ const it=selItem(); if(it){it.z=zSeq++; renderAll();} };
+$('sel-back').onclick = ()=>{ const it=selItem(); if(it){ const min=Math.min(...placed.map(i=>i.z)); it.z=min-1; renderAll();} };
+$('sel-del').onclick = ()=>{ placed=placed.filter(i=>i.uid!==selected); selected=null; renderAll(); toast('Móvel removido'); };
+$('sel-color').oninput = e=>{
+  const it=selItem(); if(!it) return; it.hue=Number(e.target.value);
+  const svg = stage.querySelector(`.item[data-uid="${it.uid}"] svg`);
+  if(svg) svg.style.filter = `drop-shadow(0 6px 6px rgba(0,0,0,.28)) hue-rotate(${it.hue}deg)`;
+  save();
+};
+
+// Clear with an in-page confirm (two taps)
+let clearArmed=false, clearTimer;
+$('btn-clear').onclick = ()=>{
+  if(!placed.length){ toast('O quarto já está vazio'); return; }
+  if(!clearArmed){
+    clearArmed=true; $('btn-clear').textContent='Toque de novo para confirmar';
+    clearTimer=setTimeout(()=>{clearArmed=false;$('btn-clear').textContent='Tirar todos os móveis';},3000);
+    return;
+  }
+  clearTimeout(clearTimer); clearArmed=false; $('btn-clear').textContent='Tirar todos os móveis';
+  placed=[]; selected=null; renderAll(); toast('Quarto vazio. Comece de novo!');
+};
+
+// ---------- Drag & resize ----------
+let drag = null;
+stage.addEventListener('pointerdown', e=>{
+  const el = e.target.closest('.item');
+  if(!el){ if(selected!==null){ selected=null; renderStage(); } return; }
+  const uid = Number(el.dataset.uid);
+  const it = placed.find(i=>i.uid===uid);
+  const rect = stage.getBoundingClientRect();
+  const resizing = e.target.classList.contains('handle');
+  if(selected!==uid){
+    selected = uid;
+    stage.querySelectorAll('.item').forEach(n=>n.classList.toggle('sel', Number(n.dataset.uid)===uid));
+    renderSelbar();
+  }
+  drag = {it, el, resizing, sx:e.clientX, sy:e.clientY, ox:it.x, oy:it.y, ow:it.w, rect};
+  el.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+stage.addEventListener('pointermove', e=>{
+  if(!drag) return;
+  const {it, el, rect} = drag;
+  const dx = (e.clientX-drag.sx)/rect.width*100;
+  const dy = (e.clientY-drag.sy)/rect.height*100;
+  if(drag.resizing){
+    it.w = Math.min(95, Math.max(4, drag.ow + dx));
+    el.style.width = it.w+'%';
+  } else {
+    it.x = Math.min(100-it.w*0.3, Math.max(-it.w*0.7, drag.ox+dx));
+    it.y = Math.min(95, Math.max(-20, drag.oy+dy));
+    el.style.left = it.x+'%'; el.style.top = it.y+'%';
+  }
+});
+function endDrag(){ if(drag){ drag=null; save(); } }
+stage.addEventListener('pointerup', endDrag);
+stage.addEventListener('pointercancel', endDrag);
+
+// keyboard nudge for accessibility
+stage.addEventListener('keydown', e=>{
+  const el = e.target.closest('.item'); if(!el) return;
+  const it = placed.find(i=>i.uid===Number(el.dataset.uid));
+  const step = e.shiftKey?5:1;
+  const moves = {ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};
+  if(moves[e.key]){ it.x+=moves[e.key][0]; it.y+=moves[e.key][1]; el.style.left=it.x+'%'; el.style.top=it.y+'%'; save(); e.preventDefault(); }
+  if(e.key==='Enter'||e.key===' '){ selected=it.uid; renderStage(); stage.querySelector(`.item[data-uid="${it.uid}"]`).focus(); e.preventDefault(); }
+  if(e.key==='Delete'||e.key==='Backspace'){ selected=it.uid; $('sel-del').click(); e.preventDefault(); }
+});
+
+// ---------- Photo ----------
+$('photo-input').addEventListener('change', e=>{
+  const f = e.target.files && e.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = $('photo');
+    img.onload = () => {
+      stage.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+      img.hidden = false; $('sample-room').hidden = true; $('sample-tag').hidden = true;
+      toast('Foto carregada! Agora escolha os móveis');
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+  e.target.value = '';
+});
+$('btn-sample').onclick = ()=>{
+  $('photo').hidden = true; $('photo').removeAttribute('src');
+  stage.style.aspectRatio = '4 / 3';
+  $('sample-room').hidden = false; $('sample-tag').hidden = false;
+};
+
+// ---------- Tabs ----------
+function showTab(which){
+  const cat = which==='cat';
+  $('tab-cat').setAttribute('aria-selected', cat); $('tab-list').setAttribute('aria-selected', !cat);
+  $('pane-cat').hidden = !cat; $('pane-list').hidden = cat;
+}
+$('tab-cat').onclick = ()=>showTab('cat');
+$('tab-list').onclick = ()=>showTab('list');
+$('budget').addEventListener('input', ()=>{ renderList(); save(); });
+
+// ---------- Start with an example room ----------
+drawSampleRoom();
+if(!load()){
+  placed = [
+    {uid:1,id:'tapete',x:30,y:70,w:34,flip:false,hue:0,z:1},
+    {uid:2,id:'cama',x:4,y:44,w:46,flip:false,hue:0,z:2},
+    {uid:3,id:'escrivaninha',x:58,y:44,w:32,flip:false,hue:0,z:3},
+    {uid:4,id:'gamer',x:66,y:52,w:14,flip:false,hue:0,z:4},
+    {uid:5,id:'luzes',x:6,y:8,w:40,flip:false,hue:0,z:5},
+    {uid:6,id:'planta',x:88,y:50,w:11,flip:false,hue:0,z:6},
+  ];
+  uidSeq=7; zSeq=7;
+}
+renderCats(); renderGrid(); renderAll();
+</script>

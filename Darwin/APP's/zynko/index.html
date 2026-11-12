@@ -1,0 +1,672 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Zynko</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&family=Anton&display=swap">
+<style>
+/* Layout: um celular centralizado na tela (no celular de verdade ocupa a tela toda), abas embaixo, mini player fixo acima das abas */
+:root{
+  --bg:#E9EDF2; --screen:#F7F8FA; --card:#FFFFFF; --fg:#16202B; --muted:#5F6B78; --line:#E0E5EB;
+  --zy:#FF4D2E; --zy-ink:#FFFFFF; --teal:#0F8B9C; --sun:#FFC53D; --soft:#FFE7E1;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Nunito",ui-rounded,system-ui,sans-serif;
+  --meme:"Anton",Impact,"Arial Narrow Bold",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1016; --screen:#121922; --card:#1A2430; --fg:#EEF2F6; --muted:#9AA7B5; --line:#283442;
+  --zy:#FF6A4D; --zy-ink:#1A0A06; --teal:#3CC3D3; --sun:#FFC94F; --soft:#3A1F1A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1016; --screen:#121922; --card:#1A2430; --fg:#EEF2F6; --muted:#9AA7B5; --line:#283442;
+  --zy:#FF6A4D; --zy-ink:#1A0A06; --teal:#3CC3D3; --sun:#FFC94F; --soft:#3A1F1A; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;display:flex;justify-content:center;align-items:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;box-sizing:border-box}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.phone{width:100%;max-width:400px;height:min(820px,100%);background:var(--screen);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 0 0 10px var(--fg),0 30px 60px -20px rgba(0,0,0,.45);position:relative}
+@media (max-width:480px){
+  body{padding:0}
+  .phone{max-width:none;height:100%;border-radius:0;box-shadow:none}
+}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;background:var(--screen);border-bottom:1px solid var(--line)}
+.logo{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.03em;display:flex;align-items:center;gap:6px}
+.logo i{display:inline-block;width:22px;height:22px;border-radius:7px;background:var(--zy);transform:rotate(-12deg);position:relative}
+.logo i::after{content:"Z";position:absolute;inset:0;display:grid;place-items:center;color:var(--zy-ink);font-style:normal;font-size:15px;transform:rotate(12deg)}
+.logo span{color:var(--zy)}
+.topbtn{border:0;background:var(--card);width:38px;height:38px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);position:relative}
+.dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--zy)}
+main{flex:1;overflow-y:auto;padding:14px 14px 20px;display:flex;flex-direction:column;gap:14px}
+[hidden]{display:none!important}
+.view{display:flex;flex-direction:column;gap:14px}
+h2{font-family:var(--display);font-weight:800;font-size:22px;margin:2px 2px 0;letter-spacing:-.02em;text-wrap:balance}
+.sub{color:var(--muted);margin:-8px 2px 0;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex:none;font-size:15px}
+.row{display:flex;align-items:center;gap:10px}
+.name{font-weight:800}
+.meta{color:var(--muted);font-size:12.5px}
+.post p{margin:10px 0 12px;line-height:1.5}
+.actions{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.act{border:0;background:transparent;padding:6px 10px;border-radius:10px;display:flex;gap:6px;align-items:center;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.act:hover{background:var(--soft)}
+.act.on{color:var(--zy)}
+.act svg{width:18px;height:18px}
+.composer{display:flex;gap:10px;align-items:center}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--screen);border-radius:14px;padding:11px 12px;font:inherit;color:var(--fg)}
+.btn{border:0;background:var(--zy);color:var(--zy-ink);font-weight:800;padding:10px 14px;border-radius:12px}
+.stories{display:flex;gap:12px;overflow-x:auto;padding:6px 6px 4px;scrollbar-width:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:var(--muted);border:0;background:none;padding:0}
+.story .av{width:58px;height:58px;box-shadow:0 0 0 3px var(--screen),0 0 0 5px var(--zy);font-size:20px}
+.story.seen .av{box-shadow:0 0 0 3px var(--screen),0 0 0 5px var(--line)}
+.sv{position:absolute;inset:0;z-index:20;background:#000;display:flex;flex-direction:column;color:#fff}
+.sv .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:90px 28px 100px;text-align:center;gap:14px}
+.sv .big{font-family:var(--display);font-weight:800;font-size:32px;line-height:1.1;letter-spacing:-.02em;text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.sv .small{font-size:16px;font-weight:700;opacity:.92;max-width:28ch}
+.sv .stk{background:#fff;color:#16202B;font-weight:800;padding:8px 14px;border-radius:12px;transform:rotate(-4deg);font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.sv .bars{position:relative;z-index:2;display:flex;gap:4px;padding:12px 12px 0}
+.sv .bars i{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.4);overflow:hidden}
+.sv .bars i b{display:block;height:100%;width:0;background:#fff}
+.sv .shead{position:relative;z-index:2;display:flex;align-items:center;gap:10px;padding:10px 12px}
+.sv .shead .av{width:34px;height:34px;font-size:13px;box-shadow:0 0 0 2px #fff}
+.sv .shead .meta{color:rgba(255,255,255,.8)}
+.sv .x{margin-left:auto;border:0;background:rgba(0,0,0,.25);color:#fff;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+.sv .tapL,.sv .tapR{position:absolute;top:70px;bottom:80px;width:40%;z-index:1;border:0;background:transparent}
+.sv .tapL{left:0}.sv .tapR{right:0;width:60%}
+.sv form{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;gap:8px;padding:12px 12px calc(14px + env(safe-area-inset-bottom,0px))}
+.sv form input{flex:1;min-width:0;background:rgba(0,0,0,.25);border:1.5px solid rgba(255,255,255,.7);color:#fff;border-radius:99px;padding:10px 14px;font:inherit}
+.sv form input::placeholder{color:rgba(255,255,255,.8)}
+.sv form button{border:0;background:#fff;color:#16202B;font-weight:800;border-radius:99px;padding:0 16px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--soft);color:var(--zy)}
+/* memes */
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.chip{border:1px solid var(--line);background:var(--card);padding:7px 13px;border-radius:99px;font-weight:700;white-space:nowrap}
+.chip.on{background:var(--fg);color:var(--screen);border-color:var(--fg)}
+.meme{border-radius:16px;overflow:hidden;aspect-ratio:1/1;max-width:100%;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:14px;text-align:center}
+.meme b{font-family:var(--meme);font-weight:400;font-size:26px;line-height:1.05;color:#fff;text-transform:uppercase;letter-spacing:.01em;
+  text-shadow:2px 2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000,-2px -2px 0 #000}
+.meme .art{position:absolute;inset:0;z-index:0}
+.meme b{position:relative;z-index:1}
+.reacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.react{border:1px solid var(--line);background:var(--screen);border-radius:99px;padding:5px 10px;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.react.on{border-color:var(--zy);background:var(--soft);color:var(--zy)}
+/* música */
+.now{background:var(--fg);color:var(--screen);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.cover{aspect-ratio:1/1;max-width:100%;border-radius:16px;display:grid;place-items:center;position:relative;overflow:hidden}
+.cover .disc{width:62%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 3px,#222 3px 5px);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.cover .disc::after{content:"";width:30%;aspect-ratio:1;border-radius:50%;background:var(--zy)}
+.playing .disc{animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.track-title{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.bar{height:6px;border-radius:9px;background:rgba(127,127,127,.35);overflow:hidden}
+.bar div{height:100%;width:0;background:var(--zy);transition:width .25s linear}
+.times{display:flex;justify-content:space-between;font-size:12px;opacity:.75;font-variant-numeric:tabular-nums}
+.ctrls{display:flex;justify-content:center;align-items:center;gap:22px}
+.ctrls button{border:0;background:transparent;color:var(--screen);display:grid;place-items:center}
+.ctrls .big{width:62px;height:62px;border-radius:50%;background:var(--zy);color:var(--zy-ink)}
+.ctrls svg{width:26px;height:26px}
+.eq{display:flex;gap:3px;align-items:flex-end;height:16px}
+.eq span{width:3px;background:var(--zy);height:30%;border-radius:2px}
+.playing .eq span{animation:eq .8s ease-in-out infinite alternate}
+.eq span:nth-child(2){animation-delay:.2s!important}.eq span:nth-child(3){animation-delay:.4s!important}
+@keyframes eq{from{height:20%}to{height:100%}}
+.list{display:flex;flex-direction:column}
+.trk{display:flex;align-items:center;gap:12px;padding:10px 6px;border:0;background:transparent;text-align:left;border-radius:12px;width:100%}
+.trk:hover{background:var(--soft)}
+.trk .sq{width:44px;height:44px;border-radius:10px;flex:none}
+.trk .info{flex:1;min-width:0}
+.trk .t{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trk.cur .t{color:var(--zy)}
+.trk .d{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+/* mini player */
+.mini{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border-top:1px solid var(--line)}
+.mini .sq{width:36px;height:36px;border-radius:9px;flex:none}
+.mini .info{flex:1;min-width:0;font-size:13px}
+.mini .info b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini button{border:0;width:38px;height:38px;border-radius:50%;background:var(--zy);color:var(--zy-ink);display:grid;place-items:center}
+.mini svg{width:18px;height:18px}
+/* chat */
+.conv{display:flex;align-items:center;gap:12px;padding:10px 8px;border:0;background:transparent;width:100%;text-align:left;border-radius:14px}
+.conv:hover{background:var(--soft)}
+.conv .info{flex:1;min-width:0}
+.conv .last{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{background:var(--zy);color:var(--zy-ink);font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:99px;display:grid;place-items:center;padding:0 6px}
+.chatview{display:flex;flex-direction:column;gap:8px;min-height:100%}
+.chathead{position:sticky;top:-14px;z-index:2;background:var(--screen);padding-top:6px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.back{border:0;background:var(--card);border:1px solid var(--line);width:36px;height:36px;border-radius:11px;display:grid;place-items:center}
+.msgs{display:flex;flex-direction:column;gap:6px;flex:1;padding:8px 0}
+.bub{max-width:78%;padding:9px 13px;border-radius:18px;line-height:1.4;background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.bub.me{align-self:flex-end;background:var(--teal);color:#fff;border-color:transparent;border-bottom-left-radius:18px;border-bottom-right-radius:6px}
+.typing{color:var(--muted);font-size:12.5px;font-style:italic;padding-left:4px}
+/* perfil */
+.prof{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.prof .av{width:84px;height:84px;font-size:30px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:6px}
+.stats div{background:var(--screen);border-radius:14px;padding:10px 4px}
+.stats b{display:block;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+/* tabs */
+nav.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+.tab{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:800;color:var(--muted);padding:6px 0;border-radius:12px}
+.tab svg{width:23px;height:23px}
+.tab.on{color:var(--zy)}
+.toast{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);background:var(--fg);color:var(--screen);padding:9px 16px;border-radius:99px;font-weight:700;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.cmts{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.cmt{display:flex;gap:8px;align-items:flex-start}
+.cmt .av{width:30px;height:30px;font-size:12px}
+.cmt .txt{background:var(--screen);border-radius:14px;border-top-left-radius:4px;padding:7px 11px;font-size:14px;line-height:1.4;min-width:0;overflow-wrap:anywhere}
+.cmt .txt b{display:block;font-size:12.5px}
+.cmts form{display:flex;gap:8px}
+.cmts input,.searchbox input{flex:1;min-width:0;border:1px solid var(--line);background:var(--screen);border-radius:12px;padding:9px 12px;font:inherit;color:var(--fg)}
+.cmts .btn{padding:8px 12px}
+.searchbox{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 6px 6px 12px}
+.searchbox input{border:0;background:transparent;padding:8px 4px}
+.res-h{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:4px 4px 0}
+.res{display:flex;align-items:center;gap:12px;padding:10px;border:0;background:var(--card);border:1px solid var(--line);border-radius:14px;width:100%;text-align:left;color:inherit;text-decoration:none}
+.res:hover{background:var(--soft)}
+.res .info{flex:1;min-width:0}
+.res .info .t{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .info .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .sq{width:40px;height:40px;border-radius:10px;flex:none}
+mark{background:var(--sun);color:#16202B;border-radius:3px;padding:0 1px}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+.hit{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:12px;color:inherit;text-decoration:none}
+.hit:hover{background:var(--soft)}
+.hit .pos{width:26px;text-align:center;font-family:var(--display);font-weight:800;font-size:18px;color:var(--zy);font-variant-numeric:tabular-nums;flex:none}
+.hit .info{flex:1;min-width:0}
+.hit .t{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hit .go{font-size:12px;font-weight:800;color:var(--teal);border:1px solid var(--line);border-radius:99px;padding:4px 10px;white-space:nowrap}
+.kp{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.kp .hero{position:relative;aspect-ratio:16/9;max-width:100%;display:flex;align-items:flex-end;padding:14px;color:#fff;overflow:hidden}
+.kp .hero .ini{position:absolute;right:-6px;top:-18px;font-family:var(--display);font-weight:800;font-size:150px;line-height:1;opacity:.22;letter-spacing:-.06em}
+.kp .hero .mic{position:absolute;right:22px;bottom:16px;width:64px;opacity:.9}
+.kp .hero h3{position:relative;margin:0;font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.05;text-wrap:balance;max-width:70%;text-shadow:0 2px 10px rgba(0,0,0,.25)}
+.kp .hero small{display:block;font-family:var(--body);font-size:13px;font-weight:700;opacity:.9;letter-spacing:0;margin-top:4px}
+.kp .body{padding:14px;display:flex;flex-direction:column;gap:12px}
+.kp .resumo{margin:0;line-height:1.5}
+.kp dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.kp dt{font-weight:800;color:var(--muted)}
+.kp dd{margin:0;min-width:0}
+.kp .songs{display:flex;flex-wrap:wrap;gap:6px}
+.kp .songs span{background:var(--screen);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:13px;font-weight:700}
+.kp .links{display:flex;flex-wrap:wrap;gap:8px}
+.kp .links a{flex:1 1 auto;text-align:center;text-decoration:none;font-weight:800;font-size:13px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);color:var(--fg)}
+.kp .links a.pri{background:var(--zy);color:var(--zy-ink);border-color:var(--zy)}
+.kp .fonte{font-size:11.5px;color:var(--muted)}
+.arts{display:flex;gap:12px;overflow-x:auto;padding:6px 4px 4px;scrollbar-width:none}
+.art-c{display:flex;flex-direction:column;align-items:center;gap:5px;border:0;background:none;padding:0;width:70px;flex:none;font-size:11.5px;font-weight:700;color:var(--muted);text-align:center;line-height:1.2}
+.art-c .ph{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:800;font-size:20px}
+.src{font-size:12px;color:var(--muted);margin:8px 6px 0;line-height:1.4}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="phone" id="phone">
+  <header class="top">
+    <div class="logo"><i></i><div>zynk<span>o</span></div></div>
+    <div class="row">
+      <button class="topbtn" aria-label="Buscar" id="btnBusca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="topbtn" aria-label="Notificações" id="btnNotif"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21h4"/></svg><span class="dot"></span></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- INÍCIO / POSTS -->
+    <section class="view" data-view="inicio">
+      <div class="stories" id="stories"></div>
+      <form class="card composer" id="composer">
+        <div class="av" style="background:var(--zy)">V</div>
+        <input id="novoPost" placeholder="O que está rolando hoje?" maxlength="200" autocomplete="off">
+        <button class="btn" type="submit">Postar</button>
+      </form>
+      <div id="feed" class="view"></div>
+    </section>
+
+    <!-- BUSCA -->
+    <section class="view" data-view="busca" hidden>
+      <form class="searchbox" id="buscaForm" role="search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="color:var(--muted);flex:none"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="buscaInput" type="search" placeholder="Buscar pessoas, posts, memes e músicas" autocomplete="off">
+      </form>
+      <div class="chips" id="buscaSug"></div>
+      <div id="buscaRes" class="view"></div>
+    </section>
+
+    <!-- MEMES -->
+    <section class="view" data-view="memes" hidden>
+      <h2>Memes do dia</h2>
+      <p class="sub">Os mais engraçados da galera, escolhidos pelas reações</p>
+      <div class="chips" id="memeChips"></div>
+      <div id="memeList" class="view"></div>
+    </section>
+
+    <!-- MÚSICA -->
+    <section class="view" data-view="musica" hidden>
+      <div class="now" id="now">
+        <div class="cover" id="cover"><div class="disc"></div></div>
+        <div class="row" style="justify-content:space-between">
+          <div style="min-width:0"><div class="track-title" id="nowTitle"></div><div style="opacity:.75" id="nowArtist"></div></div>
+          <div class="eq"><span></span><span></span><span></span></div>
+        </div>
+        <div><div class="bar"><div id="prog"></div></div><div class="times"><span id="tCur">0:00</span><span id="tTot">0:00</span></div></div>
+        <div class="ctrls">
+          <button aria-label="Anterior" id="prev"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+          <button class="big" aria-label="Tocar" id="play"></button>
+          <button aria-label="Próxima" id="next"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+        </div>
+      </div>
+      <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h2 style="font-size:18px">Playlist da turma</h2><span class="tag">8º ano</span></div><div class="list" id="tracks"></div></div>
+      <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h2 style="font-size:18px">Em alta no Brasil</h2><span class="tag">Top 10</span></div>
+        <div class="list" id="hits"></div>
+        <p class="src">As mais tocadas nas rádios de 1 a 31 de outubro de 2026, segundo o ranking do site Mais Tocadas. Toque em uma música para ouvir no Spotify.</p>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="view" data-view="chat" hidden>
+      <div id="chatList" class="view">
+        <h2>Mensagens</h2>
+        <div class="card" style="padding:6px" id="convs"></div>
+      </div>
+      <div id="chatOpen" class="chatview" hidden>
+        <div class="chathead">
+          <button class="back" id="back" aria-label="Voltar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="av" id="chatAv"></div>
+          <div><div class="name" id="chatName"></div><div class="meta">online agora</div></div>
+        </div>
+        <div class="msgs" id="msgs"></div>
+        <form class="composer" id="chatForm">
+          <input id="chatInput" placeholder="Escreva uma mensagem" autocomplete="off" maxlength="300">
+          <button class="btn" type="submit">Enviar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- PERFIL -->
+    <section class="view" data-view="perfil" hidden>
+      <div class="card prof">
+        <div class="av" style="background:var(--zy)">V</div>
+        <div class="name" style="font-size:20px">Você</div>
+        <div class="meta">@voce.zynko · 8º ano</div>
+        <div class="stats"><div><b id="stPosts">0</b><span>posts</span></div><div><b>128</b><span>seguidores</span></div><div><b>96</b><span>seguindo</span></div></div>
+      </div>
+      <div class="card">
+        <h2 style="font-size:18px;margin-bottom:8px">Sobre o Zynko</h2>
+        <p style="margin:0;line-height:1.55;color:var(--muted)">O Zynko junta tudo o que você curte em um só lugar: memes para rir, música para ouvir, posts para compartilhar e mensagens para conversar com os amigos. Este é um protótipo com dados de exemplo.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="mini" id="mini" hidden>
+    <div class="sq" id="miniSq"></div>
+    <div class="info"><b id="miniT"></b><span class="meta" id="miniA"></span></div>
+    <button id="miniPlay" aria-label="Tocar ou pausar"></button>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-go="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 11 12 4l9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Início</button>
+    <button class="tab" data-go="memes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 3 4 3 4-3 4-3"/><path d="M9 9h.01M15 9h.01" stroke-width="3"/></svg>Memes</button>
+    <button class="tab" data-go="musica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Música</button>
+    <button class="tab" data-go="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>Chat</button>
+    <button class="tab" data-go="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>Perfil</button>
+  </nav>
+  <div class="sv" id="sv" hidden>
+    <div class="slide" id="svSlide"></div>
+    <div class="bars" id="svBars"></div>
+    <div class="shead"><div class="av" id="svAv"></div><div><div class="name" id="svName"></div><div class="meta" id="svTime"></div></div>
+      <button class="x" id="svPause" aria-label="Pausar story"></button><button class="x" id="svX" aria-label="Fechar" style="margin-left:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <button class="tapL" id="svPrev" aria-label="Story anterior"></button><button class="tapR" id="svNext" aria-label="Próximo story"></button>
+    <form id="svForm"><input id="svInput" placeholder="Responder..." autocomplete="off" maxlength="200"><button type="submit">Enviar</button></form>
+  </div>
+  <div class="toast" id="toast" style="z-index:30"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const COLORS=["#FF4D2E","#0F8B9C","#E0A100","#7A5CFA","#E8478B","#2E9E5B","#3D6FE0"];
+const pessoas={
+  ana:{n:"Ana Clara",c:COLORS[4]}, leo:{n:"Léo Martins",c:COLORS[1]}, bia:{n:"Bia Souza",c:COLORS[2]},
+  gui:{n:"Gui Rocha",c:COLORS[3]}, duda:{n:"Duda Lima",c:COLORS[5]}, prof:{n:"Prof. Rodrigo",c:COLORS[6]}
+};
+const av=(p,size)=>`<div class="av" style="background:${p.c}${size?`;width:${size}px;height:${size}px`:""}">${p.n[0]}</div>`;
+const ic={
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/></svg>',
+  heartF:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/></svg>',
+  com:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12v8h16v-8M12 3v13M7 8l5-5 5 5"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
+};
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("show"),1600)}
+
+const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const eu={n:"Você",c:"var(--zy)"};
+const quem=k=>k==="eu"?eu:pessoas[k];
+function cmtsHTML(arr,kind,i){
+  return `<div class="cmts">${arr.map(([k,t])=>{const p=quem(k);return `<div class="cmt">${av(p)}<div class="txt"><b>${p.n}</b>${t}</div></div>`}).join("")}
+  <form data-cform="${kind}" data-i="${i}"><input id="cmt-${kind}-${i}" placeholder="Escreva um comentário" maxlength="200" autocomplete="off"><button class="btn" type="submit">Comentar</button></form></div>`;
+}
+function addCmt(e,list,render){
+  const f=e.target.closest("[data-cform]");if(!f)return;e.preventDefault();
+  const inp=f.querySelector("input"),v=inp.value.trim();if(!v)return;
+  const i=f.dataset.i,kind=f.dataset.cform;list[i].cm.push(["eu",esc(v)]);render();toast("Comentário publicado");
+  const n=document.getElementById("cmt-"+kind+"-"+i);if(n)n.focus();
+}
+/* ---------- Abas ---------- */
+function go(v){
+  document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==v);
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.go===v));
+  $("#main").scrollTop=0;
+  $("#mini").hidden=!(cur!==null && v!=="musica" && started);
+}
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)go(b.dataset.go)});
+$("#btnNotif").onclick=()=>toast("Duda curtiu seu post");
+$("#btnBusca").onclick=()=>{go("busca");$("#buscaInput").focus()};
+
+/* ---------- Stories ---------- */
+const stories={
+  ana:{h:"há 1 h",s:[{bg:"linear-gradient(160deg,#E8478B,#FF4D2E)",big:"Ouvindo agora",small:"Cadeira Cativa no repeat desde cedo",stk:"Em alta no Zynko"},{bg:"linear-gradient(200deg,#7A5CFA,#E8478B)",big:"Quem vem estudar ciências amanhã?",small:"Biblioteca, depois do intervalo"}]},
+  leo:{h:"há 2 h",s:[{bg:"linear-gradient(160deg,#0F8B9C,#2E9E5B)",big:"8º A 3 x 2 8º B",small:"Final do campeonato da escola",stk:"Campeões"},{bg:"linear-gradient(180deg,#16202B,#0F8B9C)",big:"Golaço da Duda no último minuto",small:"Ninguém acreditou"}]},
+  bia:{h:"há 3 h",s:[{bg:"linear-gradient(160deg,#E0A100,#FF4D2E)",big:"15 minutos por dia",small:"Minha meta de estudo para a prova de matemática",stk:"Foco total"}]},
+  gui:{h:"há 4 h",s:[{bg:"linear-gradient(200deg,#3D6FE0,#16202B)",big:"Só mais uma partida",small:"Disse eu às 22h",stk:"Nível 42"},{bg:"linear-gradient(160deg,#16202B,#7A5CFA)",big:"Bom dia?",small:"Dormi 5 horas"}]},
+  duda:{h:"há 5 h",s:[{bg:"linear-gradient(160deg,#2E9E5B,#E0A100)",big:"Minha música entrou na playlist da turma",small:"Ouçam Gol no Último Minuto na aba Música",stk:"Lançamento"}]},
+  prof:{h:"há 6 h",s:[{bg:"linear-gradient(160deg,#3D6FE0,#0F8B9C)",big:"Apresentação dos apps na sexta",small:"Tragam o protótipo funcionando e uma ideia de nome",stk:"Lembrete"},{bg:"linear-gradient(200deg,#FF4D2E,#E0A100)",big:"Estou orgulhoso de vocês",small:"Os projetos estão ficando ótimos"}]}
+};
+const ordem=Object.keys(stories);const vistos=new Set();
+function renderStories(){$("#stories").innerHTML=ordem.map(k=>`<button class="story ${vistos.has(k)?"seen":""}" type="button" data-st="${k}">${av(pessoas[k])}${pessoas[k].n.split(" ")[0]}</button>`).join("")}
+renderStories();
+let sv={k:null,i:0,t:0,raf:0,last:0,paused:false};const SDUR=5000;
+const icPause='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+const icPlay='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>';
+function abrirStory(k){sv.k=k;sv.i=0;$("#sv").hidden=false;mostrarSlide()}
+function mostrarSlide(){
+  const st=stories[sv.k],sl=st.s[sv.i],p=pessoas[sv.k];vistos.add(sv.k);
+  $("#svAv").outerHTML=`<div class="av" id="svAv" style="background:${p.c}">${p.n[0]}</div>`;
+  $("#svName").textContent=p.n;$("#svTime").textContent=st.h;
+  $("#svSlide").style.background=sl.bg;
+  $("#svSlide").innerHTML=(sl.stk?`<div class="stk">${sl.stk}</div>`:"")+`<div class="big">${sl.big}</div><div class="small">${sl.small}</div>`;
+  $("#svBars").innerHTML=st.s.map((_,j)=>`<i><b style="width:${j<sv.i?100:0}%"></b></i>`).join("");
+  sv.t=0;sv.paused=false;$("#svPause").innerHTML=icPause;sv.last=performance.now();cancelAnimationFrame(sv.raf);sv.raf=requestAnimationFrame(passo);
+}
+function passo(now){
+  if(!sv.paused){sv.t+=now-sv.last}sv.last=now;
+  const bar=$("#svBars").children[sv.i];if(bar)bar.firstChild.style.width=Math.min(100,sv.t/SDUR*100)+"%";
+  if(sv.t>=SDUR){proxStory();return}
+  sv.raf=requestAnimationFrame(passo);
+}
+function proxStory(){const st=stories[sv.k];if(sv.i<st.s.length-1){sv.i++;mostrarSlide()}else{const n=ordem.indexOf(sv.k)+1;if(n<ordem.length){sv.k=ordem[n];sv.i=0;mostrarSlide()}else fecharStory()}}
+function antStory(){if(sv.i>0){sv.i--;mostrarSlide()}else{const n=ordem.indexOf(sv.k)-1;if(n>=0){sv.k=ordem[n];sv.i=stories[sv.k].s.length-1;mostrarSlide()}else mostrarSlide()}}
+function fecharStory(){cancelAnimationFrame(sv.raf);$("#sv").hidden=true;renderStories()}
+$("#stories").addEventListener("click",e=>{const b=e.target.closest("[data-st]");if(b)abrirStory(b.dataset.st)});
+$("#svNext").onclick=proxStory;$("#svPrev").onclick=antStory;$("#svX").onclick=fecharStory;
+$("#svPause").onclick=()=>{sv.paused=!sv.paused;$("#svPause").innerHTML=sv.paused?icPlay:icPause};
+$("#svInput").addEventListener("focus",()=>{sv.paused=true;$("#svPause").innerHTML=icPlay});
+document.addEventListener("keydown",e=>{if($("#sv").hidden)return;if(e.key==="Escape")fecharStory();if(e.target.id!=="svInput"){if(e.key==="ArrowRight")proxStory();if(e.key==="ArrowLeft")antStory()}});
+$("#svForm").addEventListener("submit",e=>{
+  e.preventDefault();const v=$("#svInput").value.trim();if(!v)return;$("#svInput").value="";
+  let i=convs.findIndex(c=>c.p===sv.k);if(i<0){convs.push({p:sv.k,u:0,m:[]});i=convs.length-1}
+  convs[i].m.push(["eu","Respondeu ao seu story: "+esc(v)]);renderConvs();toast("Resposta enviada no Chat");$("#svInput").blur();sv.paused=false;$("#svPause").innerHTML=icPause;
+});
+
+/* ---------- Posts ---------- */
+const posts=[
+  {p:"prof",t:"Lembrete: a apresentação dos apps do 8º ano é sexta-feira! Capricha no protótipo.",h:"há 10 min",l:42,tag:"Aviso",cm:[["gui","Professor, pode ser em dupla?"],["prof","Pode sim, Gui!"],["bia","Já tô terminando o meu"]]},
+  {p:"ana",t:"Alguém mais ficou com a música do intervalo na cabeça o dia inteiro? Coloquei ela na playlist da turma.",h:"há 25 min",l:18,tag:"Música",cm:[["duda","Eu! Não sai da cabeça"],["leo","Coloca Cadeira Cativa também"]]},
+  {p:"leo",t:"Placar do futsal de hoje: 8º A 3 x 2 8º B. Golaço da Duda no último minuto!",h:"há 1 h",l:57,tag:"Esporte",cm:[["duda","Valeu, time!"],["ana","Que jogo!"],["gui","Revanche semana que vem"]]},
+  {p:"bia",t:"Dica de estudo: revisar 15 minutos por dia funciona melhor do que virar a noite antes da prova.",h:"há 2 h",l:31,cm:[["prof","Ótima dica, Bia!"]]}
+];
+let meusPosts=0;
+function renderFeed(){
+  $("#feed").innerHTML=posts.map((x,i)=>{const p=pessoas[x.p]||{n:"Você",c:"var(--zy)"};return `
+  <article class="card post">
+    <div class="row">${av(p)}<div style="flex:1;min-width:0"><div class="name">${p.n}</div><div class="meta">${x.h}</div></div>${x.tag?`<span class="tag">${x.tag}</span>`:""}</div>
+    <p>${x.t}</p>
+    <div class="actions">
+      <button class="act ${x.liked?"on":""}" data-like="${i}" aria-label="Curtir">${x.liked?ic.heartF:ic.heart}${x.l}</button>
+      <button class="act ${x.open?"on":""}" data-com="${i}" aria-label="Comentários">${ic.com}${x.cm.length}</button>
+      <button class="act" data-share="${i}" aria-label="Compartilhar">${ic.share}</button>
+    </div>
+    ${x.open?cmtsHTML(x.cm,"post",i):""}
+  </article>`}).join("");
+}
+$("#feed").addEventListener("click",e=>{
+  const l=e.target.closest("[data-like]"),c=e.target.closest("[data-com]"),s=e.target.closest("[data-share]");
+  if(l){const x=posts[l.dataset.like];x.liked=!x.liked;x.l+=x.liked?1:-1;renderFeed()}
+  if(c){posts[c.dataset.com].open=!posts[c.dataset.com].open;renderFeed();const inp=document.getElementById("cmt-post-"+c.dataset.com);if(inp)inp.focus()}
+  if(s)toast("Link do post copiado");
+});
+$("#composer").addEventListener("submit",e=>{
+  e.preventDefault();const v=$("#novoPost").value.trim();if(!v)return;
+  posts.unshift({p:"eu",t:esc(v),h:"agora",l:0,cm:[]});$("#novoPost").value="";meusPosts++;$("#stPosts").textContent=meusPosts;renderFeed();toast("Post publicado");
+});
+$("#feed").addEventListener("submit",e=>addCmt(e,posts,renderFeed));
+renderFeed();
+
+/* ---------- Memes ---------- */
+const memes=[
+  {cat:"Escola",top:"Quando o professor diz",bot:"\"Vale ponto\"",art:"linear-gradient(160deg,#FF4D2E,#FFC53D)",shape:"sol",by:"leo",r:[120,34,9],cm:[["bia","Kkkkk sempre"],["prof","Vale ponto mesmo, hein"]]},
+  {cat:"Games",top:"Eu: só mais uma partida",bot:"Também eu às 2h da manhã",art:"linear-gradient(200deg,#0F8B9C,#16202B)",shape:"lua",by:"gui",r:[88,51,3],cm:[["leo","Isso sou eu todo dia"]]},
+  {cat:"Escola",top:"Prova surpresa",bot:"Meu cérebro: carregando...",art:"linear-gradient(180deg,#7A5CFA,#E8478B)",shape:"load",by:"bia",r:[210,12,40],cm:[["ana","Chorei de rir"],["gui","Real demais"]]},
+  {cat:"Família",top:"Mãe: tem comida em casa",bot:"A comida em casa:",art:"linear-gradient(150deg,#2E9E5B,#E0A100)",shape:"prato",by:"duda",r:[156,22,15],cm:[]}
+];
+const reacoes=["Kkkk","Real","Chorei"];
+let memeCat="Todos";
+const shapes={
+  sol:'<svg viewBox="0 0 100 100" style="position:absolute;inset:18% 18%;width:64%;opacity:.35"><circle cx="50" cy="50" r="22" fill="#fff"/><g stroke="#fff" stroke-width="6" stroke-linecap="round">'+Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return `<line x1="${50+32*Math.cos(a)}" y1="${50+32*Math.sin(a)}" x2="${50+44*Math.cos(a)}" y2="${50+44*Math.sin(a)}"/>`}).join("")+'</g></svg>',
+  lua:'<svg viewBox="0 0 100 100" style="position:absolute;inset:20%;width:60%;opacity:.4"><path d="M62 20a32 32 0 1 0 18 52A34 34 0 0 1 62 20z" fill="#FFC53D"/></svg>',
+  load:'<svg viewBox="0 0 100 100" style="position:absolute;inset:25%;width:50%;opacity:.5"><circle cx="50" cy="50" r="34" fill="none" stroke="#fff" stroke-width="10" stroke-dasharray="60 160" stroke-linecap="round"/></svg>',
+  prato:'<svg viewBox="0 0 100 100" style="position:absolute;inset:22%;width:56%;opacity:.45"><ellipse cx="50" cy="55" rx="40" ry="16" fill="#fff"/><ellipse cx="50" cy="52" rx="26" ry="9" fill="#E0A100"/></svg>'
+};
+function renderMemes(){
+  const cats=["Todos",...new Set(memes.map(m=>m.cat))];
+  $("#memeChips").innerHTML=cats.map(c=>`<button class="chip ${c===memeCat?"on":""}" data-cat="${c}">${c}</button>`).join("");
+  $("#memeList").innerHTML=memes.map((m,i)=>({m,i})).filter(o=>memeCat==="Todos"||o.m.cat===memeCat).map(({m,i})=>`
+  <article class="card">
+    <div class="row" style="margin-bottom:10px">${av(pessoas[m.by],34)}<div><div class="name" style="font-size:14px">${pessoas[m.by].n}</div><div class="meta">${m.cat}</div></div></div>
+    <div class="meme" style="background:${m.art}"><div class="art">${shapes[m.shape]}</div><b>${m.top}</b><b>${m.bot}</b></div>
+    <div class="reacts">${reacoes.map((r,j)=>`<button class="react ${m.mine===j?"on":""}" data-m="${i}" data-r="${j}">${r} · ${m.r[j]}</button>`).join("")}<button class="react ${m.open?"on":""}" data-mc="${i}">Comentários · ${m.cm.length}</button></div>
+    ${m.open?cmtsHTML(m.cm,"meme",i):""}
+  </article>`).join("");
+}
+$("#memeChips").addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(b){memeCat=b.dataset.cat;renderMemes()}});
+$("#memeList").addEventListener("click",e=>{
+  const mc=e.target.closest("[data-mc]");if(mc){memes[mc.dataset.mc].open=!memes[mc.dataset.mc].open;renderMemes();const n=document.getElementById("cmt-meme-"+mc.dataset.mc);if(n)n.focus();return}
+  const b=e.target.closest("[data-r]");if(!b)return;const m=memes[b.dataset.m],j=+b.dataset.r;
+  if(m.mine===j){m.r[j]--;m.mine=undefined}else{if(m.mine!==undefined)m.r[m.mine]--;m.r[j]++;m.mine=j}
+  renderMemes();
+});
+$("#memeList").addEventListener("submit",e=>addCmt(e,memes,renderMemes));
+renderMemes();
+
+/* ---------- Música (melodias simples geradas no navegador) ---------- */
+const tracks=[
+  {t:"Recreio Elétrico",a:"Turma do 8º A",c:"linear-gradient(135deg,#FF4D2E,#FFC53D)",bpm:128,notes:[60,64,67,72,67,64,62,65,69,72,69,65],wave:"square"},
+  {t:"Noite de Prova",a:"Lo-fi Linhares",c:"linear-gradient(135deg,#0F8B9C,#16202B)",bpm:80,notes:[57,60,64,67,65,64,60,62],wave:"sine"},
+  {t:"Gol no Último Minuto",a:"Duda & Banda",c:"linear-gradient(135deg,#2E9E5B,#E0A100)",bpm:140,notes:[67,67,71,74,72,71,69,67,64,67],wave:"triangle"},
+  {t:"Céu de Espírito Santo",a:"Ana Clara",c:"linear-gradient(135deg,#7A5CFA,#E8478B)",bpm:96,notes:[62,66,69,74,73,69,66,64],wave:"sawtooth"}
+];
+const DUR=60; // cada faixa de exemplo dura 1 minuto
+let cur=0,playing=false,started=false,pos=0,ctx=null,timer=null,step=0,lastTick=0;
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+function renderTracks(){
+  $("#tracks").innerHTML=tracks.map((x,i)=>`<button class="trk ${i===cur?"cur":""}" data-t="${i}"><div class="sq" style="background:${x.c}"></div><div class="info"><div class="t">${x.t}</div><div class="meta">${x.a}</div></div><div class="d">${fmt(DUR)}</div></button>`).join("");
+  const x=tracks[cur];
+  $("#nowTitle").textContent=x.t;$("#nowArtist").textContent=x.a;$("#cover").style.background=x.c;
+  $("#miniT").textContent=x.t;$("#miniA").textContent=x.a;$("#miniSq").style.background=x.c;
+  $("#tTot").textContent=fmt(DUR);
+  $("#play").innerHTML=playing?ic.pause:ic.play;$("#miniPlay").innerHTML=playing?ic.pause:ic.play;
+  $("#play").setAttribute("aria-label",playing?"Pausar":"Tocar");
+  $("#now").classList.toggle("playing",playing);
+}
+function beep(){
+  const x=tracks[cur];const n=x.notes[step%x.notes.length];step++;
+  const o=ctx.createOscillator(),g=ctx.createGain();o.type=x.wave;o.frequency.value=440*Math.pow(2,(n-69)/12);
+  const t=ctx.currentTime,len=60/x.bpm*.9;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.08,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+len);
+  o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+len);
+  if(step%2===0){const b=ctx.createOscillator(),bg=ctx.createGain();b.type="sine";b.frequency.value=440*Math.pow(2,(x.notes[0]-81)/12);bg.gain.setValueAtTime(.12,t);bg.gain.exponentialRampToValueAtTime(.001,t+len*1.6);b.connect(bg).connect(ctx.destination);b.start(t);b.stop(t+len*1.6)}
+}
+function tick(){
+  const now=performance.now();pos+=(now-lastTick)/1000;lastTick=now;
+  if(pos>=DUR){next();return}
+  $("#prog").style.width=(pos/DUR*100)+"%";$("#tCur").textContent=fmt(pos);
+}
+function play(){
+  try{if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();ctx.resume()}catch(e){}
+  playing=true;started=true;lastTick=performance.now();
+  clearInterval(timer);timer=setInterval(()=>{if(ctx)beep();},60000/tracks[cur].bpm);
+  clearInterval(tick.h);tick.h=setInterval(tick,250);renderTracks();
+}
+function pause(){playing=false;clearInterval(timer);clearInterval(tick.h);renderTracks()}
+function load(i){cur=(i+tracks.length)%tracks.length;pos=0;step=0;$("#prog").style.width="0";$("#tCur").textContent="0:00";playing?play():renderTracks()}
+function next(){load(cur+1)}
+$("#play").onclick=$("#miniPlay").onclick=()=>playing?pause():play();
+$("#next").onclick=next;$("#prev").onclick=()=>load(cur-1);
+$("#tracks").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(b){load(+b.dataset.t);if(!playing)play()}});
+renderTracks();
+
+/* ---------- Chat ---------- */
+const convs=[
+  {p:"ana",u:2,m:[["ana","Oi! Viu o meme da prova surpresa?"],["eu","Vi kkkk real demais"],["ana","Vamos fazer o trabalho de ciências juntas amanhã?"]]},
+  {p:"leo",u:0,m:[["leo","Bora jogar no intervalo?"],["eu","Bora, levo a bola"]]},
+  {p:"prof",u:1,m:[["prof","Pessoal, não esqueçam de testar o app antes da apresentação!"]]},
+  {p:"duda",u:0,m:[["duda","Coloquei minha música na playlist da turma"],["eu","Ficou muito boa!"]]}
+];
+const respostas=["Kkkk verdade","Combinado!","Sério? Me conta mais","Boa ideia","Vou ver e te falo","Tô ouvindo a playlist agora"];
+let aberta=null;
+function renderConvs(){
+  $("#convs").innerHTML=convs.map((c,i)=>{const p=pessoas[c.p],l=c.m[c.m.length-1]||["",'Diga oi!'];return `<button class="conv" data-c="${i}">${av(p)}<div class="info"><div class="name">${p.n}</div><div class="last">${l[0]==="eu"?"Você: ":""}${l[1]}</div></div>${c.u?`<span class="badge">${c.u}</span>`:""}</button>`}).join("");
+}
+function renderMsgs(typing){
+  const c=convs[aberta];
+  $("#msgs").innerHTML=c.m.map(([w,t])=>`<div class="bub ${w==="eu"?"me":""}">${t}</div>`).join("")+(typing?`<div class="typing">${pessoas[c.p].n.split(" ")[0]} está digitando...</div>`:"");
+  $("#main").scrollTop=$("#main").scrollHeight;
+}
+$("#convs").addEventListener("click",e=>{
+  const b=e.target.closest("[data-c]");if(!b)return;abrirConversa(+b.dataset.c);
+});
+$("#back").onclick=()=>{aberta=null;$("#chatOpen").hidden=true;$("#chatList").hidden=false;renderConvs()};
+$("#chatForm").addEventListener("submit",e=>{
+  e.preventDefault();const v=$("#chatInput").value.trim();if(!v||aberta===null)return;
+  const c=convs[aberta],idx=aberta;c.m.push(["eu",v.replace(/</g,"&lt;")]);$("#chatInput").value="";renderMsgs(true);
+  setTimeout(()=>{c.m.push([c.p,respostas[Math.floor(Math.random()*respostas.length)]]);if(aberta===idx)renderMsgs()},1300);
+});
+renderConvs();
+function abrirConversa(i){
+  aberta=i;const c=convs[i];c.u=0;
+  $("#chatAv").outerHTML=`<div class="av" id="chatAv" style="background:${pessoas[c.p].c}">${pessoas[c.p].n[0]}</div>`;
+  $("#chatName").textContent=pessoas[c.p].n;$("#chatList").hidden=true;$("#chatOpen").hidden=false;renderMsgs();
+}
+
+/* ---------- Em alta (ranking das rádios, outubro/2026) ---------- */
+const hits=[
+  ["Cadeira Cativa","Zé Neto e Cristiano"],["Bala Alojada","Gusttavo Lima"],["Direitos Iguais","Simone Mendes"],
+  ["Irmão da Lua, Amigo das Estrelas","Zezé di Camargo"],["Peão Todo Tatuado","Jeninho feat. Mariana Fagundes"],
+  ["Imagina Eu","Eduardo Costa"],["Tubarões (Ao Vivo)","Diego e Victor Hugo"],["I Just Might","Bruno Mars"],
+  ["Retrovisor","Gusttavo Lima"],["Ordinary","Alex Warren"]
+];
+const spot=(t,a)=>"https://open.spotify.com/search/"+encodeURIComponent(t+" "+a.split(" feat.")[0]);
+$("#hits").innerHTML=hits.map(([t,a],i)=>`<a class="hit" href="${spot(t,a)}" target="_blank" rel="noopener"><span class="pos">${i+1}</span><div class="info"><div class="t">${t}</div><div class="meta">${a}</div></div><span class="go">Ouvir</span></a>`).join("");
+
+/* ---------- Busca ---------- */
+const norm=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const strip=t=>t.replace(/<[^>]*>/g,"").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");
+function hl(text,q){
+  const n=norm(text),k=n.indexOf(q);if(k<0)return esc(text);
+  return esc(text.slice(0,k))+"<mark>"+esc(text.slice(k,k+q.length))+"</mark>"+esc(text.slice(k+q.length));
+}
+const sugest=["K-pop","BTS","Gusttavo Lima","Bruno Mars","prova"];
+$("#buscaSug").innerHTML=sugest.map(t=>`<button class="chip" type="button" data-sug="${t}">${t}</button>`).join("");
+$("#buscaSug").addEventListener("click",e=>{const b=e.target.closest("[data-sug]");if(b){$("#buscaInput").value=b.dataset.sug;buscar()}});
+const artistas=[
+  {k:"zeneto",fonte:"Informações do ranking das rádios de outubro de 2026.",n:"Zé Neto & Cristiano",tipo:"Dupla sertaneja",c:"linear-gradient(135deg,#FF4D2E,#E0A100)",wiki:"https://pt.wikipedia.org/w/index.php?search=Z%C3%A9+Neto+e+Cristiano",
+   resumo:"Dupla sertaneja de São José do Rio Preto, no interior de São Paulo, uma das mais tocadas nas rádios do Brasil.",
+   info:[["Origem","São José do Rio Preto (SP)"],["Gênero","Sertanejo"]],songs:["Cadeira Cativa","Largado às Traças","Status Que Eu Não Queria"]},
+  {k:"gusttavo",n:"Gusttavo Lima",tipo:"Cantor e compositor",c:"linear-gradient(135deg,#16202B,#3D6FE0)",wiki:"https://pt.wikipedia.org/wiki/Gusttavo_Lima",
+   resumo:"Cantor, compositor e empresário sertanejo. Começou a cantar aos 7 anos, e \"Balada\" é seu maior sucesso.",
+   info:[["Nascimento","3 de setembro de 1989"],["Origem","Presidente Olegário (MG)"],["Gênero","Sertanejo"]],songs:["Bala Alojada","Retrovisor","Balada","Inventor dos Amores"]},
+  {k:"simone",n:"Simone Mendes",tipo:"Cantora e compositora",c:"linear-gradient(135deg,#E8478B,#7A5CFA)",wiki:"https://pt.wikipedia.org/wiki/Simone_Mendes",
+   resumo:"Cantora baiana que fez parte do Forró do Muído e da dupla Simone & Simaria. Segue em carreira solo desde 2022.",
+   info:[["Nascimento","24 de maio de 1984"],["Origem","Uibaí (BA)"],["Gênero","Sertanejo"]],songs:["Direitos Iguais","Erro Gostoso","126 Cabides"]},
+  {k:"zeze",n:"Zezé Di Camargo",tipo:"Cantor e compositor",c:"linear-gradient(135deg,#0F8B9C,#16202B)",wiki:"https://pt.wikipedia.org/wiki/Zez%C3%A9_Di_Camargo",
+   resumo:"Metade da dupla Zezé Di Camargo & Luciano, que vendeu mais de 30 milhões de discos. \"É o Amor\" é o maior sucesso da dupla.",
+   info:[["Nascimento","17 de agosto de 1962"],["Origem","Pirenópolis (GO)"],["Gênero","Sertanejo"]],songs:["Irmão da Lua, Amigo das Estrelas","É o Amor","Quero Ter Você Comigo"]},
+  {k:"jeninho",n:"Jeninho",tipo:"Cantor",c:"linear-gradient(135deg,#2E9E5B,#0F8B9C)",wiki:null,
+   resumo:"Cantor sertanejo que está entre os mais tocados do mês com \"Peão Todo Tatuado\", em parceria com Mariana Fagundes.",
+   info:[["Gênero","Sertanejo"]],songs:["Peão Todo Tatuado"]},
+  {k:"eduardo",n:"Eduardo Costa",tipo:"Cantor e compositor",c:"linear-gradient(135deg,#E0A100,#FF4D2E)",wiki:"https://pt.wikipedia.org/wiki/Eduardo_Costa_(cantor)",
+   resumo:"Cantor sertanejo mineiro que começou cantando em bares de Belo Horizonte e seguiu carreira solo a partir de 2000.",
+   info:[["Nascimento","13 de dezembro de 1978"],["Origem","Abre Campo (MG)"],["Gênero","Sertanejo"]],songs:["Imagina Eu","Sapequinha","Coração Aberto"]},
+  {k:"diego",n:"Diego & Victor Hugo",tipo:"Dupla sertaneja",c:"linear-gradient(135deg,#7A5CFA,#0F8B9C)",wiki:"https://pt.wikipedia.org/wiki/Diego_%26_Victor_Hugo",
+   resumo:"Dupla formada por Diego, de Brasília, e Victor Hugo, de Uberlândia. Também compõem sucessos gravados por outros artistas.",
+   info:[["Integrantes","Diego e Victor Hugo"],["Origem","Brasília (DF) e Uberlândia (MG)"],["Gênero","Sertanejo"]],songs:["Tubarões","Infarto","Sem Contraindicação"]},
+  {k:"bruno",n:"Bruno Mars",tipo:"Cantor e compositor",c:"linear-gradient(135deg,#E8478B,#E0A100)",wiki:"https://pt.wikipedia.org/wiki/Bruno_Mars",
+   resumo:"Cantor americano conhecido pelo pop com cara de anos 70 e 80. Já ganhou 15 prêmios Grammy.",
+   info:[["Nascimento","8 de outubro de 1985"],["Origem","Honolulu, Havaí (EUA)"],["Gênero","Pop, funk, R&B"]],songs:["I Just Might","Just the Way You Are","Uptown Funk"]},
+  {k:"alex",n:"Alex Warren",tipo:"Cantor e compositor",c:"linear-gradient(135deg,#3D6FE0,#2E9E5B)",wiki:"https://en.wikipedia.org/wiki/Alex_Warren",
+   resumo:"Começou como criador de vídeos no YouTube e no TikTok. Sua música \"Ordinary\" chegou ao 1º lugar da Billboard Hot 100.",
+   info:[["Nascimento","18 de setembro de 2000"],["Origem","Carlsbad, Califórnia (EUA)"],["Gênero","Pop, folk-pop"]],songs:["Ordinary","Burning Down","Carry You Home"]},
+  {"k": "bts", "n": "BTS", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#7A5CFA,#16202B)", "wiki": "https://pt.wikipedia.org/wiki/BTS", "resumo": "Grupo masculino sul-coreano que bateu recordes na Billboard e ganhou prêmios no mundo todo.", "info": [["Estreia", "2013"], ["Agência", "Big Hit Music (HYBE)"], ["Integrantes", "7: RM, Jin, SUGA, J-Hope, Jimin, V, Jungkook"], ["Origem", "Coreia do Sul"]], "songs": ["Dynamite", "Fake Love", "Spring Day"], "busca": "kpop k-pop coreano coreia RM, Jin, SUGA, J-Hope, Jimin, V, Jungkook"},
+  {"k": "blackpink", "n": "BLACKPINK", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#16202B,#E8478B)", "wiki": "https://pt.wikipedia.org/wiki/BLACKPINK", "resumo": "Um dos maiores grupos femininos do mundo, formado pela YG Entertainment.", "info": [["Estreia", "2016"], ["Agência", "YG Entertainment"], ["Integrantes", "4: Jisoo, Jennie, Rosé, Lisa"], ["Origem", "Coreia do Sul"]], "songs": ["How You Like That", "Ddu-Du Ddu-Du", "Kill This Love"], "busca": "kpop k-pop coreano coreia Jisoo, Jennie, Rosé, Lisa"},
+  {"k": "straykids", "n": "Stray Kids", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#FF4D2E,#16202B)", "wiki": "https://pt.wikipedia.org/wiki/Stray_Kids", "resumo": "Grupo masculino da JYP Entertainment que surgiu de um reality show com o mesmo nome.", "info": [["Estreia", "2018"], ["Agência", "JYP Entertainment"], ["Integrantes", "8: Bang Chan, Lee Know, Changbin, Hyunjin, Han, Felix, Seungmin, I.N"], ["Origem", "Coreia do Sul"]], "songs": ["Maniac", "Thunderous", "District 9"], "busca": "kpop k-pop coreano coreia Bang Chan, Lee Know, Changbin, Hyunjin, Han, Felix, Seungmin, I.N"},
+  {"k": "twice", "n": "TWICE", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#FF4D2E,#E8478B)", "wiki": "https://pt.wikipedia.org/wiki/TWICE", "resumo": "Grupo feminino da JYP Entertainment formado no reality show Sixteen.", "info": [["Estreia", "2015"], ["Agência", "JYP Entertainment"], ["Integrantes", "9: Nayeon, Jeongyeon, Momo, Sana, Jihyo, Mina, Dahyun, Chaeyoung, Tzuyu"], ["Origem", "Coreia do Sul"]], "songs": ["Cheer Up", "TT", "Signal"], "busca": "kpop k-pop coreano coreia Nayeon, Jeongyeon, Momo, Sana, Jihyo, Mina, Dahyun, Chaeyoung, Tzuyu"},
+  {"k": "seventeen", "n": "SEVENTEEN", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#3D6FE0,#E8478B)", "wiki": "https://pt.wikipedia.org/wiki/Seventeen_(banda)", "resumo": "Grupo masculino de 13 integrantes, dividido em unidades de hip-hop, vocal e performance.", "info": [["Estreia", "2015"], ["Agência", "Pledis Entertainment"], ["Integrantes", "13: S.Coups, Jeonghan, Joshua, Jun, Hoshi, Wonwoo, Woozi, DK, Mingyu, The8, Seungkwan, Vernon, Dino"], ["Origem", "Coreia do Sul"]], "songs": ["Don't Wanna Cry", "Pretty U", "Boom Boom"], "busca": "kpop k-pop coreano coreia S.Coups, Jeonghan, Joshua, Jun, Hoshi, Wonwoo, Woozi, DK, Mingyu, The8, Seungkwan, Vernon, Dino"},
+  {"k": "aespa", "n": "aespa", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#0F8B9C,#7A5CFA)", "wiki": "https://pt.wikipedia.org/wiki/Aespa", "resumo": "Grupo feminino da SM Entertainment conhecido pelo conceito de metaverso.", "info": [["Estreia", "2020"], ["Agência", "SM Entertainment"], ["Integrantes", "4: Karina, Winter, Giselle, Ningning"], ["Origem", "Coreia do Sul"]], "songs": ["Next Level", "Savage", "Black Mamba"], "busca": "kpop k-pop coreano coreia Karina, Winter, Giselle, Ningning"},
+  {"k": "newjeans", "n": "NewJeans", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#3D6FE0,#0F8B9C)", "wiki": "https://pt.wikipedia.org/wiki/NewJeans", "resumo": "Grupo feminino formado pela ADOR (HYBE). Depois do fim do contrato, anunciou a volta com o nome NJZ.", "info": [["Estreia", "2022"], ["Agência", "ADOR (HYBE)"], ["Integrantes", "5: Minji, Hanni, Danielle, Haerin, Hyein"], ["Origem", "Coreia do Sul"]], "songs": ["Super Shy", "Hype Boy", "Ditto"], "busca": "kpop k-pop coreano coreia Minji, Hanni, Danielle, Haerin, Hyein"},
+  {"k": "enhypen", "n": "ENHYPEN", "tipo": "Grupo de K-pop", "kpop": true, "c": "linear-gradient(135deg,#16202B,#FF4D2E)", "wiki": "https://pt.wikipedia.org/wiki/Enhypen", "resumo": "Grupo masculino formado no reality show I-Land, da Belift Lab (CJ ENM e HYBE).", "info": [["Estreia", "2020"], ["Agência", "Belift Lab"], ["Integrantes", "7: Jungwon, Heeseung, Jay, Jake, Sunghoon, Sunoo, Ni-ki"], ["Origem", "Coreia do Sul"]], "songs": ["Given-Taken", "Drunk-Dazed", "TFW"], "busca": "kpop k-pop coreano coreia Jungwon, Heeseung, Jay, Jake, Sunghoon, Sunoo, Ni-ki"}
+];
+const ini=n=>!/[ &]/.test(n)&&n.length<=4?n:n.split(/[ &]+/).filter(w=>w.length>2||/^[A-ZÀ-Ú]/.test(w)).slice(0,2).map(w=>w[0]).join("");
+const google=t=>"https://www.google.com/search?tbm=isch&q="+encodeURIComponent(t);
+const micSvg='<svg class="mic" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><rect x="22" y="6" width="20" height="32" rx="10" fill="rgba(255,255,255,.25)"/><path d="M14 30a18 18 0 0 0 36 0M32 48v10M22 58h20"/></svg>';
+function painelArtista(a){
+  const nosHits=hits.map((h,i)=>({h,i})).filter(({h})=>norm(h[1]).includes(norm(a.n.split(" &")[0])));
+  const ranking=nosHits.length?nosHits.map(({h,i})=>`${i+1}º ${h[0]}`).join(", "):"";
+  return `<article class="kp">
+    <div class="hero" style="background:${a.c}"><span class="ini">${ini(a.n)}</span>${micSvg}<h3>${a.n}<small>${a.tipo}</small></h3></div>
+    <div class="body">
+      <p class="resumo">${a.resumo}</p>
+      <dl>${a.info.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}${ranking?`<dt>Em alta</dt><dd>${ranking}</dd>`:""}</dl>
+      <div><div class="res-h" style="margin:0 0 6px">Músicas</div><div class="songs">${a.songs.map(t=>`<span>${t}</span>`).join("")}</div></div>
+      <div class="links">
+        <a class="pri" href="${google(a.n+(a.kpop?" kpop":" cantor"))}" target="_blank" rel="noopener">Ver fotos</a>
+        <a href="${"https://open.spotify.com/search/"+encodeURIComponent(a.n)}" target="_blank" rel="noopener">Ouvir no Spotify</a>
+        ${a.wiki?`<a href="${a.wiki}" target="_blank" rel="noopener">Wikipédia</a>`:""}
+      </div>
+      <div class="fonte">${a.fonte||(a.wiki?"Informações da Wikipédia.":"Informações do ranking das rádios de outubro de 2026.")}</div>
+    </div></article>`;
+}
+const artCarrossel=()=>`<div class="res-h">Artistas em alta</div><div class="arts">${artistas.filter(a=>!a.kpop).map(a=>`<button class="art-c" data-art="${a.k}"><span class="ph" style="background:${a.c}">${ini(a.n)}</span>${a.n}</button>`).join("")}</div><div class="res-h">K-pop</div><div class="arts">${artistas.filter(a=>a.kpop).map(a=>`<button class="art-c" data-art="${a.k}"><span class="ph" style="background:${a.c}">${ini(a.n)}</span>${a.n}</button>`).join("")}</div>`;
+function buscar(){
+  const raw=$("#buscaInput").value.trim(),q=norm(raw);const out=$("#buscaRes");
+  if(!q){out.innerHTML=artCarrossel()+`<p class="empty">Digite algo ou toque em um artista para ver fotos e informações.</p>`;return}
+  const grupos=[];
+  const ar=q.length>=3?artistas.filter(a=>norm(a.n+" "+(a.busca||"")).includes(q)||a.songs.some(t=>norm(t).includes(q))):[];
+  const ps=Object.entries(pessoas).filter(([k,p])=>norm(p.n).includes(q));
+  if(ps.length)grupos.push(["Pessoas",ps.map(([k,p])=>`<button class="res" data-pessoa="${k}">${av(p)}<div class="info"><div class="t">${hl(p.n,q)}</div><div class="meta">Toque para conversar</div></div></button>`)]);
+  const po=posts.map((x,i)=>({x,i})).filter(({x})=>norm(strip(x.t)).includes(q)||norm(quem(x.p).n).includes(q));
+  if(po.length)grupos.push(["Posts",po.map(({x,i})=>`<button class="res" data-post="${i}">${av(quem(x.p))}<div class="info"><div class="t">${quem(x.p).n}</div><div class="meta">${hl(strip(x.t),q)}</div></div></button>`)]);
+  const me=memes.map((m,i)=>({m,i})).filter(({m})=>norm(m.top+" "+m.bot+" "+m.cat).includes(q));
+  if(me.length)grupos.push(["Memes",me.map(({m,i})=>`<button class="res" data-meme="${i}"><div class="sq" style="background:${m.art}"></div><div class="info"><div class="t">${hl(m.top,q)}</div><div class="meta">${hl(m.bot,q)}</div></div></button>`)]);
+  const tr=tracks.map((x,i)=>({x,i})).filter(({x})=>norm(x.t+" "+x.a).includes(q));
+  const hi=hits.map((h,i)=>({h,i})).filter(({h})=>norm(h[0]+" "+h[1]).includes(q));
+  if(tr.length||hi.length)grupos.push(["Músicas",[
+    ...tr.map(({x,i})=>`<button class="res" data-track="${i}"><div class="sq" style="background:${x.c}"></div><div class="info"><div class="t">${hl(x.t,q)}</div><div class="meta">${hl(x.a,q)} · Playlist da turma</div></div></button>`),
+    ...hi.map(({h,i})=>`<a class="res" href="${spot(h[0],h[1])}" target="_blank" rel="noopener"><div class="sq" style="background:var(--soft);display:grid;place-items:center;font-weight:800;color:var(--zy)">${i+1}</div><div class="info"><div class="t">${hl(h[0],q)}</div><div class="meta">${hl(h[1],q)} · Em alta</div></div></a>`)
+  ]]);
+  const topo=ar.length?painelArtista(ar[0])+(ar.length>1?`<div class="res-h">Outros artistas</div>`+ar.slice(1).map(a=>`<button class="res" data-art="${a.k}"><span class="sq" style="background:${a.c};border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800">${ini(a.n)}</span><div class="info"><div class="t">${hl(a.n,q)}</div><div class="meta">${a.tipo}</div></div></button>`).join(""):""):"";
+  out.innerHTML=(topo||grupos.length)?topo+grupos.map(([t,itens])=>`<div class="res-h">${t}</div>${itens.join("")}`).join(""):`<p class="empty">Nada encontrado para "${esc(raw)}".</p>`;
+}
+$("#buscaInput").addEventListener("input",buscar);
+$("#buscaForm").addEventListener("submit",e=>{e.preventDefault();buscar()});
+$("#buscaRes").addEventListener("click",e=>{
+  const ab=e.target.closest("[data-art]");if(ab){const a=artistas.find(x=>x.k===ab.dataset.art);$("#buscaInput").value=a.n;buscar();$("#main").scrollTop=0;return}
+  const b=e.target.closest("button.res");if(!b)return;
+  if(b.dataset.post){go("inicio");posts.forEach(p=>p.open=false);posts[b.dataset.post].open=true;renderFeed();document.querySelectorAll("#feed .post")[b.dataset.post].scrollIntoView({block:"start"})}
+  else if(b.dataset.meme){go("memes");memeCat="Todos";renderMemes();document.querySelectorAll("#memeList article")[b.dataset.meme].scrollIntoView({block:"start"})}
+  else if(b.dataset.track){go("musica");load(+b.dataset.track);if(!playing)play()}
+  else if(b.dataset.pessoa){const k=b.dataset.pessoa;let i=convs.findIndex(c=>c.p===k);if(i<0){convs.push({p:k,u:0,m:[]});i=convs.length-1}go("chat");abrirConversa(i)}
+});
+buscar();
+</script>
+
+</body></html>
