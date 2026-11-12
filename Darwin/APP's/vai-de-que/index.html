@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Vai de Quê?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+/* Layout: app de tela cheia. Mapa ocupa o fundo; painel "Perto de você" embaixo no celular e à esquerda no computador. */
+:root{
+  --bg:#eef2f6; --surface:#ffffff; --surface-2:#f4f7fa; --fg:#14202e; --muted:#5a6878; --line:#d5dde6;
+  --ink:#16324f; --accent:#ffc629; --accent-fg:#1d1600;
+  --plane:#1f7ae0; --train:#d6283b; --bus:#16924a; --taxi:#e0a100;
+  --map-bg:#dfe7ee; --map-grid:rgba(22,50,79,.07);
+  --live:#16924a; --sim:#a35f00; --osm:#1f7ae0;
+  --shadow:0 6px 24px rgba(20,32,46,.14);
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1520; --surface:#152130; --surface-2:#1b2a3c; --fg:#e6edf5; --muted:#93a3b5; --line:#2a3b50;
+  --ink:#cfe0f2; --accent:#ffc629; --accent-fg:#1d1600;
+  --plane:#5aa6ff; --train:#ff5a6a; --bus:#3cc47a; --taxi:#ffc629;
+  --map-bg:#132030; --map-grid:rgba(207,224,242,.06);
+  --live:#3cc47a; --sim:#ffb44d; --osm:#5aa6ff;
+  --shadow:0 6px 24px rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1520; --surface:#152130; --surface-2:#1b2a3c; --fg:#e6edf5; --muted:#93a3b5; --line:#2a3b50;
+  --ink:#cfe0f2; --accent:#ffc629; --accent-fg:#1d1600;
+  --plane:#5aa6ff; --train:#ff5a6a; --bus:#3cc47a; --taxi:#ffc629;
+  --map-bg:#132030; --map-grid:rgba(207,224,242,.06);
+  --live:#3cc47a; --sim:#ffb44d; --osm:#5aa6ff;
+  --shadow:0 6px 24px rgba(0,0,0,.45); color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.4}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:2000;background:var(--surface)}
+*{box-sizing:border-box}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr;}
+header.top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between;
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:var(--surface);border-bottom:1px solid var(--line);position:relative;z-index:1000}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;flex:none}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:1.45rem;letter-spacing:-.02em;margin:0;color:var(--ink);line-height:1}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.8rem}
+.where{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;font-size:.88rem;font-weight:700}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+select.btn{padding-right:10px}
+
+.main{position:relative;min-height:0;display:grid;grid-template-columns:1fr}
+#map{position:absolute;inset:0;background-color:var(--map-bg);
+  background-image:linear-gradient(var(--map-grid) 1px,transparent 1px),linear-gradient(90deg,var(--map-grid) 1px,transparent 1px);background-size:40px 40px}
+.leaflet-container{font-family:var(--f-body)}
+.leaflet-control-attribution{font-size:10px}
+
+.panel{position:absolute;z-index:900;left:0;right:0;bottom:0;max-height:52%;display:flex;flex-direction:column;
+  background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:var(--shadow);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.panel-inner{overflow:auto;padding-block:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+.grab{width:42px;height:4px;border-radius:4px;background:var(--line);margin:8px auto 0;flex:none}
+@media (min-width:860px){
+  .panel{top:14px;bottom:14px;left:14px;right:auto;width:380px;max-height:none;border-radius:18px}
+  .grab{display:none}
+}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 10px 5px 6px;cursor:pointer;font-weight:700;font-size:.86rem}
+.chip .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.chip .n{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:400}
+.chip[aria-pressed="false"]{opacity:.5}
+.chip[aria-pressed="false"] .dot{filter:grayscale(1)}
+
+h2{font-family:var(--f-display);font-weight:800;font-size:1.05rem;margin:0;color:var(--ink);letter-spacing:-.01em;text-wrap:balance}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+
+.best{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:var(--surface-2);display:flex;flex-direction:column;gap:3px;cursor:pointer;text-align:left;min-width:0}
+.tile:hover{border-color:var(--ink)}
+.tile .k{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.82rem}
+.tile .v{font-family:var(--f-display);font-weight:800;font-size:1.25rem;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.1}
+.tile .s{font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;color:#fff;flex:none}
+
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;text-align:left;width:100%}
+.item:hover{background:var(--surface-2)}
+.ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff}
+.ic.round{border-radius:50%}
+.item .name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .dist{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:.9rem}
+.item .dist small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+.badge{display:inline-block;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:5px;border:1px solid currentColor;vertical-align:1px;margin-right:4px}
+.spd{display:inline-block;font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums;margin-right:6px}
+.b-live{color:var(--live)} .b-osm{color:var(--osm)} .b-sim{color:var(--sim)}
+
+.note{font-size:.82rem;color:var(--muted);background:var(--surface-2);border:1px dashed var(--line);border-radius:10px;padding:8px 10px}
+.note strong{color:var(--fg)}
+.sources{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sq{width:14px;height:14px;border-radius:4px;background:var(--muted)} .ci{width:14px;height:14px;border-radius:50%;background:var(--muted)}
+
+/* marcadores */
+.mk{display:grid;place-items:center;color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.mk.stop{border-radius:8px}
+.mk.veh{border-radius:50%}
+.mk.sim{border-style:dashed}
+.mk svg{display:block}
+.me{width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 0 0 6px rgba(31,122,224,.25)}
+.picking #map{cursor:crosshair}
+.toast{position:absolute;z-index:1100;top:12px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:999px;font-weight:700;font-size:.85rem;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
+@media (min-width:860px){.toast{left:calc(50% + 200px)}}
+.leaflet-popup-content{font-family:var(--f-body);font-size:.88rem;margin:10px 12px}
+.leaflet-popup-content b{font-size:.95rem}
+/* tela de abertura */
+.splash{position:fixed;inset:0;z-index:3000;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:opacity .45s ease}
+.splash.out{opacity:0;pointer-events:none}
+.splash .logo{width:72px;height:72px;border-radius:20px}
+.splash h2{font-size:clamp(2.2rem,8vw,3.4rem);letter-spacing:-.03em;line-height:1}
+.bar{width:min(220px,60vw);height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:40%;border-radius:6px;background:var(--accent);animation:slide 1.3s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="splash" id="splash" role="status" aria-label="Carregando, procurando sua localização">
+  <div class="logo" aria-hidden="true">
+    <svg width="42" height="42" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+  </div>
+  <h2>Vai de Quê?</h2>
+  <div class="bar" aria-hidden="true"><i></i></div>
+</div>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+      </div>
+      <div>
+        <h1>Vai de Quê?</h1>
+        <p>Aviões, trens, ônibus e táxis perto de você</p>
+      </div>
+    </div>
+    <div class="where">
+      <button class="btn primary" id="btnGps" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm-1-6h2v3.1A7 7 0 0 1 18.9 11H22v2h-3.1A7 7 0 0 1 13 18.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1V2zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+        Minha localização
+      </button>
+      <button class="btn" id="btnPick" type="button" aria-pressed="false">Escolher no mapa</button>
+      <label class="sr" for="city" hidden>Cidade</label>
+      <select class="btn" id="city" aria-label="Escolher cidade">
+        <option value="">Ir para cidade…</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="main">
+    <div id="map" role="application" aria-label="Mapa de transportes"></div>
+    <div class="toast" id="toast" hidden></div>
+    <section class="panel" aria-label="Perto de você">
+      <div class="grab" aria-hidden="true"></div>
+      <div class="panel-inner">
+        <div class="chips" id="chips"></div>
+        <div>
+          <div class="eyebrow" id="whereLabel">Você está em: São Paulo (Praça da Sé)</div>
+          <h2>O mais perto de cada tipo</h2>
+        </div>
+        <div class="best" id="best"></div>
+        <div class="note" id="note" hidden></div>
+        <h2>Perto de você</h2>
+        <ul class="list" id="list"></ul>
+        <div class="legend">
+          <span><i class="sq"></i>Parada ou estação</span>
+          <span><i class="ci"></i>Veículo em movimento</span>
+        </div>
+        <div class="sources" id="sources"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+// ---------- configuração ----------
+const CITIES = [
+  {name:"São Paulo (Praça da Sé)", lat:-23.5505, lon:-46.6333},
+  {name:"Rio de Janeiro (Centro)", lat:-22.9035, lon:-43.1780},
+  {name:"Brasília (Rodoviária)", lat:-15.7939, lon:-47.8828},
+  {name:"Belo Horizonte (Praça Sete)", lat:-19.9191, lon:-43.9386},
+  {name:"Curitiba (Centro)", lat:-25.4290, lon:-49.2671},
+  {name:"Porto Alegre (Centro)", lat:-30.0277, lon:-51.2287},
+  {name:"Salvador (Centro)", lat:-12.9777, lon:-38.5016},
+  {name:"Recife (Centro)", lat:-8.0631, lon:-34.8711},
+  {name:"Fortaleza (Centro)", lat:-3.7319, lon:-38.5267}
+];
+const MODES = {
+  plane:{label:"Aviões", one:"Avião", color:"--plane"},
+  train:{label:"Trens", one:"Trem", color:"--train"},
+  bus:{label:"Ônibus", one:"Ônibus", color:"--bus"},
+  taxi:{label:"Táxis", one:"Táxi", color:"--taxi"}
+};
+const ICON = {
+  plane:'<path fill="currentColor" d="M12 2c.8 0 1.5.7 1.5 1.5V9l7.5 4.3V15l-7.5-2.2v4.6l2 1.6V20.5L12 19.6l-3.5.9V19l2-1.6v-4.6L3 15v-1.7L10.5 9V3.5C10.5 2.7 11.2 2 12 2z"/>',
+  train:'<path fill="currentColor" fill-rule="evenodd" d="M12 2c4 0 7 .5 7 4v9.5a3.5 3.5 0 0 1-2.4 3.3L18 21h-2.2l-1.3-2h-5l-1.3 2H6l1.4-2.2A3.5 3.5 0 0 1 5 15.5V6c0-3.5 3-4 7-4zM7 7v4h10V7H7zm1.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>',
+  bus:'<path fill="currentColor" fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-1 1.7V20a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1.5H8V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2.3A2 2 0 0 1 4 16V4a2 2 0 0 1 2-2zm0 3v6h12V5H6zm1.5 8.3a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm9 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/>',
+  taxi:'<path fill="currentColor" fill-rule="evenodd" d="M9 3h6v2h1.5l1.6 4.2A2 2 0 0 1 20 11v5a1 1 0 0 1-1 1h-.5v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-2h-7v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-2H5a1 1 0 0 1-1-1v-5a2 2 0 0 1 1.9-1.8L7.5 5H9V3zm-.2 4-1 2.5h8.4l-1-2.5H8.8zM7.3 12a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm9.4 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/>'
+};
+const svg = (m, s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true">${ICON[m]}</svg>`;
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const colorOf = m => cssVar(MODES[m].color);
+
+// ---------- estado ----------
+const state = {
+  me: {lat:CITIES[0].lat, lon:CITIES[0].lon, label:CITIES[0].name},
+  on: {plane:true, train:true, bus:true, taxi:true},
+  stops: [],     // paradas, estações e pontos de táxi
+  planes: [],    // aviões
+  sims: [],      // veículos simulados que se movem
+  buses: [],     // ônibus reais (quando a cidade tem dado aberto)
+  src: {planes:"…", places:"…"},
+  picking: false,
+  loadId: 0
+};
+const markers = new Map();
+
+// ---------- utilidades ----------
+function dist(a, b){
+  const R = 6371000, toR = Math.PI/180;
+  const dLat = (b.lat-a.lat)*toR, dLon = (b.lon-a.lon)*toR;
+  const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*toR)*Math.cos(b.lat*toR)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x));
+}
+function fmtDist(m){ return m < 1000 ? Math.round(m/10)*10 + " m" : (m/1000).toFixed(m < 10000 ? 1 : 0).replace(".", ",") + " km"; }
+function walk(m){ const min = Math.max(1, Math.round(m/80)); return min > 90 ? "longe para ir a pé" : min + " min a pé"; }
+function rand(seed){ let s = seed >>> 0; return () => { s = (s*1664525 + 1013904223) >>> 0; return s/4294967296; }; }
+function offset(p, meters, angle){
+  const dLat = meters*Math.cos(angle)/111320;
+  const dLon = meters*Math.sin(angle)/(111320*Math.cos(p.lat*Math.PI/180));
+  return {lat:p.lat+dLat, lon:p.lon+dLon};
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+let toastTimer;
+function toast(msg, ms=3500){
+  const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, ms);
+}
+async function fetchJSON(url, opts={}, ms=12000){
+  const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), ms);
+  try { const r = await fetch(url, {...opts, credentials:"omit", cache:"no-store", signal:ctl.signal}); if(!r.ok) throw new Error("HTTP "+r.status); return await r.json(); }
+  finally { clearTimeout(tm); }
+}
+
+// ---------- mapa ----------
+const map = L.map("map", {zoomControl:false, attributionControl:true}).setView([state.me.lat, state.me.lon], 14);
+L.control.zoom({position:"topright"}).addTo(map);
+let tilesFailed = 0, tilesOk = 0;
+// Mapa base: Esri (funciona sem chave e abrindo o arquivo direto). Se falhar, troca para o OpenStreetMap.
+const BASES = [
+  {url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", opts:{maxZoom:19,
+    attribution:'Mapa &copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, dados &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> e outros'}},
+  {url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png", opts:{maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}}
+];
+let baseIdx = 0, baseLayer = null;
+function useBase(i){
+  if(baseLayer) map.removeLayer(baseLayer);
+  baseIdx = i; tilesFailed = 0; tilesOk = 0;
+  baseLayer = L.tileLayer(BASES[i].url, BASES[i].opts)
+    .on("tileerror", () => { tilesFailed++; if(tilesOk === 0 && tilesFailed >= 4 && baseIdx + 1 < BASES.length) useBase(baseIdx + 1); else updateNote(); })
+    .on("tileload", () => { tilesOk++; })
+    .addTo(map);
+}
+useBase(0);
+
+const meMarker = L.marker([state.me.lat, state.me.lon], {
+  icon:L.divIcon({className:"", html:'<div class="me" title="Você"></div>', iconSize:[18,18], iconAnchor:[9,9]}),
+  zIndexOffset:1000, keyboard:false
+}).addTo(map).bindTooltip("Você está aqui");
+const radiusCircle = L.circle([state.me.lat, state.me.lon], {radius:1500, color:cssVar("--ink"), weight:1, opacity:.35, fillOpacity:.04, interactive:false}).addTo(map);
+
+function iconFor(it){
+  const size = it.mode === "plane" ? 30 : (it.kind === "stop" ? 26 : 28);
+  const rot = it.mode === "plane" && it.heading != null ? `transform:rotate(${it.heading}deg)` : "";
+  const cls = `mk ${it.kind === "stop" ? "stop" : "veh"} ${it.source === "sim" ? "sim" : ""}`;
+  return L.divIcon({
+    className:"",
+    html:`<div class="${cls}" style="width:${size}px;height:${size}px;background:${colorOf(it.mode)}"><div style="${rot}">${svg(it.mode, size-10)}</div></div>`,
+    iconSize:[size,size], iconAnchor:[size/2,size/2], popupAnchor:[0,-size/2]
+  });
+}
+function popupFor(it){
+  const d = dist(state.me, it);
+  const b = it.source === "live" ? '<span class="badge b-live">ao vivo</span>' : it.source === "osm" ? '<span class="badge b-osm">OpenStreetMap</span>' : '<span class="badge b-sim">simulado</span>';
+  const extra = (it.kind === "vehicle" && it.kmh != null ? `<br><b>${it.kmh === 0 ? "Parado agora" : "Velocidade: " + it.kmh + " km/h"}</b>` : "") + (it.extra ? `<br>${esc(it.extra)}` : "");
+  const far = it.mode === "plane" ? `a ${fmtDist(d)} de você` : `a ${fmtDist(d)} · ${walk(d)}`;
+  return `<b>${esc(it.name)}</b><br>${b}${MODES[it.mode].one}${it.kind === "stop" ? " · parada" : ""}${extra}<br>${far}`;
+}
+function allItems(){ return [...state.stops, ...state.planes, ...state.buses, ...state.sims]; }
+
+function syncMarkers(){
+  const seen = new Set();
+  for(const it of allItems()){
+    if(!state.on[it.mode]) continue;
+    seen.add(it.id);
+    let m = markers.get(it.id);
+    if(!m){
+      m = L.marker([it.lat, it.lon], {icon:iconFor(it), title:it.name, zIndexOffset: it.kind === "stop" ? 0 : 500}).addTo(map);
+      m.bindPopup(() => popupFor(m._item));
+      m._iconKey = it.heading; markers.set(it.id, m);
+    } else {
+      m.setLatLng([it.lat, it.lon]);
+      if(it.mode === "plane" && m._iconKey !== it.heading){ m.setIcon(iconFor(it)); m._iconKey = it.heading; }
+    }
+    m._item = it;
+  }
+  for(const [id, m] of markers){ if(!seen.has(id)){ map.removeLayer(m); markers.delete(id); } }
+}
+
+// ---------- painel ----------
+function renderChips(){
+  const counts = {plane:0, train:0, bus:0, taxi:0};
+  for(const it of allItems()) counts[it.mode]++;
+  const el = document.getElementById("chips");
+  el.innerHTML = Object.entries(MODES).map(([k, m]) =>
+    `<button type="button" class="chip" data-mode="${k}" aria-pressed="${state.on[k]}"><span class="dot" style="background:${colorOf(k)}">${svg(k,14)}</span>${m.label} <span class="n">${counts[k]}</span></button>`
+  ).join("");
+}
+function nearest(mode){
+  let best = null, bd = Infinity;
+  for(const it of allItems()){ if(it.mode !== mode) continue; const d = dist(state.me, it); if(d < bd){ bd = d; best = it; } }
+  return best ? {it:best, d:bd} : null;
+}
+function renderBest(){
+  const el = document.getElementById("best");
+  el.innerHTML = Object.entries(MODES).map(([k, m]) => {
+    const n = nearest(k);
+    if(!n) return `<div class="tile"><div class="k"><span class="mini" style="background:${colorOf(k)}">${svg(k,12)}</span>${m.one}</div><div class="v">—</div><div class="s">Nada por perto</div></div>`;
+    const sub = k === "plane" ? (n.it.extra || n.it.name) : walk(n.d);
+    return `<button type="button" class="tile" data-id="${esc(n.it.id)}"><div class="k"><span class="mini" style="background:${colorOf(k)}">${svg(k,12)}</span>${m.one}</div><div class="v">${fmtDist(n.d)}</div><div class="s">${esc(sub)}</div></button>`;
+  }).join("");
+}
+function renderList(){
+  const items = allItems().filter(it => state.on[it.mode]).map(it => ({it, d:dist(state.me, it)}))
+    .sort((a, b) => a.d - b.d).slice(0, 40);
+  const el = document.getElementById("list");
+  if(!items.length){ el.innerHTML = '<li class="note">Ligue pelo menos um tipo de transporte nos botões acima.</li>'; return; }
+  el.innerHTML = items.map(({it, d}) => {
+    const b = it.source === "live" ? '<span class="badge b-live">ao vivo</span>' : it.source === "osm" ? '<span class="badge b-osm">OSM</span>' : '<span class="badge b-sim">simulado</span>';
+    const what = it.kind === "stop" ? (it.mode === "train" ? "Estação" : it.mode === "taxi" ? "Ponto de táxi" : "Ponto de ônibus") : MODES[it.mode].one + (it.mode === "plane" ? " no ar" : " circulando");
+    const spd = it.kind === "vehicle" && it.kmh != null ? `<span class="spd">${it.kmh === 0 ? "parado" : it.kmh + " km/h"}</span>` : "";
+    const sub = it.mode === "plane" ? "" : `<small>${walk(d)}</small>`;
+    return `<li><button type="button" class="item" data-id="${esc(it.id)}"><span class="ic ${it.kind === "stop" ? "" : "round"}" style="background:${colorOf(it.mode)}">${svg(it.mode,20)}</span><span style="min-width:0"><div class="name">${esc(it.name)}</div><div class="meta">${b}${spd}${what}${it.extra ? " · " + esc(it.extra) : ""}</div></span><span class="dist">${fmtDist(d)}${sub}</span></button></li>`;
+  }).join("");
+}
+function srcBadge(txt, cls, label){
+  if(txt.startsWith("simulados")) return '<span class="badge b-sim">simulado</span>';
+  if(txt.startsWith("carregando")) return "";
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function centerOn(lat, lon, zoom){
+  map.setView([lat, lon], zoom, {animate:false});
+  const panel = document.querySelector(".panel").getBoundingClientRect();
+  if(window.innerWidth >= 860) map.panBy([-(panel.width + 14)/2, 0], {animate:false});
+  else map.panBy([0, panel.height/2], {animate:false});
+}
+function renderSources(){
+  document.getElementById("sources").innerHTML =
+    `<div>${srcBadge(state.src.planes, "b-live", "ao vivo")}Aviões: ${esc(state.src.planes)}</div>` +
+    `<div>${srcBadge(state.src.places, "b-osm", "OSM")}Estações e pontos: ${esc(state.src.places)}</div>` +
+    (state.src.buses ? `<div>${state.buses.length ? '<span class="badge b-live">ao vivo</span>' : '<span class="badge b-sim">simulado</span>'}Ônibus: ${esc(state.src.buses)}</div>` : "") +
+    `<div><span class="badge b-sim">simulado</span>${state.buses.length ? "Trens e táxis" : "Ônibus, trens e táxis"} andando são uma simulação: as empresas não liberam a posição deles ao vivo de graça. A velocidade deles também é simulada.</div>`;
+}
+function updateNote(){
+  const msgs = [];
+  if(tilesFailed > 0 && tilesOk === 0 && baseIdx + 1 >= BASES.length) msgs.push("<strong>O desenho das ruas não carregou.</strong> Confira a internet ou abra o app num navegador comum (Chrome, Safari).");
+  const falhou = [];
+  if(state.src.planes.startsWith("simulados")) falhou.push("aviões");
+  if(state.src.places.startsWith("simulados")) falhou.push("estações e pontos");
+  if(falhou.length) msgs.push(`Não consegui buscar os dados reais de <strong>${falhou.join(" e ")}</strong>, então eles estão <strong>simulados</strong> (marcados em laranja).`);
+  const n = document.getElementById("note");
+  n.innerHTML = msgs.join(" "); n.hidden = !msgs.length;
+}
+function renderAll(){ syncMarkers(); renderChips(); renderBest(); renderList(); renderSources(); updateNote(); }
+
+document.addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if(chip){ const k = chip.dataset.mode; state.on[k] = !state.on[k]; renderAll(); return; }
+  const go = e.target.closest("[data-id]");
+  if(go){
+    const m = markers.get(go.dataset.id);
+    const it = allItems().find(x => x.id === go.dataset.id);
+    if(it && !state.on[it.mode]){ state.on[it.mode] = true; renderAll(); }
+    const mk = markers.get(go.dataset.id) || m;
+    if(mk){ map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), it && it.mode === "plane" ? 11 : 16), {duration:.8}); setTimeout(() => mk.openPopup(), 850); }
+  }
+});
+
+// ---------- dados reais ----------
+async function loadPlanes(id){
+  const p = state.me, dLat = 1.2, dLon = 1.2/Math.cos(p.lat*Math.PI/180);
+  const t = () => new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+  // 1) ADSB.lol e airplanes.live: gratuitos e sem chave
+  const adsb = [
+    {nome:"ADSB.lol", url:`https://api.adsb.lol/v2/lat/${p.lat.toFixed(4)}/lon/${p.lon.toFixed(4)}/dist/70`},
+    {nome:"airplanes.live", url:`https://api.airplanes.live/v2/point/${p.lat.toFixed(4)}/${p.lon.toFixed(4)}/70`}
+  ];
+  for(const fonte of adsb){
+    try{
+      const j = await fetchJSON(fonte.url);
+      if(id !== state.loadId) return;
+      const list = j.ac || j.aircraft;
+      if(!Array.isArray(list)) throw new Error("formato");
+      state.planes = list.filter(a => a.lat != null && a.lon != null && a.alt_baro !== "ground").map(a => ({
+        id:"pl-"+a.hex, mode:"plane", kind:"vehicle", source:"live",
+        name:(a.flight || "").trim() || a.r || ("Voo " + String(a.hex).toUpperCase()),
+        lat:a.lat, lon:a.lon, heading:Math.round(a.track || a.true_heading || 0),
+        speed:a.gs != null ? a.gs*0.5144 : 0, kmh:a.gs != null ? Math.round(a.gs*1.852) : null,
+        extra:`${typeof a.alt_baro === "number" ? Math.round(a.alt_baro*0.3048).toLocaleString("pt-BR") + " m de altura" : "altitude ?"}${a.t ? " · " + a.t : ""}`
+      }));
+      state.src.planes = `${fonte.nome}, atualizado às ${t()} (${state.planes.length} no ar num raio de ~130 km)`;
+      renderAll(); return;
+    } catch(e){ /* tenta a próxima fonte */ }
+  }
+  // 2) OpenSky
+  const url = `https://opensky-network.org/api/states/all?lamin=${(p.lat-dLat).toFixed(3)}&lomin=${(p.lon-dLon).toFixed(3)}&lamax=${(p.lat+dLat).toFixed(3)}&lomax=${(p.lon+dLon).toFixed(3)}`;
+  try{
+    const j = await fetchJSON(url);
+    if(id !== state.loadId) return;
+    state.planes = (j.states || []).filter(s => s[5] != null && s[6] != null && !s[8]).map(s => ({
+      id:"pl-"+s[0], mode:"plane", kind:"vehicle", source:"live",
+      name:(s[1] || "").trim() || ("Voo " + s[0].toUpperCase()),
+      lat:s[6], lon:s[5], heading:Math.round(s[10] || 0),
+      speed:s[9] || 0, kmh:s[9] != null ? Math.round(s[9]*3.6) : null,
+      extra:`${s[13] != null || s[7] != null ? Math.round((s[13] ?? s[7])).toLocaleString("pt-BR") + " m de altura" : "altitude ?"} · ${s[2] || ""}`
+    }));
+    state.src.planes = `OpenSky Network, atualizado às ${t()} (${state.planes.length} no ar num raio de ~130 km)`;
+  } catch(e){
+    if(id !== state.loadId) return;
+    if(state.planes.length && state.planes[0].source === "live") return; // mantém os últimos dados reais
+    simPlanes();
+    state.src.planes = "simulados (ADSB.lol, airplanes.live e OpenSky não responderam)";
+  }
+  renderAll();
+}
+// Ônibus ao vivo do Rio de Janeiro (dados abertos da Prefeitura, sem chave)
+function inRio(p){ return p.lat > -23.1 && p.lat < -22.7 && p.lon > -43.8 && p.lon < -43.1; }
+function rioTime(d){
+  const f = new Intl.DateTimeFormat("sv-SE", {timeZone:"America/Sao_Paulo", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  return f.format(d).replace(" ", "+");
+}
+async function loadBuses(id){
+  if(!inRio(state.me)) return;
+  const now = new Date();
+  const url = `https://dados.mobilidade.rio/gps/sppo?dataInicial=${rioTime(new Date(now - 3*60000))}&dataFinal=${rioTime(now)}`;
+  try{
+    const j = await fetchJSON(url, {}, 20000);
+    if(id !== state.loadId) return;
+    const last = new Map();
+    for(const b of j){
+      const lat = parseFloat(String(b.latitude).replace(",", ".")), lon = parseFloat(String(b.longitude).replace(",", "."));
+      if(!isFinite(lat) || !isFinite(lon)) continue;
+      const p = {lat, lon};
+      if(dist(state.me, p) > 3000) continue;
+      const t = +b.datahora || 0, old = last.get(b.ordem);
+      if(!old || t > old.t) last.set(b.ordem, {t, lat, lon, kmh:Math.round(+b.velocidade || 0), linha:b.linha, ordem:b.ordem});
+    }
+    state.buses = [...last.values()].map(b => ({id:"bus-"+b.ordem, mode:"bus", kind:"vehicle", source:"live", name:"Linha " + (b.linha || "?"), lat:b.lat, lon:b.lon, kmh:b.kmh, speed:0, extra:"Ônibus " + b.ordem}));
+    state.sims = state.sims.filter(x => x.mode !== "bus");
+    const t = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    state.src.buses = `Prefeitura do Rio (GPS dos ônibus), atualizado às ${t} (${state.buses.length} a até 3 km)`;
+  } catch(e){
+    if(id !== state.loadId) return;
+    state.src.buses = "o GPS dos ônibus do Rio não respondeu, então os ônibus estão simulados";
+  }
+  renderAll();
+}
+function simPlanes(){
+  const r = rand(Math.round(state.me.lat*1000) ^ Math.round(state.me.lon*1000));
+  const cias = ["AZU", "GLO", "TAM", "PTB", "ONE"];
+  state.planes = Array.from({length:7}, (_, i) => {
+    const pos = offset(state.me, 4000 + r()*60000, r()*Math.PI*2);
+    const alt = Math.round(1500 + r()*10000);
+    return {id:"pl-sim-"+i, mode:"plane", kind:"vehicle", source:"sim", name:cias[i%5] + (1000 + Math.floor(r()*8999)), lat:pos.lat, lon:pos.lon,
+      heading:Math.round(r()*360), speed:180 + r()*60, extra:`${alt.toLocaleString("pt-BR")} m de altura`};
+  });
+}
+async function loadPlaces(id){
+  const {lat, lon} = state.me;
+  const q = `[out:json][timeout:25];(
+    node["railway"~"^(station|halt)$"](around:6000,${lat},${lon});
+    node["public_transport"="station"]["train"="yes"](around:6000,${lat},${lon});
+    node["station"="subway"](around:6000,${lat},${lon});
+    node["highway"="bus_stop"](around:1500,${lat},${lon});
+    node["amenity"="taxi"](around:5000,${lat},${lon});
+    node["aeroway"="aerodrome"](around:40000,${lat},${lon});
+    way["aeroway"="aerodrome"](around:40000,${lat},${lon});
+  );out center 400;`;
+  const hosts = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  for(const h of hosts){
+    try{
+      const j = await fetchJSON(h, {method:"POST", body:"data=" + encodeURIComponent(q), headers:{"Content-Type":"application/x-www-form-urlencoded"}}, 25000);
+      if(id !== state.loadId) return;
+      const seen = new Set(), out = [];
+      for(const el of j.elements || []){
+        const t = el.tags || {}, la = el.lat ?? el.center?.lat, lo = el.lon ?? el.center?.lon;
+        if(la == null) continue;
+        let mode = null;
+        if(t.aeroway === "aerodrome") mode = "plane";
+        else if(t.amenity === "taxi") mode = "taxi";
+        else if(t.highway === "bus_stop") mode = "bus";
+        else mode = "train";
+        const nm = t.name || (mode === "bus" ? "Ponto de ônibus" : mode === "taxi" ? "Ponto de táxi" : mode === "plane" ? "Aeroporto" : "Estação");
+        const key = mode + nm + (mode === "bus" ? la.toFixed(4) : "");
+        if(seen.has(key)) continue; seen.add(key);
+        const extra = mode === "plane" ? (t.iata ? "Aeroporto " + t.iata : "Aeroporto") : mode === "train" ? (t.station === "subway" || t.subway === "yes" ? "Metrô" : "Trem") : (t.route_ref || t.ref || "");
+        out.push({id:"osm-"+el.type+el.id, mode, kind:"stop", source:"osm", name:nm, lat:la, lon:lo, extra});
+      }
+      state.stops = out;
+      state.src.places = `OpenStreetMap (${out.length} encontrados)`;
+      makeSims(); renderAll(); return;
+    } catch(e){ /* tenta o próximo servidor */ }
+  }
+  if(id !== state.loadId) return;
+  simStops();
+  state.src.places = "simulados (o OpenStreetMap não respondeu)";
+  makeSims(); renderAll();
+}
+function simStops(){
+  const r = rand(Math.round(state.me.lat*7919) ^ Math.round(state.me.lon*104729));
+  const out = [];
+  const ruas = ["Rua das Flores", "Av. Brasil", "Rua da Escola", "Praça Central", "Rua do Comércio", "Av. Paulista", "Rua XV", "Largo da Matriz", "Rua Sete", "Av. dos Estados", "Rua do Sol", "Av. Rio Branco"];
+  for(let i = 0; i < 14; i++){ const p = offset(state.me, 120 + r()*1300, r()*Math.PI*2); out.push({id:"st-bus-"+i, mode:"bus", kind:"stop", source:"sim", name:"Ponto " + ruas[i%ruas.length], lat:p.lat, lon:p.lon, extra:""}); }
+  for(let i = 0; i < 4; i++){ const p = offset(state.me, 500 + r()*4500, r()*Math.PI*2); out.push({id:"st-tr-"+i, mode:"train", kind:"stop", source:"sim", name:"Estação " + ["Central", "Norte", "Parque", "Universidade"][i], lat:p.lat, lon:p.lon, extra:i%2 ? "Metrô" : "Trem"}); }
+  for(let i = 0; i < 4; i++){ const p = offset(state.me, 200 + r()*2500, r()*Math.PI*2); out.push({id:"st-tx-"+i, mode:"taxi", kind:"stop", source:"sim", name:"Ponto de táxi " + ruas[(i+5)%ruas.length], lat:p.lat, lon:p.lon, extra:""}); }
+  const ap = offset(state.me, 9000 + r()*12000, r()*Math.PI*2);
+  out.push({id:"st-ap", mode:"plane", kind:"stop", source:"sim", name:"Aeroporto da cidade", lat:ap.lat, lon:ap.lon, extra:"Aeroporto"});
+  state.stops = out;
+}
+
+// ---------- veículos simulados (ônibus, trens e táxis andando) ----------
+function makeSims(){
+  const r = rand(Math.round(state.me.lat*3571) ^ Math.round(state.me.lon*6151));
+  const sims = [];
+  const linhas = ["8000-10", "175T-10", "702U-10", "106A-10", "478P-10", "6412-10"];
+  for(let i = 0; i < (state.buses.length ? 0 : 6); i++){
+    const p = offset(state.me, 200 + r()*1400, r()*Math.PI*2);
+    sims.push({id:"sim-bus-"+i, mode:"bus", kind:"vehicle", source:"sim", name:"Linha " + linhas[i], lat:p.lat, lon:p.lon, ang:r()*Math.PI*2, v:6 + r()*5, vmin:0, vmax:13, extra:"Ônibus circulando"});
+  }
+  for(let i = 0; i < 5; i++){
+    const p = offset(state.me, 150 + r()*1800, r()*Math.PI*2);
+    const free = r() > .35;
+    sims.push({id:"sim-taxi-"+i, mode:"taxi", kind:"vehicle", source:"sim", name:"Táxi " + (100 + Math.floor(r()*899)), lat:p.lat, lon:p.lon, ang:r()*Math.PI*2, v:7 + r()*6, vmin:0, vmax:17, extra:free ? "Livre" : "Ocupado"});
+  }
+  // trens andam entre duas estações de verdade quando houver
+  const st = state.stops.filter(s => s.mode === "train");
+  for(let i = 0; i < 3; i++){
+    let a, b;
+    if(st.length >= 2){ a = st[Math.floor(r()*st.length)]; b = st[Math.floor(r()*st.length)]; if(a === b) b = st[(st.indexOf(a)+1) % st.length]; }
+    else { a = offset(state.me, 3000, r()*Math.PI*2); b = offset(state.me, 3000, r()*Math.PI*2); }
+    sims.push({id:"sim-train-"+i, mode:"train", kind:"vehicle", source:"sim", name:"Trem " + (i+1) + (b.name ? " → " + b.name : ""), a:{lat:a.lat, lon:a.lon}, b:{lat:b.lat, lon:b.lon}, t:r(), dir:1, v:14 + r()*6, vmin:8, vmax:22, lat:a.lat, lon:a.lon, extra:"Trem circulando"});
+  }
+  state.sims = sims;
+}
+function stepSims(dt){
+  for(const s of state.sims){
+    // velocidade muda aos poucos, como no trânsito de verdade
+    s.v = Math.min(s.vmax, Math.max(s.vmin, s.v + (Math.random() - .5)*2.4*dt));
+    if(s.mode !== "train" && Math.random() < .02) s.v = 0; // parou no semáforo ou no ponto
+    s.kmh = Math.round(s.v*3.6);
+    if(s.mode === "train"){
+      const len = Math.max(300, dist(s.a, s.b));
+      s.t += s.dir * (s.v*dt)/len;
+      if(s.t > 1){ s.t = 1; s.dir = -1; } else if(s.t < 0){ s.t = 0; s.dir = 1; }
+      s.lat = s.a.lat + (s.b.lat - s.a.lat)*s.t; s.lon = s.a.lon + (s.b.lon - s.a.lon)*s.t;
+    } else {
+      s.ang += (Math.random() - .5)*.25;
+      const p = offset(s, s.v*dt, s.ang);
+      if(dist(state.me, p) > 2200){ s.ang += Math.PI; } else { s.lat = p.lat; s.lon = p.lon; }
+    }
+  }
+  // aviões: entre uma atualização e outra, seguem em frente na velocidade e direção informadas
+  for(const p of state.planes){
+    if(p.source === "sim") p.kmh = Math.round(p.speed*3.6);
+    if(!p.speed) continue;
+    const np = offset(p, p.speed*dt, p.heading*Math.PI/180);
+    p.lat = np.lat; p.lon = np.lon;
+    if(p.source === "sim" && dist(state.me, p) > 80000) p.heading = (p.heading + 180) % 360;
+  }
+}
+
+// ---------- localização ----------
+function setMe(lat, lon, label, zoom){
+  state.me = {lat, lon, label};
+  state.loadId++;
+  state.stops = []; state.planes = []; state.sims = []; state.buses = [];
+  for(const m of markers.values()) map.removeLayer(m); markers.clear();
+  meMarker.setLatLng([lat, lon]); radiusCircle.setLatLng([lat, lon]);
+  centerOn(lat, lon, zoom || 15);
+  document.getElementById("whereLabel").textContent = "Você está em: " + label;
+  state.src = {planes:"carregando…", places:"carregando…", buses:""};
+  renderAll();
+  const id = state.loadId;
+  loadPlaces(id); loadPlanes(id); loadBuses(id);
+}
+document.getElementById("btnGps").addEventListener("click", () => {
+  if(!navigator.geolocation){ toast("Este aparelho não informa a localização. Escolha uma cidade ou toque no mapa."); return; }
+  toast("Procurando onde você está…", 8000);
+  navigator.geolocation.getCurrentPosition(
+    pos => { toast("Achei você!"); setMe(pos.coords.latitude, pos.coords.longitude, "sua localização (GPS)", 15); },
+    () => toast("Não deu para pegar sua localização aqui. Use “Escolher no mapa” ou escolha uma cidade.", 6000),
+    {enableHighAccuracy:true, timeout:10000, maximumAge:60000}
+  );
+});
+const pickBtn = document.getElementById("btnPick");
+pickBtn.addEventListener("click", () => {
+  state.picking = !state.picking; pickBtn.setAttribute("aria-pressed", state.picking);
+  document.getElementById("app").classList.toggle("picking", state.picking);
+  if(state.picking) toast("Toque no mapa onde você está.");
+});
+map.on("click", e => {
+  if(!state.picking) return;
+  state.picking = false; pickBtn.setAttribute("aria-pressed", "false"); document.getElementById("app").classList.remove("picking");
+  setMe(e.latlng.lat, e.latlng.lng, "ponto escolhido no mapa", map.getZoom());
+});
+const sel = document.getElementById("city");
+sel.innerHTML += CITIES.map((c, i) => `<option value="${i}">${c.name}</option>`).join("");
+sel.addEventListener("change", () => { if(sel.value === "") return; const c = CITIES[+sel.value]; setMe(c.lat, c.lon, c.name, 15); sel.value = ""; });
+
+// ---------- laços de atualização ----------
+let last = performance.now(), listTick = 0;
+setInterval(() => {
+  const now = performance.now(), dt = Math.min(5, (now - last)/1000); last = now;
+  stepSims(dt); syncMarkers();
+  if(++listTick % 2 === 0){ renderBest(); renderList(); }
+  for(const m of markers.values()) if(m.isPopupOpen()) m.setPopupContent(popupFor(m._item));
+}, 1000);
+setInterval(() => loadPlanes(state.loadId), 10000);
+setInterval(() => loadBuses(state.loadId), 20000);
+
+// começa em São Paulo e tenta o GPS sem travar a tela
+setMe(state.me.lat, state.me.lon, state.me.label, 15);
+// tela de abertura: fica até a localização chegar (ou até 30 s, se o GPS não responder)
+const splash = document.getElementById("splash");
+function hideSplash(){
+  if(splash.classList.contains("out")) return;
+  splash.classList.add("out"); map.invalidateSize();
+  setTimeout(() => splash.hidden = true, 500);
+}
+if(navigator.geolocation && !/claude\.ai|claudeusercontent/.test(location.host)){
+  const fallback = setTimeout(() => { hideSplash(); toast("A localização está demorando. Use “Minha localização” ou escolha uma cidade.", 6000); }, 30000);
+  navigator.geolocation.getCurrentPosition(
+    pos => { clearTimeout(fallback); setMe(pos.coords.latitude, pos.coords.longitude, "sua localização (GPS)", 15); hideSplash(); toast("Achei você!"); },
+    () => { clearTimeout(fallback); hideSplash(); toast("Sem permissão de localização. Use “Minha localização”, “Escolher no mapa” ou escolha uma cidade.", 6000); },
+    {enableHighAccuracy:true, timeout:30000, maximumAge:60000});
+} else {
+  setTimeout(hideSplash, 1200);
+}
+})();
+</script>
+
+</body></html>

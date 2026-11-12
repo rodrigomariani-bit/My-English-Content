@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Online English 3 Workbooks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap">
+<style>
+/* Layout: a bright light page with one colorful card per lesson */
+:root{color-scheme:light;--bg:#F4F6FF;--surface:#FFFFFF;--ink:#1D1A39;--muted:#656A8A;--line:#E3E6F5;
+  --blue:#3E63FF;--violet:#8B5CF6;--coral:#FF6B57;--pink:#FF4F9A;--orange:#FF8A1F;--sun:#FFC72C;--sun-ink:#3D2C00;--sun-edge:#E2A800;
+  --font-display:"Sora","Plus Jakarta Sans",system-ui,Arial,sans-serif;--font-body:"Plus Jakarta Sans","Segoe UI",system-ui,Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
+  background-image:radial-gradient(900px 420px at 100% -10%,rgba(255,79,154,.12),transparent 60%),radial-gradient(800px 400px at -10% 0%,rgba(62,99,255,.12),transparent 60%);background-attachment:fixed}
+.wrap{max-width:760px;margin:0 auto;padding:48px max(16px,env(safe-area-inset-right,0px)) 72px max(16px,env(safe-area-inset-left,0px))}
+.badge{display:inline-block;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:.14em;color:#fff;padding:7px 14px;border-radius:999px;background:linear-gradient(120deg,var(--coral),var(--pink) 55%,var(--violet));box-shadow:0 8px 18px -8px rgba(255,79,154,.7)}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1.1;letter-spacing:-.02em;margin:16px 0 10px}
+p.lead{color:var(--muted);margin:0 0 30px;max-width:56ch}
+.list{display:grid;gap:16px;padding:0;margin:0;list-style:none}
+a.card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px 22px 20px 26px;color:inherit;text-decoration:none;overflow:hidden;
+  box-shadow:0 14px 34px -18px rgba(40,52,150,.35);transition:transform .15s,box-shadow .15s}
+a.card:hover{transform:translateY(-3px);box-shadow:0 20px 40px -18px rgba(40,52,150,.45)}
+a.card:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+.num{flex:0 0 auto;display:grid;place-items:center;width:54px;height:54px;border-radius:18px;font-family:var(--font-display);font-weight:800;font-size:24px;color:#fff;background:var(--c);box-shadow:0 8px 16px -8px var(--c)}
+.info{flex:1;min-width:0}
+.card strong{display:block;font-family:var(--font-display);font-size:20px}
+.card span.sub{color:var(--muted);font-size:15px}
+.go{flex:0 0 auto;font-family:var(--font-display);font-weight:800;font-size:15px;background:var(--sun);color:var(--sun-ink);padding:10px 18px;border-radius:999px;box-shadow:0 4px 0 var(--sun-edge)}
+@media (max-width:480px){a.card{flex-wrap:wrap}.go{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <span class="badge">TT 3 · CW</span>
+  <h1>Online English 3</h1>
+  <p class="lead">Choose your lesson, answer the exercises, and send your answers to your teacher at the end, in <b>My results</b>.</p>
+  <ul class="list">
+    <li><a class="card" href="lesson-8/" style="--c:var(--blue)"><span class="num">8</span><span class="info"><strong>Lesson 8</strong><span class="sub">Sections 1 to 3, You know how to… and Practice Makes Perfect 2</span></span><span class="go">Start →</span></a></li>
+    <li><a class="card" href="lesson-9/" style="--c:var(--coral)"><span class="num">9</span><span class="info"><strong>Lesson 9</strong><span class="sub">Sections 1 to 3, You know how to… and WCP 2</span></span><span class="go">Start →</span></a></li>
+  </ul>
+</main>
+</body>
+</html>
