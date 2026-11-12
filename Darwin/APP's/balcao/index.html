@@ -1,0 +1,2183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Protótipo Balcão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: app shell. Sidebar rail on wide screens, bottom tab bar on phones; cool counter-paper ground; statuses read as price tags; the weekly summary prints like a till receipt */
+:root{
+  --paper:#EFF3EE;
+  --surface:#FFFFFF;
+  --sunk:#E3E9E2;
+  --ink:#15201B;
+  --ink-2:#47554F;
+  --ink-3:#6F7D76;
+  --line:#D2DAD1;
+  --cobalt:#2243CF;
+  --cobalt-hover:#1A36AD;
+  --on-cobalt:#FFFFFF;
+  --cobalt-soft:#E1E7FC;
+  --tag:#F2C230;
+  --tag-ink:#2C2200;
+  --ok:#16764A; --ok-soft:#DCF1E4;
+  --warn:#8F4D00; --warn-soft:#FAE9D0;
+  --bad:#B3302A; --bad-soft:#F9DEDA;
+  --scrim:rgba(14,22,18,.42);
+  --shadow:0 1px 2px rgba(21,32,27,.06),0 14px 30px -18px rgba(21,32,27,.30);
+  --shadow-sm:0 1px 2px rgba(21,32,27,.14);
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1311; --surface:#161C1A; --sunk:#1F2724; --ink:#E6ECE8; --ink-2:#A9B5AF; --ink-3:#83908A; --line:#2B3531;
+    --cobalt:#8EA1FF; --cobalt-hover:#AAB9FF; --on-cobalt:#0A1238; --cobalt-soft:#1B2550;
+    --tag:#F0C445; --tag-ink:#271E00;
+    --ok:#5DCB91; --ok-soft:#11301F; --warn:#F1A750; --warn-soft:#3A2911; --bad:#FF8273; --bad-soft:#3E1814;
+    --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 30px -18px rgba(0,0,0,.8); --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1311; --surface:#161C1A; --sunk:#1F2724; --ink:#E6ECE8; --ink-2:#A9B5AF; --ink-3:#83908A; --line:#2B3531;
+  --cobalt:#8EA1FF; --cobalt-hover:#AAB9FF; --on-cobalt:#0A1238; --cobalt-soft:#1B2550;
+  --tag:#F0C445; --tag-ink:#271E00;
+  --ok:#5DCB91; --ok-soft:#11301F; --warn:#F1A750; --warn-soft:#3A2911; --bad:#FF8273; --bad-soft:#3E1814;
+  --scrim:rgba(0,0,0,.6); --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 30px -18px rgba(0,0,0,.8); --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body.noscroll{overflow:hidden}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(1.65rem,1.15rem + 1.6vw,2.35rem);font-weight:800;line-height:1.08}
+h2{font-size:1.08rem;font-weight:700}
+p{margin:0}
+a{color:var(--cobalt)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.muted{color:var(--ink-3);font-size:.86rem}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.lede{color:var(--ink-2);max-width:62ch;font-size:1.02rem}
+.hint{color:var(--ink-3);font-size:.84rem}
+.mono,time,.hm{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.linkbtn{background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-weight:600;color:var(--cobalt);justify-self:start}
+
+/* Shell */
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;align-self:start;display:flex;flex-direction:column;gap:20px;padding-block:22px 18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;border-right:1px solid var(--line);background:var(--surface);overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand strong{font-family:var(--f-display);font-size:1.32rem;font-weight:800;display:block;line-height:1}
+.brand small{display:block;color:var(--ink-3);font-size:.76rem;margin-top:3px}
+.logo{width:40px;height:30px;display:grid;place-items:center;padding-left:8px;background:var(--tag);color:var(--tag-ink);font-family:var(--f-display);font-weight:800;font-size:1rem;clip-path:polygon(11px 0,100% 0,100% 100%,11px 100%,0 50%);position:relative;flex:none}
+.logo::before{content:"";position:absolute;left:7px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:var(--hole,var(--surface))}
+.biz{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;min-width:0;text-decoration:none;color:var(--ink)}
+a.biz:hover{border-color:var(--ink-3)}
+.biz > span:last-child{min-width:0}
+.biz strong{display:block;font-size:.9rem;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.biz small{display:block;color:var(--ink-3);font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);font-family:var(--f-display);font-weight:700;font-size:.82rem;flex:none;color:var(--ink-2)}
+.nav{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;color:var(--ink-2);text-decoration:none;font-weight:600}
+.nav a:hover{background:var(--sunk);color:var(--ink)}
+.nav a[aria-current="page"]{background:var(--cobalt-soft);color:var(--cobalt)}
+.nav-sep{height:1px;background:var(--line);margin:8px 10px}
+[data-icon]{display:grid;place-items:center}
+[data-icon] svg{width:20px;height:20px}
+.count{margin-left:auto;font-family:var(--f-mono);font-size:.72rem;background:var(--bad);color:var(--surface);border-radius:999px;padding:1px 7px;font-weight:600}
+.rail-foot{margin-top:auto;display:grid;gap:8px;justify-items:start}
+.ap-mini{display:flex;align-items:center;gap:9px;font-size:.84rem;font-weight:600}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft);flex:none}
+.dot.off{background:var(--ink-3);box-shadow:0 0 0 3px var(--sunk)}
+.ai-badge{display:inline-flex;align-items:center;font-family:var(--f-mono);font-size:.72rem;color:var(--ink-2);border:1px dashed var(--line);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.ai-badge[data-mode="on"],.ai-badge[data-mode="server"]{color:var(--cobalt);border-color:var(--cobalt);border-style:solid}
+.ai-badge[data-mode="erro"]{color:var(--bad);border-color:var(--bad);border-style:solid}
+
+main{min-width:0;padding-block:24px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:861px){main{padding-left:40px;padding-right:max(40px,env(safe-area-inset-right,0px))}}
+.proto{max-width:1160px;margin:0 auto 26px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;background:var(--tag);color:var(--tag-ink);border-radius:10px;padding:8px 14px;font-size:.86rem}
+.proto p{flex:1 1 240px;min-width:0}
+.proto b{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em}
+.proto .linkbtn{color:var(--tag-ink)}
+.mhead{display:none}
+.view{max-width:1160px;margin:0 auto;display:grid;gap:26px}
+.vhead{display:grid;gap:8px}
+.row-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px}
+.row-head > div:first-child{display:grid;gap:8px;min-width:0}
+
+/* Controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 15px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:.92rem;cursor:pointer;white-space:nowrap;text-decoration:none;transition:background .15s,border-color .15s}
+.btn:hover{border-color:var(--ink-3)}
+.btn-primary{background:var(--cobalt);border-color:var(--cobalt);color:var(--on-cobalt)}
+.btn-primary:hover{background:var(--cobalt-hover);border-color:var(--cobalt-hover)}
+.btn-quiet{background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn-quiet:hover{background:var(--sunk);border-color:transparent}
+.btn-danger{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn.sm{min-height:34px;padding:5px 11px;font-size:.85rem}
+.btn.wide{width:100%}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.stack{display:grid;gap:16px}
+.block{display:grid;gap:12px;align-content:start;min-width:0}
+.block-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.more{font-weight:600;font-size:.88rem;text-decoration:none}
+.field{display:grid;gap:6px;min-width:0;border:0;padding:0;margin:0}
+.field > label,.field > legend,.lbl{font-weight:600;font-size:.88rem;padding:0}
+.field > legend{margin-bottom:6px}
+.opt-l{font-weight:400;color:var(--ink-3)}
+input[type=text],input[type=email],input[type=tel],input[type=password],input[type=date],input[type=time],textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:.95rem;line-height:1.45;min-width:0}
+textarea{resize:vertical}
+input:focus,textarea:focus{border-color:var(--cobalt);outline:none;box-shadow:0 0 0 3px var(--cobalt-soft)}
+textarea[readonly]{background:var(--sunk)}
+input[type=file]{font-size:.86rem;max-width:100%}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.formerr{color:var(--bad);font-weight:600;font-size:.88rem}
+.formnote{color:var(--ink-2);font-size:.86rem;background:var(--sunk);border-radius:8px;padding:8px 11px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-weight:600;font-size:.88rem;cursor:pointer;user-select:none}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip:has(input:checked){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip:has(input:focus-visible){outline:2px solid var(--cobalt);outline-offset:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;color:var(--ink-2);cursor:pointer}
+.check input{margin-top:2px;width:18px;height:18px;accent-color:var(--cobalt);flex:none}
+.switch{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:999px;background:var(--sunk);border:1px solid var(--line);position:relative;cursor:pointer;flex:none;margin:0;transition:background .2s}
+.switch::before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ink-3);transition:transform .2s,background .2s}
+.switch:checked{background:var(--cobalt);border-color:var(--cobalt)}
+.switch:checked::before{transform:translateX(18px);background:var(--surface)}
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sunk);border-radius:10px;padding:4px;gap:4px;justify-self:start}
+.seg button{border:0;background:transparent;border-radius:7px;padding:7px 14px;font-weight:600;font-size:.9rem;cursor:pointer;color:var(--ink-2);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* Status marks */
+.pill{display:inline-flex;align-items:center;font-size:.74rem;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;line-height:1.5}
+.st-publicado,.st-respondida,.st-auto{background:var(--ok-soft);color:var(--ok)}
+.st-agendado{background:var(--cobalt-soft);color:var(--cobalt)}
+.st-aprovar,.st-late{background:var(--warn-soft);color:var(--warn)}
+.st-rascunho,.st-arquivada,.st-processando{background:var(--sunk);color:var(--ink-2)}
+.st-precisa{background:var(--bad-soft);color:var(--bad)}
+.net{font-family:var(--f-mono);font-size:.68rem;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--ink-2);line-height:1.6}
+.kind{font-size:.78rem;color:var(--ink-3);font-weight:600}
+.intent{font-size:.74rem;font-weight:700;padding:2px 9px;border-radius:4px;background:var(--sunk);color:var(--ink-2)}
+.tag{display:inline-flex;align-items:center;background:var(--tag);color:var(--tag-ink);font-family:var(--f-mono);font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:5px 11px 5px 19px;clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);position:relative;white-space:nowrap}
+.tag::before{content:"";position:absolute;left:8px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:var(--hole,var(--surface))}
+.tag.off{background:var(--sunk);color:var(--ink-3)}
+.tag-sm{font-size:.62rem;padding:3px 9px 3px 16px}
+.tag-sm::before{left:6px;width:4px;height:4px;margin-top:-2px}
+.spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--cobalt);animation:spin .8s linear infinite;flex:none}
+.btn-primary .spin{border-color:color-mix(in srgb,var(--on-cobalt) 35%,transparent);border-top-color:var(--on-cobalt)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.thinking{display:inline-flex;align-items:center;gap:9px;color:var(--ink-2);font-size:.9rem}
+.note{font-size:.88rem;padding:10px 12px;border-radius:9px}
+.note.warn{background:var(--warn-soft);color:var(--warn)}
+.note.info{background:var(--sunk);color:var(--ink-2)}
+
+/* Entrada: criar conta e entrar */
+.gate{min-height:100vh;display:grid;align-items:center;padding-block:32px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.gate-in{max-width:1080px;width:100%;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:56px;align-items:center}
+.gate-pitch{display:grid;gap:22px;align-content:center;--hole:var(--paper)}
+.gate-pitch h1{font-size:clamp(2rem,1.3rem + 2.6vw,3.3rem);line-height:1.02}
+.pitch-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.pitch-list li{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:start}
+.pitch-list .tag{justify-self:start;margin-top:2px}
+.pitch-list b{display:block;font-weight:700}
+.pitch-list span span{display:block;color:var(--ink-2);font-size:.94rem}
+.gate-note{font-size:.84rem;color:var(--ink-2)}
+.gate-note b{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;background:var(--tag);color:var(--tag-ink);padding:2px 6px;border-radius:4px;margin-right:6px}
+.gate-card{display:grid;gap:18px;padding:24px;box-shadow:var(--shadow)}
+.steps{display:grid;gap:8px}
+.stepbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stepbar i{height:4px;border-radius:2px;background:var(--sunk)}
+.stepbar i.on{background:var(--cobalt)}
+.picks{display:grid;gap:8px}
+.pick{display:grid;gap:3px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer;position:relative;background:var(--surface)}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.pick:hover{border-color:var(--ink-3)}
+.pick:has(input:checked){border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
+.pick:has(input:focus-visible){outline:2px solid var(--cobalt);outline-offset:2px}
+.pick-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pick-top strong{font-family:var(--f-display);font-size:1.02rem}
+.pick-price{margin-left:auto;font-size:.84rem;color:var(--ink-2)}
+.pick-price b{font-family:var(--f-display);font-size:1.12rem;color:var(--ink)}
+.pick-desc{font-size:.86rem;color:var(--ink-2)}
+.choices{display:grid;gap:10px}
+.choice{display:grid;gap:4px;text-align:left;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.choice:hover{border-color:var(--cobalt)}
+.choice strong{font-family:var(--f-display);font-size:1.08rem}
+.choice span{color:var(--ink-2);font-size:.9rem}
+
+/* Painel */
+.planline{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.9rem;color:var(--ink-2)}
+.planline a{font-weight:600}
+.dash{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:28px;align-items:start}
+.dash-main,.dash-side{display:grid;gap:28px;min-width:0}
+.att,.start ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.att li,.start li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.sev{width:9px;height:9px;border-radius:50%}
+.sev.bad{background:var(--bad)}
+.sev.warn{background:var(--warn)}
+.att-text,.st-text{min-width:0}
+.att-text strong,.st-text strong{display:block;font-size:.92rem}
+.att-text span{display:block;color:var(--ink-2);font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-text span{display:block;color:var(--ink-2);font-size:.88rem}
+.stepnum{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:.8rem;font-weight:600;background:var(--sunk);color:var(--ink-2)}
+.start li.done .stepnum{background:var(--ok-soft);color:var(--ok)}
+.start li.done strong{color:var(--ink-3);text-decoration:line-through}
+.att-empty{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--ink-2)}
+.next{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.next li + li{border-top:1px solid var(--line)}
+.nrow{width:100%;display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:start;padding:14px 16px;background:none;border:0;text-align:left;cursor:pointer}
+.nrow:hover{background:var(--paper)}
+.when{display:grid;gap:1px}
+.when .wd{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.when .hm{font-size:1.05rem;font-weight:600}
+.nbody{display:grid;gap:6px;min-width:0}
+.ncap{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.nmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ap{display:grid;gap:12px}
+.ap-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ap-state{font-family:var(--f-display);font-weight:700;font-size:1.12rem;line-height:1.25}
+.ap-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.9rem;color:var(--ink-2)}
+.ap-list li{display:flex;gap:9px;align-items:baseline}
+.ap-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none;transform:translateY(-2px)}
+.ap.is-off .ap-list li::before{background:var(--ink-3)}
+.receipt{background:var(--surface);color:var(--ink);font-family:var(--f-mono);font-size:.78rem;padding:20px 20px 30px;display:grid;gap:7px;border-radius:var(--r) var(--r) 0 0;
+  -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;
+  mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%}
+.rc-head{display:grid;justify-items:center;gap:2px;text-align:center;letter-spacing:.06em;color:var(--ink-2)}
+.rc-head strong{font-family:var(--f-display);font-size:1.15rem;letter-spacing:.04em;color:var(--ink)}
+.rc-sep{border-top:1px dashed var(--ink-3);margin:6px 0}
+.rl{display:flex;align-items:baseline;gap:6px}
+.rl .dots{flex:1;border-bottom:1px dotted var(--ink-3);transform:translateY(-3px);min-width:10px}
+.rl b{font-weight:600;font-variant-numeric:tabular-nums}
+.rl.total{font-weight:600;font-size:.9rem}
+.rc-foot{color:var(--ink-3);font-size:.68rem;text-align:center;margin-top:4px}
+.accts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.accts li{display:flex;align-items:center;gap:10px;font-size:.9rem;min-width:0;flex-wrap:wrap}
+.acc-txt{min-width:0;flex:1 1 160px}
+.acc-txt strong{display:block}
+.acc-txt small{display:block;color:var(--ink-3);font-size:.8rem}
+
+/* Criar */
+.create{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:start}
+.create-form,.create-preview{display:grid;gap:20px;min-width:0}
+.results{display:grid;gap:12px}
+.opts{display:grid;gap:10px}
+.opt{display:grid;gap:6px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer;position:relative}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:hover{border-color:var(--ink-3)}
+.opt:has(input:checked){border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt)}
+.opt:has(input:focus-visible){outline:2px solid var(--cobalt);outline-offset:2px}
+.opt-style{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+.opt:has(input:checked) .opt-style{color:var(--cobalt)}
+.opt-cap{white-space:pre-line;overflow-wrap:anywhere}
+.opt-tags,.pv-tags,.tags{color:var(--cobalt);font-size:.86rem;overflow-wrap:anywhere}
+.pv{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;max-width:400px;width:100%;justify-self:center;box-shadow:var(--shadow)}
+.pv-head{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.pv-head .av{width:32px;height:32px;background:var(--tag);color:var(--tag-ink)}
+.pv-head strong{display:block;font-size:.88rem;line-height:1.2}
+.pv-head small{color:var(--ink-3);font-size:.76rem}
+.pv-media,.d-media{aspect-ratio:1/1;max-width:100%;background:var(--sunk);position:relative;overflow:hidden}
+.d-media{aspect-ratio:4/3;border-radius:10px}
+.pv-media img,.d-media img{width:100%;height:100%;object-fit:cover;display:block}
+.pv-ph{position:absolute;inset:0;display:grid;align-content:center;justify-items:start;gap:12px;padding:28px;background:repeating-linear-gradient(135deg,var(--sunk) 0 16px,var(--paper) 16px 32px);--hole:var(--sunk)}
+.pv-ph p{font-family:var(--f-display);font-weight:700;font-size:1.18rem;line-height:1.25;max-width:24ch;color:var(--ink)}
+.d-media .pv-ph p{font-size:1.02rem}
+.pv-body{padding:12px 14px 16px;display:grid;gap:6px;font-size:.9rem}
+.pv-body p{white-space:pre-line;overflow-wrap:anywhere}
+.pv-empty{color:var(--ink-3)}
+.best b{font-weight:600;color:var(--ink)}
+
+/* Calendário */
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 8px;display:grid;grid-template-rows:auto 1fr;gap:10px;min-height:270px;min-width:0}
+.day.is-past{background:transparent}
+.dhead{display:flex;align-items:center;gap:7px;padding:0 4px}
+.dname{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+.dnum{font-family:var(--f-display);font-weight:700;font-size:1.2rem;line-height:1}
+.is-today .dnum{background:var(--cobalt);color:var(--on-cobalt);border-radius:999px;min-width:30px;height:30px;display:inline-grid;place-items:center;font-size:1rem}
+.dposts{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pc{display:grid;gap:5px;text-align:left;width:100%;padding:8px;border-radius:9px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:.8rem;min-width:0}
+.pc:hover{border-color:var(--ink-3)}
+.pc.is-aprovar{border-style:dashed;border-color:var(--warn)}
+.pc-top{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.pc-top .hm{font-weight:600;font-size:.82rem;margin-right:auto}
+.pc-cap{color:var(--ink-2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.pc .pill{justify-self:start;font-size:.68rem;padding:1px 7px;white-space:normal}
+.dadd{border:1px dashed var(--line);background:none;border-radius:9px;padding:10px 6px;color:var(--ink-3);font-weight:600;font-size:.8rem;cursor:pointer}
+.dadd:hover{color:var(--cobalt);border-color:var(--cobalt)}
+.dempty{color:var(--ink-3);font-size:.8rem;padding:4px}
+
+/* Caixa de entrada */
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab .n{font-family:var(--f-mono);font-size:.74rem;opacity:.8}
+.msgs{padding:0;overflow:hidden}
+.msg{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;padding:18px 20px}
+.msg + .msg{border-top:1px solid var(--line)}
+.msg-body{display:grid;gap:9px;min-width:0}
+.msg-head{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.86rem}
+.msg-head strong{font-size:.94rem}
+.msg-head time{margin-left:auto;color:var(--ink-3);font-size:.76rem}
+.msg-text{font-size:1rem;overflow-wrap:anywhere}
+.msg-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.reply{background:var(--cobalt-soft);border-radius:12px 12px 12px 3px;padding:10px 13px;display:grid;gap:3px;max-width:62ch}
+.reply p{overflow-wrap:anywhere}
+.reply-who{font-family:var(--f-mono);font-size:.72rem;color:var(--cobalt);letter-spacing:.03em}
+.why{font-size:.86rem;color:var(--ink-2)}
+.window{font-family:var(--f-mono);font-size:.72rem;padding:2px 7px;border-radius:4px;background:var(--sunk);color:var(--ink-2)}
+.window.low{background:var(--warn-soft);color:var(--warn)}
+.window.closed{background:var(--bad-soft);color:var(--bad)}
+.ib-empty{padding:28px 20px;color:var(--ink-2)}
+
+/* Marca, conta, planos, servidor */
+.settings,.acct-grid,.srv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.faq{display:grid;gap:12px}
+.faq-row{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.faq-row .btn{justify-self:end}
+.rules{display:grid}
+.rule{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;cursor:pointer}
+.rule + .rule{border-top:1px solid var(--line)}
+.rule strong{display:block;font-size:.94rem}
+.rule small{display:block;color:var(--ink-3);font-size:.82rem}
+.saved{font-family:var(--f-mono);font-size:.72rem;color:var(--ok)}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:0;font-size:.92rem}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;overflow-wrap:anywhere}
+.meter{height:8px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--cobalt);border-radius:inherit}
+.meter.full i{background:var(--warn)}
+.price{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.price b{font-family:var(--f-display);font-size:2.3rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.price span{color:var(--ink-3)}
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.plan{display:grid;grid-template-rows:auto auto auto auto 1fr auto;gap:12px;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;min-width:0}
+.plan.is-featured{border:2px solid var(--cobalt);padding:21px}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.plan-head h2{font-size:1.3rem}
+.feats{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:.92rem;align-content:start}
+.feats li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:8px;align-items:start}
+.feats li::before{content:"";width:10px;height:5px;margin-top:6px;border-left:2px solid var(--ok);border-bottom:2px solid var(--ok);transform:rotate(-45deg)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tbl th,.tbl td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-family:var(--f-mono);font-weight:500}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl td small{display:block;color:var(--ink-3)}
+.matrix{min-width:600px}
+.matrix td:not(:first-child),.matrix th:not(:first-child){text-align:center}
+.accounts-tbl{min-width:860px}
+.faqs{display:grid;gap:8px}
+.faqs details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.faqs summary{cursor:pointer;font-weight:600}
+.faqs details p{color:var(--ink-2);margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:4px;min-width:0;align-content:start}
+.kpi span{font-size:.8rem;color:var(--ink-3)}
+.kpi b{font-family:var(--f-display);font-size:1.7rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1;overflow-wrap:anywhere}
+.kpi small{font-size:.76rem;color:var(--ink-3)}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:84px minmax(0,1fr) 32px;gap:10px;align-items:center;font-size:.88rem}
+.bar .track{height:10px;background:var(--sunk);border-radius:999px;overflow:hidden}
+.bar .track i{display:block;height:100%;background:var(--cobalt);border-radius:inherit}
+.bar b{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+
+/* Gaveta e aviso */
+.drawer{position:fixed;inset:0;z-index:50;display:flex;justify-content:flex-end}
+.scrim{position:absolute;inset:0;background:var(--scrim)}
+.panel{position:relative;width:min(460px,100%);height:100%;overflow-y:auto;background:var(--surface);border-left:1px solid var(--line);padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start}
+.d-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.iconbtn{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:1.3rem;line-height:1;cursor:pointer;color:var(--ink);flex:none}
+.d-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:4px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.metric{background:var(--paper);border-radius:9px;padding:10px;display:grid}
+.metric b{font-family:var(--f-mono);font-size:1.08rem;font-variant-numeric:tabular-nums}
+.metric span{font-size:.76rem;color:var(--ink-3)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:10px;display:flex;gap:14px;align-items:center;font-size:.9rem;box-shadow:var(--shadow);width:max-content;max-width:min(560px,calc(100% - 32px))}
+.toast .linkbtn{color:inherit;white-space:nowrap}
+.tabbar{display:none}
+
+@media (max-width:1200px){
+  .week{grid-template-columns:minmax(0,1fr)}
+  .day{min-height:0;grid-template-columns:62px minmax(0,1fr);grid-template-rows:auto;align-items:start}
+  .dhead{flex-direction:column;align-items:flex-start;gap:4px}
+}
+@media (max-width:1060px){
+  .dash,.create,.settings,.acct-grid,.srv-grid,.plans{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .gate-in{grid-template-columns:minmax(0,1fr);gap:20px}
+  .gate{align-items:start}
+  .gate-pitch{display:contents}
+  .gate-pitch .brand{order:1}
+  .gate-pitch h1{order:2;font-size:clamp(1.7rem,1.2rem + 2.4vw,2.4rem)}
+  .gate-card{order:3}
+  .gate-pitch .lede{order:4;margin-top:12px}
+  .pitch-list{order:5}
+  .gate-note{order:6}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{display:none}
+  main{padding-top:14px;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  .mhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;--hole:var(--paper)}
+  .mhead .brand strong{font-size:1.18rem}
+  .mhead-r{display:flex;align-items:center;gap:8px}
+  .mav{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--tag);color:var(--tag-ink);font-family:var(--f-display);font-weight:700;font-size:.8rem;text-decoration:none}
+  .proto{margin-bottom:20px}
+  .tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .tabbar a{display:grid;justify-items:center;gap:3px;padding:5px 2px;text-decoration:none;color:var(--ink-3);font-size:.68rem;font-weight:600;border-radius:8px;position:relative;min-width:0}
+  .tabbar a[aria-current="page"]{color:var(--cobalt)}
+  .tcount{position:absolute;top:0;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--bad);color:var(--surface);font-family:var(--f-mono);font-size:.62rem;display:grid;place-items:center}
+  .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .msg{padding:16px;grid-template-columns:34px minmax(0,1fr);gap:12px}
+  .msg .av{width:34px;height:34px}
+  .msg-head time{margin-left:0;width:100%}
+  .pitch-list li{grid-template-columns:minmax(0,1fr);gap:6px}
+}
+@media (prefers-reduced-motion:reduce){
+  .spin{animation:none}
+  *{transition:none!important}
+}
+</style>
+
+</head>
+<body>
+<!-- Entrada: criar conta e entrar -->
+<div class="gate" id="gate" hidden>
+  <div class="gate-in">
+    <section class="gate-pitch" aria-labelledby="gate-h1">
+      <span class="brand"><span class="logo" aria-hidden="true">B</span><span><strong>Balcão</strong><small>suas redes no piloto automático</small></span></span>
+      <h1 id="gate-h1">O Instagram e o Facebook do seu negócio, no piloto automático.</h1>
+      <p class="lede">O Balcão escreve os posts com IA, publica no melhor horário e responde os clientes. Você só aprova o que importa.</p>
+      <ul class="pitch-list">
+        <li><span class="tag">Cria</span><span><b>Posts a partir de uma frase</b><span>Você conta a ideia e a IA escreve três legendas no tom da sua marca.</span></span></li>
+        <li><span class="tag">Publica</span><span><b>No horário certo</b><span>O calendário publica sozinho, até quando você está atendendo.</span></span></li>
+        <li><span class="tag">Responde</span><span><b>Comentários e mensagens</b><span>Perguntas frequentes recebem resposta na hora. Reclamações vêm para você.</span></span></li>
+      </ul>
+      <p class="gate-note"><b>PROTÓTIPO</b>Valores provisórios. Nada é publicado nem cobrado de verdade.</p>
+    </section>
+    <section class="gate-card card" aria-label="Acesso">
+      <div class="seg" id="gate-tabs" role="group" aria-label="Acesso"><button type="button" data-gtab="criar" aria-pressed="true">Criar conta</button><button type="button" data-gtab="entrar" aria-pressed="false">Entrar</button></div>
+      <div id="gate-body" class="stack" aria-live="polite"></div>
+    </section>
+  </div>
+</div>
+
+<div class="shell" id="app" hidden>
+  <nav class="rail" aria-label="Navegação principal">
+    <a class="brand" href="#painel"><span class="logo" aria-hidden="true">B</span><span><strong>Balcão</strong><small>suas redes no piloto automático</small></span></a>
+    <a class="biz" href="#conta" aria-label="Minha conta"><span class="av" id="rail-av" aria-hidden="true"></span><span><strong id="rail-name"></strong><small id="rail-plan"></small></span></a>
+    <ul class="nav">
+      <li><a href="#painel" data-nav="painel"><span data-icon="home"></span>Início</a></li>
+      <li><a href="#criar" data-nav="criar"><span data-icon="plus"></span>Criar post</a></li>
+      <li><a href="#calendario" data-nav="calendario"><span data-icon="cal"></span>Calendário</a></li>
+      <li><a href="#inbox" data-nav="inbox"><span data-icon="inbox"></span>Caixa de entrada<span class="count" data-count hidden></span></a></li>
+      <li><a href="#marca" data-nav="marca"><span data-icon="store"></span>Marca e regras</a></li>
+      <li class="nav-sep" aria-hidden="true"></li>
+      <li><a href="#planos" data-nav="planos"><span data-icon="tag"></span>Planos</a></li>
+      <li><a href="#conta" data-nav="conta"><span data-icon="user"></span>Minha conta</a></li>
+      <li id="nav-servidor" hidden><a href="#servidor" data-nav="servidor"><span data-icon="server"></span>Servidor</a></li>
+    </ul>
+    <div class="rail-foot">
+      <div class="ap-mini"><span class="dot" id="ap-mini-dot"></span><span id="ap-mini-text">Piloto automático ligado</span></div>
+      <span class="ai-badge" data-ai>IA · conectando…</span>
+      <span class="ai-badge" data-store>Dados · conectando…</span>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="mhead"><a class="brand" href="#painel"><span class="logo" aria-hidden="true">B</span><strong>Balcão</strong></a><span class="mhead-r"><span class="ai-badge" data-ai>IA · conectando…</span><a class="mav" id="m-av" href="#conta" aria-label="Minha conta"></a></span></div>
+    <div class="proto">
+      <b>PROTÓTIPO</b>
+      <p id="proto-text">Nada é publicado nem enviado de verdade.</p>
+      <button class="linkbtn" id="reset-btn" type="button">Restaurar exemplo</button>
+    </div>
+
+    <!-- Início -->
+    <section id="v-painel" class="view" aria-labelledby="p-hello">
+      <header class="vhead">
+        <p class="eyebrow" id="p-date"></p>
+        <h1 id="p-hello"></h1>
+        <p class="lede" id="p-lede"></p>
+        <p class="planline" id="p-plan"></p>
+      </header>
+      <div class="dash">
+        <div class="dash-main">
+          <section class="block start" id="p-start" hidden></section>
+          <section class="block" aria-labelledby="h-att">
+            <div class="block-head"><h2 id="h-att">Precisa de você</h2><span class="muted" id="att-count"></span></div>
+            <ul class="att" id="att-list"></ul>
+          </section>
+          <section class="block" aria-labelledby="h-next">
+            <div class="block-head"><h2 id="h-next">Próximos posts</h2><a href="#calendario" class="more">Ver calendário</a></div>
+            <ul class="next" id="next-list"></ul>
+          </section>
+        </div>
+        <aside class="dash-side">
+          <section class="ap card" id="ap-card" aria-label="Piloto automático">
+            <div class="ap-top"><span class="tag" id="ap-tag">Piloto automático</span><input type="checkbox" role="switch" class="switch" id="ap-switch" aria-label="Piloto automático"></div>
+            <p class="ap-state" id="ap-state"></p>
+            <ul class="ap-list" id="ap-list"></ul>
+          </section>
+          <section class="receipt" id="receipt" aria-label="Resumo da semana"></section>
+          <section class="block" aria-labelledby="h-accts">
+            <h2 id="h-accts">Contas conectadas</h2>
+            <ul class="accts" id="accts-mini"></ul>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Criar post -->
+    <section id="v-criar" class="view" aria-labelledby="c-h" hidden>
+      <header class="vhead">
+        <p class="eyebrow">Criar post</p>
+        <h1 id="c-h">Conte a ideia. A IA escreve.</h1>
+        <p class="lede">Descreva o post do jeito que você falaria no balcão. O Balcão escreve três legendas no tom da sua marca e sugere o melhor horário.</p>
+      </header>
+      <div class="create">
+        <div class="create-form">
+          <form id="c-form" class="card stack" novalidate>
+            <div class="field">
+              <label for="c-topic">Sobre o que é o post?</label>
+              <textarea id="c-topic" rows="3" placeholder="Ex.: bolo de cenoura com cobertura saindo às 15h, fatia a R$ 7"></textarea>
+              <p class="hint">Uma frase já basta. Inclua preço ou horário só se quiser que apareça no post.</p>
+            </div>
+            <fieldset class="field"><legend>Objetivo</legend><div class="chips" id="c-goals"></div></fieldset>
+            <fieldset class="field"><legend>Onde publicar</legend>
+              <div class="chips">
+                <label class="chip"><input type="checkbox" id="c-ig" checked> Instagram</label>
+                <label class="chip"><input type="checkbox" id="c-fb" checked> Facebook</label>
+              </div>
+            </fieldset>
+            <div class="row"><button class="btn btn-primary" type="submit" id="c-gen">Gerar 3 legendas</button><span class="ai-badge" data-ai>IA · conectando…</span></div>
+            <p class="hint" id="c-quota"></p>
+            <p class="hint" id="c-ainote"></p>
+            <p class="formerr" id="c-err" hidden></p>
+            <p class="formnote" id="c-note" hidden></p>
+          </form>
+          <section id="c-results" class="results" aria-labelledby="c-res-h" hidden>
+            <div class="block-head"><h2 id="c-res-h">Escolha uma legenda</h2><span class="muted" id="c-src"></span></div>
+            <div class="opts" id="c-opts" role="radiogroup" aria-labelledby="c-res-h"></div>
+          </section>
+        </div>
+        <div class="create-preview">
+          <div class="pv" id="pv" aria-label="Prévia do post"></div>
+          <div class="card stack">
+            <div class="field"><label for="c-caption">Legenda final</label><textarea id="c-caption" rows="6"></textarea></div>
+            <div class="field">
+              <label for="c-photo">Foto</label>
+              <input type="file" id="c-photo" accept="image/*">
+              <p class="hint" id="c-photo-hint">Sem foto, o post guarda a ideia de foto sugerida como lembrete.</p>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="c-date">Dia</label><input type="date" id="c-date"></div>
+              <div class="field"><label for="c-time">Horário</label><input type="time" id="c-time"></div>
+            </div>
+            <p class="hint best" id="c-best"></p>
+            <div class="row"><button class="btn btn-primary" id="c-schedule" type="button">Agendar post</button><button class="btn" id="c-draft" type="button">Salvar rascunho</button></div>
+            <p class="formerr" id="c-err2" hidden></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendário -->
+    <section id="v-calendario" class="view" aria-labelledby="cal-range" hidden>
+      <header class="row-head">
+        <div><p class="eyebrow" id="cal-eyebrow">Calendário</p><h1 id="cal-range"></h1></div>
+        <div class="row">
+          <button class="btn" id="cal-prev" type="button" aria-label="Semana anterior">←</button>
+          <button class="btn" id="cal-today" type="button">Hoje</button>
+          <button class="btn" id="cal-next" type="button" aria-label="Próxima semana">→</button>
+          <button class="btn btn-primary" id="cal-fill" type="button">Preencher dias vazios com IA</button>
+        </div>
+      </header>
+      <div class="legend" aria-label="Legenda">
+        <span class="pill st-publicado">Publicado</span><span class="pill st-agendado">Agendado</span><span class="pill st-aprovar">Aguardando aprovação</span><span class="pill st-rascunho">Rascunho</span>
+      </div>
+      <div class="week" id="week"></div>
+    </section>
+
+    <!-- Caixa de entrada -->
+    <section id="v-inbox" class="view" aria-labelledby="ib-h" hidden>
+      <header class="row-head">
+        <div><p class="eyebrow">Caixa de entrada</p><h1 id="ib-h">Comentários e mensagens</h1><p class="lede">A IA responde sozinha o que já está nas suas respostas prontas e separa o resto para você, com uma resposta sugerida.</p></div>
+        <button class="btn" id="ib-sim" type="button">Simular nova mensagem</button>
+      </header>
+      <div class="tabs" id="ib-tabs"></div>
+      <div class="msgs card" id="ib-list"></div>
+    </section>
+
+    <!-- Marca e regras -->
+    <section id="v-marca" class="view" aria-labelledby="mk-h" hidden>
+      <header class="vhead">
+        <p class="eyebrow">Marca e regras</p>
+        <h1 id="mk-h">O que a IA precisa saber</h1>
+        <p class="lede">Tudo o que o Balcão escreve e responde parte daqui. A IA não inventa preço, prazo ou produto que não esteja nesta página.</p>
+      </header>
+      <div class="settings">
+        <section class="card stack" aria-labelledby="h-biz">
+          <div class="block-head"><h2 id="h-biz">Seu negócio</h2><span class="saved" id="b-saved" aria-live="polite"></span></div>
+          <div class="field"><label for="b-name">Nome</label><input type="text" id="b-name" data-b="name"></div>
+          <div class="row2">
+            <div class="field"><label for="b-seg">Segmento</label><input type="text" id="b-seg" data-b="segment"></div>
+            <div class="field"><label for="b-place">Bairro ou cidade</label><input type="text" id="b-place" data-b="place"></div>
+          </div>
+          <div class="field"><label for="b-hours">Horário de funcionamento</label><input type="text" id="b-hours" data-b="hours"></div>
+          <div class="field"><label for="b-about">Em poucas palavras</label><textarea id="b-about" data-b="about" rows="2"></textarea></div>
+          <fieldset class="field"><legend>Tom de voz</legend><div class="chips" id="b-tones"></div></fieldset>
+          <div class="field"><label for="b-avoid">Palavras e assuntos que a marca evita</label><input type="text" id="b-avoid" data-b="avoid"></div>
+        </section>
+        <section class="card stack" aria-labelledby="h-faq">
+          <div class="block-head"><h2 id="h-faq">Respostas prontas</h2><button class="btn sm" id="faq-add" type="button">Adicionar</button></div>
+          <p class="hint">A IA usa estas informações nos posts, nos comentários e nas mensagens. O que não estiver aqui vai para você.</p>
+          <div class="faq" id="faq-list"></div>
+        </section>
+        <section class="card stack" aria-labelledby="h-rules">
+          <h2 id="h-rules">Regras do piloto automático</h2>
+          <div class="rules" id="rules"></div>
+        </section>
+        <section class="card stack" aria-labelledby="h-acc2">
+          <h2 id="h-acc2">Contas conectadas</h2>
+          <ul class="accts" id="accts-full"></ul>
+          <p class="hint">O Instagram só deixa aplicativos publicarem em contas profissionais (Comercial ou Criador de conteúdo). Mensagens diretas só podem ser respondidas até 24 horas depois da última mensagem do cliente.</p>
+        </section>
+      </div>
+    </section>
+
+    <!-- Planos -->
+    <section id="v-planos" class="view" aria-labelledby="pl-h" hidden>
+      <header class="row-head">
+        <div><p class="eyebrow">Planos · valores provisórios</p><h1 id="pl-h">Escolha o seu plano</h1><p class="lede">Todos os planos começam com 14 dias grátis, sem cartão. Troque ou cancele quando quiser.</p></div>
+        <div class="seg" id="pl-cycle" role="group" aria-label="Forma de cobrança"></div>
+      </header>
+      <div class="plans" id="pl-cards"></div>
+      <section class="block" aria-labelledby="pl-cmp">
+        <h2 id="pl-cmp">Compare os planos</h2>
+        <div class="tbl-wrap"><table class="tbl matrix" id="pl-matrix"></table></div>
+      </section>
+      <section class="block" aria-labelledby="pl-faq">
+        <h2 id="pl-faq">Perguntas sobre cobrança</h2>
+        <div class="faqs">
+          <details><summary>Como funciona o teste grátis?</summary><p>São 14 dias com tudo do plano escolhido, sem pedir cartão. No fim do teste, você decide se quer continuar.</p></details>
+          <details><summary>Posso trocar de plano ou cancelar?</summary><p>Sim, quando quiser. A troca vale a partir da próxima cobrança, e cancelar não tem multa.</p></details>
+          <details><summary>Como eu pago?</summary><p>Pix, boleto ou cartão de crédito. No plano anual, a cobrança é feita uma vez por ano.</p></details>
+          <details><summary>Estes valores são definitivos?</summary><p>Não. São valores provisórios para testar com os primeiros clientes e podem mudar antes do lançamento.</p></details>
+        </div>
+      </section>
+    </section>
+
+    <!-- Minha conta -->
+    <section id="v-conta" class="view" aria-labelledby="ct-h" hidden>
+      <header class="vhead"><p class="eyebrow">Minha conta</p><h1 id="ct-h"></h1></header>
+      <div class="acct-grid" id="ct"></div>
+    </section>
+
+    <!-- Servidor -->
+    <section id="v-servidor" class="view" aria-labelledby="sv-h" hidden>
+      <header class="vhead">
+        <p class="eyebrow">Servidor</p>
+        <h1 id="sv-h">Contas no servidor</h1>
+        <p class="lede">Quem criou conta no protótipo, salvo no banco de dados desta página. Só quem administra o protótipo vê esta tela.</p>
+      </header>
+      <div class="stack" id="srv"></div>
+    </section>
+  </main>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="Navegação" hidden>
+  <a href="#painel" data-nav="painel"><span data-icon="home"></span>Início</a>
+  <a href="#criar" data-nav="criar"><span data-icon="plus"></span>Criar</a>
+  <a href="#calendario" data-nav="calendario"><span data-icon="cal"></span>Agenda</a>
+  <a href="#inbox" data-nav="inbox"><span data-icon="inbox"></span>Mensagens<span class="tcount" data-count hidden></span></a>
+  <a href="#marca" data-nav="marca"><span data-icon="store"></span>Marca</a>
+</nav>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="scrim" id="scrim"></div>
+  <aside class="panel" id="d-panel" role="dialog" aria-modal="true" aria-labelledby="d-title"></aside>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- utilidades ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const clip = (s, n) => { s = String(s).replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s; };
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const fmtN = n => Number(n).toLocaleString("pt-BR");
+const brl = n => "R$ " + Number(n).toLocaleString("pt-BR", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+const clone = o => JSON.parse(JSON.stringify(o));
+const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+const randHex = n => { const a = new Uint8Array(n); try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < n; i++) a[i] = Math.random() * 256 | 0; } return [...a].map(b => b.toString(16).padStart(2, "0")).join(""); };
+
+const DIAS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+const DC = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const MC = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const NET = { ig: "Instagram", fb: "Facebook" };
+const KINDS = ["Vender", "Novidade", "Bastidores", "Data especial", "Engajar"];
+const INTENTS = ["Pergunta frequente", "Elogio", "Encomenda", "Reclamação", "Outro"];
+const TONES = ["Acolhedor", "Bem-humorado", "Profissional", "Direto", "Elegante"];
+const SEGMENTS = ["Padaria e café", "Restaurante", "Salão e estética", "Loja de roupas", "Pet shop", "Outro"];
+const ST = { publicado: "Publicado", agendado: "Agendado", aprovar: "Aguardando aprovação", rascunho: "Rascunho" };
+const IBST = { auto: "Respondida pela IA", respondida: "Respondida por você", precisa: "Precisa de você", arquivada: "Arquivada", processando: "Lendo…" };
+const SLOTS = ["07:30", "11:40", "16:10", "19:20"];
+const DAY = 86400000;
+
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const parseYmd = s => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+const dayStart = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => { const x = dayStart(d); x.setDate(x.getDate() + n); return x; };
+const mondayOf = d => addDays(d, -((d.getDay() + 6) % 7));
+const when = p => { const d = parseYmd(p.date); const [h, m] = String(p.time).split(":").map(Number); d.setHours(h || 0, m || 0, 0, 0); return d; };
+const hm = d => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+const dm = d => `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+const fmtDate = ts => { const d = new Date(ts); return `${dm(d)}/${d.getFullYear()}`; };
+const initials = n => String(n).replace(/^@/, "").split(/[\s._]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("") || "?";
+const firstName = a => cap1(String(a).replace(/^@/, "").split(/[\s._]+/)[0] || "");
+const slug = s => norm(s).replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "") || "seu.negocio";
+function dayLabel(key) {
+  const now = new Date();
+  if (key === ymd(now)) return "hoje";
+  if (key === ymd(addDays(now, 1))) return "amanhã";
+  const d = parseYmd(key);
+  return `${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
+}
+function ago(ts) {
+  const m = Math.round((Date.now() - ts) / 60000);
+  if (m < 1) return "agora";
+  if (m < 60) return `há ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `há ${h} h`;
+  const d = new Date(ts);
+  return `${DC[d.getDay()]} ${hm(d)}`;
+}
+function isoWeek(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  return Math.ceil(((t - y0) / DAY + 1) / 7);
+}
+
+/* ---------- planos (valores provisórios) ---------- */
+const PLANS = {
+  essencial: { name: "Essencial", m: 49, a: 39, quota: 30, dms: false, week: false, tagline: "Para postar sempre, sem esforço.", feats: ["1 negócio", "Instagram e Facebook", "30 gerações de legenda com IA por mês", "Agendamento e calendário sem limite", "Respostas automáticas nos comentários", "Suporte por e-mail"] },
+  piloto: { name: "Piloto", m: 99, a: 79, quota: 150, dms: true, week: true, featured: true, tagline: "O piloto automático completo.", feats: ["Tudo do Essencial", "150 gerações de legenda com IA por mês", "Respostas automáticas nas mensagens diretas", "Preencher a semana com IA", "Relatório semanal por e-mail", "Suporte por WhatsApp"] },
+  agencia: { name: "Agência", m: 249, a: 199, quota: 500, dms: true, week: true, tagline: "Para quem cuida das redes de vários clientes.", feats: ["Até 5 negócios", "Tudo do Piloto em cada negócio", "500 gerações de legenda com IA por mês", "Aprovação de posts pelo cliente", "Relatório com a sua marca", "3 pessoas na equipe"] }
+};
+const PLAN_IDS = ["essencial", "piloto", "agencia"];
+const MATRIX = [
+  ["Negócios", "1", "1", "5"],
+  ["Gerações de legenda com IA por mês", "30", "150", "500"],
+  ["Agendamento e calendário", "Sem limite", "Sem limite", "Sem limite"],
+  ["Respostas automáticas nos comentários", "✓", "✓", "✓"],
+  ["Respostas automáticas nas mensagens diretas", "–", "✓", "✓"],
+  ["Preencher a semana com IA", "–", "✓", "✓"],
+  ["Aprovação de posts pelo cliente", "–", "–", "✓"],
+  ["Pessoas na equipe", "1", "1", "3"],
+  ["Suporte", "E-mail", "WhatsApp", "WhatsApp prioritário"]
+];
+const priceOf = (id, ciclo) => { const p = PLANS[id]; return p ? (ciclo === "anual" ? p.a : p.m) : 0; };
+const plan = () => PLANS[ACC && ACC.plano] || PLANS.piloto;
+
+/* ---------- armazenamento local ---------- */
+const K_CONTAS = "balcao-contas-v2", K_SESSAO = "balcao-sessao-v2";
+const stateKey = id => "balcao-estado-v2-" + id;
+const LS = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* sem armazenamento */ } }
+};
+
+/* ---------- estado global ---------- */
+let S = null;            // dados do app da conta atual
+let ACC = null;          // conta atual (sem a senha)
+let MODE = "checking";   // "server" quando quem vê administra o protótipo; "local" nos outros casos
+let db = null, userNs = null;
+let calWeek = 0, ibFilter = "precisa", PL_ciclo = null, CT_confirm = false;
+let sample = null, aiMode = "checking";
+const C = { goal: "Vender", options: [], chosen: 0, src: "exemplo", img: null, photo: "", tags: [], inited: false, presetDate: null };
+const ADM = { list: null, unsub: null, err: "", timer: null, confirm: null };
+
+/* ---------- servidor (banco de dados do artefato) ---------- */
+const ready = (async () => {
+  if (!(window.claude && typeof window.claude.use === "function")) return "local";
+  try {
+    const timeout = new Promise(r => setTimeout(() => r(null), 10000));
+    const [d, u] = await Promise.all([Promise.race([window.claude.use("db"), timeout]), Promise.race([window.claude.use("user"), timeout])]);
+    db = d; userNs = u;
+    if (!db || !userNs) return "local";
+    return (await userNs.canEdit()) ? "server" : "local";
+  } catch (e) { return "local"; }
+})();
+
+const Accounts = {
+  srv() { return MODE === "server" && !!db; },
+  async findByEmail(email) {
+    if (this.srv()) {
+      const q = await db.collection("contas").where("email", "==", email).limit(1).get();
+      if (!q.empty) return clone(q.docs[0].data());
+    }
+    return (LS.get(K_CONTAS) || []).find(a => a.email === email) || null;
+  },
+  async get(id, mode) {
+    if (mode === "server") {
+      if (!this.srv()) throw new Error("offline");
+      const s = await db.doc("contas/" + id).get();
+      return s.exists ? clone(s.data()) : null;
+    }
+    return (LS.get(K_CONTAS) || []).find(a => a.id === id) || null;
+  },
+  async save(acc) {
+    if (acc.mode === "server") { await db.doc("contas/" + acc.id).set(acc); return; }
+    const list = LS.get(K_CONTAS) || [];
+    const i = list.findIndex(a => a.id === acc.id);
+    if (i >= 0) list[i] = acc; else list.push(acc);
+    if (!LS.set(K_CONTAS, list)) throw new Error("storage");
+  },
+  async update(id, mode, fields) {
+    if (mode === "server") { if (!this.srv()) throw new Error("offline"); await db.doc("contas/" + id).update(fields); return; }
+    const list = LS.get(K_CONTAS) || [];
+    const a = list.find(x => x.id === id);
+    if (a) { Object.assign(a, fields); LS.set(K_CONTAS, list); }
+  },
+  async remove(id, mode) {
+    if (mode === "server") {
+      if (!this.srv()) throw new Error("offline");
+      await db.doc(`contas/${id}/dados/estado`).delete();
+      await db.doc("contas/" + id).delete();
+      return;
+    }
+    LS.set(K_CONTAS, (LS.get(K_CONTAS) || []).filter(a => a.id !== id));
+  }
+};
+const publicAcc = a => { const o = { ...a }; delete o.senha; return o; };
+const saveSession = () => { if (ACC) LS.set(K_SESSAO, { conta: ACC }); };
+async function hashPass(pass, salt) {
+  const data = new TextEncoder().encode(salt + ":" + pass);
+  try {
+    if (crypto && crypto.subtle) {
+      const buf = await crypto.subtle.digest("SHA-256", data);
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch (e) { /* cai no hash simples abaixo */ }
+  let h = 2166136261;
+  for (const b of data) { h ^= b; h = Math.imul(h, 16777619) >>> 0; }
+  return "f" + h.toString(16);
+}
+
+function stripImgs(s) {
+  const o = clone(s);
+  o.posts = (o.posts || []).map(p => { delete p.img; return p; });
+  if (o.inbox && o.inbox.length > 300) o.inbox = o.inbox.slice(-300);
+  return o;
+}
+let srvTimer = null, srvBusy = false, srvAgain = false, pendingSync = false;
+function save() {
+  if (!ACC || !S) return;
+  S.updatedAt = Date.now();
+  if (!LS.set(stateKey(ACC.id), S)) LS.set(stateKey(ACC.id), stripImgs(S));
+  if (ACC.mode === "server" && MODE === "server") { clearTimeout(srvTimer); setStore("salvando"); srvTimer = setTimeout(flushServer, 1200); }
+  else if (ACC.mode === "server") pendingSync = true;
+}
+async function flushServer() {
+  if (!ACC || !S || ACC.mode !== "server" || MODE !== "server") return;
+  if (srvBusy) { srvAgain = true; return; }
+  srvBusy = true;
+  const id = ACC.id, body = stripImgs(S);
+  try { await db.doc(`contas/${id}/dados/estado`).set(body); setStore("salvo"); }
+  catch (e) { setStore("erro"); }
+  finally { srvBusy = false; if (srvAgain) { srvAgain = false; flushServer(); } }
+}
+async function loadState(acc) {
+  let local = LS.get(stateKey(acc.id));
+  if (acc.mode === "server" && MODE === "server") {
+    try {
+      const s = await db.doc(`contas/${acc.id}/dados/estado`).get();
+      if (s.exists) {
+        const srv = clone(s.data());
+        if (!local || (srv.updatedAt || 0) >= (local.updatedAt || 0)) {
+          const imgs = {};
+          ((local && local.posts) || []).forEach(p => { if (p.img) imgs[p.id] = p.img; });
+          (srv.posts || []).forEach(p => { if (imgs[p.id]) p.img = imgs[p.id]; });
+          local = srv;
+        }
+      }
+    } catch (e) { /* usa a cópia local */ }
+  }
+  return local && local.business ? local : null;
+}
+
+/* ---------- IA ---------- */
+(async () => {
+  try { sample = (window.claude && typeof window.claude.use === "function") ? await window.claude.use("sample") : null; }
+  catch (e) { sample = null; }
+  aiMode = sample ? "on" : "off";
+  paintAi();
+})();
+const PERMANENT = ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"];
+function aiFail(e) {
+  const code = e && e.code ? e.code : "upstream_error";
+  if (PERMANENT.includes(code)) { sample = null; aiMode = "off"; paintAi(); return "A IA não está liberada nesta visualização. Mostrando um exemplo simulado."; }
+  if (code === "rate_limited") return "Muitos pedidos à IA em pouco tempo. Mostrando um exemplo simulado; tente de novo daqui a pouco.";
+  if (code === "refused") return "A IA não quis responder a esse pedido. Mostrando um exemplo simulado.";
+  if (code === "invalid_json") return "A IA respondeu num formato inesperado. Mostrando um exemplo simulado.";
+  return "A IA não respondeu agora. Mostrando um exemplo simulado.";
+}
+function paintAi() {
+  $$("[data-ai]").forEach(el => {
+    el.dataset.mode = aiMode;
+    el.textContent = aiMode === "on" ? "IA real · Claude" : aiMode === "checking" ? "IA · conectando…" : "IA simulada";
+    el.title = aiMode === "on" ? "As gerações usam o Claude pela sua conta. Na primeira vez ele pede sua permissão." : "Sem acesso à IA nesta visualização. O protótipo usa respostas de exemplo.";
+  });
+  const n = $("#c-ainote");
+  if (n) n.textContent = aiMode === "on" ? "Na primeira geração o Claude pede sua permissão. O uso conta na sua conta Claude." : aiMode === "off" ? "A IA não está disponível nesta visualização, então o protótipo mostra legendas de exemplo." : "";
+}
+function setStore(state) {
+  $$("[data-store]").forEach(el => {
+    if (!ACC) return;
+    if (ACC.mode === "server" && MODE === "server") {
+      el.dataset.mode = state === "erro" ? "erro" : "server";
+      el.textContent = state === "salvando" ? "Servidor · salvando…" : state === "erro" ? "Servidor · erro ao salvar" : "Servidor · salvo";
+      el.title = "Seus dados ficam no banco de dados do protótipo.";
+    } else if (ACC.mode === "server") {
+      el.dataset.mode = "local"; el.textContent = "Servidor · sem conexão"; el.title = "Usando a cópia salva neste navegador.";
+    } else {
+      el.dataset.mode = "local"; el.textContent = "Salvo neste navegador"; el.title = "Esta conta existe só neste navegador.";
+    }
+  });
+}
+
+function bizContext() {
+  const b = S.business;
+  const faq = S.faq.filter(f => f.q.trim() && f.a.trim()).map(f => `- ${f.q}: ${f.a}`).join("\n") || "- (nenhuma)";
+  return `Negócio: ${b.name} (${b.segment}), ${b.place || "local não informado"}.
+Sobre: ${b.about || "não informado"}
+Horário: ${b.hours || "não informado"}
+Tom de voz: ${(b.tone || []).join(", ") || "acolhedor"}.
+A marca evita: ${b.avoid || "nada específico"}.
+Informações confirmadas pelo dono (respostas prontas):
+${faq}`;
+}
+function promptCaptions(topic, goal, nets) {
+  return `Você é o redator de redes sociais de um pequeno negócio brasileiro.
+${bizContext()}
+
+Pedido do dono para o próximo post: "${topic}"
+Objetivo do post: ${goal}. Será publicado em: ${nets.map(n => NET[n]).join(" e ")}.
+
+Escreva 3 legendas diferentes em português do Brasil:
+1. estilo "Curta e direta": até 2 frases.
+2. estilo "Contando uma história": um parágrafo curto, próximo e humano.
+3. estilo "Chamada para comentar": termina com uma pergunta ou um convite para comentar.
+Regras: use só as informações acima e o pedido do dono; não invente preços, prazos, endereços ou produtos. No máximo 2 emojis por legenda. Não coloque hashtags dentro da legenda.
+
+Responda somente com um JSON array de 3 objetos neste formato:
+[{"estilo":"Curta e direta","legenda":"...","hashtags":["#exemplo"],"ideia_foto":"uma foto simples que o dono consegue tirar com o celular"}]
+Use de 3 a 5 hashtags em cada objeto.`;
+}
+function promptInbox(m) {
+  return `Você faz o atendimento nas redes sociais de um pequeno negócio brasileiro.
+${bizContext()}
+
+Chegou ${m.type === "direct" ? "uma mensagem direta" : "um comentário"} no ${NET[m.net]} de "${m.author}":
+"${m.text}"
+
+Classifique a mensagem e escreva uma resposta em português do Brasil, no tom da marca, com até 280 caracteres e no máximo 1 emoji.
+Use somente as informações confirmadas acima. Se a resposta depender de algo que não está nelas, não invente: diga que vai confirmar e marque precisa_humano como true.
+Reclamações, encomendas e pedidos especiais sempre precisam de humano.
+
+Responda somente com JSON neste formato:
+{"intencao":"Pergunta frequente | Elogio | Encomenda | Reclamação | Outro","precisa_humano":true,"motivo":"frase curta explicando a decisão","resposta":"..."}`;
+}
+function promptAlt(m, current) {
+  return `Você faz o atendimento nas redes sociais de um pequeno negócio brasileiro.
+${bizContext()}
+
+Mensagem de "${m.author}" (${m.type === "direct" ? "mensagem direta" : "comentário"} no ${NET[m.net]}): "${m.text}"
+Escreva UMA resposta nova, diferente desta: "${current}".
+Português do Brasil, tom da marca, até 280 caracteres, no máximo 1 emoji. Não invente nada que não esteja nas informações acima.
+Responda só com o texto da resposta, sem aspas e sem comentários.`;
+}
+function promptWeek(days) {
+  return `Você planeja o calendário de redes sociais de um pequeno negócio brasileiro.
+${bizContext()}
+
+Crie 1 post para cada um destes dias: ${days.map(d => `${ymd(d)} (${DIAS[d.getDay()]})`).join(", ")}.
+Varie os tipos entre: Vender, Novidade, Bastidores, Data especial, Engajar. Escolha horários entre 07:00 e 21:00 em que clientes desse tipo de negócio costumam olhar o celular.
+Legendas em português do Brasil, até 400 caracteres, no máximo 2 emojis, sem hashtags. Não invente preços nem promoções que não estejam nas informações acima; se falar de produto, fale de forma geral.
+
+Responda somente com um JSON array neste formato:
+[{"data":"AAAA-MM-DD","horario":"HH:MM","tipo":"Vender","legenda":"...","ideia_foto":"..."}]`;
+}
+function normOptions(r) {
+  const arr = Array.isArray(r) ? r : (r && Array.isArray(r.opcoes) ? r.opcoes : null);
+  if (!arr) return null;
+  const out = arr.map(o => ({
+    style: String((o && o.estilo) || "Opção"),
+    caption: String((o && o.legenda) || "").trim(),
+    tags: (o && Array.isArray(o.hashtags) ? o.hashtags : []).map(x => String(x).trim().replace(/\s+/g, "")).filter(Boolean).slice(0, 6).map(x => x.startsWith("#") ? x : "#" + x),
+    photo: String((o && o.ideia_foto) || "")
+  })).filter(o => o.caption).slice(0, 3);
+  return out.length ? out : null;
+}
+function normInbox(r) {
+  if (!r || typeof r !== "object") return null;
+  const reply = String(r.resposta || "").trim();
+  if (!reply) return null;
+  return { intent: INTENTS.includes(r.intencao) ? r.intencao : "Outro", needsHuman: r.precisa_humano === true || r.precisa_humano === "true", why: String(r.motivo || "").trim(), reply };
+}
+
+/* ---------- dados de exemplo e conta nova ---------- */
+const DEFAULT_RULES = { autoFaq: true, autoPraise: true, complaintsToMe: true, approval: true, quietHours: true };
+function seedDemo() {
+  const now = new Date();
+  const D = o => ymd(addDays(now, o));
+  const posts = [
+    { id: "p1", date: D(-4), time: "07:00", kind: "Novidade", nets: ["ig", "fb"], status: "agendado", caption: "Chegou o pão de fermentação natural! Casca crocante, miolo macio e 36 horas de fermentação. Sai do forno às 7h, todos os dias. 🥖", tags: ["#padariatrigobom", "#fermentacaonatural", "#paocaseiro"], photo: "Pão de fermentação natural cortado ao meio sobre a tábua." },
+    { id: "p2", date: D(-2), time: "18:30", kind: "Bastidores", nets: ["ig"], status: "agendado", caption: "4h30 da manhã e o forno já está ligado. Esse é o seu Jorge, nosso padeiro há 22 anos. Se o pão chega quentinho na sua mesa, é por causa dele. 👨‍🍳", tags: ["#bastidores", "#padariadebairro"], photo: "Seu Jorge sorrindo ao lado do forno, de avental." },
+    { id: "p3", date: D(0), time: "07:30", kind: "Vender", nets: ["ig", "fb"], status: "agendado", caption: "Café da manhã completo por R$ 14,90 até as 10h: pão na chapa, café coado e suco de laranja. ☕", tags: ["#cafedamanha", "#padariatrigobom"], photo: "Mesa com pão na chapa, café e suco, na luz da manhã." },
+    { id: "p4", date: D(0), time: "16:10", kind: "Vender", nets: ["ig", "fb"], status: "agendado", caption: "Pão de queijo saindo às 16h! Hoje é 10 por R$ 12. Corre que acaba rápido. 🧀", tags: ["#paodequeijo", "#lanchedatarde"], photo: "Cesta de pão de queijo soltando fumaça." },
+    { id: "p5", date: D(1), time: "08:00", kind: "Data especial", nets: ["ig", "fb"], status: "agendado", caption: "Fim de semana pede bolo de fubá com goiabada. Tem fatia no balcão e bolo inteiro por encomenda, com 48 horas de antecedência.", tags: ["#bolodefuba", "#fimdesemana"], photo: "Bolo de fubá inteiro com uma fatia cortada." },
+    { id: "p6", date: D(2), time: "09:00", kind: "Engajar", nets: ["ig"], status: "aprovar", ai: true, caption: "Doce ou salgado no café da manhã de domingo? Conta aqui nos comentários 👇", tags: ["#enquete", "#cafedamanha"], photo: "Metade da foto com sonho, metade com misto quente." },
+    { id: "p7", date: D(4), time: "11:00", kind: "Novidade", nets: ["ig", "fb"], status: "rascunho", caption: "Panetone artesanal da casa: encomendas abertas para o Natal. Gotas de chocolate ou frutas cristalizadas.", tags: ["#panetone", "#natal"], photo: "Panetone embrulhado em papel kraft com fita." }
+  ];
+  posts.forEach(p => { if (p.status === "agendado" && when(p) <= now) p.status = "publicado"; });
+  const t = Date.now(), M = 60000;
+  const inbox = [
+    { id: "m1", net: "ig", type: "comentario", author: "carla.mendes", ref: "Chegou o pão de fermentação natural", text: "Que horas sai o pão de fermentação natural?", at: t - 40 * M, intent: "Pergunta frequente", status: "auto", reply: "Oi, Carla! Ele sai do forno às 7h, todos os dias. Vem cedo que o primeiro lote some rápido! 🥖", replyAt: t - 39 * M, why: "A informação estava no próprio post." },
+    { id: "m2", net: "ig", type: "direct", author: "rafa_lima", text: "Bom dia! Vocês fazem bolo de aniversário para 30 pessoas? Preciso para o dia 20.", at: t - 2 * 60 * M, intent: "Encomenda", status: "precisa", suggestion: "Bom dia, Rafa! Fazemos sim. Me conta o sabor que você prefere e se quer retirar aqui ou receber em casa, que eu já te passo o valor. 🎂", why: "Encomendas precisam da sua confirmação de valor e prazo." },
+    { id: "m3", net: "fb", type: "comentario", author: "Antônio Pereira", ref: "Chegou o pão de fermentação natural", text: "Comprei pão ontem e veio meio queimado embaixo. Fiquei chateado.", at: t - 5 * 60 * M, intent: "Reclamação", status: "precisa", suggestion: "Oi, Antônio, sentimos muito. Não é o pão que queremos entregar para você. Pode nos chamar no direct? Queremos trocar e entender o que aconteceu.", why: "Reclamações sempre passam por você." },
+    { id: "m4", net: "ig", type: "comentario", author: "pedro.hg", ref: "Café da manhã completo", text: "Tem opção sem glúten?", at: t - 3 * 60 * M, intent: "Outro", status: "precisa", suggestion: "Oi, Pedro! Vou confirmar com a cozinha quais opções sem glúten temos hoje e já te respondo por aqui.", why: "Essa informação não está nas suas respostas prontas, então a IA não respondeu sozinha." },
+    { id: "m5", net: "ig", type: "comentario", author: "ju.tavares", ref: "Esse é o seu Jorge", text: "Seu Jorge é demais! Melhor padaria do bairro ❤️", at: t - 20 * 60 * M, intent: "Elogio", status: "auto", reply: "Ju, o seu Jorge ficou todo bobo com esse comentário! Obrigado pelo carinho. ❤️", replyAt: t - 20 * 60 * M + 2 * M, why: "Elogio: agradecimento automático." },
+    { id: "m6", net: "fb", type: "direct", author: "Lúcia Andrade", text: "Vocês fazem entrega?", at: t - 27 * 60 * M, intent: "Pergunta frequente", status: "auto", reply: "Oi, Lúcia! Entregamos no bairro e arredores das 7h às 19h, com taxa de R$ 5. É só mandar o pedido por aqui.", replyAt: t - 27 * 60 * M + M, why: "Respondida com a resposta pronta “Entrega”." }
+  ];
+  return {
+    v: 2, demo: true, autopilot: true, sim: 0, usage: { mes: monthKey(), ia: 0 },
+    business: { name: "Padaria Trigo Bom", segment: "Padaria e confeitaria", place: "Centro", hours: "Segunda a sábado, das 6h às 20h. Domingo, das 6h ao meio-dia.", about: "Padaria de bairro desde 1998. Pão de fermentação natural, bolos caseiros e café coado na hora.", tone: ["Acolhedor", "Bem-humorado"], avoid: "“promoção imperdível”, gírias de internet, política" },
+    faq: [
+      { q: "Horário de funcionamento", a: "Abrimos de segunda a sábado, das 6h às 20h, e no domingo das 6h ao meio-dia.", kw: "horario, abre, fecha, aberto, domingo, feriado" },
+      { q: "Entrega", a: "Entregamos no bairro e arredores das 7h às 19h, com taxa de R$ 5. É só mandar o pedido pelo direct.", kw: "entrega, delivery, taxa, levam" },
+      { q: "Preço do pão francês", a: "O pão francês está R$ 16,90 o quilo.", kw: "preco, quanto custa, quilo, pao frances, valor" },
+      { q: "Encomenda de bolos", a: "Aceitamos encomendas de bolo com 48 horas de antecedência, pelo direct ou no balcão.", kw: "encomendar bolo" },
+      { q: "Formas de pagamento", a: "Aceitamos Pix, dinheiro e cartões de débito e crédito.", kw: "pix, cartao, pagamento, pagar, debito, credito" }
+    ],
+    rules: { ...DEFAULT_RULES },
+    accounts: [
+      { net: "Instagram", handle: "@trigobom.padaria", detail: "Conta profissional · 2.318 seguidores", on: true },
+      { net: "Facebook", handle: "Padaria Trigo Bom", detail: "Página · 1.104 curtidas", on: true },
+      { net: "TikTok", detail: "Próxima fase", soon: true },
+      { net: "WhatsApp Business", detail: "Próxima fase: mandar a foto pelo WhatsApp e virar post", soon: true }
+    ],
+    posts, inbox
+  };
+}
+function seedEmpty(acc) {
+  return {
+    v: 2, demo: false, autopilot: true, sim: 0, usage: { mes: monthKey(), ia: 0 },
+    business: { name: acc.negocio, segment: acc.segmento, place: acc.cidade || "", hours: "", about: "", tone: ["Acolhedor"], avoid: "" },
+    faq: [{ q: "Horário de funcionamento", a: "" }, { q: "Formas de pagamento", a: "" }, { q: "Entrega", a: "" }],
+    rules: { ...DEFAULT_RULES },
+    accounts: [
+      { net: "Instagram", handle: "", detail: "Não conectado", on: false },
+      { net: "Facebook", handle: "", detail: "Não conectado", on: false },
+      { net: "TikTok", detail: "Próxima fase", soon: true },
+      { net: "WhatsApp Business", detail: "Próxima fase: mandar a foto pelo WhatsApp e virar post", soon: true }
+    ],
+    posts: [], inbox: []
+  };
+}
+function normalize(s) {
+  s.v = 2;
+  if (typeof s.demo !== "boolean") s.demo = true;
+  if (typeof s.autopilot !== "boolean") s.autopilot = true;
+  if (typeof s.sim !== "number") s.sim = 0;
+  s.rules = Object.assign({ ...DEFAULT_RULES }, s.rules || {});
+  s.business = Object.assign({ name: "", segment: "", place: "", hours: "", about: "", tone: [], avoid: "" }, s.business || {});
+  ["faq", "posts", "inbox", "accounts"].forEach(k => { if (!Array.isArray(s[k])) s[k] = []; });
+  if (!s.usage || s.usage.mes !== monthKey()) s.usage = { mes: monthKey(), ia: 0 };
+  s.inbox.forEach(m => { if (m.status === "processando") { const r = fakeInbox(m, s); m.status = "precisa"; m.intent = r.intent; m.why = r.why; m.suggestion = r.reply; } });
+  return s;
+}
+
+/* ---------- respostas simuladas (sem IA) ---------- */
+const tagOf = s => "#" + norm(s).replace(/[^a-z0-9]/g, "");
+function fakeCaptions(topic) {
+  const t = topic.trim().replace(/[.!]+$/, "");
+  const T = cap1(t), low = t.charAt(0).toLowerCase() + t.slice(1);
+  const base = [tagOf(S.business.name || "loja"), tagOf((S.business.segment || "loja").split(" ")[0])];
+  return [
+    { style: "Curta e direta", caption: `${T}! Passa aqui e garante o seu antes que acabe.`, tags: [...base, "#feitonahora"], photo: "Close do produto no balcão, com a luz da janela." },
+    { style: "Contando uma história", caption: `Tem coisa que a gente faz sem pressa, do jeito que aprendeu. Hoje o destaque é: ${low}. Vem conhecer e depois conta pra gente o que achou.`, tags: [...base, "#feitocomcarinho"], photo: "Mãos preparando o produto, foto tirada de cima." },
+    { style: "Chamada para comentar", caption: `${T}. Marca aqui quem vai dividir com você 👇`, tags: [...base, "#marcaalguem"], photo: "O produto em destaque, com o balcão ao fundo." }
+  ];
+}
+function matchFaq(text, state) {
+  const t = norm(text);
+  return (state.faq || []).filter(f => f.q.trim() && f.a.trim()).find(f => {
+    const words = (f.kw ? f.kw.split(",") : []).concat(norm(f.q).split(/\s+/).filter(w => w.length >= 5));
+    return words.map(w => norm(w).trim()).filter(Boolean).some(w => t.includes(w));
+  });
+}
+function fakeInbox(m, state = S) {
+  const t = norm(m.text);
+  const has = (...w) => w.some(x => t.includes(x));
+  const n = firstName(m.author);
+  if (has("mal ", "ruim", "queimad", "chatead", "reclam", "pessim", "demor", "errado", "resolveu")) return { intent: "Reclamação", needsHuman: true, why: "Reclamações sempre passam por você.", reply: `Oi, ${n}. Sentimos muito por isso. Pode nos chamar no direct? Queremos entender o que aconteceu e resolver com você.` };
+  if (has("encomenda", "festa", "unidades", "aniversario", "para o dia")) return { intent: "Encomenda", needsHuman: true, why: "Encomendas precisam da sua confirmação de valor e prazo.", reply: `Oi, ${n}! Fazemos sim. Me conta a quantidade, a data e se prefere retirar ou receber, que eu já te passo o valor.` };
+  if (has("amei", "melhor", "delicia", "adoro", "maravilh", "❤")) return { intent: "Elogio", needsHuman: false, why: "Elogio: agradecimento automático.", reply: `Que alegria ler isso, ${n}! Obrigado pelo carinho. Te esperamos de novo. ❤️` };
+  const f = matchFaq(m.text, state);
+  if (f) return { intent: "Pergunta frequente", needsHuman: false, why: `Respondida com a resposta pronta “${f.q}”.`, reply: `Oi, ${n}! ${f.a}` };
+  return { intent: "Outro", needsHuman: true, why: "Essa informação não está nas suas respostas prontas, então a IA não respondeu sozinha.", reply: `Oi, ${n}! Obrigado pela mensagem. Vou confirmar essa informação e já te respondo.` };
+}
+const ALT = {
+  "Reclamação": n => `${n}, obrigado por avisar e desculpe pelo transtorno. Quero resolver isso pessoalmente: me chama no direct e me conta como foi?`,
+  "Encomenda": n => `Oba, ${n}! Dá pra fazer sim. Me passa a quantidade, a data e se prefere retirar ou receber, que eu te mando o orçamento ainda hoje.`,
+  "Elogio": n => `${n}, muito obrigado! Ficamos felizes demais com a sua mensagem.`,
+  "Pergunta frequente": n => `Oi, ${n}! Já te respondo com a informação certinha.`,
+  "Outro": n => `Oi, ${n}! Boa pergunta. Vou confirmar aqui e te respondo ainda hoje.`
+};
+const IDEAS = [
+  { kind: "Bastidores", time: "18:30", caption: "Por trás de cada atendimento tem muito cuidado. Hoje a gente mostra um pouquinho de como tudo é preparado antes de você chegar.", photo: "A equipe preparando o espaço antes de abrir." },
+  { kind: "Vender", time: "11:40", caption: "Passa aqui hoje e conhece o que a gente preparou para você. Estamos de portas abertas.", photo: "O produto mais pedido em destaque no balcão." },
+  { kind: "Engajar", time: "19:00", caption: "Qual é o seu pedido de sempre aqui? Conta nos comentários 👇", photo: "Vitrine ou balcão vistos de frente." },
+  { kind: "Novidade", time: "16:10", caption: "Tem novidade chegando por aqui. Fica de olho que amanhã a gente conta tudo.", photo: "Detalhe de um produto novo, foto bem de perto." },
+  { kind: "Data especial", time: "08:00", caption: "Fim de semana é dia de aproveitar com calma. Te esperamos com o atendimento de sempre.", photo: "Ambiente da loja com luz natural." }
+];
+function fakeWeek(days) {
+  return days.map((d, i) => { const idea = IDEAS[(d.getDay() + i) % IDEAS.length]; return { date: ymd(d), time: idea.time, kind: idea.kind, caption: idea.caption, photo: idea.photo }; });
+}
+function normWeek(r, days) {
+  const keys = new Set(days.map(ymd)), used = new Set(), out = [];
+  (Array.isArray(r) ? r : []).forEach(o => {
+    const k = String((o && o.data) || "");
+    if (!keys.has(k) || used.has(k)) return;
+    const caption = String((o && o.legenda) || "").trim();
+    if (!caption) return;
+    let t = String((o && o.horario) || "09:00");
+    if (!/^\d{2}:\d{2}$/.test(t) || +t.slice(0, 2) > 23 || +t.slice(3) > 59) t = "09:00";
+    used.add(k);
+    out.push({ date: k, time: t, kind: KINDS.includes(o.tipo) ? o.tipo : "Novidade", caption, photo: String(o.ideia_foto || "") });
+  });
+  if (!out.length) return null;
+  return out.concat(fakeWeek(days.filter(d => !used.has(ymd(d)))));
+}
+
+/* ---------- comuns ---------- */
+const late = p => p.status === "agendado" && when(p) < new Date();
+function statusPill(p) {
+  if (late(p)) return `<span class="pill st-late">Atrasado</span>`;
+  return `<span class="pill st-${p.status}">${ST[p.status] || p.status}</span>`;
+}
+const netChips = nets => (nets || []).map(n => `<span class="net" title="${NET[n]}">${n === "ig" ? "IG" : "FB"}</span>`).join("");
+const isConnected = n => { const a = S.accounts.find(x => x.net === NET[n]); return !!(a && a.on); };
+function bestSlot() {
+  const now = new Date();
+  for (let off = 0; off < 3; off++) {
+    const d = addDays(now, off);
+    for (const s of SLOTS) {
+      const [h, m] = s.split(":").map(Number);
+      const w = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m);
+      if (w - now > 30 * 60000) return { date: ymd(w), time: s };
+    }
+  }
+  return { date: ymd(addDays(now, 1)), time: SLOTS[0] };
+}
+function validateWhen(date, time) {
+  if (!date || !time) return "Escolha o dia e o horário.";
+  const w = when({ date, time });
+  if (isNaN(w)) return "Esse dia ou horário não é válido.";
+  if (w - new Date() < 60000) return "Escolha um horário que ainda não passou.";
+  const h = +time.slice(0, 2);
+  if (S.rules.quietHours && (h >= 22 || h < 6)) return "Pelas suas regras, o piloto não publica entre 22h e 6h. Escolha outro horário.";
+  return null;
+}
+function connectionError(nets) {
+  const off = nets.filter(n => !isConnected(n));
+  return off.length ? `Conecte o ${off.map(n => NET[n]).join(" e o ")} em Marca e regras para agendar. Enquanto isso, dá para salvar como rascunho.` : null;
+}
+function igHandle() { const a = S.accounts.find(x => x.net === "Instagram"); return a && a.handle ? a.handle.replace(/^@/, "") : slug(S.business.name); }
+function mediaHtml(p, cls) {
+  if (p.img) return `<div class="${cls}"><img src="${esc(p.img)}" alt="Foto do post"></div>`;
+  return `<div class="${cls}"><div class="pv-ph"><span class="tag">Ideia de foto</span><p>${esc(p.photo || "Gere as legendas para receber uma ideia de foto.")}</p></div></div>`;
+}
+function fakeMetrics(id) {
+  let h = 7;
+  for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return { likes: 80 + h % 320, comments: 3 + (h >>> 5) % 28, reach: 900 + (h >>> 9) % 2200 };
+}
+const trialDays = () => ACC ? Math.ceil((ACC.testeAte - Date.now()) / DAY) : 0;
+
+let toastT = null;
+function toast(msg, action) {
+  const t = $("#toast");
+  t.innerHTML = `<span>${esc(msg)}</span>` + (action ? `<button class="linkbtn" type="button" id="toast-act">${esc(action.label)}</button>` : "");
+  t.hidden = false;
+  if (action) $("#toast-act").addEventListener("click", () => { t.hidden = true; action.fn(); });
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.hidden = true; }, action ? 6500 : 4200);
+}
+
+/* ---------- entrada: criar conta e entrar ---------- */
+const freshGate = () => ({ tab: "criar", step: 1, d: { nome: "", email: "", whatsapp: "", senha: "", negocio: "", segmento: "", segOutro: "", cidade: "", plano: "piloto", ciclo: "mensal", termos: false }, err: "", busy: false, created: null, loginEmail: "" });
+let G = freshGate();
+const spinHtml = '<span class="spin" aria-hidden="true"></span>';
+const errHtml = () => G.err ? `<p class="formerr" role="alert">${esc(G.err)}</p>` : "";
+
+function showGate() {
+  closeDrawer();
+  $("#app").hidden = true; $("#tabbar").hidden = true; $("#gate").hidden = false;
+  renderGate();
+}
+function enterApp() {
+  $("#gate").hidden = true; $("#app").hidden = false; $("#tabbar").hidden = false;
+  C.inited = false; calWeek = 0; ibFilter = "precisa"; PL_ciclo = null; CT_confirm = false;
+  route(true); setStore("salvo");
+}
+function renderGate() {
+  $$("#gate-tabs [data-gtab]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.gtab === G.tab)));
+  $("#gate-tabs").hidden = G.tab === "criar" && G.step === 4;
+  $("#gate-body").innerHTML = G.tab === "entrar" ? loginHtml() : signupHtml();
+}
+function loginHtml() {
+  return `<h2>Entrar no Balcão</h2>
+  <form id="l-form" class="stack" novalidate>
+    <div class="field"><label for="l-email">E-mail</label><input type="email" id="l-email" autocomplete="email" inputmode="email" value="${esc(G.loginEmail)}"></div>
+    <div class="field"><label for="l-senha">Senha</label><input type="password" id="l-senha" autocomplete="current-password"></div>
+    ${errHtml()}
+    <button class="btn btn-primary wide" type="submit" ${G.busy ? "disabled" : ""}>${G.busy ? spinHtml + " Entrando…" : "Entrar"}</button>
+    <button type="button" class="linkbtn" id="l-forgot">Esqueci minha senha</button>
+    <p class="hint" id="l-forgot-msg" hidden>No app real, enviamos um link para criar uma nova senha. Neste protótipo não há envio de e-mail, então crie uma conta nova.</p>
+  </form>`;
+}
+function signupHtml() {
+  const d = G.d, s = G.step;
+  if (s === 4) {
+    const a = G.created, p = PLANS[a.plano];
+    return `<h2>Conta criada, ${esc(firstName(a.nome))}!</h2>
+    <p class="lede">Seu teste grátis do plano ${esc(p.name)} vai até ${fmtDate(a.testeAte)}. Como você quer começar?</p>
+    <div class="choices">
+      <button type="button" class="choice" data-start="zero"><strong>Começar com o meu negócio</strong><span>Calendário vazio, pronto para conectar o Instagram e criar o primeiro post da ${esc(a.negocio)}.</span></button>
+      <button type="button" class="choice" data-start="exemplo"><strong>Explorar com um exemplo</strong><span>Veja o Balcão funcionando com os dados de uma padaria fictícia.</span></button>
+    </div>`;
+  }
+  const titles = { 1: "Crie sua conta", 2: "Conte sobre o seu negócio", 3: "Escolha o plano do teste" };
+  const head = `<div class="steps"><span class="eyebrow">Passo ${s} de 3</span><div class="stepbar" aria-hidden="true"><i class="on"></i><i class="${s >= 2 ? "on" : ""}"></i><i class="${s >= 3 ? "on" : ""}"></i></div></div><h2>${titles[s]}</h2>`;
+  if (s === 1) {
+    return `${head}<form id="g-form" class="stack" novalidate>
+      <div class="field"><label for="g-nome">Seu nome</label><input type="text" id="g-nome" data-g="nome" autocomplete="name" value="${esc(d.nome)}"></div>
+      <div class="field"><label for="g-email">E-mail</label><input type="email" id="g-email" data-g="email" autocomplete="email" inputmode="email" value="${esc(d.email)}"></div>
+      <div class="field"><label for="g-whats">WhatsApp <span class="opt-l">(opcional)</span></label><input type="tel" id="g-whats" data-g="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(27) 99999-0000" value="${esc(d.whatsapp)}"></div>
+      <div class="field"><label for="g-senha">Crie uma senha</label><input type="password" id="g-senha" data-g="senha" autocomplete="new-password" value="${esc(d.senha)}"><p class="hint">Pelo menos 8 caracteres. Como isto é um protótipo, use uma senha que você não usa em outros sites.</p></div>
+      ${errHtml()}
+      <button class="btn btn-primary wide" type="submit" ${G.busy ? "disabled" : ""}>${G.busy ? spinHtml + " Verificando…" : "Continuar"}</button>
+    </form>`;
+  }
+  if (s === 2) {
+    return `${head}<form id="g-form" class="stack" novalidate>
+      <div class="field"><label for="g-neg">Nome do negócio</label><input type="text" id="g-neg" data-g="negocio" autocomplete="organization" value="${esc(d.negocio)}"></div>
+      <fieldset class="field"><legend>Segmento</legend><div class="chips">${SEGMENTS.map((x, i) => `<label class="chip"><input type="radio" name="g-seg" id="g-seg-${i}" data-g="segmento" value="${esc(x)}" ${d.segmento === x ? "checked" : ""}> ${esc(x)}</label>`).join("")}</div></fieldset>
+      ${d.segmento === "Outro" ? `<div class="field"><label for="g-segoutro">Qual é o segmento?</label><input type="text" id="g-segoutro" data-g="segOutro" value="${esc(d.segOutro)}"></div>` : ""}
+      <div class="field"><label for="g-cid">Bairro ou cidade <span class="opt-l">(opcional)</span></label><input type="text" id="g-cid" data-g="cidade" value="${esc(d.cidade)}"></div>
+      ${errHtml()}
+      <div class="row"><button type="button" class="btn" data-gback>Voltar</button><button class="btn btn-primary" type="submit">Continuar</button></div>
+    </form>`;
+  }
+  const where = MODE === "server" ? "Sua conta será salva no servidor do protótipo." : MODE === "checking" ? "Conectando ao servidor do protótipo…" : "Sua conta fica salva só neste navegador (modo de demonstração).";
+  return `${head}<form id="g-form" class="stack" novalidate>
+    <div class="seg" role="group" aria-label="Forma de cobrança"><button type="button" data-cycle="mensal" aria-pressed="${d.ciclo === "mensal"}">Mensal</button><button type="button" data-cycle="anual" aria-pressed="${d.ciclo === "anual"}">Anual · 20% menos</button></div>
+    <div class="picks" role="radiogroup" aria-label="Plano">${PLAN_IDS.map(id => { const p = PLANS[id]; return `<label class="pick"><input type="radio" name="g-plano" data-g="plano" value="${id}" ${d.plano === id ? "checked" : ""}><span class="pick-top"><strong>${p.name}</strong>${p.featured ? '<span class="tag tag-sm">Mais escolhido</span>' : ""}<span class="pick-price"><b>${brl(priceOf(id, d.ciclo))}</b>/mês</span></span><span class="pick-desc">${esc(p.tagline)} ${p.quota} gerações com IA por mês.</span></label>`; }).join("")}</div>
+    <p class="hint">14 dias grátis, sem cartão. Você só paga se continuar.${d.ciclo === "anual" ? " No anual, a cobrança é uma vez por ano." : ""} Valores provisórios.</p>
+    <label class="check" for="g-termos"><input type="checkbox" id="g-termos" data-g="termos" ${d.termos ? "checked" : ""}><span>Li e aceito os termos de uso e a política de privacidade. Meus dados são tratados conforme a LGPD.</span></label>
+    <p class="hint">${where}</p>
+    ${errHtml()}
+    <div class="row"><button type="button" class="btn" data-gback>Voltar</button><button class="btn btn-primary" type="submit" ${G.busy ? "disabled" : ""}>${G.busy ? spinHtml + " Criando conta…" : "Criar conta e começar o teste"}</button></div>
+  </form>`;
+}
+function gErr(msg, focusId) {
+  G.err = msg; G.busy = false; renderGate();
+  const el = focusId && document.getElementById(focusId);
+  if (el) el.focus();
+}
+function focusFirst() { const el = $("#gate-body input:not([type=radio]):not([type=checkbox])"); if (el) el.focus(); }
+async function gateSubmit(e) {
+  e.preventDefault();
+  if (G.busy) return;
+  G.err = "";
+  if (G.tab === "entrar") return doLogin();
+  const d = G.d;
+  if (G.step === 1) {
+    d.nome = d.nome.trim(); d.email = d.email.trim().toLowerCase();
+    if (!d.nome) return gErr("Escreva seu nome.", "g-nome");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return gErr("Esse e-mail parece incompleto. Confira e tente de novo.", "g-email");
+    if (d.senha.length < 8) return gErr("A senha precisa ter pelo menos 8 caracteres.", "g-senha");
+    G.busy = true; renderGate();
+    await ready;
+    let exists = null;
+    try { exists = await Accounts.findByEmail(d.email); } catch (x) { exists = null; }
+    G.busy = false;
+    if (exists) { G.tab = "entrar"; G.loginEmail = d.email; return gErr("Já existe uma conta com este e-mail. Entre com a sua senha.", "l-senha"); }
+    G.step = 2; renderGate(); focusFirst(); return;
+  }
+  if (G.step === 2) {
+    d.negocio = d.negocio.trim();
+    if (!d.negocio) return gErr("Escreva o nome do negócio.", "g-neg");
+    if (!d.segmento) return gErr("Escolha o segmento do negócio.", "g-seg-0");
+    if (d.segmento === "Outro" && !d.segOutro.trim()) return gErr("Escreva qual é o segmento.", "g-segoutro");
+    G.step = 3; renderGate(); return;
+  }
+  if (G.step === 3) {
+    if (!d.termos) return gErr("Para criar a conta, aceite os termos de uso e a política de privacidade.", "g-termos");
+    G.busy = true; renderGate();
+    try { await createAccount(); G.step = 4; G.busy = false; renderGate(); const c = $("#gate-body .choice"); if (c) c.focus(); }
+    catch (x) { gErr(x && x.code === "quota_exceeded" ? "O servidor do protótipo está cheio. Exclua contas antigas na página Servidor." : "Não foi possível criar a conta agora. Tente de novo em instantes."); }
+  }
+}
+async function createAccount() {
+  await ready;
+  const d = G.d, now = Date.now(), salt = randHex(16);
+  const acc = {
+    id: uid("c"), mode: MODE === "server" ? "server" : "local",
+    nome: d.nome, email: d.email, whatsapp: d.whatsapp.trim(),
+    negocio: d.negocio, segmento: d.segmento === "Outro" ? d.segOutro.trim() : d.segmento, cidade: d.cidade.trim(),
+    plano: d.plano, ciclo: d.ciclo, criadaEm: now, testeAte: now + 14 * DAY, termosEm: now, inicio: null,
+    senha: { salt, hash: await hashPass(d.senha, salt) }
+  };
+  await Accounts.save(acc);
+  d.senha = "";
+  G.created = acc;
+}
+async function startWith(kind) {
+  const acc = G.created; if (!acc) return;
+  acc.inicio = kind;
+  try { await Accounts.update(acc.id, acc.mode, { inicio: kind }); } catch (e) { /* segue com o que já foi salvo */ }
+  ACC = publicAcc(acc); saveSession();
+  S = normalize(kind === "exemplo" ? seedDemo() : seedEmpty(ACC));
+  save();
+  G = freshGate();
+  if (location.hash !== "#painel") { try { history.replaceState(null, "", "#painel"); } catch (e) { /* fica na tela atual */ } }
+  enterApp();
+  toast(kind === "exemplo" ? "Bem-vindo! Você está vendo o exemplo de uma padaria." : `Bem-vindo, ${firstName(ACC.nome)}! Vamos montar as redes da ${ACC.negocio}.`);
+}
+async function doLogin() {
+  const email = ($("#l-email").value || "").trim().toLowerCase(), pass = $("#l-senha").value || "";
+  G.loginEmail = email;
+  if (!email || !pass) return gErr("Preencha o e-mail e a senha.", email ? "l-senha" : "l-email");
+  G.busy = true; renderGate();
+  await ready;
+  let acc = null;
+  try { acc = await Accounts.findByEmail(email); } catch (e) { acc = null; }
+  if (!acc || !acc.senha || (await hashPass(pass, acc.senha.salt)) !== acc.senha.hash) return gErr("E-mail ou senha incorretos.", "l-senha");
+  ACC = publicAcc(acc); saveSession();
+  S = normalize((await loadState(ACC)) || (ACC.inicio === "exemplo" ? seedDemo() : seedEmpty(ACC)));
+  save();
+  G = freshGate();
+  enterApp();
+  toast(`Olá de novo, ${firstName(ACC.nome)}!`);
+}
+async function logout(msg) {
+  if (srvTimer) { clearTimeout(srvTimer); srvTimer = null; await flushServer(); }
+  const email = ACC ? ACC.email : "";
+  LS.del(K_SESSAO);
+  ACC = null; S = null;
+  G = freshGate(); G.tab = "entrar"; G.loginEmail = email;
+  showGate();
+  if (msg) toast(msg);
+}
+async function deleteAccount(id, mode) {
+  const isMe = ACC && ACC.id === id;
+  if (isMe) { clearTimeout(srvTimer); srvTimer = null; }
+  try { await Accounts.remove(id, mode); }
+  catch (e) { toast("Não foi possível excluir agora. Confira a conexão e tente de novo."); return false; }
+  LS.del(stateKey(id));
+  if (isMe) { LS.del(K_SESSAO); ACC = null; S = null; G = freshGate(); showGate(); toast("Conta excluída. Seus dados foram apagados."); }
+  else toast("Conta excluída do servidor.");
+  return true;
+}
+
+/* ---------- navegação ---------- */
+const VIEWS = ["painel", "criar", "calendario", "inbox", "marca", "planos", "conta", "servidor"];
+const current = () => { const v = location.hash.slice(1); return VIEWS.includes(v) ? v : "painel"; };
+const RENDER = {};
+function route(scroll) {
+  if (!ACC || !S) { showGate(); return; }
+  const v = current();
+  VIEWS.forEach(n => { $("#v-" + n).hidden = n !== v; });
+  $$("[data-nav]").forEach(a => { if (a.dataset.nav === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  RENDER[v]();
+  paintChrome();
+  if (scroll) window.scrollTo(0, 0);
+}
+function rerender() { if (!ACC || !S) return; const v = current(); if (v === "painel" || v === "calendario" || v === "inbox") RENDER[v](); paintChrome(); }
+function paintChrome() {
+  if (!ACC || !S) return;
+  const days = trialDays();
+  $("#rail-name").textContent = S.business.name || ACC.negocio || "Seu negócio";
+  $("#rail-plan").textContent = `Plano ${plan().name} · ${days > 0 ? "teste grátis" : "ativo"}`;
+  $("#rail-av").textContent = initials(S.business.name || ACC.negocio || "N");
+  $("#m-av").textContent = initials(ACC.nome || "?");
+  const n = S.inbox.filter(m => m.status === "precisa").length;
+  $$("[data-count]").forEach(el => { el.textContent = n ? String(n) : ""; el.hidden = !n; });
+  $("#ap-mini-dot").classList.toggle("off", !S.autopilot);
+  $("#ap-mini-text").textContent = S.autopilot ? "Piloto automático ligado" : "Piloto automático pausado";
+  $("#nav-servidor").hidden = MODE !== "server";
+  $("#proto-text").textContent = S.demo ? "Você está vendo o exemplo de uma padaria fictícia. Nada é publicado nem enviado de verdade." : "Nada é publicado, enviado ou cobrado de verdade.";
+  if (!resetArm) $("#reset-btn").textContent = S.demo ? "Restaurar exemplo" : "Carregar exemplo";
+}
+
+/* ---------- Início ---------- */
+function attention() {
+  const a = [];
+  S.posts.filter(p => p.status === "aprovar").sort((x, y) => when(x) - when(y)).forEach(p => a.push({ kind: "post", p }));
+  S.inbox.filter(m => m.status === "precisa").sort((x, y) => y.at - x.at).forEach(m => a.push({ kind: "msg", m }));
+  return a;
+}
+RENDER.painel = function () {
+  const now = new Date(), h = now.getHours(), today = ymd(now);
+  $("#p-date").textContent = `${cap1(DIAS[now.getDay()])}, ${now.getDate()} de ${MESES[now.getMonth()]}`;
+  $("#p-hello").textContent = `${h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"}, ${S.demo ? S.business.name : firstName(ACC.nome)}`;
+  const pubToday = S.posts.filter(p => p.status === "publicado" && p.date === today).length;
+  const autoToday = S.inbox.filter(m => m.status === "auto" && ymd(new Date(m.replyAt || m.at)) === today).length;
+  const att = attention();
+  const fresh = !S.demo && !S.posts.length && !S.inbox.length;
+  $("#p-lede").textContent = fresh ? "Sua conta está pronta. Siga os primeiros passos para o piloto automático começar a trabalhar."
+    : S.autopilot ? `Hoje o piloto automático publicou ${plural(pubToday, "post", "posts")} e respondeu ${plural(autoToday, "mensagem", "mensagens")}. ` + (att.length ? (att.length === 1 ? "Uma coisa espera por você." : `${att.length} coisas esperam por você.`) : "Nada espera por você agora.")
+    : "O piloto automático está pausado. Nada é publicado nem respondido sozinho até você ligar de novo.";
+  const days = trialDays();
+  $("#p-plan").innerHTML = `<span class="pill st-agendado">Plano ${esc(plan().name)}</span><span>${days > 0 ? `Teste grátis até ${dm(new Date(ACC.testeAte))}, ${days === 1 ? "falta 1 dia" : `faltam ${days} dias`}.` : "Teste grátis encerrado."}</span><a href="#planos">Ver planos</a>`;
+
+  const st = $("#p-start");
+  if (!S.demo) {
+    const conn = isConnected("ig") && isConnected("fb"), faqOk = S.faq.some(f => f.q.trim() && f.a.trim()), postOk = S.posts.length > 0;
+    const steps = [
+      [conn, "Conecte o Instagram e o Facebook", "O Balcão só publica e responde em contas conectadas.", "#marca", "Conectar"],
+      [faqOk, "Preencha as respostas prontas", "Horário, pagamento e entrega. É daqui que a IA tira as respostas.", "#marca", "Preencher"],
+      [postOk, "Crie o primeiro post", "Conte a ideia em uma frase e escolha uma das legendas.", "#criar", "Criar post"]
+    ];
+    const done = steps.filter(x => x[0]).length;
+    st.hidden = done === 3;
+    st.innerHTML = `<div class="block-head"><h2>Primeiros passos</h2><span class="muted">${done} de 3</span></div><ol>${steps.map(([ok, t, d, href, l], i) => `<li class="${ok ? "done" : ""}"><span class="stepnum" aria-hidden="true">${ok ? "✓" : i + 1}</span><span class="st-text"><strong>${t}</strong><span>${d}</span></span>${ok ? '<span class="pill st-publicado">Feito</span>' : `<a class="btn sm" href="${href}">${l}</a>`}</li>`).join("")}</ol>`;
+  } else st.hidden = true;
+
+  $("#att-count").textContent = att.length ? plural(att.length, "item", "itens") : "";
+  $("#att-list").innerHTML = att.length ? att.slice(0, 5).map(x => {
+    if (x.kind === "post") {
+      const p = x.p;
+      return `<li><span class="sev warn" aria-hidden="true"></span><span class="att-text"><strong>Post de ${esc(dayLabel(p.date))} às ${esc(p.time)} aguarda aprovação</strong><span>${esc(p.caption)}</span></span><button class="btn sm" type="button" data-post="${p.id}">Revisar</button></li>`;
+    }
+    const m = x.m;
+    return `<li><span class="sev ${m.intent === "Reclamação" ? "bad" : "warn"}" aria-hidden="true"></span><span class="att-text"><strong>${esc(m.author)} · ${esc(m.intent || "Mensagem")}</strong><span>${esc(m.text)}</span></span><a class="btn sm" href="#inbox">Responder</a></li>`;
+  }).join("") : `<li class="att-empty">Tudo em dia. O piloto automático está cuidando do resto.</li>`;
+
+  const nxt = S.posts.filter(p => (p.status === "agendado" || p.status === "aprovar") && when(p) > now).sort((a, b) => when(a) - when(b)).slice(0, 4);
+  $("#next-list").innerHTML = nxt.length ? nxt.map(p => {
+    const d = parseYmd(p.date);
+    return `<li><button class="nrow" type="button" data-post="${p.id}"><span class="when"><span class="wd">${p.date === today ? "hoje" : DC[d.getDay()] + " " + d.getDate()}</span><span class="hm">${esc(p.time)}</span></span><span class="nbody"><span class="ncap">${esc(p.caption)}</span><span class="nmeta">${netChips(p.nets)}<span class="kind">${esc(p.kind)}</span>${statusPill(p)}</span></span></button></li>`;
+  }).join("") : `<li class="att-empty">Nenhum post na fila. <a href="#criar">Criar um post</a></li>`;
+
+  $("#ap-switch").checked = S.autopilot;
+  $("#ap-card").classList.toggle("is-off", !S.autopilot);
+  $("#ap-tag").classList.toggle("off", !S.autopilot);
+  $("#ap-state").textContent = S.autopilot ? "Ligado. O Balcão trabalha enquanto você atende." : "Pausado. Nada sai sem você.";
+  const r = S.rules, items = ["Publica os posts agendados no horário"];
+  if (r.autoFaq) items.push(plan().dms ? "Responde perguntas que estão nas respostas prontas" : "Responde nos comentários as perguntas das respostas prontas");
+  if (r.autoPraise) items.push("Agradece elogios");
+  if (r.complaintsToMe) items.push("Manda reclamações para você");
+  if (r.approval) items.push("Pede sua aprovação para posts criados pela IA");
+  if (r.quietHours) items.push("Não publica entre 22h e 6h");
+  $("#ap-list").innerHTML = items.map(t => `<li>${esc(t)}</li>`).join("");
+
+  renderReceipt();
+  const conn = S.accounts.filter(a => !a.soon);
+  $("#accts-mini").innerHTML = conn.map(a => `<li><span class="dot ${a.on ? "" : "off"}" aria-hidden="true"></span><span class="acc-txt"><strong>${esc(a.net)}</strong><small>${a.on ? esc(a.handle) + " · " : ""}${esc(a.detail)}</small></span>${a.on ? "" : '<a class="btn sm" href="#marca">Conectar</a>'}</li>`).join("");
+};
+function renderReceipt() {
+  const now = new Date(), a = mondayOf(now), b = addDays(a, 6), end = addDays(a, 7);
+  const inW = d => d >= a && d < end;
+  const pub = S.posts.filter(p => p.status === "publicado" && inW(parseYmd(p.date))).length;
+  const fila = S.posts.filter(p => (p.status === "agendado" || p.status === "aprovar") && inW(parseYmd(p.date))).length;
+  const au = S.inbox.filter(m => m.status === "auto" && inW(new Date(m.replyAt || m.at))).length;
+  const yo = S.inbox.filter(m => m.status === "respondida" && inW(new Date(m.replyAt || m.at))).length;
+  const mins = (pub + fila) * 20 + au * 5;
+  const L = (k, v) => `<div class="rl"><span>${k}</span><span class="dots"></span><b>${v}</b></div>`;
+  $("#receipt").innerHTML = `<div class="rc-head"><strong>BALCÃO</strong><span>RESUMO DA SEMANA ${isoWeek(now)}</span><span>${dm(a)} A ${dm(b)}</span></div><div class="rc-sep"></div>${L("POSTS PUBLICADOS", pub)}${L("POSTS NA FILA", fila)}${L("RESPOSTAS DA IA", au)}${L("RESPONDIDAS POR VOCÊ", yo)}${S.demo ? L("ALCANCE ESTIMADO*", "2.480") : ""}<div class="rc-sep"></div><div class="rl total"><span>TEMPO POUPADO</span><span class="dots"></span><b>${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, "0")}</b></div><p class="rc-foot">${S.demo ? "*número de exemplo<br>" : ""}conta 20 min por post e 5 min por resposta</p>`;
+}
+
+/* ---------- Criar post ---------- */
+const selectedNets = () => [...($("#c-ig").checked ? ["ig"] : []), ...($("#c-fb").checked ? ["fb"] : [])];
+RENDER.criar = function () {
+  if (!C.inited) {
+    C.inited = true; C.img = null; C.tags = []; C.photo = ""; $("#c-photo").value = "";
+    $("#c-err").hidden = true; $("#c-note").hidden = true; $("#c-err2").hidden = true;
+    if (S.demo) {
+      $("#c-topic").value = "Pão de queijo saindo do forno às 16h, hoje 10 unidades por R$ 12";
+      C.options = fakeCaptions($("#c-topic").value); C.src = "exemplo"; C.chosen = 0; applyOption(0);
+    } else {
+      $("#c-topic").value = ""; C.options = []; C.src = "exemplo"; $("#c-caption").value = "";
+    }
+    const b = bestSlot(); $("#c-date").value = b.date; $("#c-time").value = b.time;
+    $("#c-gen").textContent = "Gerar 3 legendas";
+  }
+  if (C.presetDate) {
+    $("#c-date").value = C.presetDate;
+    $("#c-time").value = C.presetDate === ymd(new Date()) ? bestSlot().time : "11:40";
+    C.presetDate = null;
+  }
+  $("#c-goals").innerHTML = KINDS.map((k, i) => `<label class="chip"><input type="radio" name="c-goal" id="c-goal-${i}" value="${esc(k)}" ${k === C.goal ? "checked" : ""}> ${esc(k)}</label>`).join("");
+  renderOptions(); renderPreview(); renderBest(); renderQuota(); paintAi();
+};
+function renderQuota() {
+  const p = plan(), used = S.usage.ia;
+  $("#c-quota").textContent = `${used} de ${p.quota} gerações com IA usadas neste mês (plano ${p.name}).`;
+}
+function renderOptions() {
+  $("#c-results").hidden = !C.options.length;
+  $("#c-src").textContent = C.src === "ia" ? "Escritas pela IA agora" : C.src === "exemplo" ? "Exemplo pronto. Toque em Gerar para a IA escrever" : "Exemplo simulado";
+  $("#c-opts").innerHTML = C.options.map((o, i) => `<label class="opt"><input type="radio" name="c-opt" id="c-opt-${i}" value="${i}" ${i === C.chosen ? "checked" : ""}><span class="opt-style">${esc(o.style)}</span><span class="opt-cap">${esc(o.caption)}</span>${o.tags.length ? `<span class="opt-tags">${esc(o.tags.join(" "))}</span>` : ""}</label>`).join("");
+}
+function applyOption(i) {
+  const o = C.options[i]; if (!o) return;
+  C.chosen = i; C.tags = o.tags.slice(); C.photo = o.photo;
+  $("#c-caption").value = o.caption;
+  renderPreview();
+}
+function renderPreview() {
+  const cap = $("#c-caption").value.trim();
+  $("#pv").innerHTML = `<div class="pv-head"><span class="av" aria-hidden="true">${esc(initials(S.business.name || "N"))}</span><span><strong>${esc(igHandle())}</strong><small>${esc(S.business.place || "")}</small></span></div>${mediaHtml({ img: C.img, photo: C.photo }, "pv-media")}<div class="pv-body">${cap ? `<p><strong>${esc(igHandle())}</strong> ${esc(cap)}</p>` : `<p class="pv-empty">A legenda escolhida aparece aqui.</p>`}${C.tags.length ? `<p class="pv-tags">${esc(C.tags.join(" "))}</p>` : ""}</div>`;
+}
+function renderBest() {
+  const b = bestSlot();
+  $("#c-best").innerHTML = `Melhor horário sugerido: <b class="mono">${esc(dayLabel(b.date))} às ${b.time}</b>. É quando os seguidores costumam abrir o app (estimativa de exemplo). <button type="button" class="linkbtn" id="c-usebest">Usar este horário</button>`;
+}
+async function generate() {
+  const topic = $("#c-topic").value.trim(), errEl = $("#c-err"), noteEl = $("#c-note");
+  errEl.hidden = true; noteEl.hidden = true;
+  if (!topic) { errEl.textContent = "Escreva sobre o que é o post. Uma frase já basta."; errEl.hidden = false; $("#c-topic").focus(); return; }
+  const nets = selectedNets();
+  if (!nets.length) { errEl.textContent = "Escolha pelo menos uma rede para publicar."; errEl.hidden = false; return; }
+  const p = plan();
+  if (S.usage.ia >= p.quota) { errEl.innerHTML = `Você usou as ${p.quota} gerações do mês no plano ${esc(p.name)}. <a href="#planos">Ver planos</a>`; errEl.hidden = false; return; }
+  const btn = $("#c-gen");
+  btn.disabled = true; btn.innerHTML = `${spinHtml} Escrevendo…`;
+  $("#c-results").hidden = false;
+  $("#c-src").textContent = "";
+  $("#c-opts").innerHTML = `<p class="thinking">${spinHtml} ${aiMode === "on" ? "O Claude está escrevendo 3 opções no tom da sua marca…" : "Preparando 3 opções de exemplo…"}</p>`;
+  let opts = null, note = "";
+  if (sample) {
+    try { opts = normOptions(await sample.json(promptCaptions(topic, C.goal, nets), { modelTier: "quick", cache: false })); if (!opts) note = "A IA respondeu num formato inesperado. Mostrando um exemplo simulado."; }
+    catch (e) { note = aiFail(e); }
+  } else {
+    await new Promise(r => setTimeout(r, 450));
+  }
+  if (!S) return;
+  C.src = opts ? "ia" : "sim";
+  C.options = opts || fakeCaptions(topic);
+  C.chosen = 0; applyOption(0); renderOptions();
+  S.usage.ia++; save(); renderQuota();
+  btn.disabled = false; btn.textContent = "Gerar de novo";
+  if (note) { noteEl.textContent = note; noteEl.hidden = false; }
+}
+function createPost(asDraft) {
+  const err = $("#c-err2"); err.hidden = true;
+  const fail = m => { err.textContent = m; err.hidden = false; };
+  const caption = $("#c-caption").value.trim();
+  if (!caption) return fail("Escolha ou escreva uma legenda antes de salvar.");
+  const nets = selectedNets();
+  if (!nets.length) return fail("Escolha pelo menos uma rede para publicar.");
+  const date = $("#c-date").value, time = $("#c-time").value;
+  if (!asDraft) {
+    const ce = connectionError(nets); if (ce) return fail(ce);
+    const e = validateWhen(date, time); if (e) return fail(e);
+  }
+  const p = { id: uid("p"), date: date || ymd(new Date()), time: time || "09:00", kind: C.goal, nets, caption, tags: C.tags.slice(), photo: C.photo, img: C.img, status: asDraft ? "rascunho" : "agendado" };
+  S.posts.push(p); save();
+  const go = () => { calWeek = Math.round((mondayOf(parseYmd(p.date)) - mondayOf(new Date())) / (7 * DAY)); location.hash = "#calendario"; };
+  toast(asDraft ? "Rascunho salvo no calendário." : `Post agendado para ${dayLabel(p.date)} às ${p.time}.`, { label: "Ver no calendário", fn: go });
+  C.img = null; $("#c-photo").value = ""; $("#c-photo-hint").textContent = "Sem foto, o post guarda a ideia de foto sugerida como lembrete.";
+  renderPreview(); paintChrome();
+}
+function shrink(file, max) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(im.width * s)); c.height = Math.max(1, Math.round(im.height * s));
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL("image/jpeg", 0.82));
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("imagem")); };
+    im.src = url;
+  });
+}
+
+/* ---------- Calendário ---------- */
+RENDER.calendario = function () {
+  const now = new Date(), today = ymd(now), start = addDays(mondayOf(now), calWeek * 7), end = addDays(start, 6);
+  $("#cal-range").textContent = start.getMonth() === end.getMonth()
+    ? `${start.getDate()} a ${end.getDate()} de ${MESES[start.getMonth()]}`
+    : `${start.getDate()} de ${MC[start.getMonth()]} a ${end.getDate()} de ${MC[end.getMonth()]}`;
+  $("#cal-eyebrow").textContent = `Calendário · semana ${isoWeek(start)}${calWeek === 0 ? " · esta semana" : ""}`;
+  const fill = $("#cal-fill");
+  if (!fill.disabled) fill.textContent = plan().week ? "Preencher dias vazios com IA" : "Preencher com IA · plano Piloto";
+  let html = "";
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(start, i), key = ymd(d), past = d < dayStart(now);
+    const dp = S.posts.filter(p => p.date === key).sort((a, b) => a.time.localeCompare(b.time));
+    const cards = dp.map(p => `<button class="pc ${p.status === "aprovar" ? "is-aprovar" : ""}" type="button" data-post="${p.id}"><span class="pc-top"><span class="hm">${esc(p.time)}</span>${netChips(p.nets)}</span><span class="pc-cap">${esc(p.caption)}</span>${statusPill(p)}</button>`).join("");
+    const empty = past ? `<p class="dempty">Sem post</p>` : `<button class="dadd" type="button" data-add="${key}">+ Criar post</button>`;
+    html += `<section class="day ${key === today ? "is-today" : ""} ${past ? "is-past" : ""}" aria-label="${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}"><header class="dhead"><span class="dname">${DC[d.getDay()]}</span><span class="dnum">${d.getDate()}</span></header><div class="dposts">${cards || empty}</div></section>`;
+  }
+  $("#week").innerHTML = html;
+};
+async function fillWeek() {
+  const btn = $("#cal-fill"), p = plan();
+  if (!p.week) { toast("Preencher a semana com IA faz parte dos planos Piloto e Agência.", { label: "Ver planos", fn: () => { location.hash = "#planos"; } }); return; }
+  if (S.usage.ia >= p.quota) { toast(`Você usou as ${p.quota} gerações do mês no plano ${p.name}.`, { label: "Ver planos", fn: () => { location.hash = "#planos"; } }); return; }
+  const start = addDays(mondayOf(new Date()), calWeek * 7), tomorrow = addDays(new Date(), 1);
+  const empty = [];
+  for (let i = 0; i < 7; i++) { const d = addDays(start, i); if (d < tomorrow) continue; if (!S.posts.some(x => x.date === ymd(d))) empty.push(d); }
+  if (!empty.length) { toast("Nesta semana, todos os dias a partir de amanhã já têm post."); return; }
+  btn.disabled = true; btn.innerHTML = `${spinHtml} Criando ${plural(empty.length, "post", "posts")}…`;
+  let items = null, note = "";
+  if (sample) { try { items = normWeek(await sample.json(promptWeek(empty), { modelTier: "quick", cache: false }), empty); } catch (e) { note = aiFail(e); } }
+  else await new Promise(r => setTimeout(r, 500));
+  btn.disabled = false;
+  if (!S) return;
+  if (!items) items = fakeWeek(empty);
+  const status = S.rules.approval ? "aprovar" : "agendado";
+  items.forEach(it => {
+    let t = it.time;
+    const h = +t.slice(0, 2);
+    if (S.rules.quietHours && (h >= 22 || h < 6)) t = "09:00";
+    S.posts.push({ id: uid("p"), date: it.date, time: t, kind: it.kind, nets: ["ig", "fb"], status, caption: it.caption, tags: [], photo: it.photo || "", ai: true });
+  });
+  S.usage.ia++; save();
+  RENDER.calendario(); paintChrome();
+  toast((note ? note + " " : "") + (status === "aprovar" ? `${plural(items.length, "post criado", "posts criados")}. Revise e aprove cada um.` : `${plural(items.length, "post agendado", "posts agendados")} pela IA.`));
+}
+
+/* ---------- Gaveta do post ---------- */
+let drawerId = null, lastFocus = null, confirmDel = false;
+function openPost(id) {
+  drawerId = id; confirmDel = false; lastFocus = document.activeElement;
+  renderDrawer();
+  $("#drawer").hidden = false; document.body.classList.add("noscroll");
+  const c = $("#d-close"); if (c) c.focus();
+}
+function closeDrawer() {
+  if ($("#drawer").hidden) return;
+  $("#drawer").hidden = true; drawerId = null; document.body.classList.remove("noscroll");
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+function renderDrawer() {
+  const p = S && S.posts.find(x => x.id === drawerId);
+  if (!p) { closeDrawer(); return; }
+  const d = parseYmd(p.date), ro = p.status === "publicado";
+  let notes = "";
+  if (p.status === "aprovar") notes += `<p class="note warn">A IA criou este post. Ele só vai ao ar depois que você aprovar.</p>`;
+  if (late(p)) notes += `<p class="note warn">O horário passou com o piloto automático pausado. Ligue o piloto ou publique agora.</p>`;
+  let body;
+  if (ro) {
+    const m = fakeMetrics(p.id);
+    body = `<div class="metrics" aria-label="Resultado de exemplo"><div class="metric"><b>${fmtN(m.likes)}</b><span>curtidas</span></div><div class="metric"><b>${fmtN(m.comments)}</b><span>comentários</span></div><div class="metric"><b>${fmtN(m.reach)}</b><span>alcance</span></div></div><p class="hint">Números de exemplo. No app real eles vêm das métricas do Instagram e do Facebook.</p>`;
+  } else {
+    body = `<div class="row2"><div class="field"><label for="d-date">Dia</label><input type="date" id="d-date" value="${esc(p.date)}"></div><div class="field"><label for="d-time">Horário</label><input type="time" id="d-time" value="${esc(p.time)}"></div></div>`;
+  }
+  let actions;
+  if (confirmDel) actions = `<p class="note info" style="flex-basis:100%">Excluir este post? Isso não pode ser desfeito.</p><button class="btn btn-danger" type="button" data-act="confirm-del">Excluir post</button><button class="btn" type="button" data-act="cancel-del">Cancelar</button>`;
+  else if (p.status === "aprovar") actions = `<button class="btn btn-primary" type="button" data-act="schedule">Aprovar e agendar</button><button class="btn" type="button" data-act="save">Salvar alterações</button><button class="btn btn-quiet" type="button" data-act="delete">Excluir</button>`;
+  else if (p.status === "agendado") actions = `<button class="btn btn-primary" type="button" data-act="save">Salvar alterações</button><button class="btn" type="button" data-act="publish">Publicar agora</button><button class="btn btn-quiet" type="button" data-act="delete">Excluir</button>`;
+  else if (p.status === "rascunho") actions = `<button class="btn btn-primary" type="button" data-act="schedule">Agendar</button><button class="btn" type="button" data-act="save">Salvar rascunho</button><button class="btn btn-quiet" type="button" data-act="delete">Excluir</button>`;
+  else actions = `<a class="btn" href="#inbox" data-act="inbox">Ver comentários</a><button class="btn btn-quiet" type="button" data-act="delete">Excluir do calendário</button>`;
+  $("#d-panel").innerHTML = `<div class="d-top">${statusPill(p)}<button class="iconbtn" type="button" id="d-close" aria-label="Fechar">×</button></div>
+    <div class="vhead"><h2 id="d-title">${esc(p.kind)} · ${esc(cap1(DIAS[d.getDay()]))}, ${d.getDate()} de ${MESES[d.getMonth()]}</h2><p class="muted"><span class="mono">${esc(p.time)}</span> · ${(p.nets || []).map(n => NET[n]).join(" e ")}${p.ai ? " · criado pela IA" : ""}</p></div>
+    ${mediaHtml(p, "d-media")}
+    ${notes}
+    <div class="field"><label for="d-cap">Legenda</label><textarea id="d-cap" rows="6" ${ro ? "readonly" : ""}>${esc(p.caption)}</textarea></div>
+    ${p.tags && p.tags.length ? `<p class="tags">${esc(p.tags.join(" "))}</p>` : ""}
+    ${body}
+    <p class="formerr" id="d-err" hidden></p>
+    <div class="d-actions">${actions}</div>`;
+}
+function drawerAction(act) {
+  const p = S && S.posts.find(x => x.id === drawerId); if (!p) return;
+  const capEl = $("#d-cap"), dEl = $("#d-date"), tEl = $("#d-time");
+  const fail = m => { const el = $("#d-err"); el.textContent = m; el.hidden = false; };
+  const read = () => { if (capEl && !capEl.readOnly && capEl.value.trim()) p.caption = capEl.value.trim(); if (dEl && dEl.value) p.date = dEl.value; if (tEl && tEl.value) p.time = tEl.value; };
+  const done = msg => { save(); closeDrawer(); rerender(); toast(msg); };
+  if (act === "schedule") {
+    const ce = connectionError(p.nets || []); if (ce) return fail(ce);
+    const e = validateWhen(dEl.value, tEl.value); if (e) return fail(e);
+    const wasApproval = p.status === "aprovar";
+    read(); p.status = "agendado";
+    done(`${wasApproval ? "Post aprovado e agendado" : "Post agendado"} para ${dayLabel(p.date)} às ${p.time}.`);
+  } else if (act === "save") {
+    if (p.status === "agendado" || p.status === "aprovar") { const e = validateWhen(dEl.value, tEl.value); if (e) return fail(e); }
+    read(); done("Alterações salvas.");
+  } else if (act === "publish") {
+    const ce = connectionError(p.nets || []); if (ce) return fail(ce);
+    read(); const n = new Date(); p.date = ymd(n); p.time = hm(n); p.status = "publicado";
+    done(`Publicado agora no ${(p.nets || []).map(x => NET[x]).join(" e no ")} (simulado).`);
+  } else if (act === "delete") {
+    confirmDel = true; renderDrawer(); const b = $('[data-act="confirm-del"]'); if (b) b.focus();
+  } else if (act === "cancel-del") {
+    confirmDel = false; renderDrawer();
+  } else if (act === "confirm-del") {
+    S.posts = S.posts.filter(x => x.id !== p.id); done("Post excluído.");
+  } else if (act === "inbox") {
+    closeDrawer();
+  }
+}
+
+/* ---------- Caixa de entrada ---------- */
+const FILTERS = {
+  precisa: ["Precisa de você", m => m.status === "precisa" || m.status === "processando"],
+  respondidas: ["Respondidas", m => m.status === "auto" || m.status === "respondida"],
+  todas: ["Todas", () => true]
+};
+const POOL_DEMO = [
+  { net: "ig", type: "comentario", author: "bia.rocha", ref: "Café da manhã completo", text: "Qual o preço do pão francês hoje?" },
+  { net: "fb", type: "direct", author: "Sérgio Lopes", text: "Vocês abrem domingo?" },
+  { net: "ig", type: "direct", author: "nina.festas", text: "Oi! Vocês aceitam encomenda de salgados para festa? Seriam 200 unidades para o dia 15." },
+  { net: "ig", type: "comentario", author: "marcos_vb", ref: "Fim de semana pede bolo de fubá", text: "Amei o bolo de fubá!! Melhor que o da minha vó 😂" },
+  { net: "fb", type: "comentario", author: "Helena Duarte", ref: "Café da manhã completo", text: "Fui atendida muito mal hoje de manhã no caixa." },
+  { net: "ig", type: "comentario", author: "gui.santana", ref: "Café da manhã completo", text: "Esse café da manhã vale no sábado também?" },
+  { net: "ig", type: "direct", author: "ana.p.costa", text: "Aceitam Pix?" }
+];
+const POOL_GEN = [
+  { net: "ig", type: "comentario", author: "bia.rocha", ref: "seu último post", text: "Qual o horário de funcionamento de vocês?" },
+  { net: "fb", type: "direct", author: "Sérgio Lopes", text: "Aceitam Pix?" },
+  { net: "ig", type: "comentario", author: "marcos_vb", ref: "seu último post", text: "Amei o atendimento de vocês, voltarei com certeza!" },
+  { net: "ig", type: "direct", author: "ana.p.costa", text: "Vocês fazem entrega?" },
+  { net: "fb", type: "comentario", author: "Helena Duarte", ref: "seu último post", text: "Fui mal atendida ontem e ninguém resolveu meu problema." },
+  { net: "ig", type: "comentario", author: "gui.santana", ref: "seu último post", text: "Quanto custa?" }
+];
+function windowChip(m) {
+  if (m.type !== "direct" || m.status !== "precisa") return "";
+  const left = 24 - (Date.now() - m.at) / 3600000;
+  if (left <= 0) return `<span class="window closed">Janela de 24 h fechada</span>`;
+  return `<span class="window ${left < 4 ? "low" : ""}" title="A Meta só deixa responder mensagens diretas até 24 horas depois da última mensagem do cliente.">Responda em até ${Math.max(1, Math.floor(left))} h</span>`;
+}
+function msgHtml(m) {
+  const where = m.type === "direct" ? "mensagem direta" : `comentou em “${esc(clip(m.ref || "um post", 40))}”`;
+  let body = "";
+  if (m.status === "processando") {
+    body = `<p class="thinking">${spinHtml} ${aiMode === "on" ? "O Claude está lendo e decidindo o que fazer…" : "Classificando a mensagem…"}</p>`;
+  } else if (m.status === "auto" || m.status === "respondida") {
+    body = `<div class="reply"><span class="reply-who">${m.status === "auto" ? "Resposta automática" : "Você respondeu"} · ${hm(new Date(m.replyAt || m.at))}</span><p>${esc(m.reply)}</p></div>${m.status === "auto" && m.why ? `<p class="why">${esc(m.why)}</p>` : ""}`;
+  } else if (m.status === "arquivada") {
+    body = `<p class="why">Arquivada sem resposta.</p>`;
+  } else {
+    const closed = m.type === "direct" && Date.now() - m.at > 24 * 3600000;
+    body = `${m.why ? `<p class="why"><b>Por que veio para você:</b> ${esc(m.why)}</p>` : ""}
+      <div class="field"><label for="r-${m.id}">Resposta sugerida pela IA</label><textarea id="r-${m.id}" data-sug="${m.id}" rows="3">${esc(m.suggestion || "")}</textarea></div>
+      ${closed ? `<p class="note warn">Passou de 24 horas desde a mensagem. A Meta não deixa mais responder por aplicativo; responda pelo próprio Instagram ou Facebook.</p>` : ""}
+      <div class="row"><button class="btn btn-primary sm" type="button" data-act="send" data-id="${m.id}" ${closed ? "disabled" : ""}>Enviar resposta</button><button class="btn sm" type="button" data-act="suggest" data-id="${m.id}">Sugerir outra</button><button class="btn btn-quiet sm" type="button" data-act="archive" data-id="${m.id}">Arquivar</button></div>`;
+  }
+  const meta = m.status === "processando" ? "" : `${m.intent ? `<span class="intent">${esc(m.intent)}</span>` : ""}<span class="pill st-${m.status}">${IBST[m.status] || ""}</span>`;
+  return `<article class="msg"><span class="av" aria-hidden="true">${esc(initials(m.author))}</span><div class="msg-body"><div class="msg-head"><strong>${esc(m.author)}</strong><span class="net" title="${NET[m.net]}">${m.net === "ig" ? "IG" : "FB"}</span><span class="muted">${where}</span><time>${ago(m.at)}</time></div><p class="msg-text">${esc(m.text)}</p><div class="msg-meta">${meta}${windowChip(m)}</div>${body}</div></article>`;
+}
+RENDER.inbox = function () {
+  $("#ib-tabs").innerHTML = Object.entries(FILTERS).map(([k, [label, fn]]) => `<button class="tab" type="button" data-f="${k}" aria-pressed="${k === ibFilter}">${label}<span class="n">${S.inbox.filter(fn).length}</span></button>`).join("");
+  const list = S.inbox.filter(FILTERS[ibFilter][1]).sort((a, b) => b.at - a.at);
+  $("#ib-list").innerHTML = list.length ? list.map(msgHtml).join("")
+    : `<p class="ib-empty">${ibFilter === "precisa" ? "Nada esperando você." : "Nenhuma mensagem aqui ainda."} ${S.demo || S.inbox.length ? "" : "Quando o Instagram e o Facebook estiverem conectados, os comentários e as mensagens chegam aqui. "}Toque em “Simular nova mensagem” para ver o piloto em ação.</p>`;
+};
+async function simulate() {
+  const pool = S.demo ? POOL_DEMO : POOL_GEN;
+  const src = pool[S.sim % pool.length]; S.sim++;
+  const m = { id: uid("m"), ...src, at: Date.now(), status: "processando" };
+  S.inbox.push(m); ibFilter = "todas"; save(); RENDER.inbox(); paintChrome();
+  let r = null, note = "";
+  if (sample) { try { r = normInbox(await sample.json(promptInbox(m), { modelTier: "quick" })); } catch (e) { note = aiFail(e); } }
+  else await new Promise(res => setTimeout(res, 900));
+  if (!S || !S.inbox.includes(m)) return;
+  if (!r) r = fakeInbox(m);
+  m.intent = r.intent; m.why = r.why;
+  const ruleOk = (r.intent === "Pergunta frequente" && S.rules.autoFaq) || (r.intent === "Elogio" && S.rules.autoPraise);
+  const planOk = m.type !== "direct" || plan().dms;
+  let auto = S.autopilot && !r.needsHuman && ruleOk && planOk;
+  if (r.intent === "Reclamação" && S.rules.complaintsToMe) auto = false;
+  if (auto) { m.status = "auto"; m.reply = r.reply; m.replyAt = Date.now(); }
+  else {
+    m.status = "precisa"; m.suggestion = r.reply;
+    if (!S.autopilot) m.why = "O piloto automático está pausado, então tudo vem para você.";
+    else if (!r.needsHuman && !planOk) m.why = "Respostas automáticas nas mensagens diretas fazem parte dos planos Piloto e Agência.";
+    else if (!r.needsHuman && !ruleOk) m.why = "Respostas automáticas para este tipo de mensagem estão desligadas nas suas regras.";
+  }
+  save();
+  if (current() === "inbox") RENDER.inbox(); else rerender();
+  paintChrome();
+  toast((note ? note + " " : "") + (auto ? `${m.author} recebeu resposta automática.` : `A mensagem de ${m.author} precisa de você.`));
+}
+async function suggestReply(m, btn) {
+  const ta = $("#r-" + m.id); if (!ta) return;
+  const before = ta.value, n = firstName(m.author);
+  btn.disabled = true; const label = btn.textContent; btn.textContent = "Escrevendo…";
+  if (sample) {
+    try {
+      await sample(promptAlt(m, before), { modelTier: "quick", cache: false, onText: ({ text }) => { ta.value = text; } });
+      m.suggestion = ta.value.trim(); save();
+    } catch (e) {
+      const note = aiFail(e);
+      ta.value = (ALT[m.intent] || ALT.Outro)(n); m.suggestion = ta.value; save();
+      if (e && e.code !== "cancelled") toast(note);
+    }
+  } else {
+    await new Promise(r => setTimeout(r, 400));
+    const alt = (ALT[m.intent] || ALT.Outro)(n);
+    ta.value = alt === before ? `Oi, ${n}! Obrigado por escrever. Já te respondo com calma.` : alt;
+    m.suggestion = ta.value; save();
+  }
+  btn.disabled = false; btn.textContent = label;
+}
+
+/* ---------- Marca e regras ---------- */
+const RULES = [
+  ["autoFaq", "Responder sozinho o que está nas respostas prontas", "Horário, entrega, preços e formas de pagamento."],
+  ["autoPraise", "Agradecer elogios automaticamente", "Uma resposta curta, no tom da marca."],
+  ["complaintsToMe", "Reclamações sempre vêm para mim", "A IA sugere a resposta, mas quem envia é você."],
+  ["approval", "Aprovar posts criados pela IA antes de publicar", "Vale para o “Preencher dias vazios com IA”."],
+  ["quietHours", "Não publicar entre 22h e 6h", "Posts fora desse horário não podem ser agendados."]
+];
+RENDER.marca = function () {
+  const b = S.business;
+  $$("[data-b]").forEach(el => { el.value = b[el.dataset.b] || ""; });
+  $("#b-tones").innerHTML = TONES.map((t, i) => `<label class="chip"><input type="checkbox" id="tone-${i}" data-tone value="${esc(t)}" ${(b.tone || []).includes(t) ? "checked" : ""}> ${esc(t)}</label>`).join("");
+  renderFaq();
+  $("#rules").innerHTML = RULES.map(([k, title, desc]) => `<label class="rule" for="r-${k}"><span><strong>${esc(title)}</strong><small>${esc(desc)}</small></span><input type="checkbox" role="switch" class="switch" id="r-${k}" data-rule="${k}" ${S.rules[k] ? "checked" : ""}></label>`).join("");
+  renderAccts();
+};
+function renderAccts() {
+  $("#accts-full").innerHTML = S.accounts.map((a, i) => `<li><span class="dot ${a.on ? "" : "off"}" aria-hidden="true"></span><span class="acc-txt"><strong>${esc(a.net)}</strong><small>${a.on && a.handle ? esc(a.handle) + " · " : ""}${esc(a.detail)}</small></span>${a.soon ? '<span class="pill st-rascunho">Em breve</span>' : a.on ? `<span class="pill st-publicado">Conectada</span><button class="btn btn-quiet sm" type="button" data-acc="${i}" data-accact="off">Desconectar</button>` : `<button class="btn sm" type="button" data-acc="${i}" data-accact="on">Conectar</button>`}</li>`).join("");
+}
+function renderFaq() {
+  $("#faq-list").innerHTML = S.faq.length ? S.faq.map((f, i) => `<div class="faq-row" data-i="${i}"><div class="field"><label for="fq-${i}">Pergunta</label><input type="text" id="fq-${i}" data-fq="q" value="${esc(f.q)}" placeholder="Ex.: Vocês têm estacionamento?"></div><div class="field"><label for="fa-${i}">Resposta</label><textarea id="fa-${i}" data-fq="a" rows="2" placeholder="A resposta que a IA pode usar">${esc(f.a)}</textarea></div><button class="btn btn-quiet sm" type="button" data-fq-del="${i}">Remover</button></div>`).join("")
+    : `<p class="hint">Nenhuma resposta pronta. Sem elas, todas as perguntas vêm para você.</p>`;
+}
+let savedT = null, accBizT = null;
+function markSaved() {
+  save();
+  const el = $("#b-saved"); el.textContent = "Salvo";
+  clearTimeout(savedT); savedT = setTimeout(() => { el.textContent = ""; }, 1800);
+}
+function syncAccountBusiness() {
+  if (!ACC || !S || S.demo) return;
+  clearTimeout(accBizT);
+  accBizT = setTimeout(async () => {
+    if (!ACC || !S || S.demo) return;
+    const f = { negocio: S.business.name, segmento: S.business.segment, cidade: S.business.place };
+    try { await Accounts.update(ACC.id, ACC.mode, f); Object.assign(ACC, f); saveSession(); } catch (e) { /* tenta de novo na próxima edição */ }
+  }, 2000);
+}
+
+/* ---------- Planos ---------- */
+RENDER.planos = function () {
+  const cyc = PL_ciclo || ACC.ciclo || "mensal";
+  $("#pl-cycle").innerHTML = `<button type="button" data-plcycle="mensal" aria-pressed="${cyc === "mensal"}">Mensal</button><button type="button" data-plcycle="anual" aria-pressed="${cyc === "anual"}">Anual · 20% menos</button>`;
+  $("#pl-cards").innerHTML = PLAN_IDS.map(id => {
+    const p = PLANS[id], price = priceOf(id, cyc), mine = ACC.plano === id, cur = mine && (ACC.ciclo || "mensal") === cyc;
+    const label = cur ? "Seu plano atual" : mine ? `Mudar para o ${cyc}` : `Escolher o ${p.name}`;
+    return `<article class="plan ${p.featured ? "is-featured" : ""}" aria-label="Plano ${p.name}"><div class="plan-head"><h2>${p.name}</h2>${cur ? '<span class="pill st-agendado">Seu plano</span>' : p.featured ? '<span class="tag tag-sm">Mais escolhido</span>' : ""}</div><p class="muted">${esc(p.tagline)}</p><div class="price"><b>${brl(price)}</b><span>/mês</span></div><p class="hint">${cyc === "anual" ? `Cobrado ${brl(price * 12)} por ano. Economia de ${brl((p.m - p.a) * 12)}.` : "Cobrança mensal. Cancele quando quiser."}</p><ul class="feats">${p.feats.map(f => `<li>${esc(f)}</li>`).join("")}</ul><button class="btn ${cur ? "" : "btn-primary"} wide" type="button" data-plan="${id}" ${cur ? "disabled" : ""}>${label}</button></article>`;
+  }).join("");
+  $("#pl-matrix").innerHTML = `<thead><tr><th scope="col">Recurso</th>${PLAN_IDS.map(id => `<th scope="col">${PLANS[id].name}</th>`).join("")}</tr></thead><tbody><tr><th scope="row">Preço por mês</th>${PLAN_IDS.map(id => `<td>${brl(priceOf(id, cyc))}</td>`).join("")}</tr>${MATRIX.map(r => `<tr><th scope="row">${esc(r[0])}</th>${r.slice(1).map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+};
+async function changePlan(id, btn) {
+  const cyc = PL_ciclo || ACC.ciclo || "mensal";
+  btn.disabled = true;
+  try {
+    await Accounts.update(ACC.id, ACC.mode, { plano: id, ciclo: cyc });
+    ACC.plano = id; ACC.ciclo = cyc; saveSession();
+    paintChrome(); RENDER.planos();
+    toast(`Plano alterado para ${PLANS[id].name} ${cyc}. ` + (trialDays() > 0 ? `Você continua no teste grátis até ${dm(new Date(ACC.testeAte))}.` : "A próxima cobrança já vem com o novo valor (simulado)."));
+  } catch (e) {
+    btn.disabled = false;
+    toast("Não foi possível mudar o plano agora. Confira a conexão e tente de novo.");
+  }
+}
+
+/* ---------- Minha conta ---------- */
+RENDER.conta = function () {
+  const a = ACC, p = plan(), days = trialDays(), used = S.usage.ia, pct = Math.min(100, Math.round(used / p.quota * 100));
+  $("#ct-h").textContent = a.nome;
+  const where = a.mode === "server" ? (MODE === "server" ? "No servidor do protótipo" : "No servidor do protótipo. Sem conexão agora, então você está usando a cópia deste navegador.") : "Só neste navegador (modo de demonstração)";
+  const danger = CT_confirm
+    ? `<p class="note warn">Excluir apaga sua conta e todos os dados do Balcão${a.mode === "server" ? " no servidor" : " neste navegador"}. Não dá para desfazer.</p><div class="row"><button class="btn btn-danger" type="button" data-ct="del-yes">Excluir minha conta</button><button class="btn" type="button" data-ct="del-no">Cancelar</button></div>`
+    : `<p class="hint">Sair mantém tudo salvo. Excluir apaga a conta e os dados, como prevê a LGPD.</p><div class="row"><button class="btn" type="button" data-ct="logout">Sair</button><button class="btn btn-quiet" type="button" data-ct="del">Excluir minha conta</button></div>`;
+  $("#ct").innerHTML = `
+    <section class="card stack" aria-labelledby="ct-dados"><h2 id="ct-dados">Seus dados</h2><dl class="kv"><dt>E-mail</dt><dd>${esc(a.email)}</dd><dt>WhatsApp</dt><dd>${esc(a.whatsapp || "Não informado")}</dd><dt>Negócio</dt><dd>${esc(a.negocio)} · ${esc(a.segmento)}${a.cidade ? " · " + esc(a.cidade) : ""}</dd><dt>Conta criada</dt><dd>${fmtDate(a.criadaEm)}</dd><dt>Onde fica salva</dt><dd>${esc(where)}</dd></dl></section>
+    <section class="card stack" aria-labelledby="ct-plano"><div class="block-head"><h2 id="ct-plano">Plano ${esc(p.name)}</h2><a class="more" href="#planos">Ver planos</a></div>
+      <div class="price"><b>${brl(priceOf(a.plano, a.ciclo))}</b><span>/mês · ${a.ciclo === "anual" ? "cobrança anual" : "cobrança mensal"}</span></div>
+      <p class="note ${days > 3 ? "info" : "warn"}">${days > 0 ? `Teste grátis até ${fmtDate(a.testeAte)}. ${days === 1 ? "Falta 1 dia." : `Faltam ${days} dias.`} Nenhuma cobrança até lá.` : "O teste grátis terminou. No app real, aqui você cadastraria o pagamento."}</p>
+      <div class="field"><span class="lbl" id="ct-uso">Gerações com IA neste mês</span><div class="meter ${used >= p.quota ? "full" : ""}" role="meter" aria-labelledby="ct-uso" aria-valuemin="0" aria-valuemax="${p.quota}" aria-valuenow="${used}"><i style="width:${pct}%"></i></div><p class="hint">${used} de ${p.quota}. Renova no dia 1º de cada mês.</p></div>
+    </section>
+    ${MODE === "server" ? `<section class="card stack" aria-labelledby="ct-adm"><h2 id="ct-adm">Administração</h2><p class="hint">Você administra este protótipo. Veja todas as contas criadas e os planos escolhidos.</p><a class="btn" href="#servidor">Abrir o servidor</a></section>` : ""}
+    <section class="card stack" aria-labelledby="ct-sair"><h2 id="ct-sair">Sair ou excluir</h2>${danger}</section>`;
+};
+
+/* ---------- Servidor ---------- */
+function startAdmin() {
+  if (ADM.unsub || MODE !== "server" || !db) return;
+  ADM.timer = setTimeout(() => { if (ADM.list === null) { ADM.err = "O servidor ainda não respondeu. As contas aparecem assim que ele responder."; if (current() === "servidor") RENDER.servidor(); } }, 10000);
+  ADM.unsub = db.collection("contas").onSnapshot(snap => {
+    ADM.list = snap.docs.map(d => { const x = { ...d.data() }; delete x.senha; return x; });
+    if (!snap.metadata.fromCache) { clearTimeout(ADM.timer); ADM.err = ""; }
+    if (ACC && current() === "servidor") RENDER.servidor();
+  }, () => {
+    clearTimeout(ADM.timer);
+    ADM.err = "Não foi possível ler as contas do servidor.";
+    if (ACC && current() === "servidor") RENDER.servidor();
+  });
+}
+RENDER.servidor = function () {
+  const el = $("#srv");
+  if (MODE !== "server") { el.innerHTML = `<p class="att-empty">Esta tela aparece para quem administra o protótipo, com o servidor conectado. Nesta visualização, cada conta fica salva só no navegador de quem a criou.</p>`; return; }
+  const L = ADM.list;
+  if (!L) { el.innerHTML = ADM.err ? `<p class="note warn">${esc(ADM.err)}</p>` : `<p class="thinking">${spinHtml} Lendo as contas do servidor…</p>`; return; }
+  const now = Date.now(), trial = L.filter(a => a.testeAte > now).length;
+  const mrr = L.reduce((s, a) => s + priceOf(a.plano, a.ciclo), 0);
+  const byPlan = PLAN_IDS.map(id => [id, L.filter(a => a.plano === id).length]);
+  const max = Math.max(1, ...byPlan.map(x => x[1]));
+  const segs = {};
+  L.forEach(a => { const k = a.segmento || "Outro"; segs[k] = (segs[k] || 0) + 1; });
+  const rows = L.slice().sort((a, b) => (b.criadaEm || 0) - (a.criadaEm || 0)).map(a => {
+    const me = ACC && a.id === ACC.id, conf = ADM.confirm === a.id;
+    const act = conf ? `<span class="row"><button class="btn btn-danger sm" type="button" data-adm-yes="${esc(a.id)}">Excluir</button><button class="btn sm" type="button" data-adm-no>Cancelar</button></span>` : `<button class="btn btn-quiet sm" type="button" data-adm-del="${esc(a.id)}">Excluir</button>`;
+    return `<tr><td><strong>${esc(a.nome)}</strong>${me ? ' <span class="pill st-agendado">você</span>' : ""}<small>${esc(a.email)}${a.whatsapp ? " · " + esc(a.whatsapp) : ""}</small></td><td>${esc(a.negocio)}<small>${esc(a.segmento)}${a.cidade ? " · " + esc(a.cidade) : ""}</small></td><td>${esc(PLANS[a.plano] ? PLANS[a.plano].name : a.plano)}<small>${a.ciclo === "anual" ? "anual" : "mensal"} · ${brl(priceOf(a.plano, a.ciclo))}/mês</small></td><td>${a.criadaEm ? fmtDate(a.criadaEm) : "–"}<small>${a.testeAte > now ? "teste até " + dm(new Date(a.testeAte)) : "teste encerrado"}</small></td><td>${a.inicio === "exemplo" ? "Exemplo" : a.inicio === "zero" ? "Do zero" : "–"}</td><td>${act}</td></tr>`;
+  }).join("");
+  el.innerHTML = `${ADM.err ? `<p class="note warn">${esc(ADM.err)}</p>` : ""}
+    <div class="kpis">
+      <div class="kpi"><span>Contas criadas</span><b>${L.length}</b></div>
+      <div class="kpi"><span>Em teste grátis</span><b>${trial}</b></div>
+      <div class="kpi"><span>Receita mensal se todos assinarem</span><b>${brl(mrr)}</b><small>valores provisórios</small></div>
+      <div class="kpi"><span>Valor médio por conta</span><b>${L.length ? brl(Math.round(mrr / L.length)) : "–"}</b><small>por mês</small></div>
+    </div>
+    <div class="srv-grid">
+      <section class="card stack" aria-labelledby="sv-pl"><h2 id="sv-pl">Planos escolhidos</h2><div class="bars">${byPlan.map(([id, n]) => `<div class="bar"><span>${PLANS[id].name}</span><span class="track"><i style="width:${Math.round(n / max * 100)}%"></i></span><b>${n}</b></div>`).join("")}</div></section>
+      <section class="card stack" aria-labelledby="sv-sg"><h2 id="sv-sg">Segmentos</h2><div class="chips">${Object.entries(segs).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<span class="intent">${esc(k)} · ${n}</span>`).join("") || '<span class="muted">Nenhuma conta ainda.</span>'}</div></section>
+    </div>
+    <section class="block" aria-labelledby="sv-ct"><h2 id="sv-ct">Contas</h2>${L.length ? `<div class="tbl-wrap"><table class="tbl accounts-tbl"><thead><tr><th scope="col">Pessoa</th><th scope="col">Negócio</th><th scope="col">Plano</th><th scope="col">Criada</th><th scope="col">Começou com</th><th scope="col"><span class="muted">Ações</span></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="att-empty">Nenhuma conta no servidor ainda.</p>`}</section>
+    <p class="hint">As senhas ficam guardadas só como código embaralhado (hash) e nunca aparecem aqui. Quem abre o link só para ver não consegue gravar neste banco; para receber cadastros do público, o app real precisa de um servidor próprio.</p>`;
+};
+
+/* ---------- piloto automático (publicação simulada) ---------- */
+function autoPublish(announce) {
+  if (!S || !S.autopilot) return;
+  const now = new Date(), done = [];
+  S.posts.forEach(p => { if (p.status === "agendado" && when(p) <= now) { p.status = "publicado"; done.push(p); } });
+  if (!done.length) return;
+  save();
+  if (announce) toast(done.length === 1 ? `O post das ${done[0].time} foi publicado (simulado).` : `${done.length} posts foram publicados (simulado).`);
+  rerender();
+}
+
+/* ---------- eventos ---------- */
+const ICONS = {
+  home: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
+  plus: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/>',
+  cal: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  inbox: '<path d="M4 13.5 6.5 5h11l2.5 8.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 13.5h4.5a3.5 3.5 0 0 0 7 0H20"/>',
+  store: '<path d="M4.5 9.5 6 4.5h12l1.5 5"/><path d="M4.5 9.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0"/><path d="M6 11.5V20h12v-8.5M10 20v-4.5h4V20"/>',
+  tag: '<path d="M3.5 12.2V5A1.5 1.5 0 0 1 5 3.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-6.6 6.6a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/>',
+  user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  server: '<rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01M8 16.5h.01"/>'
+};
+$$("[data-icon]").forEach(el => { el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[el.dataset.icon]}</svg>`; });
+
+// entrada
+$("#gate-tabs").addEventListener("click", e => { const b = e.target.closest("[data-gtab]"); if (!b || G.busy) return; G.tab = b.dataset.gtab; G.err = ""; renderGate(); focusFirst(); });
+$("#gate-body").addEventListener("input", e => { const t = e.target; if (t.dataset.g) G.d[t.dataset.g] = t.type === "checkbox" ? t.checked : t.value; if (t.id === "l-email") G.loginEmail = t.value; });
+$("#gate-body").addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.g === "segmento") { G.d.segmento = t.value; renderGate(); const f = t.value === "Outro" ? $("#g-segoutro") : document.getElementById(t.id); if (f) f.focus(); }
+  else if (t.dataset.g === "plano") G.d.plano = t.value;
+  else if (t.dataset.g === "termos") { G.d.termos = t.checked; if (t.checked && G.err) { G.err = ""; const fe = $("#gate-body .formerr"); if (fe) fe.remove(); } }
+});
+$("#gate-body").addEventListener("click", e => {
+  if (e.target.closest("[data-gback]")) { G.step = Math.max(1, G.step - 1); G.err = ""; renderGate(); return; }
+  const cy = e.target.closest("[data-cycle]"); if (cy) { G.d.ciclo = cy.dataset.cycle; renderGate(); const b = $(`[data-cycle="${cy.dataset.cycle}"]`); if (b) b.focus(); return; }
+  const st = e.target.closest("[data-start]"); if (st) { startWith(st.dataset.start); return; }
+  if (e.target.id === "l-forgot") $("#l-forgot-msg").hidden = false;
+});
+$("#gate-body").addEventListener("submit", gateSubmit);
+
+// app
+document.addEventListener("click", e => {
+  const post = e.target.closest("[data-post]");
+  if (post) { openPost(post.dataset.post); return; }
+  const add = e.target.closest("[data-add]");
+  if (add) { C.presetDate = add.dataset.add; location.hash = "#criar"; }
+});
+$("#ap-switch").addEventListener("change", e => {
+  S.autopilot = e.target.checked; save();
+  if (S.autopilot) autoPublish(false);
+  RENDER.painel(); paintChrome();
+  toast(S.autopilot ? "Piloto automático ligado." : "Piloto automático pausado. Nada sai sem você.");
+});
+$("#c-form").addEventListener("submit", e => { e.preventDefault(); generate(); });
+$("#c-goals").addEventListener("change", e => { if (e.target.name === "c-goal") C.goal = e.target.value; });
+$("#c-opts").addEventListener("change", e => { if (e.target.name === "c-opt") applyOption(+e.target.value); });
+$("#c-caption").addEventListener("input", renderPreview);
+$("#c-best").addEventListener("click", e => { if (e.target.id === "c-usebest") { const b = bestSlot(); $("#c-date").value = b.date; $("#c-time").value = b.time; } });
+$("#c-schedule").addEventListener("click", () => createPost(false));
+$("#c-draft").addEventListener("click", () => createPost(true));
+$("#c-photo").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const err = $("#c-err2"); err.hidden = true;
+  if (!f.type.startsWith("image/")) { err.textContent = "Escolha um arquivo de imagem (JPG ou PNG)."; err.hidden = false; return; }
+  try { C.img = await shrink(f, 720); renderPreview(); $("#c-photo-hint").textContent = "Foto adicionada. Ela aparece na prévia."; }
+  catch (x) { err.textContent = "Não foi possível abrir essa imagem. Tente outra."; err.hidden = false; }
+});
+$("#cal-prev").addEventListener("click", () => { calWeek--; RENDER.calendario(); });
+$("#cal-next").addEventListener("click", () => { calWeek++; RENDER.calendario(); });
+$("#cal-today").addEventListener("click", () => { calWeek = 0; RENDER.calendario(); });
+$("#cal-fill").addEventListener("click", fillWeek);
+$("#d-panel").addEventListener("click", e => {
+  if (e.target.closest("#d-close")) { closeDrawer(); return; }
+  const b = e.target.closest("[data-act]"); if (b) drawerAction(b.dataset.act);
+});
+$("#scrim").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+$("#ib-tabs").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if (b) { ibFilter = b.dataset.f; RENDER.inbox(); } });
+$("#ib-sim").addEventListener("click", simulate);
+$("#ib-list").addEventListener("input", e => { const id = e.target.dataset.sug; if (!id) return; const m = S.inbox.find(x => x.id === id); if (m) { m.suggestion = e.target.value; save(); } });
+$("#ib-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const m = S.inbox.find(x => x.id === b.dataset.id); if (!m) return;
+  if (b.dataset.act === "send") {
+    const ta = $("#r-" + m.id), txt = ta ? ta.value.trim() : "";
+    if (!txt) { if (ta) ta.focus(); toast("Escreva uma resposta antes de enviar."); return; }
+    m.reply = txt; m.replyAt = Date.now(); m.status = "respondida"; save(); RENDER.inbox(); paintChrome();
+    toast(`Resposta enviada para ${m.author} (simulado).`);
+  } else if (b.dataset.act === "archive") {
+    m.status = "arquivada"; save(); RENDER.inbox(); paintChrome();
+    toast("Mensagem arquivada.", { label: "Desfazer", fn: () => { m.status = "precisa"; save(); rerender(); } });
+  } else if (b.dataset.act === "suggest") {
+    suggestReply(m, b);
+  }
+});
+$("#v-marca").addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.b) { S.business[t.dataset.b] = t.value; markSaved(); paintChrome(); syncAccountBusiness(); }
+  else if (t.dataset.fq) { const row = t.closest(".faq-row"); const f = S.faq[+row.dataset.i]; if (f) { f[t.dataset.fq] = t.value; if (t.dataset.fq === "q") f.kw = ""; markSaved(); } }
+});
+$("#v-marca").addEventListener("change", e => {
+  const t = e.target;
+  if (t.hasAttribute("data-tone")) { S.business.tone = $$("[data-tone]").filter(x => x.checked).map(x => x.value); markSaved(); }
+  else if (t.dataset.rule) { S.rules[t.dataset.rule] = t.checked; markSaved(); toast(`Regra ${t.checked ? "ligada" : "desligada"}.`); }
+});
+$("#faq-add").addEventListener("click", () => { S.faq.push({ q: "", a: "" }); save(); renderFaq(); const el = $(`#fq-${S.faq.length - 1}`); if (el) el.focus(); });
+$("#faq-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-fq-del]"); if (!b) return;
+  const i = +b.dataset.fqDel, [rm] = S.faq.splice(i, 1); save(); renderFaq();
+  toast("Resposta pronta removida.", { label: "Desfazer", fn: () => { if (!S) return; S.faq.splice(i, 0, rm); save(); if (current() === "marca") renderFaq(); } });
+});
+$("#accts-full").addEventListener("click", e => {
+  const b = e.target.closest("[data-acc]"); if (!b) return;
+  const a = S.accounts[+b.dataset.acc]; if (!a || a.soon) return;
+  if (b.dataset.accact === "on") {
+    a.on = true;
+    a.handle = a.net === "Instagram" ? "@" + slug(S.business.name) : (S.business.name || "Sua página");
+    a.detail = a.net === "Instagram" ? "Conta profissional" : "Página";
+    toast(`${a.net} conectado (simulado). No app real, abre o login da Meta para você autorizar.`);
+  } else {
+    a.on = false; a.detail = "Não conectado";
+    toast(`${a.net} desconectado.`);
+  }
+  save(); renderAccts(); paintChrome();
+});
+$("#pl-cycle").addEventListener("click", e => { const b = e.target.closest("[data-plcycle]"); if (b) { PL_ciclo = b.dataset.plcycle; RENDER.planos(); } });
+$("#pl-cards").addEventListener("click", e => { const b = e.target.closest("[data-plan]"); if (b && !b.disabled) changePlan(b.dataset.plan, b); });
+$("#ct").addEventListener("click", async e => {
+  const b = e.target.closest("[data-ct]"); if (!b) return;
+  const act = b.dataset.ct;
+  if (act === "logout") logout("Você saiu. Seus dados continuam salvos.");
+  else if (act === "del") { CT_confirm = true; RENDER.conta(); const y = $('[data-ct="del-yes"]'); if (y) y.focus(); }
+  else if (act === "del-no") { CT_confirm = false; RENDER.conta(); }
+  else if (act === "del-yes") { b.disabled = true; CT_confirm = false; const ok = await deleteAccount(ACC.id, ACC.mode); if (!ok && ACC) RENDER.conta(); }
+});
+$("#srv").addEventListener("click", async e => {
+  const del = e.target.closest("[data-adm-del]"); if (del) { ADM.confirm = del.dataset.admDel; RENDER.servidor(); const y = $("[data-adm-yes]"); if (y) y.focus(); return; }
+  if (e.target.closest("[data-adm-no]")) { ADM.confirm = null; RENDER.servidor(); return; }
+  const yes = e.target.closest("[data-adm-yes]");
+  if (yes) { yes.disabled = true; const id = yes.dataset.admYes; ADM.confirm = null; await deleteAccount(id, "server"); if (ACC && current() === "servidor") RENDER.servidor(); }
+});
+
+let resetArm = 0;
+$("#reset-btn").addEventListener("click", () => {
+  const b = $("#reset-btn");
+  if (resetArm && Date.now() - resetArm < 5000) {
+    resetArm = 0;
+    const usage = S.usage;
+    S = normalize(seedDemo()); S.usage = usage; save();
+    C.inited = false; C.goal = "Vender"; calWeek = 0; ibFilter = "precisa";
+    closeDrawer(); route(false); toast("Dados de exemplo carregados.");
+  } else {
+    resetArm = Date.now(); b.textContent = S.demo ? "Toque de novo para apagar suas mudanças" : "Toque de novo para trocar seus dados pelo exemplo";
+    setTimeout(() => { if (resetArm && Date.now() - resetArm >= 5000) { resetArm = 0; paintChrome(); } }, 5100);
+  }
+});
+
+window.addEventListener("hashchange", () => { if (!ACC) return; closeDrawer(); CT_confirm = false; ADM.confirm = null; route(true); });
+
+/* ---------- início ---------- */
+const sess = LS.get(K_SESSAO);
+if (sess && sess.conta && sess.conta.id) {
+  ACC = sess.conta;
+  const cached = LS.get(stateKey(ACC.id));
+  S = normalize(cached && cached.business ? cached : (ACC.inicio === "exemplo" ? seedDemo() : seedEmpty(ACC)));
+  autoPublish(false);
+  enterApp();
+} else {
+  showGate();
+}
+paintAi();
+ready.then(async m => {
+  MODE = m;
+  if (m === "server") startAdmin();
+  if (!ACC) { if (G.tab === "criar" && G.step === 3) renderGate(); return; }
+  if (ACC.mode === "server" && m === "server") {
+    let fresh = null, failed = false;
+    try { fresh = await Accounts.get(ACC.id, "server"); } catch (e) { failed = true; }
+    if (!ACC) return;
+    if (!failed && !fresh) { logout("Sua conta não foi encontrada no servidor. Entre ou crie uma nova."); return; }
+    if (fresh) {
+      ACC = publicAcc(fresh); saveSession();
+      const st = await loadState(ACC);
+      if (st && ACC && (st.updatedAt || 0) > ((S && S.updatedAt) || 0)) { S = normalize(st); pendingSync = false; route(false); }
+      else if (pendingSync) { pendingSync = false; save(); }
+    }
+  }
+  setStore("salvo"); paintChrome();
+  if (ACC && (current() === "servidor" || current() === "conta")) RENDER[current()]();
+});
+setInterval(() => autoPublish(true), 30000);
+})();
+</script>
+
+</body>
+</html>
