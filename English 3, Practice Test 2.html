@@ -602,6 +602,8 @@ function playSeg(seg) {
   else { audio.addEventListener('loadedmetadata', go, {once: true}); audio.load(); }
 }
 audio.addEventListener('ended', stopAudio);
+/* requestAnimationFrame sleeps when the tab is hidden; timeupdate keeps firing, so the item still stops at its end */
+audio.addEventListener('timeupdate', () => { if (playing && audio.currentTime >= stopAt) stopAudio(); });
 
 /* ---------- blanks (word box and verbs) ---------- */
 const B = (a, o) => Object.assign({a: [].concat(a)}, o || {});
