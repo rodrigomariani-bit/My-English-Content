@@ -386,6 +386,8 @@ figure.pic.ph{background:repeating-linear-gradient(135deg,#fff 0 10px,var(--surf
 figure.pic.ph span{display:grid;gap:4px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.3}
 figure.pic.ph small{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sec-ink)}
 .pic-items.three figure.pic.ph{aspect-ratio:3/2}
+.ord-in{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;color:var(--muted);font-size:14px;cursor:text}
+.ord-in .bl.w-num{width:3em;font-size:22px;font-weight:800;padding:4px 0;line-height:1.3}
 .pic-items.three .pic-item figure.pic{padding:4px}
 .pic-items.three .pic-item figure.pic img{max-height:none;max-width:100%}
 @media (max-width:520px){.wide-items .pic-item{padding:8px}.two-pics.n3{gap:6px}.two-pics.n3 .one-pic{min-width:0}.two-pics.n3 .mc-opt{padding:7px 4px;gap:5px;min-width:0}.two-pics.n3 figure.pic.ph{padding:4px}figure.pic.ph span{font-size:11.5px}figure.pic.ph small{font-size:9px;letter-spacing:.04em}}
@@ -545,7 +547,7 @@ figure.pic.big{padding:8px}
 /* answers are e-mailed to the teacher through this Formspree form */
 const FORMSPREE = 'https://formspree.io/f/xgakrpgp';
 /* content: spec.py (answers from the worksheet's ANSWER KEY) */
-const D = {"lesson": 1, "course": "English 4", "ex": [{"type": "order", "pics": ["p01", "p02", "p03", "p04", "p05", "p06"], "labels": ["a", "b", "c", "d", "e", "f"], "ans": [4, 1, 6, 3, 5, 2], "done": [], "ph": {"p01": "two girls give fliers to Joshua and Rick", "p02": "Joshua comes out of a classroom; a crowd at the end of the hallway", "p03": "Joshua and Rick put their ballots in a ballot box", "p04": "Joshua and Rick look at a poster of Allison", "p05": "Allison gives a speech; the boys listen", "p06": "Joshua talks to Rick at his open locker"}, "r": "I", "sect": "Listening and Understanding", "instr": "You are going to listen to Joshua Reed talking about his day at school yesterday. You will hear the recording twice. The first time, just listen to Joshua and look at the pictures. The second time, number the pictures in the order in which Joshua talks about what happened."}, {"type": "pairs", "two": true, "letters": ["a", "b", "c"], "items": [{"n": "1", "pics": ["p07", "p08", "p09"], "ans": "c", "model": false}, {"n": "2", "pics": ["p10", "p11", "p12"], "ans": "b", "model": false}, {"n": "3", "pics": ["p13", "p14", "p15"], "ans": "b", "model": false}], "done_word": "Model", "ph": {"p07": "some knives", "p08": "some forks", "p09": "some spoons", "p10": "a full glass", "p11": "an empty glass", "p12": "a glass half full", "p13": "a young man eating a hamburger", "p14": "a young man holding a tray", "p15": "a young man looking for an empty table"}, "r": "II", "sect": "Listening, Reading, and Understanding", "instr": "Look at the pictures and listen to the dialogues. Each dialogue is followed by a question. Mark the picture which corresponds to the correct answer for each question."}, {"type": "mc", "items": [{"n": "1", "stem": "", "o": [["d", "She is calling a boy who is near her."], ["e", "She thinks Andrew is a good student council president."], ["f", "She thinks Andrew is really cute."]], "ans": "f", "model": false}, {"n": "2", "stem": "", "o": [["d", "To give her something that is in his hand."], ["e", "To help her organize things for the garage sale."], ["f", "To buy something at the garage sale on Saturday."]], "ans": "e", "model": false}, {"n": "3", "stem": "", "o": [["d", "Bobby helped the boy mow the lawn."], ["e", "The boy mowed the lawn without any help."], ["f", "The boy’s father mowed the lawn."]], "ans": "e", "model": false}, {"n": "4", "stem": "", "o": [["d", "Tony and Megan don’t like each other."], ["e", "Tony and Megan are good friends."], ["f", "Megan is organizing a birthday party for Tony."]], "ans": "d", "model": false}, {"n": "5", "stem": "", "o": [["d", "Sarah Williams is the student council president."], ["e", "Both speakers are going to vote for Adam Morley."], ["f", "There is going to be an election at the speakers’ school tomorrow."]], "ans": "f", "model": false}], "plain": false, "r": "III", "sect": "Listening, Reading, and Understanding", "instr": "You are going to hear some dialogues, each followed by a question. Mark the correct answer for each question."}, {"type": "choice", "labels": ["TRUE", "FALSE"], "head": ["TRUE", "FALSE"], "groups": [{"pic": null, "items": [{"n": "1", "ans": "FALSE", "model": false, "word": "The mother made the meat loaf for lunch."}, {"n": "2", "ans": "FALSE", "model": false, "word": "The son doesn’t like his father’s meat loaf."}, {"n": "3", "ans": "TRUE", "model": false, "word": "The daughter asks for a second helping of meat loaf."}, {"n": "4", "ans": "TRUE", "model": false, "word": "The mother can’t eat any more."}, {"n": "5", "ans": "TRUE", "model": false, "word": "The son is very sure his sister will have a second helping of dessert."}]}], "layout": "rows", "long": true, "r": "IV", "sect": "TOEFL®-Like Exercise", "instr": "You are going to hear a conversation. As you listen, look at the statements below. For each statement, mark TRUE or FALSE."}]};
+const D = {"lesson": 1, "course": "English 4", "ex": [{"type": "order", "pics": ["p01", "p02", "p03", "p04", "p05", "p06"], "labels": ["a", "b", "c", "d", "e", "f"], "ans": [4, 1, 6, 3, 5, 2], "done": [], "ph": {"p01": "two girls give fliers to Joshua and Rick", "p02": "Joshua comes out of a classroom; a crowd at the end of the hallway", "p03": "Joshua and Rick put their ballots in a ballot box", "p04": "Joshua and Rick look at a poster of Allison", "p05": "Allison gives a speech; the boys listen", "p06": "Joshua talks to Rick at his open locker"}, "typed": true, "r": "I", "sect": "Listening and Understanding", "instr": "You are going to listen to Joshua Reed talking about his day at school yesterday. You will hear the recording twice. The first time, just listen to Joshua and look at the pictures. The second time, number the pictures in the order in which Joshua talks about what happened."}, {"type": "pairs", "two": true, "letters": ["a", "b", "c"], "items": [{"n": "1", "pics": ["p07", "p08", "p09"], "ans": "c", "model": false}, {"n": "2", "pics": ["p10", "p11", "p12"], "ans": "b", "model": false}, {"n": "3", "pics": ["p13", "p14", "p15"], "ans": "b", "model": false}], "done_word": "Model", "ph": {"p07": "some knives", "p08": "some forks", "p09": "some spoons", "p10": "a full glass", "p11": "an empty glass", "p12": "a glass half full", "p13": "a young man eating a hamburger", "p14": "a young man holding a tray", "p15": "a young man looking for an empty table"}, "r": "II", "sect": "Listening, Reading, and Understanding", "instr": "Look at the pictures and listen to the dialogues. Each dialogue is followed by a question. Mark the picture which corresponds to the correct answer for each question."}, {"type": "mc", "items": [{"n": "1", "stem": "", "o": [["d", "She is calling a boy who is near her."], ["e", "She thinks Andrew is a good student council president."], ["f", "She thinks Andrew is really cute."]], "ans": "f", "model": false}, {"n": "2", "stem": "", "o": [["d", "To give her something that is in his hand."], ["e", "To help her organize things for the garage sale."], ["f", "To buy something at the garage sale on Saturday."]], "ans": "e", "model": false}, {"n": "3", "stem": "", "o": [["d", "Bobby helped the boy mow the lawn."], ["e", "The boy mowed the lawn without any help."], ["f", "The boy’s father mowed the lawn."]], "ans": "e", "model": false}, {"n": "4", "stem": "", "o": [["d", "Tony and Megan don’t like each other."], ["e", "Tony and Megan are good friends."], ["f", "Megan is organizing a birthday party for Tony."]], "ans": "d", "model": false}, {"n": "5", "stem": "", "o": [["d", "Sarah Williams is the student council president."], ["e", "Both speakers are going to vote for Adam Morley."], ["f", "There is going to be an election at the speakers’ school tomorrow."]], "ans": "f", "model": false}], "plain": false, "r": "III", "sect": "Listening, Reading, and Understanding", "instr": "You are going to hear some dialogues, each followed by a question. Mark the correct answer for each question."}, {"type": "choice", "labels": ["TRUE", "FALSE"], "head": ["TRUE", "FALSE"], "groups": [{"pic": null, "items": [{"n": "1", "ans": "FALSE", "model": false, "word": "The mother made the meat loaf for lunch."}, {"n": "2", "ans": "FALSE", "model": false, "word": "The son doesn’t like his father’s meat loaf."}, {"n": "3", "ans": "TRUE", "model": false, "word": "The daughter asks for a second helping of meat loaf."}, {"n": "4", "ans": "TRUE", "model": false, "word": "The mother can’t eat any more."}, {"n": "5", "ans": "TRUE", "model": false, "word": "The son is very sure his sister will have a second helping of dessert."}]}], "layout": "rows", "long": true, "r": "IV", "sect": "TOEFL®-Like Exercise", "instr": "You are going to hear a conversation. As you listen, look at the statements below. For each statement, mark TRUE or FALSE."}]};
 const N = D.lesson;
 
 /* ---------- utilities ---------- */
@@ -612,6 +614,13 @@ function toast(msg) {
   clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2400);
 }
 
+/* numbers typed in an "order the pictures" exercise: 4, four, fourth and 4th all count */
+const NUMW = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const ORDW = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+const ORDS = ['', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th', 'th'];
+/* an exercise whose answers are typed (fill, or order with typed numbers) */
+const isText = x => x.list.some(it => it.kind === 'text');
+
 /* ---------- the exercises as a flat list of answerable items ---------- */
 /* every exercise becomes: list of {id, ans, model, kind: 'pick'|'text', ...}; the renderers and the checker share it */
 const EX = D.ex.map((x, xi) => {
@@ -619,6 +628,7 @@ const EX = D.ex.map((x, xi) => {
   if (x.type === 'mc' || x.type === 'pairs') x.items.forEach(it => items.push({kind: 'pick', n: it.n, ans: it.ans, model: it.model, src: it}));
   else if (x.type === 'choice') x.groups.forEach(g => g.items.forEach(it => items.push({kind: 'pick', n: it.n, ans: it.ans, model: it.model, src: it})));
   else if (x.type === 'assign') x.rows.forEach(r => items.push({kind: 'pick', n: r.label, ans: r.ans, model: !!r.model, src: r}));
+  else if (x.type === 'order' && x.typed) x.pics.forEach((p, i) => { const a = x.ans[i]; items.push({kind: 'text', num: true, n: 'picture ' + (x.labels ? x.labels[i] : i + 1), ans: String(a), acc: [String(a), NUMW[a], ORDW[a], a + ORDS[a]], model: x.done.includes(i), src: {pic: p, label: x.labels ? x.labels[i] : ''}}); });
   else if (x.type === 'order') x.pics.forEach((p, i) => items.push({kind: 'pick', n: 'picture ' + (x.labels ? x.labels[i] : i + 1), ans: String(x.ans[i]), model: x.done.includes(i), src: {pic: p, label: x.labels ? x.labels[i] : ''}}));
   else if (x.type === 'grid') x.cols.forEach((c, ci) => items.push({kind: 'set', n: c, ans: x.ans[ci].slice().sort((a, b) => a - b).join(','), model: false, src: {col: ci}}));
   else if (x.type === 'fill') x.items.forEach((it, i) => items.push({kind: 'text', n: it.label || String(i + 1), ans: it.a[0], acc: it.a, kw: it.kw, model: !!it.model, src: it}));
@@ -717,10 +727,14 @@ function renderOrder(x) {
   const vals = x.opts || Array.from({length: x.pics.length}, (_, j) => String(j + 1));
   const all = x.none ? vals.concat('none') : vals;
   const legend = x.legend ? `<div class="clegend">${x.legend.map(h => `<span>${esc(h)}</span>`).join('')}</div>` : '';
+  /* typed: a small box under each picture where the student writes the number */
+  const answer = it => x.typed
+    ? `<label class="ord-in"><span>Number</span>${blank(x, it, 'num')}</label>`
+    : `<div class="mc-opts pills${x.none ? '' : ' ordnums'}" style="--k:${all.length}">${all.map(v => opt(x, it, v, `<b>${v === 'none' ? esc(x.none) : v}</b>`, v === 'none' ? 'none' : '')).join('')}</div>`;
   return `${legend}<div class="pic-items three">${x.list.map(it => `<div class="mc-item pic-item${it.model ? ' is-model' : ''}" ${itemAttr(x, it)}>
       <div class="mc-head">${it.src.label ? `<span class="no">${esc(it.src.label)}</span>` : ''}${it.model ? tagDone('Done for you') : ''}</div>
       ${art(it.src.pic, `Picture ${it.src.label || it.i + 1}`)}
-      <div class="mc-opts pills${x.none ? '' : ' ordnums'}" style="--k:${all.length}">${all.map(v => opt(x, it, v, `<b>${v === 'none' ? esc(x.none) : v}</b>`, v === 'none' ? 'none' : '')).join('')}</div></div>`).join('')}</div>`;
+      ${answer(it)}</div>`).join('')}</div>`;
 }
 
 /* tick everything each person can do (more than one box per person) */
@@ -733,7 +747,8 @@ function renderGrid(x) {
 /* blanks */
 function blank(x, it, w) {
   if (it.model) return `<span class="blank ok given"><input class="bl w-${w}" value="${esc(it.ans)}" disabled aria-label="${esc(it.n)}"></span>`;
-  return `<span class="blank" ${itemAttr(x, it)}><input class="bl w-${w}" data-x="${x.id}" data-i="${it.i}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(it.n)}"></span>`;
+  const num = it.num ? ' inputmode="numeric" maxlength="6"' : '';
+  return `<span class="blank" ${itemAttr(x, it)}><input class="bl w-${w}" data-x="${x.id}" data-i="${it.i}"${num} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(it.n)}"></span>`;
 }
 function renderFill(x) {
   const L = x.list;
@@ -756,7 +771,7 @@ const RENDER = {mc: renderMC, pairs: renderPairs, choice: renderChoice, assign: 
 /* ---------- views ---------- */
 function exView(x) {
   const v = $(`#v-${x.id}`);
-  v.innerHTML = `<div class="sec-head">${x.sect ? `<p class="kicker">${esc(x.sect)}</p>` : ''}<h1>Exercise ${x.r}</h1><p>Your teacher will play the recording. Listen, mark your answers, and then press <b>Check</b>.</p></div>
+  v.innerHTML = `<div class="sec-head">${x.sect ? `<p class="kicker">${esc(x.sect)}</p>` : ''}<h1>Exercise ${x.r}</h1><p>Your teacher will play the recording. Listen, ${x.type === 'order' && x.typed ? 'write the numbers' : isText(x) ? 'write your answers' : 'mark your answers'}, and then press <b>Check</b>.</p></div>
     <article class="ex" id="ex-${x.id}"><h2><span class="rn">${x.r}.</span>${typo(x.instr)}</h2>
       ${RENDER[x.type](x)}
       <div class="fb" role="status" hidden></div>
@@ -777,6 +792,9 @@ function paint(x) {
     if (it.kind === 'set') { const on = String(sel[it.i] || '').split(',').filter(Boolean); $$('[data-act="toggle"]', el).forEach(b => b.setAttribute('aria-pressed', String(on.includes(b.dataset.v)))); }
     el.classList.remove('ok', 'bad');
     if (marks[it.i]) el.classList.add(marks[it.i]);
+    /* a typed box inside a picture card gets the colour too */
+    const bl = $(`.blank[data-x="${x.id}"][data-i="${it.i}"]`);
+    if (bl && bl !== el) { bl.classList.remove('ok', 'bad'); if (marks[it.i]) bl.classList.add(marks[it.i]); }
   });
 }
 function toggle(xid, i, v) {
@@ -807,11 +825,12 @@ function textOk(it, raw) {
 function check(xid) {
   const x = exById(xid), st = ist(xid), root = $(`#ex-${xid}`), fb = $(':scope > .fb', root);
   st.sel = st.sel || {};
-  if (x.type === 'fill') st.vals = x.list.map(it => { const inp = $(`input[data-x="${xid}"][data-i="${it.i}"]`); return inp ? inp.value : ''; });
-  const value = it => x.type === 'fill' ? (st.vals[it.i] || '') : (st.sel[it.i] || '');
+  const typed = isText(x);
+  if (typed) st.vals = x.list.map(it => { const inp = $(`input[data-x="${xid}"][data-i="${it.i}"]`); return inp ? inp.value : ''; });
+  const value = it => typed ? (st.vals[it.i] || '') : (st.sel[it.i] || '');
   const open = x.list.filter(it => !it.model);
   const answered = open.filter(it => String(value(it)).trim()).length;
-  if (!answered) { showFb(fb, 'info', fbTitle('info', x.type === 'fill' ? 'Write your answers first, then press Check.' : 'Mark your answers first, then press Check.')); save(); return; }
+  if (!answered) { showFb(fb, 'info', fbTitle('info', typed ? 'Write your answers first, then press Check.' : 'Mark your answers first, then press Check.')); save(); return; }
   st.tries = (st.tries || 0) + 1;
   st.marks = {};
   let right = 0, close = [];
@@ -833,9 +852,15 @@ function check(xid) {
   } else {
     st.st = 'bad';
     const tips = [];
-    if (answered < x.total) tips.push(`Answer every item. ${x.total - answered} still empty.`);
+    if (answered < x.total) tips.push(x.type === 'order' ? `Write a number under every picture. ${x.total - answered} still empty.` : `Answer every item. ${x.total - answered} still empty.`);
+    if (x.type === 'order' && x.typed) {
+      const nums = open.map(it => String(value(it)).trim()).filter(Boolean);
+      const okRange = new Set(x.list.map(it => it.ans));
+      if (nums.some(v => !/^\d+$/.test(v) ? false : !okRange.has(v))) tips.push(`Use only the numbers 1 to ${x.list.length}.`);
+      if (new Set(nums.map(v => v.toLowerCase())).size < nums.length) tips.push('Each number goes under only one picture.');
+    }
     if (close.length) tips.push(`So close! Check the spelling of ${close.map(it => it.n.replace(/\.$/, '')).join(', ')}.`);
-    if (right + close.length < answered) tips.push(x.type === 'fill' ? 'Ask your teacher to play the recording again and listen for the ones in red.' : 'Ask your teacher to play the recording again and listen to the ones in red.');
+    if (right + close.length < answered) tips.push(x.type === 'fill' ? 'Ask your teacher to play the recording again and listen for the ones in red.' : x.type === 'order' ? 'Ask your teacher to play the recording again and check the order of the pictures in red.' : 'Ask your teacher to play the recording again and listen to the ones in red.');
     showFb(fb, 'bad', fbTitle('bad', `${right} of ${x.total} right.`) + `<ul>${tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`);
   }
   save();
@@ -843,7 +868,7 @@ function check(xid) {
 function restoreEx(x) {
   const st = state.it[x.id];
   if (!st) return;
-  if (x.type === 'fill' && st.vals) x.list.forEach(it => { const inp = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); if (inp) inp.value = st.vals[it.i] || ''; });
+  if (isText(x) && st.vals) x.list.forEach(it => { const inp = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); if (inp) inp.value = st.vals[it.i] || ''; });
   paint(x);
   if (st.st === 'ok') showFb($(`#ex-${x.id} > .fb`), 'ok', fbTitle('ok', 'All correct!'));
 }
@@ -884,7 +909,7 @@ function report() {
     const s = state.it[x.id] || {};
     L.push('', `EXERCISE ${x.r}: ${s.firstScore !== undefined ? `${s.firstScore}/${x.total} on the first check, ${s.score || 0}/${x.total} now` : 'not checked'}`);
     const parts = x.list.filter(it => !it.model).map(it => {
-      const v = x.type === 'fill' ? ((s.vals || [])[it.i] || '').trim() : ((s.sel || {})[it.i] || '');
+      const v = isText(x) ? ((s.vals || [])[it.i] || '').trim() : ((s.sel || {})[it.i] || '');
       let shown = v === 'none' ? x.none : v;
       if (v && it.kind === 'set') shown = v.split(',').map(r => x.rows[+r]).join(', ');
       else if (v && x.plain) shown = (it.src.o.find(o => o[0] === v) || [v, v])[1];
@@ -998,6 +1023,7 @@ function setupEvents() {
     st.vals = x.list.map(it => { const el = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); return el ? el.value : ''; });
     if (st.marks) delete st.marks[+inp.dataset.i];
     const bl = inp.closest('.blank'); if (bl) bl.classList.remove('ok', 'bad');
+    const card = inp.closest('.pic-item'); if (card) card.classList.remove('ok', 'bad');
     save();
   });
   main.addEventListener('keydown', e => {
