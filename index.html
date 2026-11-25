@@ -134,6 +134,95 @@ footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);colo
   .logo{width:50px;height:50px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Meu curso: pastas por nível e página do curso (nov/2026) */
+.pastas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:26px 20px;margin:8px 0 34px}
+.pastinha{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:214px;padding:22px 22px 20px;border:0;border-radius:6px 24px 24px 24px;
+  background:linear-gradient(150deg,var(--k-claro) 0%,#fff 92%);box-shadow:0 1px 0 rgba(19,27,53,.04),0 16px 30px -18px var(--k);color:var(--tinta);text-align:left;cursor:pointer;
+  transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s;isolation:isolate;margin-top:16px}
+.pastinha::before{content:"";position:absolute;left:0;top:-16px;width:46%;height:24px;border-radius:14px 18px 0 0;background:var(--k-claro);z-index:-1}
+.pastinha .folhas{position:absolute;left:18px;right:18px;top:-6px;height:70px;z-index:-1;pointer-events:none}
+.pastinha .folhas i{position:absolute;inset:0;border-radius:10px;background:#fff;border:1.5px solid var(--linha);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.pastinha .folhas i:nth-child(1){transform:rotate(-3deg) translateY(6px)}
+.pastinha .folhas i:nth-child(2){transform:rotate(2.5deg) translateY(4px)}
+.pastinha .frente{position:absolute;inset:34px 0 0;border-radius:18px 24px 24px 24px;background:linear-gradient(155deg,var(--k) 0%,var(--k-esc) 100%);z-index:-1;transition:transform .22s}
+.pastinha:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(19,27,53,.04),0 26px 40px -20px var(--k)}
+.pastinha:hover .folhas i:nth-child(1){transform:rotate(-6deg) translate(-6px,-14px)}
+.pastinha:hover .folhas i:nth-child(2){transform:rotate(5deg) translate(8px,-20px)}
+.pastinha:focus-visible{outline:3px solid var(--k);outline-offset:4px}
+.pastinha .nivel{position:absolute;right:18px;top:44px;font-family:Sora,sans-serif;font-weight:800;font-size:56px;line-height:1;letter-spacing:-.04em;color:rgba(255,255,255,.28)}
+.pastinha .rot{color:rgba(255,255,255,.85);font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.pastinha h3{margin:4px 0 12px;font-family:Sora,sans-serif;font-weight:800;font-size:27px;line-height:1.05;letter-spacing:-.02em;color:#fff}
+.pastinha .chips{display:flex;flex-wrap:wrap;gap:6px;padding-right:46px}
+.pastinha .chips span{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;backdrop-filter:blur(2px)}
+.pastinha .chips svg{width:14px;height:14px}
+.pastinha .abrir{position:absolute;right:16px;bottom:18px;width:38px;height:38px;border-radius:12px;background:#fff;color:var(--k-esc);display:grid;place-items:center;transition:transform .2s}
+.pastinha .abrir svg{width:20px;height:20px}
+.pastinha:hover .abrir{transform:translateX(3px)}
+.pastinha.breve{cursor:default;box-shadow:none;background:transparent}
+.pastinha.breve::before{background:#E9ECF4}
+.pastinha.breve .frente{background:repeating-linear-gradient(135deg,#EEF1F7 0 12px,#E7EAF2 12px 24px);border:1.5px dashed #C9D0E0}
+.pastinha.breve h3,.pastinha.breve .rot{color:var(--tinta-3)}
+.pastinha.breve .nivel{color:rgba(19,27,53,.08)}
+.pastinha.breve:hover{transform:none}
+.pastinha.breve .chips span{background:#fff;color:var(--tinta-3)}
+.dica-curso{color:var(--tinta-2);font-weight:600;font-size:15px;margin:-6px 0 10px}
+
+/* página do curso */
+.curso-vista{animation:entra .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.voltar{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:12px;background:var(--papel);border:1.5px solid var(--linha);font-weight:800;font-size:14px;color:var(--tinta-2);cursor:pointer;margin-bottom:16px;transition:border-color .15s,color .15s}
+.voltar svg{width:18px;height:18px;transform:rotate(180deg)}
+.voltar:hover{border-color:var(--k);color:var(--k-esc)}
+.voltar:focus-visible{outline:3px solid var(--k);outline-offset:2px}
+.heroi{position:relative;overflow:hidden;border-radius:28px;padding:28px clamp(20px,4vw,34px) 24px;background:linear-gradient(135deg,var(--k) 0%,var(--k-esc) 100%);color:#fff;margin-bottom:22px;box-shadow:0 24px 44px -26px var(--k)}
+.heroi::after{content:attr(data-nivel);position:absolute;right:clamp(12px,3vw,30px);bottom:-30px;font-family:Sora,sans-serif;font-weight:800;font-size:clamp(120px,18vw,190px);line-height:1;letter-spacing:-.06em;color:rgba(255,255,255,.12);pointer-events:none}
+.heroi .rot{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.heroi h2{margin:6px 0 14px;font-family:Sora,sans-serif;font-weight:800;font-size:clamp(30px,5vw,44px);line-height:1.02;letter-spacing:-.025em}
+.heroi .chips{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.heroi .chips span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.17);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:800}
+.heroi .chips svg{width:16px;height:16px}
+.filtros{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--papel);border:1.5px solid var(--linha);border-radius:14px;margin-bottom:18px}
+.filtros button{border:0;background:transparent;border-radius:10px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--tinta-2);cursor:pointer;transition:background .15s,color .15s}
+.filtros button[aria-pressed="true"]{background:var(--k);color:#fff}
+.filtros button:focus-visible{outline:3px solid var(--k);outline-offset:2px}
+.cab-curso{display:flex;align-items:center;gap:10px;margin:6px 0 12px}
+.cab-curso h3{font-family:Sora,sans-serif;font-weight:700;font-size:18px;margin:0}
+.cab-curso .cont{background:var(--k-claro);color:var(--k-esc)}
+.cab-curso::after{content:"";flex:1;height:1.5px;background:var(--linha)}
+.licoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr));gap:14px;margin-bottom:28px}
+.licao{position:relative;display:flex;flex-direction:column;gap:12px;background:var(--papel);border:1.5px solid var(--linha);border-radius:20px;padding:16px;transition:transform .15s,border-color .15s,box-shadow .15s}
+.licao:hover{transform:translateY(-2px);border-color:var(--k);box-shadow:0 14px 26px -18px rgba(30,45,90,.45)}
+.licao .topo{display:flex;align-items:center;gap:12px}
+.licao .num{width:48px;height:48px;border-radius:15px;background:var(--k-claro);color:var(--k-esc);display:grid;place-items:center;font-family:Sora,sans-serif;font-weight:800;font-size:21px;flex:none}
+.licao .tit{min-width:0}
+.licao .tit strong{display:block;font-family:Sora,sans-serif;font-weight:700;font-size:16.5px;line-height:1.15}
+.licao .tit small{display:block;margin-top:2px;color:var(--tinta-3);font-size:12.5px;font-weight:700}
+.licao .acoes{display:grid;gap:7px}
+.acao{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:13px;background:var(--fundo);border:1.5px solid transparent;font-weight:800;font-size:14px;transition:background .15s,border-color .15s,color .15s}
+.acao svg{width:19px;height:19px;color:var(--k-esc);flex:none}
+.acao .seta{opacity:.5;transform:none;margin-left:auto;width:17px;height:17px}
+.acao:hover{background:var(--papel);border-color:var(--k);color:var(--k-esc)}
+.acao:hover .seta{opacity:1}
+.acao:focus-visible{outline:3px solid var(--k);outline-offset:2px}
+.acao.falta{background:transparent;border:1.5px dashed var(--linha);color:var(--tinta-3);font-weight:700;cursor:default}
+.acao.falta svg{color:var(--tinta-3)}
+.licao .selo-novo{position:absolute;top:12px;right:12px;margin:0}
+.provas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:12px;margin-bottom:28px}
+.prova{display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;background:linear-gradient(150deg,var(--k-claro),#fff 85%);border:1.5px solid var(--linha);transition:transform .15s,border-color .15s}
+.prova:hover{transform:translateY(-2px);border-color:var(--k)}
+.prova .icone-item{background:var(--k);color:#fff}
+.prova strong{display:block;font-family:Sora,sans-serif;font-weight:700;font-size:16px}
+.prova small{display:block;color:var(--tinta-3);font-size:12.5px;font-weight:700;margin-top:2px}
+@media (max-width:760px){
+  .pastas{grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:24px 14px}
+  .pastinha{min-height:180px}
+  .pastinha h3{font-size:23px}
+  .licoes{grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:10px}
+  .licao{padding:12px;border-radius:16px}
+  .licao .num{width:40px;height:40px;font-size:18px;border-radius:12px}
+  .acao{padding:8px 10px;font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -332,6 +421,14 @@ const SECOES = [
     aleatorios: { c: 'var(--alea)', e: 'var(--alea-esc)', t: 'var(--alea-claro)' },
   };
   const estilo = id => `--c:${CORES[id].c};--e:${CORES[id].e};--t:${CORES[id].t}`;
+  /* cada nível do curso tem a sua cor; um nível novo entra aqui e como grupo em SECOES (Meu curso) */
+  const NIVEIS = {
+    'English 1-2': { slug: 'english-1-2', nivel: '1-2', k: '#E8590C', e: '#B23F05', t: '#FFE9DB' },
+    'English 3':   { slug: 'english-3',   nivel: '3',   k: '#7048E8', e: '#4F2FC0', t: '#EEE9FF' },
+    'English 4':   { slug: 'english-4',   nivel: '4',   k: '#0C8599', e: '#086170', t: '#DCF3F6' },
+    'English 5':   { slug: 'english-5',   nivel: '5',   k: '#868E96', e: '#5C636A', t: '#EEF0F3' },
+  };
+  const corNivel = n => { const c = NIVEIS[n] || NIVEIS['English 5']; return `--k:${c.k};--k-esc:${c.e};--k-claro:${c.t};--c:${c.k};--e:${c.e};--t:${c.t}`; };
   /* uma pasta (lição com "filhos") conta e aparece na busca como seus materiais, cada um com o nome da lição na frente */
   const folhas = i => i.filhos ? i.filhos.map(f => ({...f, t: i.t + ' · ' + f.t})) : [i];
   const todos = SECOES.flatMap(s => s.grupos.flatMap(g => g.itens.flatMap(folhas).map(i => ({...i, secao: s, grupo: g.titulo}))));
@@ -339,7 +436,25 @@ const SECOES = [
   const contar = s => s.grupos.reduce((n, g) => n + nItens(g), 0);
   const recentes = todos.filter(i => i.data).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 3);
   const maisNovo = new Set(recentes.slice(0, 2).map(i => i.h));
-  let atual = SECOES[0].id;
+  let atual = SECOES[0].id, sub = '', filtro = 'tudo';
+
+  /* os níveis do Meu curso, montados a partir dos grupos */
+  const CURSO = SECOES.find(s => s.id === 'curso');
+  const NUM = t => +((t.match(/(?:Lesson|Test)\s+(\d+)/i) || [])[1] || 0);
+  const cursos = CURSO.grupos.filter(g => g.itens.length && NIVEIS[g.titulo]).map(g => {
+    const licoes = g.itens.filter(i => i.filhos).map(i => ({
+      n: NUM(i.t), t: i.t,
+      atividade: i.filhos.find(f => f.i === 'lapis'), lcp: i.filhos.find(f => f.i === 'fone'),
+      outros: i.filhos.filter(f => f.i !== 'lapis' && f.i !== 'fone'),
+      novo: i.filhos.some(f => maisNovo.has(f.h)),
+    })).sort((a, b) => a.n - b.n);
+    const provas = g.itens.filter(i => !i.filhos).sort((a, b) => NUM(a.t) - NUM(b.t));
+    return {nome: g.titulo, ...NIVEIS[g.titulo], licoes, provas,
+      nAtiv: licoes.filter(l => l.atividade).length, nLcp: licoes.filter(l => l.lcp).length};
+  });
+  const embreve = CURSO.grupos.flatMap(g => g.embreve || []).filter(n => !cursos.some(c => c.nome === n));
+  const ic = n => `<svg><use href="#i-${n}"/></svg>`;
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
 
   $('#total').textContent = todos.length;
   $('#novos').innerHTML = '<b>Novos</b>' + recentes.map(i => `<a class="novo" style="${estilo(i.secao.id)}" href="${esc(i.h)}"><i></i>${esc(i.t)}</a>`).join('');
@@ -370,8 +485,58 @@ const SECOES = [
         <span class="icone-item"><svg><use href="#i-${f.i}"/></svg></span>
         <span><strong>${esc(f.t)}</strong><small>${esc(f.e.join(' · '))}</small></span></a>`).join('')}</div></div>`;
   }
+
+  /* Meu curso: uma pasta por nível */
+  function chipsCurso(c){
+    const out = [];
+    if (c.licoes.length) out.push(`<span>${ic('curso')}${plural(c.licoes.length, 'lição', 'lições')}</span>`);
+    if (c.nAtiv) out.push(`<span>${ic('lapis')}${plural(c.nAtiv, 'atividade', 'atividades')}</span>`);
+    if (c.nLcp) out.push(`<span>${ic('fone')}${plural(c.nLcp, 'LCP', 'LCPs')}</span>`);
+    if (c.provas.length) out.push(`<span>${ic('quiz')}${plural(c.provas.length, 'prova', 'provas')}</span>`);
+    return out.join('');
+  }
+  function mostrarPastas(){
+    $('#conteudo').innerHTML = `<p class="dica-curso">Escolha o nível para ver as lições, as atividades e os LCPs.</p>
+      <div class="pastas">${cursos.map(c => `<button class="pastinha" type="button" data-curso="${c.slug}" style="${corNivel(c.nome)}" aria-label="Abrir ${esc(c.nome)}">
+        <span class="folhas" aria-hidden="true"><i></i><i></i></span><span class="frente" aria-hidden="true"></span>
+        <span class="nivel" aria-hidden="true">${esc(c.nivel)}</span>
+        <span class="rot">Online</span><h3>${esc(c.nome)}</h3>
+        <span class="chips">${chipsCurso(c)}</span>
+        <span class="abrir" aria-hidden="true">${ic('seta')}</span></button>`).join('')}
+      ${embreve.map(n => `<div class="pastinha breve" style="${corNivel(n)}">
+        <span class="frente" aria-hidden="true"></span><span class="nivel" aria-hidden="true">${esc((NIVEIS[n] || {}).nivel || '')}</span>
+        <span class="rot">Online</span><h3>${esc(n)}</h3><span class="chips"><span>Em breve</span></span></div>`).join('')}</div>`;
+  }
+  /* página de um nível: lições com atividade e LCP, e as provas */
+  function mostrarCurso(c){
+    const temAtiv = c.nAtiv > 0, temLcp = c.nLcp > 0, temProvas = c.provas.length > 0;
+    const opcoes = [['tudo', 'Tudo']].concat(temAtiv ? [['atividades', 'Atividades']] : [], temLcp ? [['lcp', 'LCP · Listening']] : [], temProvas ? [['provas', 'Provas']] : []);
+    if (!opcoes.some(o => o[0] === filtro)) filtro = 'tudo';
+    const acao = (f, rot, icone) => `<a class="acao" href="${esc(f.h)}">${ic(icone)}<span>${rot}</span><svg class="seta"><use href="#i-seta"/></svg></a>`;
+    const verAtiv = filtro === 'tudo' || filtro === 'atividades', verLcp = filtro === 'tudo' || filtro === 'lcp';
+    const licoes = filtro === 'provas' ? [] : c.licoes.filter(l => (verAtiv && l.atividade) || (verLcp && l.lcp) || (filtro === 'tudo' && l.outros.length));
+    const cartaoLicao = l => {
+      const partes = [l.atividade && 'Atividade', l.lcp && 'LCP'].filter(Boolean).join(' + ');
+      return `<article class="licao">${l.novo ? '<span class="selo-novo">Novo</span>' : ''}
+        <div class="topo"><span class="num">${l.n || '•'}</span><span class="tit"><strong>Lesson ${l.n}</strong><small>${esc(partes)}</small></span></div>
+        <div class="acoes">${verAtiv && l.atividade ? acao(l.atividade, 'Lesson Activity', 'lapis') : ''}${verLcp && l.lcp ? acao(l.lcp, 'LCP · Listening', 'fone') : ''}${filtro === 'tudo' ? l.outros.map(o => acao(o, esc(o.t), o.i)).join('') : ''}</div></article>`;
+    };
+    const provas = (filtro === 'tudo' || filtro === 'provas') ? c.provas : [];
+    $('#conteudo').innerHTML = `<div class="curso-vista" style="${corNivel(c.nome)}">
+      <button class="voltar" type="button" data-voltar>${ic('seta')}Meu curso</button>
+      <header class="heroi" data-nivel="${esc(c.nivel)}"><span class="rot">Online English · nível ${esc(c.nivel)}</span><h2>${esc(c.nome)}</h2><div class="chips">${chipsCurso(c)}</div></header>
+      ${opcoes.length > 2 ? `<div class="filtros" role="group" aria-label="Mostrar">${opcoes.map(([v, r]) => `<button type="button" data-filtro="${v}" aria-pressed="${v === filtro}">${r}</button>`).join('')}</div>` : ''}
+      ${licoes.length ? `<div class="cab-curso"><h3>Lições</h3><span class="cont">${licoes.length}</span></div><div class="licoes">${licoes.map(cartaoLicao).join('')}</div>` : ''}
+      ${provas.length ? `<div class="cab-curso"><h3>Practice Tests</h3><span class="cont">${provas.length}</span></div><div class="provas">${provas.map(p => `<a class="prova" href="${esc(p.h)}">
+        <span class="icone-item">${ic(p.i)}</span><span><strong>${esc(p.t.replace(/^Online /, ''))}${maisNovo.has(p.h) ? '<span class="selo-novo">Novo</span>' : ''}</strong><small>${esc(p.e.join(' · '))}</small></span></a>`).join('')}</div>` : ''}
+    </div>`;
+  }
   function mostrarSecao(){
     const s = SECOES.find(x => x.id === atual);
+    if (s.id === 'curso') {
+      const c = cursos.find(x => x.slug === sub);
+      return c ? mostrarCurso(c) : mostrarPastas();
+    }
     $('#conteudo').innerHTML = s.grupos.map(g => `<section class="grupo" style="${estilo(s.id)}">
       <div class="cab-grupo"><h3>${esc(g.titulo)}</h3>${g.itens.length ? `<span class="cont">${nItens(g)}</span>` : ''}</div>
       ${g.itens.length ? `<div class="grade">${g.itens.map(i => i.filhos ? pasta(i, s) : cartao({...i, secao: s})).join('')}</div>` : ''}
@@ -379,11 +544,14 @@ const SECOES = [
     </section>`).join('');
   }
   function abrir(id, gravar){
-    atual = SECOES.some(s => s.id === id) ? id : SECOES[0].id;
+    const [sec, resto] = String(id || '').split('/');
+    atual = SECOES.some(s => s.id === sec) ? sec : SECOES[0].id;
+    sub = atual === 'curso' && resto ? resto : '';
     document.querySelectorAll('.divisao').forEach(b => b.setAttribute('aria-selected', b.dataset.id === atual));
     if ($('#busca').value){ $('#busca').value = ''; $('#limpar').classList.add('oculto'); }
     mostrarSecao();
-    if (gravar) history.replaceState(null, '', '#' + atual);
+    const alvo = '#' + atual + (sub ? '/' + sub : '');
+    if (gravar && location.hash !== alvo) history.pushState(null, '', alvo);
   }
   function buscar(){
     const bruto = $('#busca').value.trim();
@@ -396,6 +564,11 @@ const SECOES = [
       : '<div class="vazio">Nenhum material encontrado.</div>';
   }
   $('#conteudo').addEventListener('click', e => {
+    const p = e.target.closest('.pastinha[data-curso]');
+    if (p) { filtro = 'tudo'; abrir('curso/' + p.dataset.curso, true); window.scrollTo({top: Math.max(0, $('#divisoes').offsetTop - 12), behavior: 'smooth'}); return; }
+    if (e.target.closest('[data-voltar]')) { abrir('curso', true); return; }
+    const f = e.target.closest('[data-filtro]');
+    if (f) { filtro = f.dataset.filtro; mostrarSecao(); return; }
     const b = e.target.closest('.abre');
     if (!b) return;
     const aberta = b.getAttribute('aria-expanded') !== 'true';
@@ -405,6 +578,7 @@ const SECOES = [
   });
   $('#busca').addEventListener('input', buscar);
   $('#limpar').addEventListener('click', () => { $('#busca').value = ''; buscar(); $('#busca').focus(); });
+  addEventListener('popstate', () => abrir(location.hash.slice(1)));
   addEventListener('hashchange', () => abrir(location.hash.slice(1)));
   abrir(location.hash.slice(1));
 })();
