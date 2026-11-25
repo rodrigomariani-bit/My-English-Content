@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Painel do professor · Meu Curso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap">
+<style>
+:root{--fundo:#F4F6FB;--papel:#fff;--tinta:#131B35;--tinta-2:#3A4566;--tinta-3:#6E7A99;--linha:#E2E6F1;--linha-2:#D5DBEA;--azul:#4C6EF5;--azul-esc:#364FC7;--azul-claro:#EDF2FF;--verde:#12B886;--verde-claro:#E6FCF5;--ambar:#F59F00;--ambar-claro:#FFF9DB;--vermelho:#FA5252;--roxo:#7048E8;--roxo-claro:#F3F0FF;--sombra:0 14px 34px -22px rgba(30,45,90,.45)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fundo);color:var(--tinta);font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:15px;line-height:1.45}
+h1,h2,h3{font-family:Sora,system-ui,sans-serif;margin:0;line-height:1.15}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+/* entrada */
+.tela{min-height:100vh;display:grid;place-items:center;padding:24px}
+.cartao-login{width:min(440px,100%);background:var(--papel);border-radius:30px;padding:34px 30px;box-shadow:var(--sombra);text-align:center}
+.cartao-login .logo{width:66px;height:66px;margin:0 auto 18px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(140deg,#7048E8,#4C6EF5);color:#fff}
+.cartao-login .logo svg{width:34px;height:34px}
+.cartao-login h1{font-size:26px;margin-bottom:8px}
+.cartao-login p{color:var(--tinta-3);margin:0 0 22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:14px;padding:12px 18px;font-weight:800;background:var(--azul);color:#fff;box-shadow:0 4px 0 var(--azul-esc);transition:transform .1s}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--azul-esc)}
+.btn.g{background:#fff;color:var(--tinta);border:1.5px solid var(--linha-2);box-shadow:0 3px 0 var(--linha-2)}
+.btn.peq{padding:8px 13px;font-size:13.5px;border-radius:12px}
+.btn.roxo{background:var(--roxo);box-shadow:0 4px 0 #5235C4}
+.btn svg{width:18px;height:18px}
+.link{border:0;background:none;padding:6px;color:var(--tinta-3);font-weight:700;text-decoration:underline}
+.erro{color:#C92A2A;font-weight:700;margin-top:14px}
+/* topo */
+header.topo{position:sticky;top:0;z-index:20;background:rgba(244,246,251,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--linha)}
+header.topo .wrap{display:flex;align-items:center;gap:14px;min-height:70px}
+.marca{display:flex;align-items:center;gap:12px;min-width:0}
+.marca .logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#7048E8,#4C6EF5);color:#fff;flex:none}
+.marca .logo svg{width:22px;height:22px}
+.marca strong{display:block;font-family:Sora,sans-serif;font-size:17px}
+.marca small{display:block;color:var(--tinta-3);font-weight:600;font-size:12.5px}
+.topo .dir{margin-left:auto;display:flex;align-items:center;gap:10px}
+.online-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:var(--verde-claro);color:#087F5B;font-weight:800;font-size:13.5px}
+.online-pill.zero{background:#EEF0F5;color:var(--tinta-3)}
+.pulso{width:9px;height:9px;border-radius:50%;background:var(--verde);box-shadow:0 0 0 0 rgba(18,184,134,.6);animation:pulso 1.6s infinite;flex:none}
+.zero .pulso{background:#AEB6CC;animation:none}
+@keyframes pulso{70%{box-shadow:0 0 0 9px rgba(18,184,134,0)}100%{box-shadow:0 0 0 0 rgba(18,184,134,0)}}
+.eu{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--tinta-2)}
+.eu img{width:32px;height:32px;border-radius:50%}
+nav.abas{display:flex;gap:6px;padding:14px 0 4px;overflow-x:auto}
+nav.abas a{padding:10px 16px;border-radius:14px;text-decoration:none;font-weight:800;color:var(--tinta-2);white-space:nowrap}
+nav.abas a[aria-current="page"]{background:var(--tinta);color:#fff}
+nav.abas a .n{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:rgba(127,140,170,.18);font-size:12px}
+main{padding:18px 0 80px}
+.titulo-sec{display:flex;align-items:center;gap:10px;margin:26px 0 14px}
+.titulo-sec h2{font-size:18px}
+.titulo-sec .cont{padding:2px 10px;border-radius:999px;background:#E7EAF3;color:var(--tinta-2);font-weight:800;font-size:12.5px}
+.vazio{padding:26px;border:2px dashed var(--linha-2);border-radius:22px;color:var(--tinta-3);text-align:center;font-weight:600;background:rgba(255,255,255,.5)}
+/* cartões ao vivo */
+.ao-vivo{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px}
+.vivo{position:relative;display:grid;gap:12px;padding:18px;border-radius:24px;background:var(--papel);border:1.5px solid var(--linha);box-shadow:var(--sombra);text-align:left;color:inherit;width:100%}
+.vivo:hover{border-color:var(--k,#4C6EF5)}
+.vivo .cab{display:flex;align-items:center;gap:12px}
+.ava{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-family:Sora,sans-serif;font-weight:800;color:#fff;flex:none;font-size:16px}
+.vivo .quem strong{display:block;font-size:16px}
+.vivo .quem small{display:flex;align-items:center;gap:6px;color:#087F5B;font-weight:800;font-size:12.5px}
+.licao-tag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;background:var(--k-claro,#EDF2FF);color:var(--k-esc,#364FC7);font-weight:800;font-size:13.5px}
+.barra{height:10px;border-radius:999px;background:#EEF0F5;overflow:hidden}
+.barra i{display:block;height:100%;border-radius:999px;background:var(--k,#4C6EF5);transition:width .4s}
+.linha-info{display:flex;justify-content:space-between;gap:10px;color:var(--tinta-3);font-weight:700;font-size:13px}
+/* listas */
+.lista{display:grid;gap:10px}
+.lin{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:13px 16px;border-radius:18px;background:var(--papel);border:1.5px solid var(--linha);color:inherit;text-align:left;width:100%}
+.lin:hover{border-color:var(--k,#4C6EF5)}
+.lin .meio strong{display:block;font-size:15px}
+.lin .meio small{display:block;color:var(--tinta-3);font-weight:600;font-size:13px;margin-top:2px}
+.lin .meio .barra{margin-top:8px;height:7px;max-width:360px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-weight:800;font-size:12px;background:#EEF0F5;color:var(--tinta-2);white-space:nowrap}
+.chip.vivo-c{background:var(--verde-claro);color:#087F5B}
+.chip.ent{background:#E7F5FF;color:#1864AB}
+.chip.cor{background:var(--roxo-claro);color:#5F3DC4}
+.chip.pend{background:var(--ambar-claro);color:#AD5F00}
+/* alunos */
+.novo{display:flex;gap:10px;flex-wrap:wrap;padding:16px;border-radius:22px;background:var(--papel);border:1.5px solid var(--linha)}
+.novo input{flex:1;min-width:200px;padding:12px 14px;border:1.5px solid var(--linha-2);border-radius:14px;font:inherit;font-size:15px}
+.novo input:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 4px var(--azul-claro)}
+.alunos{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px;margin-top:16px}
+.aluno{display:grid;gap:12px;padding:18px;border-radius:24px;background:var(--papel);border:1.5px solid var(--linha);text-align:left;color:inherit;width:100%}
+.aluno:hover{border-color:var(--azul);box-shadow:var(--sombra)}
+.aluno .cab{display:flex;align-items:center;gap:12px}
+.aluno strong{font-size:16px;display:block}
+.codigo{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:#F1F3F9;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;letter-spacing:.06em;font-size:14px}
+.aluno .rod{display:flex;justify-content:space-between;align-items:center;color:var(--tinta-3);font-weight:700;font-size:13px}
+.ficha{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:20px;border-radius:26px;background:var(--papel);border:1.5px solid var(--linha);box-shadow:var(--sombra)}
+.ficha .ava{width:64px;height:64px;border-radius:20px;font-size:22px}
+.ficha h1{font-size:24px}
+.ficha .acoes{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.voltar{display:inline-flex;align-items:center;gap:6px;margin:4px 0 14px;padding:8px 12px;border-radius:12px;border:1.5px solid var(--linha-2);background:#fff;font-weight:800;text-decoration:none;font-size:13.5px}
+.licoes-aluno{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.lc{display:grid;gap:12px;padding:18px;border-radius:24px;background:var(--papel);border:1.5px solid var(--linha);border-top:6px solid var(--k);text-align:left;color:inherit;width:100%}
+.lc:hover{box-shadow:var(--sombra)}
+.lc h3{font-size:16px}
+.lc .curso{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--k-esc)}
+.lc .pct{font-family:Sora,sans-serif;font-weight:800;font-size:22px;color:var(--k-esc)}
+/* lições */
+.grupo-licao{padding:18px;border-radius:26px;background:var(--papel);border:1.5px solid var(--linha);border-left:7px solid var(--k);margin-bottom:14px}
+.grupo-licao .gcab{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:12px}
+.grupo-licao h3{font-size:17px}
+.grupo-licao .gcab .chips{margin-left:auto}
+.grupo-licao .lin{border-radius:14px;padding:10px 14px}
+/* visor */
+#visor{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--fundo)}
+#visor[hidden]{display:none}
+.vbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 16px;background:var(--papel);border-bottom:1.5px solid var(--linha);box-shadow:0 6px 20px -18px rgba(30,45,90,.6)}
+.vbar .ava{width:40px;height:40px;border-radius:13px;font-size:15px}
+.vbar .quem strong{display:block;font-size:15.5px}
+.vbar .quem small{display:block;color:var(--tinta-3);font-weight:700;font-size:12.5px}
+.vbar .chips{margin-left:auto}
+.vbar .pct{min-width:120px}
+.vbar .pct .barra{height:8px;margin-top:4px}
+.vbar .pct span{font-weight:800;font-size:12.5px;color:var(--tinta-2)}
+#quadro{flex:1;width:100%;border:0;background:#fff}
+.aviso-novo{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:16px;background:var(--tinta);color:#fff;font-weight:700;box-shadow:0 18px 40px -14px rgba(19,27,53,.6)}
+.aviso-novo[hidden]{display:none}
+.aviso-novo button{border:0;border-radius:10px;padding:7px 12px;background:#fff;color:var(--tinta);font-weight:800}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:70;padding:11px 16px;border-radius:14px;background:var(--tinta);color:#fff;font-weight:700;box-shadow:0 18px 40px -14px rgba(19,27,53,.6);animation:desce .25s}
+@keyframes desce{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (max-width:640px){
+  header.topo .wrap{min-height:62px}.marca small,.eu span{display:none}
+  .lin{grid-template-columns:auto minmax(0,1fr)}.lin .chips{grid-column:1/-1;justify-content:flex-start}
+  .vbar .chips{margin-left:0}.vbar .pct{flex:1}
+}
+@media (prefers-reduced-motion:reduce){.pulso{animation:none}.toast{animation:none}}
+</style>
+</head>
+<body>
+<div id="app"><div class="tela"><p style="color:#6E7A99;font-weight:700">Carregando o painel…</p></div></div>
+<div id="visor" hidden>
+  <div class="vbar">
+    <button class="btn g peq" data-a="fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Voltar</button>
+    <span class="ava" id="v-ava"></span>
+    <div class="quem"><strong id="v-nome"></strong><small id="v-licao"></small></div>
+    <div class="pct"><span id="v-pct"></span><div class="barra"><i id="v-barra"></i></div></div>
+    <div class="chips" id="v-chips"></div>
+  </div>
+  <iframe id="quadro" title="Atividade do aluno"></iframe>
+</div>
+<div class="aviso-novo" id="aviso" hidden><span>O aluno respondeu mais coisas.</span><button data-a="atualizar">Mostrar</button></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, serverTimestamp, deleteField } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const CFG = {"apiKey": "AIzaSyAgrXfpSBVJDHIIOmrdKLZA1klkeXTRoaU", "authDomain": "painel-meu-curso.firebaseapp.com", "projectId": "painel-meu-curso", "appId": "1:619950064445:web:1d26710c9497d3be503b54"};
+const fb = initializeApp(CFG);
+const auth = getAuth(fb);
+const db = getFirestore(fb);
+
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const app = $('#app');
+const ICON = {
+  logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V15c0 1.7 2.2 3 5 3s5-1.3 5-3V9.5"/><path d="M21 7v6"/></svg>',
+  google: '<svg viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.3-1.6 3.8-5.4 3.8-3.3 0-5.9-2.7-5.9-6s2.7-6 5.9-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.4 12 2.4 6.7 2.4 2.4 6.7 2.4 12s4.3 9.6 9.6 9.6c5.5 0 9.2-3.9 9.2-9.4 0-.6-.1-1.1-.2-1.6H12z"/></svg>',
+  copiar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  olho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  zap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg>'
+};
+const NIVEL = [
+  [/english-1-2/, {k: '#E8590C', e: '#B23F05', c: '#FFE9DB', n: 'English 1-2'}],
+  [/english-3/, {k: '#7048E8', e: '#4F2FC0', c: '#EEE9FF', n: 'English 3'}],
+  [/english-4/, {k: '#0C8599', e: '#086170', c: '#DCF3F6', n: 'English 4'}],
+  [/english-5/, {k: '#2F9E44', e: '#237032', c: '#EBFBEE', n: 'English 5'}]
+];
+const nivel = lesson => (NIVEL.find(([r]) => r.test(lesson || '')) || [0, {k: '#4C6EF5', e: '#364FC7', c: '#EDF2FF', n: 'Online English'}])[1];
+const cor = l => { const n = nivel(l); return `--k:${n.k};--k-esc:${n.e};--k-claro:${n.c}`; };
+const AVA = ['#4C6EF5', '#7048E8', '#E8590C', '#0C8599', '#2F9E44', '#D6336C', '#F08C00', '#1971C2'];
+const avaCor = s => AVA[[...String(s)].reduce((n, c) => n + c.charCodeAt(0), 0) % AVA.length];
+const iniciais = n => (n || '?').trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+const ms = t => t && t.toMillis ? t.toMillis() : (typeof t === 'number' ? t : 0);
+const ONLINE = 150000;
+const online = p => Date.now() - ms(p.visto) < ONLINE;
+function relativo(t) {
+  const d = Date.now() - ms(t); if (!ms(t)) return 'nunca';
+  if (d < 45000) return 'agora';
+  if (d < 3600000) return `há ${Math.round(d / 60000)} min`;
+  if (d < 86400000) return `há ${Math.round(d / 3600000)} h`;
+  const dt = new Date(ms(t)); return dt.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dt.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+}
+const pct = p => p.total ? Math.round(100 * (p.feito || 0) / p.total) : 0;
+const titulo = p => (p.titulo || p.lesson || '').replace(/\s*·\s*(English|Online English)\s*[\d-]+\s*$/i, '');
+const curso = p => nivel(p.lesson).n;
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.append(t); setTimeout(() => t.remove(), 2600); }
+async function copiar(txt, ok) { try { await navigator.clipboard.writeText(txt); toast(ok || 'Copiado'); } catch (e) { prompt('Copie:', txt); } }
+
+/* ---------- dados ---------- */
+let user = null, alunos = new Map(), prog = new Map(), corr = new Map(), subs = [];
+function ouvir() {
+  subs.forEach(u => u()); subs = [];
+  subs.push(onSnapshot(collection(db, 'alunos'), s => { alunos = new Map(s.docs.map(d => [d.id, d.data()])); desenhar(); }, erroLeitura));
+  subs.push(onSnapshot(collection(db, 'progresso'), s => {
+    const antes = prog; prog = new Map(s.docs.map(d => [d.id, d.data()]));
+    desenhar(); visorAtualiza(antes);
+  }, erroLeitura));
+  subs.push(onSnapshot(collection(db, 'correcoes'), s => { corr = new Map(s.docs.map(d => [d.id, d.data()])); desenhar(); visorCorr(); }, erroLeitura));
+}
+function erroLeitura(e) { console.error(e); app.innerHTML = semAcesso('Não consegui ler os dados (' + esc(e.code || e.message) + ').'); }
+
+/* ---------- login ---------- */
+const telaLogin = (msg) => `<div class="tela"><div class="cartao-login"><div class="logo">${ICON.logo}</div>
+  <h1>Painel do professor</h1><p>Acompanhe as atividades dos seus alunos em tempo real e corrija as respostas abertas.</p>
+  <button class="btn g" data-a="entrar">${ICON.google}<span>Entrar com Google</span></button>${msg ? `<p class="erro">${msg}</p>` : ''}</div></div>`;
+const semAcesso = (msg) => `<div class="tela"><div class="cartao-login"><div class="logo">${ICON.logo}</div><h1>Sem acesso</h1>
+  <p>${msg || 'Esta conta Google não é a do professor deste painel.'}</p><button class="btn g" data-a="sair">Entrar com outra conta</button></div></div>`;
+onAuthStateChanged(auth, async u => {
+  user = u;
+  subs.forEach(x => x()); subs = [];
+  if (!u) { app.innerHTML = telaLogin(); return; }
+  app.innerHTML = '<div class="tela"><p style="color:#6E7A99;font-weight:700">Abrindo o painel…</p></div>';
+  try {
+    const ref = doc(db, 'config', 'professor');
+    const s = await getDoc(ref);
+    if (!s.exists()) await setDoc(ref, {uid: u.uid});
+    else if (s.data().uid !== u.uid) { app.innerHTML = semAcesso(); return; }
+  } catch (e) { app.innerHTML = semAcesso('Esta conta Google não tem acesso a este painel.'); return; }
+  ouvir();
+  desenhar();
+  rota();
+});
+
+/* ---------- telas ---------- */
+let aba = 'agora', alunoSel = null;
+function rota() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  const [a, b] = h.split('/');
+  if (a === 'ver' && b) { abrirVisor(b); return; }
+  fecharVisor(true);
+  aba = ['agora', 'alunos', 'aluno', 'licoes'].includes(a) ? a : 'agora';
+  alunoSel = a === 'aluno' ? b : null;
+  desenhar();
+}
+window.addEventListener('hashchange', rota);
+function topo() {
+  const on = [...prog.values()].filter(online);
+  const nomes = new Set(on.map(p => p.code));
+  return `<header class="topo"><div class="wrap">
+    <div class="marca"><span class="logo">${ICON.logo}</span><div><strong>Painel do professor</strong><small>Online English · atividades e LCPs</small></div></div>
+    <div class="dir"><span class="online-pill${nomes.size ? '' : ' zero'}"><i class="pulso"></i>${nomes.size} ${nomes.size === 1 ? 'aluno online' : 'alunos online'}</span>
+      <span class="eu">${user.photoURL ? `<img src="${esc(user.photoURL)}" alt="" referrerpolicy="no-referrer">` : ''}<span>${esc((user.displayName || '').split(' ')[0])}</span></span>
+      <button class="link" data-a="sair">Sair</button></div></div></header>
+  <div class="wrap"><nav class="abas">
+    <a href="#agora" ${aba === 'agora' ? 'aria-current="page"' : ''}>Agora</a>
+    <a href="#alunos" ${aba === 'alunos' || aba === 'aluno' ? 'aria-current="page"' : ''}>Alunos<span class="n">${alunos.size}</span></a>
+    <a href="#licoes" ${aba === 'licoes' ? 'aria-current="page"' : ''}>Lições<span class="n">${new Set([...prog.values()].map(p => p.lesson)).size}</span></a>
+  </nav></div>`;
+}
+const nomeDe = p => (alunos.get(p.code) || {}).nome || p.nome || p.code;
+const nCorr = id => Object.keys(((corr.get(id) || {}).itens) || {}).length;
+function chipsDe(id, p) {
+  const c = nCorr(id);
+  return `${online(p) ? '<span class="chip vivo-c"><i class="pulso"></i>Ao vivo</span>' : ''}
+    ${p.entregue ? `<span class="chip ent">✓ Entregue ${esc(relativo(p.entregueEm))}</span>` : '<span class="chip">Em andamento</span>'}
+    ${c ? `<span class="chip cor">✎ ${c} ${c > 1 ? 'correções' : 'correção'}</span>` : (p.entregue ? '<span class="chip pend">Corrigir</span>' : '')}`;
+}
+function cartaoVivo([id, p]) {
+  const n = nomeDe(p);
+  return `<button class="vivo" style="${cor(p.lesson)}" data-ver="${esc(id)}">
+    <div class="cab"><span class="ava" style="background:${avaCor(p.code)}">${esc(iniciais(n))}</span><div class="quem"><strong>${esc(n)}</strong><small><i class="pulso"></i>fazendo agora · ${esc(relativo(p.atualizado))}</small></div></div>
+    <span class="licao-tag">${esc(curso(p))} · ${esc(titulo(p))}</span>
+    <div><div class="linha-info"><span>${esc(p.secao || '')}</span><span>${pct(p)}%</span></div><div class="barra" style="margin-top:6px"><i style="width:${pct(p)}%"></i></div></div></button>`;
+}
+function linha([id, p], mostrarAluno) {
+  const n = nomeDe(p);
+  return `<button class="lin" style="${cor(p.lesson)}" data-ver="${esc(id)}">
+    <span class="ava" style="background:${mostrarAluno ? avaCor(p.code) : nivel(p.lesson).k};width:38px;height:38px;border-radius:12px;font-size:14px">${mostrarAluno ? esc(iniciais(n)) : pct(p) + '%'}</span>
+    <span class="meio"><strong>${mostrarAluno ? esc(n) + ' · ' : ''}${esc(curso(p))} · ${esc(titulo(p))}</strong><small>${pct(p)}% feito · última atividade ${esc(relativo(p.atualizado))}${p.secao ? ' · ' + esc(p.secao) : ''}</small><span class="barra"><i style="width:${pct(p)}%"></i></span></span>
+    <span class="chips">${chipsDe(id, p)}</span></button>`;
+}
+const ordenados = () => [...prog.entries()].sort((a, b) => ms(b[1].atualizado) - ms(a[1].atualizado));
+function telaAgora() {
+  const todos = ordenados();
+  const vivos = todos.filter(([, p]) => online(p));
+  const corrigir = todos.filter(([id, p]) => p.entregue && !nCorr(id));
+  return `<div class="titulo-sec"><h2>Fazendo atividade agora</h2><span class="cont">${vivos.length}</span></div>
+    ${vivos.length ? `<div class="ao-vivo">${vivos.map(cartaoVivo).join('')}</div>` : '<div class="vazio">Nenhum aluno com atividade aberta neste momento. Quando alguém abrir uma lição com o código, aparece aqui na hora.</div>'}
+    <div class="titulo-sec"><h2>Entregues para corrigir</h2><span class="cont">${corrigir.length}</span></div>
+    ${corrigir.length ? `<div class="lista">${corrigir.map(x => linha(x, true)).join('')}</div>` : '<div class="vazio">Nada esperando correção.</div>'}
+    <div class="titulo-sec"><h2>Últimas atividades</h2></div>
+    ${todos.length ? `<div class="lista">${todos.slice(0, 15).map(x => linha(x, true)).join('')}</div>` : '<div class="vazio">Ainda não chegou nenhuma resposta. Crie os códigos na aba Alunos e mande para cada aluno.</div>'}`;
+}
+function telaAlunos() {
+  const lista = [...alunos.entries()].sort((a, b) => (a[1].nome || '').localeCompare(b[1].nome || '', 'pt-BR'));
+  return `<form class="novo" data-f="novo"><input id="novo-nome" placeholder="Nome do aluno (ex.: Bruno Calegari)" autocomplete="off" required><button class="btn" type="submit">Criar código</button></form>
+    ${lista.length ? `<div class="alunos">${lista.map(([code, a]) => {
+      const ps = [...prog.values()].filter(p => p.code === code);
+      const on = ps.some(online);
+      const ult = ps.reduce((m, p) => Math.max(m, ms(p.atualizado)), 0);
+      return `<a class="aluno" href="#aluno/${encodeURIComponent(code)}" style="text-decoration:none">
+        <div class="cab"><span class="ava" style="background:${avaCor(code)}">${esc(iniciais(a.nome))}</span><div><strong>${esc(a.nome)}</strong>${on ? '<span class="chip vivo-c" style="margin-top:4px"><i class="pulso"></i>Online</span>' : ''}</div></div>
+        <span class="codigo">${esc(code)}</span>
+        <div class="rod"><span>${ps.length} ${ps.length === 1 ? 'lição' : 'lições'}</span><span>${ult ? 'ativo ' + esc(relativo(ult)) : 'ainda não começou'}</span></div></a>`;
+    }).join('')}</div>` : '<div class="vazio" style="margin-top:16px">Nenhum aluno ainda. Escreva o nome acima e crie o código dele.</div>'}`;
+}
+const mensagem = (a, code) => `Oi, ${(a.nome || '').split(' ')[0]}! Seu código para as atividades do curso é ${code}. Na primeira vez que abrir uma atividade ou um LCP, digite esse código na caixinha que aparece. Assim suas respostas ficam salvas na nuvem, você pode continuar de qualquer aparelho e eu acompanho tudo por aqui.`;
+function telaAluno(code) {
+  const a = alunos.get(code);
+  if (!a) return `<a class="voltar" href="#alunos">← Alunos</a><div class="vazio">Aluno não encontrado.</div>`;
+  const ps = [...prog.entries()].filter(([, p]) => p.code === code).sort((x, y) => ms(y[1].atualizado) - ms(x[1].atualizado));
+  return `<a class="voltar" href="#alunos">← Alunos</a>
+    <div class="ficha"><span class="ava" style="background:${avaCor(code)}">${esc(iniciais(a.nome))}</span>
+      <div><h1>${esc(a.nome)}</h1><div style="margin-top:8px"><span class="codigo">${esc(code)}</span></div></div>
+      <div class="acoes"><button class="btn g peq" data-a="msg" data-code="${esc(code)}">${ICON.copiar}Copiar mensagem para o aluno</button><button class="btn g peq" data-a="cod" data-code="${esc(code)}">${ICON.copiar}Copiar só o código</button><button class="link" data-a="apagar" data-code="${esc(code)}">Apagar aluno</button></div></div>
+    <div class="titulo-sec"><h2>Lições</h2><span class="cont">${ps.length}</span></div>
+    ${ps.length ? `<div class="licoes-aluno">${ps.map(([id, p]) => `<button class="lc" style="${cor(p.lesson)}" data-ver="${esc(id)}">
+        <span class="curso">${esc(curso(p))}</span><h3>${esc(titulo(p))}</h3>
+        <div class="linha-info"><span class="pct">${pct(p)}%</span><span>${esc(relativo(p.atualizado))}</span></div>
+        <div class="barra"><i style="width:${pct(p)}%"></i></div>
+        <div class="chips" style="justify-content:flex-start">${chipsDe(id, p)}</div>
+        <span class="btn peq" style="justify-self:start;background:var(--k);box-shadow:0 3px 0 var(--k-esc)">${ICON.olho}Ver respostas</span></button>`).join('')}</div>`
+      : '<div class="vazio">Este aluno ainda não abriu nenhuma atividade com o código.</div>'}`;
+}
+function telaLicoes() {
+  const g = new Map();
+  ordenados().forEach(([id, p]) => { if (!g.has(p.lesson)) g.set(p.lesson, []); g.get(p.lesson).push([id, p]); });
+  if (!g.size) return '<div class="vazio" style="margin-top:20px">Nenhuma lição com respostas ainda.</div>';
+  return `<div style="margin-top:20px">${[...g.entries()].map(([l, itens]) => {
+    const media = Math.round(itens.reduce((n, [, p]) => n + pct(p), 0) / itens.length);
+    const ent = itens.filter(([, p]) => p.entregue).length;
+    return `<section class="grupo-licao" style="${cor(l)}"><div class="gcab"><div><span class="curso" style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--k-esc)">${esc(nivel(l).n)}</span><h3>${esc(titulo(itens[0][1]))}</h3></div>
+      <span class="chips"><span class="chip">${itens.length} ${itens.length === 1 ? 'aluno' : 'alunos'}</span><span class="chip">média ${media}%</span><span class="chip ent">${ent} ${ent === 1 ? 'entregue' : 'entregues'}</span></span></div>
+      <div class="lista">${itens.map(x => linha(x, true)).join('')}</div></section>`;
+  }).join('')}</div>`;
+}
+function desenhar() {
+  if (!user || !app.dataset) return;
+  if (!subs.length) return;
+  const foco = document.activeElement && document.activeElement.id === 'novo-nome' ? $('#novo-nome').value : null;
+  const corpo = aba === 'alunos' ? telaAlunos() : aba === 'aluno' ? telaAluno(alunoSel) : aba === 'licoes' ? telaLicoes() : telaAgora();
+  app.innerHTML = topo() + `<main class="wrap">${corpo}</main>`;
+  if (foco != null) { const i = $('#novo-nome'); if (i) { i.value = foco; i.focus(); } }
+  visorCab();
+}
+setInterval(desenhar, 15000);
+
+/* ---------- ações ---------- */
+const ALF = 'ACDEFGHJKMNPQRTUVWXY34679';
+function novoCodigo(nome) {
+  const base = (nome || 'ALUNO').trim().split(/\s+/)[0].normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'ALUNO';
+  for (;;) { let s = ''; for (let i = 0; i < 4; i++) s += ALF[Math.floor(Math.random() * ALF.length)]; const c = `${base}-${s}`; if (!alunos.has(c)) return c; }
+}
+document.addEventListener('submit', async e => {
+  if (e.target.dataset.f !== 'novo') return;
+  e.preventDefault();
+  const nome = $('#novo-nome').value.trim().replace(/\s+/g, ' ');
+  if (!nome) return;
+  const code = novoCodigo(nome);
+  try { await setDoc(doc(db, 'alunos', code), {nome, criado: serverTimestamp()}); $('#novo-nome').value = ''; toast(`Código de ${nome.split(' ')[0]}: ${code}`); location.hash = '#aluno/' + encodeURIComponent(code); }
+  catch (err) { toast('Não consegui criar: ' + (err.code || err.message)); }
+});
+document.addEventListener('click', async e => {
+  const v = e.target.closest('[data-ver]');
+  if (v) { e.preventDefault(); location.hash = '#ver/' + encodeURIComponent(v.dataset.ver); return; }
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, code = b.dataset.code;
+  if (a === 'entrar') { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (err) { if (err.code !== 'auth/popup-closed-by-user') app.innerHTML = telaLogin('Não deu para entrar: ' + esc(err.code || err.message)); } }
+  else if (a === 'sair') { fecharVisor(true); await signOut(auth); location.hash = ''; }
+  else if (a === 'msg') copiar(mensagem(alunos.get(code) || {}, code), 'Mensagem copiada. É só colar no WhatsApp do aluno.');
+  else if (a === 'cod') copiar(code, 'Código copiado');
+  else if (a === 'apagar') { if (confirm(`Apagar ${(alunos.get(code) || {}).nome}? O código deixa de funcionar. As respostas que ele já mandou continuam no painel.`)) { await deleteDoc(doc(db, 'alunos', code)); location.hash = '#alunos'; } }
+  else if (a === 'fechar') { history.length > 1 && /^#ver\//.test(location.hash) ? history.back() : (location.hash = '#agora'); }
+  else if (a === 'atualizar') recarregarQuadro();
+});
+
+/* ---------- visor: a atividade do aluno, na mesma interface que ele usou ---------- */
+const visor = $('#visor'), quadro = $('#quadro'), aviso = $('#aviso');
+let vId = null, vEstado = null, rolar = null;
+window.__mcProf = {
+  salvar: async (id, key, val) => {
+    const p = prog.get(id) || {};
+    const ref = doc(db, 'correcoes', id);
+    if (val) await setDoc(ref, {code: p.code || id.split('__')[0], lesson: p.lesson || id.split('__')[1], atualizado: serverTimestamp(), itens: {[key]: {m: val.m, c: val.c, t: Date.now()}}}, {merge: true});
+    else await setDoc(ref, {atualizado: serverTimestamp(), itens: {[key]: deleteField()}}, {merge: true});
+  },
+  pronto: (id, win) => { if (id === vId) { try { win.__mcCorr(((corr.get(id) || {}).itens) || {}); } catch (e) {} if (rolar != null) { const y = rolar; rolar = null; setTimeout(() => { try { win.scrollTo(0, y); } catch (e) {} }, 450); } } }
+};
+function prepararVisao(id) {
+  const p = prog.get(id); if (!p) return false;
+  try { localStorage.setItem('mc-view:' + id, JSON.stringify({key: p.key, estado: p.estado})); } catch (e) {}
+  vEstado = p.estado;
+  return true;
+}
+function abrirVisor(id) {
+  if (!user || !subs.length) return;
+  const p = prog.get(id);
+  if (!p) { if (prog.size) { toast('Atividade não encontrada'); location.hash = '#agora'; } return; }
+  if (vId === id && !visor.hidden) return;
+  vId = id; rolar = null;
+  prepararVisao(id);
+  const u = new URL(p.url, location.href); u.searchParams.set('prof', id); u.searchParams.set('v', Date.now());
+  quadro.src = u.toString();
+  visor.hidden = false; aviso.hidden = true;
+  document.body.style.overflow = 'hidden';
+  visorCab();
+}
+function fecharVisor(silencioso) {
+  if (visor.hidden) return;
+  visor.hidden = true; aviso.hidden = true; quadro.src = 'about:blank'; vId = null;
+  document.body.style.overflow = '';
+  if (!silencioso) desenhar();
+}
+function visorCab() {
+  if (!vId || visor.hidden) return;
+  const p = prog.get(vId); if (!p) return;
+  const n = nomeDe(p);
+  $('#v-ava').textContent = iniciais(n); $('#v-ava').style.background = avaCor(p.code);
+  $('#v-nome').textContent = n;
+  $('#v-licao').textContent = `${curso(p)} · ${titulo(p)}`;
+  $('#v-pct').textContent = `${pct(p)}% feito · ${online(p) ? 'ao vivo' : 'última atividade ' + relativo(p.atualizado)}`;
+  $('#v-barra').style.width = pct(p) + '%'; $('#v-barra').style.background = nivel(p.lesson).k;
+  $('#v-chips').innerHTML = chipsDe(vId, p);
+}
+function editando() { try { return !!quadro.contentDocument.querySelector('.mc-ed'); } catch (e) { return false; } }
+function recarregarQuadro() {
+  if (!vId) return;
+  try { rolar = quadro.contentWindow.scrollY; } catch (e) { rolar = null; }
+  prepararVisao(vId);
+  aviso.hidden = true;
+  try { quadro.contentWindow.location.reload(); } catch (e) { abrirVisor(vId); }
+}
+function visorAtualiza() {
+  if (!vId || visor.hidden) return;
+  visorCab();
+  const p = prog.get(vId);
+  if (!p || p.estado === vEstado) return;
+  if (editando()) { aviso.hidden = false; return; }
+  recarregarQuadro();
+  toast(`${nomeDe(p).split(' ')[0]} respondeu mais uma`);
+}
+function visorCorr() {
+  if (!vId || visor.hidden) return;
+  try { quadro.contentWindow.__mcCorr && quadro.contentWindow.__mcCorr(((corr.get(vId) || {}).itens) || {}); } catch (e) {}
+  visorCab();
+}
+</script>
+</body>
+</html>
