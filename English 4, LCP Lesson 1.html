@@ -536,6 +536,7 @@ figure.pic.big{padding:8px}
 /* teacher view */
 html.mc-prof .send-card,html.mc-prof #reset-area,html.mc-prof [data-act="reset"],html.mc-prof .ai-btn,html.mc-prof .mc-pill,html.mc-prof .mc-banner{display:none!important}
 html.mc-prof .item-row > .btn,html.mc-prof .group-actions > .btn,html.mc-prof .group-actions > .btn-link{display:none!important}
+html.mc-prof .submit-btn,html.mc-prof #successBox,html.mc-prof #nameError{display:none!important}
 html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-radius:14px}
 .mc-t{margin:12px 0 2px}
 .mc-t .mc-fb{margin:0 0 8px}
@@ -622,12 +623,38 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   let painting = false;
 
   /* ---------- the engine's localStorage key ---------- */
-  let KEY = null;
+  let KEY = null, VIEW = null;
   const skip = k => !k || k.startsWith('mc-') || k.endsWith('::t');
+
+  /* ---------- pages that keep no state of their own (plain forms, like English 1-2 Lessons 9 and 10): this layer keeps it ---------- */
+  const FORMKEY = 'form:' + LESSON;
+  let formMode = false;
+  const fieldsOf = () => $$('form [name], #studentName').filter(el => /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !['hidden', 'submit', 'button'].includes(el.type) && !el.closest('.mc-t, .mc-modal'));
+  function fieldKeys() {
+    const seen = {};
+    return fieldsOf().map(el => {
+      let k = el.id === 'studentName' ? '#name' : el.name;
+      if (el.type !== 'radio' && el.type !== 'checkbox') { const c = seen[k] = (seen[k] || 0) + 1; if (c > 1) k += '#' + (c - 1); }
+      return [el, k];
+    });
+  }
+  function formState() {
+    const f = {};
+    fieldKeys().forEach(([el, k]) => { if (el.type === 'radio') { if (el.checked) f[k] = el.value; } else if (el.type === 'checkbox') f[k + '=' + el.value] = el.checked; else f[k] = el.value; });
+    return JSON.stringify({v: 1, form: true, it: {f}});
+  }
+  function applyForm(s) {
+    const o = parse(s); if (!o || !o.it || !o.it.f) return;
+    const f = o.it.f;
+    fieldKeys().forEach(([el, k]) => { if (el.type === 'radio') el.checked = f[k] === el.value; else if (el.type === 'checkbox') el.checked = !!f[k + '=' + el.value]; else if (k in f) el.value = f[k]; });
+    try { if (typeof window.updateProgress === 'function') window.updateProgress(); } catch (e) {}
+  }
+  const isFormPage = () => !!document.querySelector('form [name]') && !document.querySelector('.tabs .tab');
 
   /* ===================== TEACHER VIEW ===================== */
   if (PROF) {
     let view = parse(get('mc-view:' + PROF) || 'null');
+    VIEW = view;
     const mem = {};
     SP.getItem = function (k) { if (isLS(this) && view && k === view.key) return k in mem ? mem[k] : (view.estado || null); return rawGet.call(this, k); };
     SP.setItem = function (k, v) { if (isLS(this) && view && k === view.key) { mem[k] = String(v); return; } return rawSet.call(this, k, v); };
@@ -669,13 +696,26 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   function schedule(ms) { clearTimeout(pushT); setStatus('busy'); pushT = setTimeout(() => { pushT = null; push().catch(() => {}); }, ms == null ? 1500 : ms); }
 
   function counts() {
+    if (formMode) {
+      const groups = {}; let done = 0, total = 0;
+      fieldsOf().forEach(el => {
+        if (el.id === 'studentName' || el.tagName === 'TEXTAREA' || el.type === 'checkbox') return;
+        if (el.type === 'radio') { if (!(el.name in groups)) { groups[el.name] = false; total++; } if (el.checked && !groups[el.name]) { groups[el.name] = true; done++; } return; }
+        total++; if (el.value.trim()) done++;
+      });
+      return {parts: [], done, total};
+    }
     const parts = $$('.tabs .tab').map(t => {
       const c = t.querySelector('.count'); const mm = c && c.textContent.match(/(\d+)\s*\/\s*(\d+)/);
       return {t: (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim(), a: mm ? +mm[1] : null, b: mm ? +mm[2] : null};
     }).filter(p => p.b != null);
     return {parts, done: parts.reduce((n, p) => n + p.a, 0), total: parts.reduce((n, p) => n + p.b, 0)};
   }
-  const section = () => { const t = $('.tabs .tab[aria-selected="true"]'); if (!t) return ''; const c = t.querySelector('.count'); return (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim(); };
+  const section = () => {
+    const t = $('.tabs .tab[aria-selected="true"]');
+    if (!t) { let cur = ''; $$('.section-header').forEach(h => { if (h.getBoundingClientRect().top < window.innerHeight * 0.4) cur = (h.querySelector('.section-title') || h).textContent.replace(/\s+/g, ' ').trim(); }); return cur; }
+    const c = t.querySelector('.count'); return (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim();
+  };
   const base = () => ({code: me.code, lesson: LESSON, nome: me.nome || '', titulo: document.title, url: location.origin + location.pathname, secao: section()});
   async function push(extra, keepalive) {
     if (!me || !KEY || !ON) return;
@@ -794,7 +834,7 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
     fillName();
   }
   function fillName() {
-    const nm = $('#name');
+    const nm = $('#name') || $('#studentName');
     if (me && nm && !nm.value.trim() && me.nome) { nm.value = me.nome; nm.dispatchEvent(new Event('input', {bubbles: true})); }
   }
 
@@ -806,6 +846,13 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
 
   /* ---------- start ---------- */
   document.addEventListener('DOMContentLoaded', () => {
+    if (!KEY && isFormPage()) {
+      formMode = true; KEY = FORMKEY;
+      const s = get(KEY); lastSig = sig(s); if (s) applyForm(s);
+      const keep = e => { if (e.target instanceof Element && e.target.matches('input, textarea, select') && !e.target.closest('.mc-modal, .mc-t')) { try { localStorage.setItem(KEY, formState()); } catch (err) {} } };
+      document.addEventListener('input', keep, true);
+      document.addEventListener('change', keep, true);
+    }
     pill = document.createElement('button');
     pill.type = 'button'; pill.className = 'mc-pill'; pill.innerHTML = '<i class="dot"></i><span></span>';
     pill.addEventListener('click', () => openModal(false));
@@ -831,6 +878,10 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
     $$('main .item[data-id]').forEach(el => {
       const ta = el.querySelector('textarea');
       out.push({key: 'i:' + el.dataset.id, el, item: true, open: !!ta, answered: !!(ta && ta.value.trim())});
+    });
+    $$('.question-card').forEach((el, n) => {
+      const ta = el.querySelector('textarea');
+      out.push({key: 'q:' + (n + 1), el, item: true, open: !!ta, answered: !!(ta && ta.value.trim())});
     });
     $$('main section.view').forEach(v => {
       let n = 0;
@@ -874,7 +925,7 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   function banner(count, fresh, map) {
     let b = $('.mc-banner');
     if (!count) { if (b) b.remove(); return; }
-    const main = $('main'); if (!main) return;
+    const main = $('main') || $('.content') || document.body; if (!main) return;
     if (!b) { b = document.createElement('div'); b.className = 'mc-banner'; main.prepend(b); }
     b.innerHTML = `<span class="mc-fi">${ICONS.note}</span><div><b>${fresh ? `New notes from your teacher` : `Notes from your teacher`}</b><span>Your teacher left ${count} ${count > 1 ? 'notes' : 'note'} on this lesson. ${fresh ? 'They are under your answers.' : ''}</span></div><button type="button">${fresh ? 'Show me' : 'See them'}</button>`;
     b.querySelector('button').onclick = () => {
@@ -887,7 +938,7 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   }
   /* the engines redraw parts of the page: put the bubbles back */
   function watchCorr() {
-    const main = $('main'); if (!main) return;
+    const main = $('main') || document.body; if (!main) return;
     let t;
     new MutationObserver(() => { if (painting) return; clearTimeout(t); t = setTimeout(() => { if (Object.keys(corrMap).length) paintCorr(corrMap, false); }, 120); }).observe(main, {childList: true, subtree: true});
   }
@@ -896,6 +947,7 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   function teacherView() {
     const P = (() => { try { return window.parent !== window ? window.parent.__mcProf : null; } catch (e) { return null; } })();
     let tmap = {};
+    if (VIEW && VIEW.key && VIEW.key.startsWith('form:')) applyForm(VIEW.estado);
     /* read-only: the student's answers can be looked at, not changed */
     const allow = '.mc-t, .tabs, .tab, .sm-fab, .sm-sheet, [data-act="jump"], [data-act="goto-results"], [data-act="goto"], a[href^="#"]';
     const block = e => {
@@ -904,6 +956,7 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
       if (t.closest('button, input, textarea, select, label, [data-act], .mc-opt, .num, .lbox, .bl')) { e.preventDefault(); e.stopPropagation(); }
     };
     ['click', 'keydown', 'beforeinput', 'paste', 'drop'].forEach(ev => document.addEventListener(ev, e => { if (ev === 'keydown' && !(e.target instanceof Element && e.target.matches('input, textarea'))) return; block(e); }, true));
+    document.addEventListener('mousedown', e => { if (e.target instanceof Element && e.target.closest('select') && !e.target.closest('.mc-t')) e.preventDefault(); }, true);
     const ro = () => $$('input, textarea, select').forEach(i => { if (!i.closest('.mc-t')) { i.readOnly = true; i.tabIndex = -1; } });
     function decorate() {
       ro();
