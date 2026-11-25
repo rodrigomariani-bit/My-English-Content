@@ -552,7 +552,8 @@ const ICON = {
   bad: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M7 7l6 6M13 7l-6 6" fill="none" stroke="var(--surface)" stroke-width="2.2" stroke-linecap="round"/></svg>',
   almost: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M10 5.5v5.5" stroke="var(--surface)" stroke-width="2.2" stroke-linecap="round"/><circle cx="10" cy="14.3" r="1.3" fill="var(--surface)"/></svg>',
   info: '',
-  ear: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="13" width="5" height="7" rx="2" fill="currentColor"/><rect x="16" y="13" width="5" height="7" rx="2" fill="currentColor"/></svg>'
+  lock: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  ear:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="13" width="5" height="7" rx="2" fill="currentColor"/><rect x="16" y="13" width="5" height="7" rx="2" fill="currentColor"/></svg>'
 };
 function burst(el) {
   if (!el || reduceMotion()) return;
@@ -575,10 +576,12 @@ function burst(el) {
 }
 function showFb(el, kind, html) { el.className = 'fb ' + kind; el.innerHTML = html; el.hidden = false; }
 const fbTitle = (kind, text) => `<p class="fb-title">${ICON[kind] || ''}<span>${text}</span></p>`;
+/* placeholders for pictures that are not drawn yet (spec.py: "ph" of each exercise) */
+const PH = Object.assign({}, ...D.ex.map(x => x.ph || {}));
 function art(key, label, cls) {
   const t = document.getElementById('art');
   const el = t && t.content.querySelector(`[data-art="${key}"]`);
-  if (!el) return '';
+  if (!el) return PH[key] ? `<figure class="pic ph ${cls || ''}" role="img" aria-label="${esc(PH[key])}"><span><small>Picture</small>${typo(PH[key])}</span></figure>` : '';
   return `<figure class="pic ${cls || ''}" role="img" aria-label="${esc(label || 'Picture')}">${el.innerHTML}</figure>`;
 }
 let toastT;
@@ -589,6 +592,13 @@ function toast(msg) {
   clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2400);
 }
 
+/* numbers typed in an "order the pictures" exercise: 4, four, fourth and 4th all count */
+const NUMW = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const ORDW = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+const ORDS = ['', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th', 'th'];
+/* an exercise whose answers are typed (fill, or order with typed numbers) */
+const isText = x => x.list.some(it => it.kind === 'text');
+
 /* ---------- the exercises as a flat list of answerable items ---------- */
 /* every exercise becomes: list of {id, ans, model, kind: 'pick'|'text', ...}; the renderers and the checker share it */
 const EX = D.ex.map((x, xi) => {
@@ -596,6 +606,7 @@ const EX = D.ex.map((x, xi) => {
   if (x.type === 'mc' || x.type === 'pairs') x.items.forEach(it => items.push({kind: 'pick', n: it.n, ans: it.ans, model: it.model, src: it}));
   else if (x.type === 'choice') x.groups.forEach(g => g.items.forEach(it => items.push({kind: 'pick', n: it.n, ans: it.ans, model: it.model, src: it})));
   else if (x.type === 'assign') x.rows.forEach(r => items.push({kind: 'pick', n: r.label, ans: r.ans, model: !!r.model, src: r}));
+  else if (x.type === 'order' && x.typed) x.pics.forEach((p, i) => { const a = x.ans[i]; items.push({kind: 'text', num: true, n: 'picture ' + (x.labels ? x.labels[i] : i + 1), ans: String(a), acc: [String(a), NUMW[a], ORDW[a], a + ORDS[a]], model: x.done.includes(i), src: {pic: p, label: x.labels ? x.labels[i] : ''}}); });
   else if (x.type === 'order') x.pics.forEach((p, i) => items.push({kind: 'pick', n: 'picture ' + (x.labels ? x.labels[i] : i + 1), ans: String(x.ans[i]), model: x.done.includes(i), src: {pic: p, label: x.labels ? x.labels[i] : ''}}));
   else if (x.type === 'grid') x.cols.forEach((c, ci) => items.push({kind: 'set', n: c, ans: x.ans[ci].slice().sort((a, b) => a - b).join(','), model: false, src: {col: ci}}));
   else if (x.type === 'fill') x.items.forEach((it, i) => items.push({kind: 'text', n: it.label || String(i + 1), ans: it.a[0], acc: it.a, kw: it.kw, model: !!it.model, src: it}));
@@ -644,10 +655,11 @@ function renderMC(x) {
 /* picture pairs: left half = first letter, right half = second */
 function renderPairs(x) {
   const [a, b] = x.letters;
-  /* two separate pictures, each with its letter under it */
-  if (x.two) return `<div class="pic-items">${x.list.map(it => `<div class="mc-item pic-item pair2${it.model ? ' is-model' : ''}" ${itemAttr(x, it)}>
+  /* separate pictures (two or three), each with its letter under it */
+  const k = x.letters.length;
+  if (x.two) return `<div class="pic-items${k > 2 ? ' wide-items' : ''}">${x.list.map(it => `<div class="mc-item pic-item pair2${it.model ? ' is-model' : ''}" ${itemAttr(x, it)}>
       <div class="mc-head">${it.model ? tagDone(x.done_word) : `<span class="no">${esc(it.n)}.</span>`}</div>
-      <div class="two-pics">${[a, b].map((l, j) => `<div class="one-pic">${art(it.src.pics[j], `Picture ${it.n}${l}`)}${opt(x, it, l, `<b>${esc(l)}</b>`)}</div>`).join('')}</div></div>`).join('')}</div>`;
+      <div class="two-pics n${k}">${x.letters.map((l, j) => `<div class="one-pic">${art(it.src.pics[j], `Picture ${it.n}${l}`)}${opt(x, it, l, `<b>${esc(l)}</b>`)}</div>`).join('')}</div></div>`).join('')}</div>`;
   const card = it => `<div class="mc-item pic-item${it.model ? ' is-model' : ''}" ${itemAttr(x, it)}>
       <div class="mc-head">${it.model ? tagDone(x.done_word) : `<span class="no">${esc(it.n)}.</span>`}</div>
       ${art(it.src.pic, `Picture ${it.n}: two scenes, ${a} on the left and ${b} on the right`, 'pairpic')}
@@ -693,10 +705,14 @@ function renderOrder(x) {
   const vals = x.opts || Array.from({length: x.pics.length}, (_, j) => String(j + 1));
   const all = x.none ? vals.concat('none') : vals;
   const legend = x.legend ? `<div class="clegend">${x.legend.map(h => `<span>${esc(h)}</span>`).join('')}</div>` : '';
+  /* typed: a small box under each picture where the student writes the number */
+  const answer = it => x.typed
+    ? `<label class="ord-in"><span>Number</span>${blank(x, it, 'num')}</label>`
+    : `<div class="mc-opts pills${x.none ? '' : ' ordnums'}" style="--k:${all.length}">${all.map(v => opt(x, it, v, `<b>${v === 'none' ? esc(x.none) : v}</b>`, v === 'none' ? 'none' : '')).join('')}</div>`;
   return `${legend}<div class="pic-items three">${x.list.map(it => `<div class="mc-item pic-item${it.model ? ' is-model' : ''}" ${itemAttr(x, it)}>
       <div class="mc-head">${it.src.label ? `<span class="no">${esc(it.src.label)}</span>` : ''}${it.model ? tagDone('Done for you') : ''}</div>
       ${art(it.src.pic, `Picture ${it.src.label || it.i + 1}`)}
-      <div class="mc-opts pills${x.none ? '' : ' ordnums'}" style="--k:${all.length}">${all.map(v => opt(x, it, v, `<b>${v === 'none' ? esc(x.none) : v}</b>`, v === 'none' ? 'none' : '')).join('')}</div></div>`).join('')}</div>`;
+      ${answer(it)}</div>`).join('')}</div>`;
 }
 
 /* tick everything each person can do (more than one box per person) */
@@ -709,7 +725,8 @@ function renderGrid(x) {
 /* blanks */
 function blank(x, it, w) {
   if (it.model) return `<span class="blank ok given"><input class="bl w-${w}" value="${esc(it.ans)}" disabled aria-label="${esc(it.n)}"></span>`;
-  return `<span class="blank" ${itemAttr(x, it)}><input class="bl w-${w}" data-x="${x.id}" data-i="${it.i}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(it.n)}"></span>`;
+  const num = it.num ? ' inputmode="numeric" maxlength="6"' : '';
+  return `<span class="blank" ${itemAttr(x, it)}><input class="bl w-${w}" data-x="${x.id}" data-i="${it.i}"${num} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(it.n)}"></span>`;
 }
 function renderFill(x) {
   const L = x.list;
@@ -730,46 +747,87 @@ function renderFill(x) {
 const RENDER = {mc: renderMC, pairs: renderPairs, choice: renderChoice, assign: renderAssign, order: renderOrder, fill: renderFill, grid: renderGrid};
 
 /* ---------- views ---------- */
+/* Since 25/11/2026 (his request): no Check button. The audio already gives the correction, so every answer is saved
+   the moment the student marks it and can't be changed. When all the items of an exercise are answered, the page
+   shows the score and the right and wrong marks. */
 function exView(x) {
   const v = $(`#v-${x.id}`);
-  v.innerHTML = `<div class="sec-head"><h1>Exercise ${x.r}</h1><p>Your teacher will play the recording. Listen, mark your answers, and then press <b>Check</b>.</p></div>
+  const how = x.type === 'grid' ? 'mark everything each person can do, then press <b>I’m done</b>'
+    : x.type === 'order' && x.typed ? 'write the numbers' : isText(x) ? 'write your answers (press Enter to save each one)' : 'mark your answers';
+  v.innerHTML = `<div class="sec-head">${x.sect ? `<p class="kicker">${esc(x.sect)}</p>` : ''}<h1>Exercise ${x.r}</h1><p>Your teacher will play the recording. Listen and ${how}. <b>Each answer is saved as soon as you give it, and you can’t change it.</b></p></div>
     <article class="ex" id="ex-${x.id}"><h2><span class="rn">${x.r}.</span>${typo(x.instr)}</h2>
       ${RENDER[x.type](x)}
       <div class="fb" role="status" hidden></div>
-      <div class="group-actions"><button class="btn btn-primary" data-act="check" data-x="${x.id}">Check</button><span class="listen-note">${ICON.ear}Need to hear it again? Ask your teacher.</span></div>
+      <div class="group-actions lock-status"><span class="saved-note" data-saved="${x.id}"></span>${x.type === 'grid' ? `<button class="btn btn-primary" data-act="done" data-x="${x.id}">I’m done</button>` : ''}</div>
     </article>`;
   restoreEx(x);
 }
 
-/* ---------- answering and checking ---------- */
+/* ---------- answering: saved on the first answer ---------- */
 const exById = id => EX.find(x => x.id === id);
+/* an item is answered (and locked) when: pick = an option was chosen; text = the value was saved; set = the exercise was closed with I'm done */
+function answered(x, st, it) {
+  if (it.kind === 'pick') return !!(st.sel && st.sel[it.i]);
+  if (it.kind === 'text') return !!(st.lock && st.lock[it.i]);
+  if (it.kind === 'set') return !!st.closed;
+  return false;
+}
 function paint(x) {
   const st = state.it[x.id] || {}, sel = st.sel || {}, marks = st.marks || {};
   x.list.forEach(it => {
     if (it.model) return;
     const el = $(`.mc-item[data-x="${x.id}"][data-i="${it.i}"], .blank[data-x="${x.id}"][data-i="${it.i}"]`);
     if (!el) return;
-    if (it.kind === 'pick') $$('[data-act="pick"]', el).forEach(b => b.setAttribute('aria-pressed', String(sel[it.i] === b.dataset.v)));
-    if (it.kind === 'set') { const on = String(sel[it.i] || '').split(',').filter(Boolean); $$('[data-act="toggle"]', el).forEach(b => b.setAttribute('aria-pressed', String(on.includes(b.dataset.v)))); }
+    const done = answered(x, st, it);
+    if (it.kind === 'pick') $$('[data-act="pick"]', el).forEach(b => { const on = sel[it.i] === b.dataset.v; b.setAttribute('aria-pressed', String(on)); b.classList.toggle('dimmed', done && !on); b.setAttribute('aria-disabled', String(done)); });
+    if (it.kind === 'set') { const on = String(sel[it.i] || '').split(',').filter(Boolean); $$('[data-act="toggle"]', el).forEach(b => { b.setAttribute('aria-pressed', String(on.includes(b.dataset.v))); b.setAttribute('aria-disabled', String(done)); }); }
+    if (it.kind === 'text') { const inp = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); if (inp) inp.readOnly = done; }
+    el.classList.toggle('locked', done);
     el.classList.remove('ok', 'bad');
     if (marks[it.i]) el.classList.add(marks[it.i]);
+    /* a typed box inside a picture card gets the colour too */
+    const bl = $(`.blank[data-x="${x.id}"][data-i="${it.i}"]`);
+    if (bl && bl !== el) { bl.classList.remove('ok', 'bad'); bl.classList.toggle('locked', done); if (marks[it.i]) bl.classList.add(marks[it.i]); }
   });
+  const open = x.list.filter(it => !it.model), n = open.filter(it => answered(x, st, it)).length;
+  const note = $(`[data-saved="${x.id}"]`);
+  if (note) note.innerHTML = st.st ? '' : `${ICON.lock}<span>${n ? `${n} of ${open.length} answers saved.` : 'Your answers are saved as you go.'}</span>`;
 }
+let lockToast = false;
+function saved() { if (!lockToast) { lockToast = true; toast('Answer saved. It can’t be changed.'); } }
 function toggle(xid, i, v) {
   const st = ist(xid);
-  st.sel = st.sel || {}; st.marks = st.marks || {};
+  if (st.closed) { toast('This exercise is closed. Your answers are saved.'); return; }
+  st.sel = st.sel || {};
   const on = new Set(String(st.sel[i] || '').split(',').filter(Boolean));
   if (on.has(v)) on.delete(v); else on.add(v);
   st.sel[i] = Array.from(on).map(Number).sort((a, b) => a - b).join(',');
-  delete st.marks[i];
   paint(exById(xid)); save();
 }
 function choose(xid, i, v) {
   const st = ist(xid);
-  st.sel = st.sel || {}; st.marks = st.marks || {};
+  st.sel = st.sel || {};
+  if (st.sel[i]) { toast('This answer is already saved. You can’t change it.'); return; }
   st.sel[i] = v;
-  delete st.marks[i];
-  paint(exById(xid)); save();
+  saved();
+  paint(exById(xid)); evaluate(xid); save();
+}
+/* typed answers are saved when the student leaves the box or presses Enter (a single-digit picture number is saved right away) */
+function commitText(inp) {
+  const x = exById(inp.dataset.x), i = +inp.dataset.i, st = ist(x.id);
+  st.lock = st.lock || {};
+  if (st.lock[i] || !inp.value.trim()) return;
+  st.vals = st.vals || [];
+  st.vals[i] = inp.value;
+  st.lock[i] = true;
+  saved();
+  paint(x); evaluate(x.id); save();
+}
+function closeGrid(xid) {
+  const st = ist(xid);
+  if (st.closed) return;
+  st.closed = true;
+  paint(exById(xid)); evaluate(xid); save();
 }
 function textOk(it, raw) {
   const v = norm(raw);
@@ -780,48 +838,41 @@ function textOk(it, raw) {
   const close = !digits && it.acc.map(norm).some(a => { const d = lev(v, a); return a.length >= 4 && d > 0 && d <= (a.length >= 7 ? 2 : 1); });
   return {ok: false, close};
 }
-function check(xid) {
-  const x = exById(xid), st = ist(xid), root = $(`#ex-${xid}`), fb = $(':scope > .fb', root);
-  st.sel = st.sel || {};
-  if (x.type === 'fill') st.vals = x.list.map(it => { const inp = $(`input[data-x="${xid}"][data-i="${it.i}"]`); return inp ? inp.value : ''; });
-  const value = it => x.type === 'fill' ? (st.vals[it.i] || '') : (st.sel[it.i] || '');
+/* when every item is answered: score it once, show the marks and the result (nothing can be changed after) */
+function resultFb(x, st) {
+  const fb = $(`#ex-${x.id} > .fb`);
+  if (!fb || !st.st) return;
+  if (st.score === x.total) showFb(fb, 'ok', fbTitle('ok', pick([`All ${x.total} correct!`, 'Perfect! All correct.', `Excellent! ${x.total} out of ${x.total}.`])));
+  else showFb(fb, 'bad', fbTitle('bad', `${st.score} of ${x.total} right.`) + '<p>The ones in red were wrong. Your answers are saved, and your teacher will see them.</p>');
+}
+function evaluate(xid) {
+  const x = exById(xid), st = ist(xid);
+  if (st.st) return;
   const open = x.list.filter(it => !it.model);
-  const answered = open.filter(it => String(value(it)).trim()).length;
-  if (!answered) { showFb(fb, 'info', fbTitle('info', x.type === 'fill' ? 'Write your answers first, then press Check.' : 'Mark your answers first, then press Check.')); save(); return; }
-  st.tries = (st.tries || 0) + 1;
+  if (!open.every(it => answered(x, st, it))) return;
   st.marks = {};
-  let right = 0, close = [];
+  let right = 0;
   open.forEach(it => {
-    const val = value(it);
-    if (!String(val).trim()) return;
-    let ok;
-    if (it.kind === 'text') { const r = textOk(it, val); ok = r.ok; if (!ok && r.close) close.push(it); }
-    else ok = val === it.ans;
+    const val = it.kind === 'text' ? ((st.vals || [])[it.i] || '') : ((st.sel || {})[it.i] || '');
+    const ok = it.kind === 'text' ? textOk(it, val).ok : val === it.ans;
     st.marks[it.i] = ok ? 'ok' : 'bad';
     if (ok) right++;
   });
-  st.score = right; st.total = x.total;
-  if (st.firstScore === undefined) st.firstScore = right;
-  paint(x);
-  if (right === x.total) {
-    st.st = 'ok';
-    showFb(fb, 'ok', fbTitle('ok', st.tries === 1 ? pick([`All ${right} correct!`, 'Perfect! All correct.', `Excellent! ${right} out of ${right}.`]) : 'All correct now. Nice work fixing them!')); burst(fb);
-  } else {
-    st.st = 'bad';
-    const tips = [];
-    if (answered < x.total) tips.push(`Answer every item. ${x.total - answered} still empty.`);
-    if (close.length) tips.push(`So close! Check the spelling of ${close.map(it => it.n.replace(/\.$/, '')).join(', ')}.`);
-    if (right + close.length < answered) tips.push(x.type === 'fill' ? 'Ask your teacher to play the recording again and listen for the ones in red.' : 'Ask your teacher to play the recording again and listen to the ones in red.');
-    showFb(fb, 'bad', fbTitle('bad', `${right} of ${x.total} right.`) + `<ul>${tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`);
-  }
-  save();
+  st.score = right; st.total = x.total; st.firstScore = right; st.tries = 1;
+  st.st = right === x.total ? 'ok' : 'bad';
+  paint(x); resultFb(x, st);
+  if (st.st === 'ok') burst($(`#ex-${x.id} > .fb`));
 }
 function restoreEx(x) {
   const st = state.it[x.id];
   if (!st) return;
-  if (x.type === 'fill' && st.vals) x.list.forEach(it => { const inp = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); if (inp) inp.value = st.vals[it.i] || ''; });
+  /* pages saved before 25/11/2026: a typed answer that was already checked counts as saved */
+  if (isText(x) && st.vals && st.firstScore !== undefined && !st.lock) { st.lock = {}; x.list.forEach(it => { if ((st.vals[it.i] || '').trim()) st.lock[it.i] = true; }); }
+  if (x.type === 'grid' && st.firstScore !== undefined) st.closed = true;
+  if (isText(x) && st.vals) x.list.forEach(it => { const inp = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); if (inp) inp.value = st.vals[it.i] || ''; });
+  if (st.st && st.marks && Object.keys(st.marks).length < x.total) delete st.st;   /* old partial checks: score again when complete */
   paint(x);
-  if (st.st === 'ok') showFb($(`#ex-${x.id} > .fb`), 'ok', fbTitle('ok', 'All correct!'));
+  if (st.st) resultFb(x, st); else evaluate(x.id);
 }
 
 /* ---------- results ---------- */
@@ -838,9 +889,9 @@ function renderResults() {
   const row = (title, n, total, detail) => `<div class="res-row"><h3>${title}</h3><span class="n">${n}/${total}</span><div class="bar"><i style="width:${total ? Math.round(100 * n / total) : 0}%"></i></div>${detail ? `<p class="detail" style="margin:0">${detail}</p>` : ''}</div>`;
   const left = EX.length - t.checked;
   $('#v-results').innerHTML = `<div class="sec-head"><h1>My results</h1><p>${state.name ? esc(state.name) : 'Write your name at the top of the page.'}${state.cls ? ` · Class No. ${esc(state.cls)}` : ''}</p></div>
-  <article class="ex"><p class="sec-note">Your score counts your answers on the <b>first Check</b> of each exercise. Fixing your mistakes afterwards is great practice, but it doesn’t change your score.</p><div class="res">
-    ${t.p.map(r => row(`Exercise ${r.x.r}`, r.first || 0, r.x.total, r.done ? (r.now > r.first ? `Now ${r.now}/${r.x.total} after your corrections.` : '') : 'Not checked yet.')).join('')}
-  </div><p class="total">Score: <b>${t.first}/${TOTAL}</b> on the first check${left ? ` <span>(${left} exercise${left > 1 ? 's' : ''} not checked yet)</span>` : ''}</p></article>
+  <article class="ex"><p class="sec-note">Each answer is saved as soon as you give it, so your score shows the answers you gave while you listened.</p><div class="res">
+    ${t.p.map(r => row(`Exercise ${r.x.r}`, r.first || 0, r.x.total, r.done ? '' : 'Not finished yet.')).join('')}
+  </div><p class="total">Score: <b>${t.first}/${TOTAL}</b>${left ? ` <span>(${left} exercise${left > 1 ? 's' : ''} not finished yet)</span>` : ''}</p></article>
   <article class="ex send-card"><h2>Send your answers to your teacher</h2>
     <p class="send-note">Your score and your answers go straight to your teacher’s e-mail. Write your name and class number at the top of the page first. If you change something later, you can send again.</p>
     <div class="res-actions"><button class="btn btn-primary" data-act="send">Send to my teacher</button><button class="btn btn-ghost" data-act="copy">Copy my answers</button></div>
@@ -855,12 +906,12 @@ function report() {
   const L = [];
   L.push(`${COURSE.toUpperCase()} · LCP LESSON ${N} (Listening Comprehension Practice)`);
   L.push(`Name: ${state.name || '-'}   Class No.: ${state.cls || '-'}`);
-  L.push(`Score on the first check: ${t.first}/${TOTAL}   After corrections: ${t.now}/${TOTAL}`);
+  L.push(`Score: ${t.first}/${TOTAL} (answers saved as the student gave them)`);
   EX.forEach(x => {
     const s = state.it[x.id] || {};
-    L.push('', `EXERCISE ${x.r}: ${s.firstScore !== undefined ? `${s.firstScore}/${x.total} on the first check, ${s.score || 0}/${x.total} now` : 'not checked'}`);
+    L.push('', `EXERCISE ${x.r}: ${s.firstScore !== undefined ? `${s.firstScore}/${x.total}` : 'not finished'}`);
     const parts = x.list.filter(it => !it.model).map(it => {
-      const v = x.type === 'fill' ? ((s.vals || [])[it.i] || '').trim() : ((s.sel || {})[it.i] || '');
+      const v = isText(x) ? ((s.vals || [])[it.i] || '').trim() : ((s.sel || {})[it.i] || '');
       let shown = v === 'none' ? x.none : v;
       if (v && it.kind === 'set') shown = v.split(',').map(r => x.rows[+r]).join(', ');
       else if (v && x.plain) shown = (it.src.o.find(o => o[0] === v) || [v, v])[1];
@@ -895,7 +946,7 @@ async function sendAnswers(btn) {
   }
   const t = tally();
   const data = {_subject: `${COURSE}, LCP Lesson ${N}: ${name} (Class No. ${cls})`, name, class_no: cls, score_first_check: `${t.first}/${TOTAL}`, answers: report()};
-  EX.forEach(x => { const s = state.it[x.id] || {}; data[`exercise_${x.r}`] = s.firstScore !== undefined ? `${s.firstScore}/${x.total}` : 'not checked'; });
+  EX.forEach(x => { const s = state.it[x.id] || {}; data[`exercise_${x.r}`] = s.firstScore !== undefined ? `${s.firstScore}/${x.total}` : 'not finished'; });
   btn.disabled = true;
   showFb(fb, 'info', fbTitle('info', 'Sending…'));
   try {
@@ -950,7 +1001,7 @@ function setupEvents() {
     const act = b.dataset.act, d = b.dataset;
     if (act === 'pick') choose(d.x, +d.i, d.v);
     else if (act === 'toggle') toggle(d.x, +d.i, d.v);
-    else if (act === 'check') check(d.x);
+    else if (act === 'done') closeGrid(d.x);
     else if (act === 'send') sendAnswers(b);
     else if (act === 'goto-results') showTab('results', true);
     else if (act === 'copy') {
@@ -969,22 +1020,46 @@ function setupEvents() {
   });
   main.addEventListener('input', e => {
     const inp = e.target;
-    if (!inp.matches('input[data-x]')) return;
+    if (!inp.matches('input[data-x]') || inp.readOnly) return;
     const st = ist(inp.dataset.x), x = exById(inp.dataset.x);
-    st.vals = x.list.map(it => { const el = $(`input[data-x="${x.id}"][data-i="${it.i}"]`); return el ? el.value : ''; });
-    if (st.marks) delete st.marks[+inp.dataset.i];
-    const bl = inp.closest('.blank'); if (bl) bl.classList.remove('ok', 'bad');
+    if (st.lock && st.lock[+inp.dataset.i]) return;
+    st.vals = st.vals || [];
+    st.vals[+inp.dataset.i] = inp.value;
     save();
+    /* a picture number (one digit) is saved as soon as it is typed */
+    const it = x.list[+inp.dataset.i];
+    if (it && it.num && x.list.length < 10 && /^\d$/.test(inp.value.trim())) commitText(inp);
   });
+  main.addEventListener('change', e => { if (e.target.matches('input[data-x]') && !e.target.readOnly) commitText(e.target); });
   main.addEventListener('keydown', e => {
     if (e.key !== 'Enter' || !e.target.matches('input[data-x]')) return;
     e.preventDefault();
+    if (!e.target.readOnly) commitText(e.target);
     const ins = $$(`input[data-x="${e.target.dataset.x}"]`), at = ins.indexOf(e.target);
-    if (at < ins.length - 1) ins[at + 1].focus(); else check(e.target.dataset.x);
+    const next = ins.slice(at + 1).find(el => !el.readOnly);
+    if (next) next.focus(); else e.target.blur();
   });
+}
+/* look of saved answers (kept here so every LCP generator gets it without touching its CSS) */
+function lockStyles() {
+  const s = document.createElement('style');
+  s.textContent = `.mc-opt.dimmed{opacity:.45;filter:grayscale(.4)}
+.mc-opt[aria-disabled="true"]{cursor:default}
+.mc-opt[aria-disabled="true"]:hover{border-color:var(--line)}
+.mc-opt[aria-disabled="true"][aria-pressed="true"]:hover{border-color:var(--sec)}
+.mc-item.locked .mc-opt[aria-pressed="true"],.mc-item.locked .mc-opt[aria-pressed="true"] .bx{transition:none}
+.locked input.bl[readonly],.blank.locked input.bl[readonly]{background:var(--sec-soft);border-color:var(--sec);border-bottom-color:var(--sec);color:var(--sec-ink);cursor:default}
+.blank.ok input.bl[readonly]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok-ink)}
+.blank.bad input.bl[readonly]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad-ink)}
+.lock-status{align-items:center}
+.saved-note{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:13.5px;font-weight:700}
+.saved-note:empty{display:none}
+.saved-note svg{flex:0 0 auto;color:var(--sec-ink)}`;
+  document.head.appendChild(s);
 }
 
 /* ---------- init ---------- */
+lockStyles();
 renderAll();
 setupEvents();
 const h = (location.hash || '').slice(1);
@@ -994,5 +1069,118 @@ updateCounts();
 
 </script>
 
+<!-- scroll-mode:start -->
+<style>
+html.scroll-mode main > section.view[hidden]{display:block!important}
+html.scroll-mode main > section.view{scroll-margin-top:18px}
+html.scroll-mode main > section.view + section.view{margin-top:38px;padding-top:34px;border-top:2px dashed var(--line,#E2E6F1)}
+html.scroll-mode .tab[aria-selected="true"]{transition:background .25s,color .25s}
+.sm-fab{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;gap:9px;max-width:calc(100vw - 28px);padding:11px 16px 11px 13px;border:0;border-radius:999px;background:var(--ink,#131B35);color:#fff;font:inherit;font-weight:800;font-size:14px;line-height:1.2;box-shadow:0 12px 28px -10px rgba(19,27,53,.55);cursor:pointer}
+.sm-fab svg{width:18px;height:18px;flex:none}
+.sm-fab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sm-sheet{position:fixed;left:12px;right:12px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 56px);z-index:81;display:grid;gap:6px;max-height:62vh;overflow:auto;padding:10px;background:#fff;border-radius:22px;box-shadow:0 24px 60px -12px rgba(19,27,53,.5);animation:sm-up .2s ease-out}
+.sm-sheet[hidden]{display:none}
+.sm-sheet p{margin:4px 8px 6px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#6E7A99)}
+.sm-sheet button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 14px;border:0;border-radius:14px;background:var(--surface-2,#F3F5FB);color:var(--ink,#131B35);font:inherit;font-weight:700;font-size:15px;text-align:left;cursor:pointer}
+.sm-sheet button[aria-current="true"]{background:var(--ink,#131B35);color:#fff}
+.sm-sheet button small{font-weight:800;font-size:12px;opacity:.75}
+@keyframes sm-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:1079px){.sm-fab{display:inline-flex}}
+@media (prefers-reduced-motion:reduce){.sm-sheet{animation:none}}
+</style>
+<script>
+(() => {
+  if (window.__scrollMode) return;
+  window.__scrollMode = true;
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const views = $$('main > section.view[data-view]'), tabs = $$('.tabs .tab[data-tab]'), bar = document.querySelector('.tabs');
+  if (views.length < 2 || !tabs.length || !bar) return;
+  document.documentElement.classList.add('scroll-mode');
+  const ids = tabs.map(t => t.dataset.tab).filter(id => views.some(v => v.dataset.view === id));
+  const view = id => views.find(v => v.dataset.view === id);
+  const tab = id => tabs.find(t => t.dataset.tab === id);
+  const smooth = () => !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const offset = () => { const h = document.querySelector('header.top'); const p = h ? getComputedStyle(h).position : ''; return 16 + (p === 'sticky' || p === 'fixed' ? h.offsetHeight : 0); };
+  const showAll = () => views.forEach(v => { if (v.hidden) v.hidden = false; });
+  let inQuiet = false, active = '';
+  /* let the page's own engine draw a section (it does that when its tab is shown), then show every section again and keep the scroll */
+  function quiet(id) {
+    const t = tab(id); if (!t) return;
+    const y = window.scrollY;
+    inQuiet = true;
+    try { t.click(); } finally { inQuiet = false; }
+    showAll();
+    window.scrollTo({top: y, behavior: 'auto'});
+  }
+  function goTo(id, animate) {
+    const v = view(id); if (!v) return;
+    const y = v.getBoundingClientRect().top + window.scrollY - offset();
+    window.scrollTo({top: Math.max(0, y), behavior: animate && smooth() ? 'smooth' : 'auto'});
+  }
+  function setActive(id) {
+    if (!id || id === active) return;
+    active = id;
+    tabs.forEach(t => { const on = t.dataset.tab === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    fabLabel();
+    if (id === 'results') quiet('results');          /* refresh the score when the student gets there */
+  }
+  /* menu clicks: scroll to the section (the page's own tab switch would hide the others) */
+  bar.addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (!t || inQuiet) return;
+    e.stopPropagation(); e.preventDefault();
+    const id = t.dataset.tab;
+    quiet(id); active = ''; setActive(id); goTo(id, true); closeSheet();
+  }, true);
+  /* the page itself switching tabs (Go to Section 2, See my results, Start over): show everything and scroll there */
+  new MutationObserver(() => {
+    if (inQuiet) return;
+    const hidden = views.filter(v => v.hidden);
+    if (!hidden.length) return;
+    const shown = views.filter(v => !v.hidden);
+    showAll();
+    if (shown.length === 1) { active = ''; setActive(shown[0].dataset.view); goTo(shown[0].dataset.view, false); }
+  }).observe(document.querySelector('main'), {attributes: true, attributeFilter: ['hidden'], subtree: true});
+  /* follow the reading position */
+  let ticking = false;
+  function spy() {
+    ticking = false;
+    const line = Math.min(window.innerHeight * 0.32, 260);
+    let cur = ids[0];
+    for (const id of ids) { const v = view(id); if (v && v.getBoundingClientRect().top - line <= 0) cur = id; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = ids[ids.length - 1];
+    setActive(cur);
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, {passive: true});
+  window.addEventListener('resize', () => requestAnimationFrame(spy));
+  /* phones and tablets: a floating button with the section list */
+  const fab = document.createElement('button');
+  fab.type = 'button'; fab.className = 'sm-fab'; fab.setAttribute('aria-haspopup', 'true'); fab.setAttribute('aria-expanded', 'false');
+  fab.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span></span>';
+  const sheet = document.createElement('div');
+  sheet.className = 'sm-sheet'; sheet.hidden = true; sheet.setAttribute('role', 'menu');
+  document.body.append(sheet, fab);
+  const label = t => { const c = t.querySelector('.count'); const txt = (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim(); return {txt, count: c ? c.textContent.trim() : ''}; };
+  function fabLabel() { const t = tab(active); if (t) fab.querySelector('span').textContent = label(t).txt; }
+  function openSheet() {
+    sheet.innerHTML = '<p>Sections</p>' + tabs.map(t => { const l = label(t); return `<button type="button" role="menuitem" data-go="${t.dataset.tab}" aria-current="${t.dataset.tab === active}"><span>${l.txt.replace(/[<>&]/g, '')}</span>${l.count ? `<small>${l.count}</small>` : ''}</button>`; }).join('');
+    sheet.hidden = false; fab.setAttribute('aria-expanded', 'true');
+  }
+  function closeSheet() { sheet.hidden = true; fab.setAttribute('aria-expanded', 'false'); }
+  fab.addEventListener('click', () => sheet.hidden ? openSheet() : closeSheet());
+  sheet.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { const t = tab(b.dataset.go); if (t) t.click(); closeSheet(); } });
+  document.addEventListener('click', e => { if (!sheet.hidden && !sheet.contains(e.target) && !fab.contains(e.target)) closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+  /* start: draw every section once, then go to the one in the address (#…) */
+  const wanted = (location.hash || '').slice(1);
+  ids.forEach(quiet);
+  const start = ids.includes(wanted) ? wanted : ids[0];
+  quiet(start); showAll(); setActive(start);
+  if (start !== ids[0]) { goTo(start, false); requestAnimationFrame(() => goTo(start, false)); window.addEventListener('load', () => goTo(start, false), {once: true}); }
+  else window.scrollTo({top: 0, behavior: 'auto'});
+})();
+</script>
+<!-- scroll-mode:end -->
 </body>
 </html>
