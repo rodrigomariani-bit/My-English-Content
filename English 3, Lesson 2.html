@@ -1992,5 +1992,118 @@ getSample().then(s => { aiReady = !!s; applyAi(); });
 
 </script>
 
+<!-- scroll-mode:start -->
+<style>
+html.scroll-mode main > section.view[hidden]{display:block!important}
+html.scroll-mode main > section.view{scroll-margin-top:18px}
+html.scroll-mode main > section.view + section.view{margin-top:38px;padding-top:34px;border-top:2px dashed var(--line,#E2E6F1)}
+html.scroll-mode .tab[aria-selected="true"]{transition:background .25s,color .25s}
+.sm-fab{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;gap:9px;max-width:calc(100vw - 28px);padding:11px 16px 11px 13px;border:0;border-radius:999px;background:var(--ink,#131B35);color:#fff;font:inherit;font-weight:800;font-size:14px;line-height:1.2;box-shadow:0 12px 28px -10px rgba(19,27,53,.55);cursor:pointer}
+.sm-fab svg{width:18px;height:18px;flex:none}
+.sm-fab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sm-sheet{position:fixed;left:12px;right:12px;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 56px);z-index:81;display:grid;gap:6px;max-height:62vh;overflow:auto;padding:10px;background:#fff;border-radius:22px;box-shadow:0 24px 60px -12px rgba(19,27,53,.5);animation:sm-up .2s ease-out}
+.sm-sheet[hidden]{display:none}
+.sm-sheet p{margin:4px 8px 6px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#6E7A99)}
+.sm-sheet button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 14px;border:0;border-radius:14px;background:var(--surface-2,#F3F5FB);color:var(--ink,#131B35);font:inherit;font-weight:700;font-size:15px;text-align:left;cursor:pointer}
+.sm-sheet button[aria-current="true"]{background:var(--ink,#131B35);color:#fff}
+.sm-sheet button small{font-weight:800;font-size:12px;opacity:.75}
+@keyframes sm-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:1079px){.sm-fab{display:inline-flex}}
+@media (prefers-reduced-motion:reduce){.sm-sheet{animation:none}}
+</style>
+<script>
+(() => {
+  if (window.__scrollMode) return;
+  window.__scrollMode = true;
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const views = $$('main > section.view[data-view]'), tabs = $$('.tabs .tab[data-tab]'), bar = document.querySelector('.tabs');
+  if (views.length < 2 || !tabs.length || !bar) return;
+  document.documentElement.classList.add('scroll-mode');
+  const ids = tabs.map(t => t.dataset.tab).filter(id => views.some(v => v.dataset.view === id));
+  const view = id => views.find(v => v.dataset.view === id);
+  const tab = id => tabs.find(t => t.dataset.tab === id);
+  const smooth = () => !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const offset = () => { const h = document.querySelector('header.top'); const p = h ? getComputedStyle(h).position : ''; return 16 + (p === 'sticky' || p === 'fixed' ? h.offsetHeight : 0); };
+  const showAll = () => views.forEach(v => { if (v.hidden) v.hidden = false; });
+  let inQuiet = false, active = '';
+  /* let the page's own engine draw a section (it does that when its tab is shown), then show every section again and keep the scroll */
+  function quiet(id) {
+    const t = tab(id); if (!t) return;
+    const y = window.scrollY;
+    inQuiet = true;
+    try { t.click(); } finally { inQuiet = false; }
+    showAll();
+    window.scrollTo({top: y, behavior: 'auto'});
+  }
+  function goTo(id, animate) {
+    const v = view(id); if (!v) return;
+    const y = v.getBoundingClientRect().top + window.scrollY - offset();
+    window.scrollTo({top: Math.max(0, y), behavior: animate && smooth() ? 'smooth' : 'auto'});
+  }
+  function setActive(id) {
+    if (!id || id === active) return;
+    active = id;
+    tabs.forEach(t => { const on = t.dataset.tab === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    fabLabel();
+    if (id === 'results') quiet('results');          /* refresh the score when the student gets there */
+  }
+  /* menu clicks: scroll to the section (the page's own tab switch would hide the others) */
+  bar.addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (!t || inQuiet) return;
+    e.stopPropagation(); e.preventDefault();
+    const id = t.dataset.tab;
+    quiet(id); active = ''; setActive(id); goTo(id, true); closeSheet();
+  }, true);
+  /* the page itself switching tabs (Go to Section 2, See my results, Start over): show everything and scroll there */
+  new MutationObserver(() => {
+    if (inQuiet) return;
+    const hidden = views.filter(v => v.hidden);
+    if (!hidden.length) return;
+    const shown = views.filter(v => !v.hidden);
+    showAll();
+    if (shown.length === 1) { active = ''; setActive(shown[0].dataset.view); goTo(shown[0].dataset.view, false); }
+  }).observe(document.querySelector('main'), {attributes: true, attributeFilter: ['hidden'], subtree: true});
+  /* follow the reading position */
+  let ticking = false;
+  function spy() {
+    ticking = false;
+    const line = Math.min(window.innerHeight * 0.32, 260);
+    let cur = ids[0];
+    for (const id of ids) { const v = view(id); if (v && v.getBoundingClientRect().top - line <= 0) cur = id; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = ids[ids.length - 1];
+    setActive(cur);
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, {passive: true});
+  window.addEventListener('resize', () => requestAnimationFrame(spy));
+  /* phones and tablets: a floating button with the section list */
+  const fab = document.createElement('button');
+  fab.type = 'button'; fab.className = 'sm-fab'; fab.setAttribute('aria-haspopup', 'true'); fab.setAttribute('aria-expanded', 'false');
+  fab.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span></span>';
+  const sheet = document.createElement('div');
+  sheet.className = 'sm-sheet'; sheet.hidden = true; sheet.setAttribute('role', 'menu');
+  document.body.append(sheet, fab);
+  const label = t => { const c = t.querySelector('.count'); const txt = (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim(); return {txt, count: c ? c.textContent.trim() : ''}; };
+  function fabLabel() { const t = tab(active); if (t) fab.querySelector('span').textContent = label(t).txt; }
+  function openSheet() {
+    sheet.innerHTML = '<p>Sections</p>' + tabs.map(t => { const l = label(t); return `<button type="button" role="menuitem" data-go="${t.dataset.tab}" aria-current="${t.dataset.tab === active}"><span>${l.txt.replace(/[<>&]/g, '')}</span>${l.count ? `<small>${l.count}</small>` : ''}</button>`; }).join('');
+    sheet.hidden = false; fab.setAttribute('aria-expanded', 'true');
+  }
+  function closeSheet() { sheet.hidden = true; fab.setAttribute('aria-expanded', 'false'); }
+  fab.addEventListener('click', () => sheet.hidden ? openSheet() : closeSheet());
+  sheet.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { const t = tab(b.dataset.go); if (t) t.click(); closeSheet(); } });
+  document.addEventListener('click', e => { if (!sheet.hidden && !sheet.contains(e.target) && !fab.contains(e.target)) closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+  /* start: draw every section once, then go to the one in the address (#…) */
+  const wanted = (location.hash || '').slice(1);
+  ids.forEach(quiet);
+  const start = ids.includes(wanted) ? wanted : ids[0];
+  quiet(start); showAll(); setActive(start);
+  if (start !== ids[0]) { goTo(start, false); requestAnimationFrame(() => goTo(start, false)); window.addEventListener('load', () => goTo(start, false), {once: true}); }
+  else window.scrollTo({top: 0, behavior: 'auto'});
+})();
+</script>
+<!-- scroll-mode:end -->
 </body>
 </html>
