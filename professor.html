@@ -190,7 +190,7 @@ function relativo(t) {
   const dt = new Date(ms(t)); return dt.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dt.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
 }
 const pct = p => p.total ? Math.round(100 * (p.feito || 0) / p.total) : 0;
-const titulo = p => (p.titulo || p.lesson || '').replace(/\s*·\s*(English|Online English)\s*[\d-]+\s*$/i, '');
+const titulo = p => (p.titulo || p.lesson || '').replace(/\s*·\s*(English|Online English)\s*[\d-]+\s*$/i, '').replace(/^Online English\s*[\d-]+\s*·\s*/i, '');
 const curso = p => nivel(p.lesson).n;
 function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.append(t); setTimeout(() => t.remove(), 2600); }
 async function copiar(txt, ok) { try { await navigator.clipboard.writeText(txt); toast(ok || 'Copiado'); } catch (e) { prompt('Copie:', txt); } }

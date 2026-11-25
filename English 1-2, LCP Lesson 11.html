@@ -477,6 +477,539 @@ figure.pic.big{padding:8px}
 [data-view="e3"],.tab[data-tab="e3"]{--sec:var(--coral);--sec-soft:var(--coral-soft);--sec-ink:var(--coral-ink)}
 [data-view="e4"],.tab[data-tab="e4"]{--sec:var(--mint);--sec-soft:var(--mint-soft);--sec-ink:var(--mint-ink)}
 [data-view="e5"],.tab[data-tab="e5"]{--sec:var(--orange);--sec-soft:var(--orange-soft);--sec-ink:var(--orange-ink)}</style>
+<!-- cloud-mode:start -->
+<style>
+.mc-pill{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));z-index:79;display:inline-flex;align-items:center;gap:8px;max-width:calc(100vw - 28px);padding:9px 14px 9px 11px;border:1.5px solid var(--line,#E2E6F1);border-radius:999px;background:rgba(255,255,255,.96);color:var(--ink,#131B35);font:inherit;font-weight:700;font-size:13px;line-height:1.2;box-shadow:0 10px 24px -14px rgba(19,27,53,.45);cursor:pointer;backdrop-filter:blur(6px)}
+.mc-pill .dot{width:9px;height:9px;border-radius:50%;background:#B8C0D6;flex:none}
+.mc-pill.ok .dot{background:#12B886}.mc-pill.busy .dot{background:#4C6EF5;animation:mc-pulse 1s infinite}.mc-pill.off .dot{background:#F59F00}.mc-pill.none .dot{background:#FA5252}
+.mc-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1079px){.mc-pill{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 58px)}}
+@keyframes mc-pulse{50%{opacity:.35}}
+.mc-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(19,27,53,.45);animation:mc-fade .2s}
+.mc-modal[hidden]{display:none}
+.mc-box{width:min(440px,100%);background:#fff;border-radius:26px;padding:26px 24px 22px;box-shadow:0 30px 80px -20px rgba(19,27,53,.55);text-align:left}
+.mc-box .mc-ic{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:var(--sec-soft,#EDF2FF);color:var(--sec-ink,#3B5BDB);margin-bottom:14px}
+.mc-box .mc-ic svg{width:28px;height:28px}
+.mc-box h2{margin:0 0 6px;font-family:Sora,system-ui,sans-serif;font-size:22px;line-height:1.2;color:var(--ink,#131B35)}
+.mc-box p{margin:0 0 14px;color:var(--muted,#55607E);font-size:15px;line-height:1.5}
+.mc-box input{width:100%;box-sizing:border-box;padding:14px 16px;border:2px solid var(--line-2,#D5DBEA);border-radius:16px;font:inherit;font-size:20px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-align:center;color:var(--ink,#131B35);background:#fff}
+.mc-box input:focus{outline:none;border-color:var(--sec,#4C6EF5);box-shadow:0 0 0 4px var(--sec-soft,#EDF2FF)}
+.mc-box .mc-err{min-height:20px;margin:8px 2px 0;color:#E03131;font-weight:700;font-size:14px}
+.mc-box .mc-who{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:#EBFBEE;color:#2B8A3E;font-weight:800;margin:0 0 14px}
+.mc-row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.mc-btn{border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:800;font-size:15px;cursor:pointer;background:var(--sec,#4C6EF5);color:#fff;box-shadow:0 4px 0 var(--sec-ink,#364FC7)}
+.mc-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--sec-ink,#364FC7)}
+.mc-btn[disabled]{opacity:.6;cursor:wait}
+.mc-link{border:0;background:none;padding:8px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--muted,#55607E);text-decoration:underline;cursor:pointer}
+@keyframes mc-fade{from{opacity:0}to{opacity:1}}
+/* teacher's corrections, as the student sees them */
+.mc-fb{display:flex;gap:12px;align-items:flex-start;margin:12px 0 2px;padding:12px 14px;border-radius:16px;border:2px solid;background:#fff;animation:mc-fade .3s}
+.mc-fb .mc-fi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff;font-weight:900;font-size:16px}
+.mc-fb b{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.mc-fb p{margin:3px 0 0;font-size:15.5px;line-height:1.5;color:var(--ink,#131B35);white-space:pre-wrap}
+.mc-fb.ok{border-color:#8CE99A;background:#F4FCF5}.mc-fb.ok .mc-fi{background:#2F9E44}.mc-fb.ok b{color:#2B8A3E}
+.mc-fb.quase{border-color:#FFD43B;background:#FFFBEA}.mc-fb.quase .mc-fi{background:#F08C00}.mc-fb.quase b{color:#D9480F}
+.mc-fb.refazer{border-color:#FFA8A8;background:#FFF5F5}.mc-fb.refazer .mc-fi{background:#E03131}.mc-fb.refazer b{color:#C92A2A}
+.mc-fb.nota{border-color:#A5D8FF;background:#F3F9FF}.mc-fb.nota .mc-fi{background:#1C7ED6}.mc-fb.nota b{color:#1864AB}
+.mc-fb.new{box-shadow:0 0 0 4px rgba(76,110,245,.18)}
+.mc-banner{display:flex;align-items:center;gap:14px;margin:0 0 22px;padding:14px 16px;border-radius:20px;background:linear-gradient(120deg,#EDF2FF,#F8F0FC);border:1.5px solid #D0BFFF}
+.mc-banner .mc-fi{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:#7048E8;color:#fff;flex:none}
+.mc-banner .mc-fi svg{width:22px;height:22px}
+.mc-banner div{flex:1;min-width:0}
+.mc-banner b{display:block;font-family:Sora,system-ui,sans-serif;font-size:16px;color:#3B2A8C}
+.mc-banner span{font-size:14px;color:#5F3DC4}
+.mc-banner button{border:0;border-radius:12px;padding:10px 14px;background:#7048E8;color:#fff;font:inherit;font-weight:800;cursor:pointer;flex:none}
+/* teacher view */
+html.mc-prof .send-card,html.mc-prof #reset-area,html.mc-prof [data-act="reset"],html.mc-prof .ai-btn,html.mc-prof .mc-pill,html.mc-prof .mc-banner{display:none!important}
+html.mc-prof .item-row > .btn,html.mc-prof .group-actions > .btn,html.mc-prof .group-actions > .btn-link{display:none!important}
+html.mc-prof .submit-btn,html.mc-prof #successBox,html.mc-prof #nameError{display:none!important}
+html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-radius:14px}
+.mc-t{margin:12px 0 2px}
+.mc-t .mc-fb{margin:0 0 8px}
+.mc-tbtn{display:inline-flex;align-items:center;gap:7px;border:1.5px solid #D0BFFF;border-radius:12px;padding:7px 12px;background:#F8F5FF;color:#5F3DC4;font:inherit;font-weight:800;font-size:13.5px;cursor:pointer}
+.mc-tbtn:hover{background:#7048E8;color:#fff;border-color:#7048E8}
+.mc-tag{display:inline-block;margin:0 0 8px;padding:3px 10px;border-radius:999px;background:#FFF3BF;color:#AD5F00;font-weight:800;font-size:12px;letter-spacing:.03em}
+.mc-ed{display:grid;gap:10px;padding:14px;border-radius:18px;background:#F8F5FF;border:1.5px solid #D0BFFF}
+.mc-seg{display:flex;flex-wrap:wrap;gap:6px}
+.mc-seg button{border:1.5px solid #D5DBEA;border-radius:12px;padding:8px 12px;background:#fff;font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;color:#343A40}
+.mc-seg button[aria-pressed="true"].ok{background:#2F9E44;border-color:#2F9E44;color:#fff}
+.mc-seg button[aria-pressed="true"].quase{background:#F08C00;border-color:#F08C00;color:#fff}
+.mc-seg button[aria-pressed="true"].refazer{background:#E03131;border-color:#E03131;color:#fff}
+.mc-seg button[aria-pressed="true"].nota{background:#1C7ED6;border-color:#1C7ED6;color:#fff}
+.mc-ed textarea{width:100%;box-sizing:border-box;min-height:84px;padding:10px 12px;border:1.5px solid #D5DBEA;border-radius:14px;font:inherit;font-size:15px;line-height:1.5;resize:vertical;background:#fff}
+.mc-ed .mc-row{margin:0}
+.mc-ed .mc-btn{padding:9px 16px;font-size:14px;background:#7048E8;box-shadow:0 3px 0 #5235C4}
+.mc-ed .mc-st{font-size:13px;font-weight:700;color:#5F3DC4}
+@media (prefers-reduced-motion:reduce){.mc-modal,.mc-fb{animation:none}.mc-pill.busy .dot{animation:none}}
+</style>
+<script>
+(() => {
+  if (window.__cloudMode) return;
+  window.__cloudMode = true;
+  const CFG = {"apiKey": "AIzaSyAgrXfpSBVJDHIIOmrdKLZA1klkeXTRoaU", "projectId": "painel-meu-curso"};
+  const ON = !!(CFG && CFG.projectId && CFG.apiKey);
+  const BASE = `https://firestore.googleapis.com/v1/projects/${CFG.projectId}/databases/(default)/documents`;
+  const DOCS = `projects/${CFG.projectId}/databases/(default)/documents`;
+  const PROF = new URLSearchParams(location.search).get('prof');
+  const SP = Storage.prototype, rawGet = SP.getItem, rawSet = SP.setItem, rawRemove = SP.removeItem;
+  let LS = null; try { LS = window.localStorage; } catch (e) {}
+  const isLS = st => !!LS && st === LS;
+  const get = k => { try { return rawGet.call(LS, k); } catch (e) { return null; } };
+  const put = (k, v) => { try { rawSet.call(LS, k, String(v)); return true; } catch (e) { return false; } };
+  const parse = v => { try { return JSON.parse(v); } catch (e) { return null; } };
+  const looksState = v => { if (!v || v[0] !== '{') return false; const o = parse(v); return !!o && typeof o === 'object' && 'it' in o && 'v' in o; };
+  /* content signature of an engine state: the open tab is not content */
+  const sig = v => { const o = v && parse(v); if (!o) return ''; const c = Object.assign({}, o); delete c.tab; return JSON.stringify(c); };
+  /* does a state hold any answer at all (a page opened on a new device holds none) */
+  /* (the engines create some bookkeeping on load, like "frame 1 seen" or an empty matching map: that is not an answer) */
+  const prune = x => {
+    if (Array.isArray(x)) { const a = x.map(prune).filter(y => y !== undefined); return a.length ? a : undefined; }
+    if (x && typeof x === 'object') { const o = {}; Object.entries(x).forEach(([k, y]) => { if (['seen', 'open', 'cur', 'tries'].includes(k)) return; const p = prune(y); if (p !== undefined) o[k] = p; }); return Object.keys(o).length ? o : undefined; }
+    return (x === '' || x === null || x === false || x === 0 || x === undefined) ? undefined : x;
+  };
+  const hasWork = v => { const o = v && parse(v); if (!o) return false; const parts = {it: o.it}; Object.keys(o).forEach(k => { if (/^s\d+$/.test(k) && o[k]) parts[k] = o[k].f; }); return prune(parts) !== undefined; };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  /* which lesson this page is */
+  const path = decodeURIComponent(location.pathname);
+  const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const m = path.match(/online-english-(\d)\/(lesson-\d+)/i);
+  const LESSON = m ? `english-${m[1]}-${m[2].toLowerCase()}` : slug(path.split('/').pop().replace(/\.html?$/i, '') || 'index');
+  window.__mcLesson = LESSON;
+
+  /* ---------- Firestore over REST (students write without logging in; the rules check the code) ---------- */
+  const fetch0 = window.fetch.bind(window);
+  const enc = v => typeof v === 'boolean' ? {booleanValue: v} : (typeof v === 'number' && Number.isInteger(v)) ? {integerValue: String(v)} : typeof v === 'number' ? {doubleValue: v} : {stringValue: String(v == null ? '' : v)};
+  function dec(f) {
+    const o = {};
+    Object.entries(f || {}).forEach(([k, v]) => {
+      o[k] = 'stringValue' in v ? v.stringValue : 'integerValue' in v ? +v.integerValue : 'booleanValue' in v ? v.booleanValue
+        : 'timestampValue' in v ? v.timestampValue : 'doubleValue' in v ? v.doubleValue : 'mapValue' in v ? dec(v.mapValue.fields) : null;
+    });
+    return o;
+  }
+  async function getDoc(p) {
+    const r = await fetch0(`${BASE}/${p}?key=${CFG.apiKey}`, {cache: 'no-store'});
+    if (r.status === 404 || r.status === 403) return null;
+    if (!r.ok) throw new Error('get ' + r.status);
+    const j = await r.json();
+    return dec(j.fields);
+  }
+  async function commit(p, data, stamps, keepalive) {
+    const body = {writes: [{update: {name: `${DOCS}/${p}`, fields: Object.fromEntries(Object.entries(data).map(([k, v]) => [k, enc(v)]))},
+      updateMask: {fieldPaths: Object.keys(data)}, updateTransforms: (stamps || []).map(f => ({fieldPath: f, setToServerValue: 'REQUEST_TIME'}))}]};
+    const r = await fetch0(`${BASE}:commit?key=${CFG.apiKey}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body), keepalive: !!keepalive});
+    if (!r.ok) throw new Error('commit ' + r.status);
+  }
+
+  /* ---------- correction bubbles (used by the student page and by the teacher view) ---------- */
+  const LBL = {ok: ['✓', 'Correct'], quase: ['~', 'Almost there'], refazer: ['↺', 'Try again'], nota: ['i', 'Note']};
+  const bubble = (c, extra) => { const l = LBL[c.m] || LBL.nota; return `<div class="mc-fb ${c.m in LBL ? c.m : 'nota'}${extra || ''}"><span class="mc-fi" aria-hidden="true">${l[0]}</span><div><b>Your teacher · ${l[1]}</b>${c.c ? `<p>${esc(c.c)}</p>` : ''}</div></div>`; };
+  let painting = false;
+
+  /* ---------- the engine's localStorage key ---------- */
+  let KEY = null, VIEW = null;
+  const skip = k => !k || k.startsWith('mc-') || k.endsWith('::t');
+
+  /* ---------- pages that keep no state of their own (plain forms, like English 1-2 Lessons 9 and 10): this layer keeps it ---------- */
+  const FORMKEY = 'form:' + LESSON;
+  let formMode = false;
+  const fieldsOf = () => $$('form [name], #studentName').filter(el => /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !['hidden', 'submit', 'button'].includes(el.type) && !el.closest('.mc-t, .mc-modal'));
+  function fieldKeys() {
+    const seen = {};
+    return fieldsOf().map(el => {
+      let k = el.id === 'studentName' ? '#name' : el.name;
+      if (el.type !== 'radio' && el.type !== 'checkbox') { const c = seen[k] = (seen[k] || 0) + 1; if (c > 1) k += '#' + (c - 1); }
+      return [el, k];
+    });
+  }
+  function formState() {
+    const f = {};
+    fieldKeys().forEach(([el, k]) => { if (el.type === 'radio') { if (el.checked) f[k] = el.value; } else if (el.type === 'checkbox') f[k + '=' + el.value] = el.checked; else f[k] = el.value; });
+    return JSON.stringify({v: 1, form: true, it: {f}});
+  }
+  function applyForm(s) {
+    const o = parse(s); if (!o || !o.it || !o.it.f) return;
+    const f = o.it.f;
+    fieldKeys().forEach(([el, k]) => { if (el.type === 'radio') el.checked = f[k] === el.value; else if (el.type === 'checkbox') el.checked = !!f[k + '=' + el.value]; else if (k in f) el.value = f[k]; });
+    try { if (typeof window.updateProgress === 'function') window.updateProgress(); } catch (e) {}
+  }
+  const isFormPage = () => !!document.querySelector('form [name]') && !document.querySelector('.tabs .tab');
+
+  /* ===================== TEACHER VIEW ===================== */
+  if (PROF) {
+    let view = parse(get('mc-view:' + PROF) || 'null');
+    VIEW = view;
+    const mem = {};
+    SP.getItem = function (k) { if (isLS(this) && view && k === view.key) return k in mem ? mem[k] : (view.estado || null); return rawGet.call(this, k); };
+    SP.setItem = function (k, v) { if (isLS(this) && view && k === view.key) { mem[k] = String(v); return; } return rawSet.call(this, k, v); };
+    SP.removeItem = function (k) { if (isLS(this) && view && k === view.key) { delete mem[k]; return; } return rawRemove.call(this, k); };
+    window.fetch = function (input) { const u = typeof input === 'string' ? input : (input && input.url) || ''; if (/formspree\.io/.test(u)) return Promise.resolve(new Response('{"error":"teacher view"}', {status: 400})); return fetch0.apply(window, arguments); };
+    document.documentElement.classList.add('mc-prof');
+    document.addEventListener('DOMContentLoaded', teacherView);
+    return;
+  }
+
+  /* ===================== STUDENT ===================== */
+  let me = parse(get('mc-aluno') || 'null');
+  if (me && !me.code) me = null;
+  let ready = false, lastSig = null, pushT = null, pushing = false, again = false, status = 'idle', lastOk = 0, corrMap = {};
+  let remoteWork = false, erased = false;   /* never replace answers kept online by a page without answers, unless the student erased them */
+  const docId = () => me ? `${me.code}__${LESSON}` : '';
+  SP.getItem = function (k) {
+    const v = rawGet.call(this, k);
+    if (isLS(this) && !skip(k) && !KEY && looksState(v)) { KEY = k; lastSig = sig(v); }
+    return v;
+  };
+  SP.setItem = function (k, v) {
+    const r = rawSet.call(this, k, v);
+    if (isLS(this) && !skip(k)) {
+      const s = String(v);
+      if ((!KEY && looksState(s)) || k === KEY) { KEY = KEY || k; changed(s); }
+    }
+    return r;
+  };
+  SP.removeItem = function (k) { if (isLS(this) && KEY && k === KEY) erased = true; return rawRemove.call(this, k); };
+  function changed(v) {
+    const s = sig(v);
+    if (s === lastSig) return;
+    lastSig = s;
+    if (!ready || !me) return;
+    put(KEY + '::t', Date.now());
+    schedule();
+  }
+  function schedule(ms) { clearTimeout(pushT); setStatus('busy'); pushT = setTimeout(() => { pushT = null; push().catch(() => {}); }, ms == null ? 1500 : ms); }
+
+  function counts() {
+    if (formMode) {
+      const groups = {}; let done = 0, total = 0;
+      fieldsOf().forEach(el => {
+        if (el.id === 'studentName' || el.tagName === 'TEXTAREA' || el.type === 'checkbox') return;
+        if (el.type === 'radio') { if (!(el.name in groups)) { groups[el.name] = false; total++; } if (el.checked && !groups[el.name]) { groups[el.name] = true; done++; } return; }
+        total++; if (el.value.trim()) done++;
+      });
+      return {parts: [], done, total};
+    }
+    const parts = $$('.tabs .tab').map(t => {
+      const c = t.querySelector('.count'); const mm = c && c.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      return {t: (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim(), a: mm ? +mm[1] : null, b: mm ? +mm[2] : null};
+    }).filter(p => p.b != null);
+    return {parts, done: parts.reduce((n, p) => n + p.a, 0), total: parts.reduce((n, p) => n + p.b, 0)};
+  }
+  const section = () => {
+    const t = $('.tabs .tab[aria-selected="true"]');
+    if (!t) { let cur = ''; $$('.section-header').forEach(h => { if (h.getBoundingClientRect().top < window.innerHeight * 0.4) cur = (h.querySelector('.section-title') || h).textContent.replace(/\s+/g, ' ').trim(); }); return cur; }
+    const c = t.querySelector('.count'); return (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim();
+  };
+  const base = () => ({code: me.code, lesson: LESSON, nome: me.nome || '', titulo: document.title, url: location.origin + location.pathname, secao: section()});
+  async function push(extra, keepalive) {
+    if (!me || !KEY || !ON) return;
+    const st = get(KEY);
+    if (!st || (remoteWork && !hasWork(st) && !erased)) { if (status === 'busy') setStatus('ok'); return; }
+    if (pushing) { if (!extra) { again = true; return; } while (pushing) await new Promise(r => setTimeout(r, 120)); }
+    pushing = true; clearTimeout(pushT); pushT = null;
+    const c = counts();
+    const data = Object.assign(base(), {key: KEY, estado: st, stamp: +(get(KEY + '::t') || Date.now()), feito: c.done, total: c.total, partes: JSON.stringify(c.parts)}, extra || {});
+    try {
+      await commit(`progresso/${docId()}`, data, extra && extra.entregue ? ['atualizado', 'visto', 'entregueEm'] : ['atualizado', 'visto'], keepalive);
+      lastOk = Date.now(); setStatus('ok');
+      remoteWork = hasWork(st); erased = false;
+    } catch (e) { setStatus(navigator.onLine === false ? 'off' : 'err'); if (!keepalive) schedule(20000); throw e; }
+    finally { pushing = false; if (again) { again = false; schedule(300); } }
+  }
+  async function beat() {
+    if (!ready || !me || !ON || document.visibilityState !== 'visible' || pushing) return;
+    try { await commit(`progresso/${docId()}`, base(), ['visto']); if (status !== 'busy') { lastOk = lastOk || Date.now(); setStatus('ok'); } } catch (e) { if (status !== 'busy') setStatus(navigator.onLine === false ? 'off' : 'err'); }
+  }
+  async function start() {
+    if (!ON) { ready = true; setStatus('local'); return; }
+    if (!me) { ready = true; setStatus('none'); return; }
+    let remote = null, failed = false;
+    try { remote = await getDoc(`progresso/${docId()}`); } catch (e) { failed = true; }
+    const guard = 'mc-restored:' + docId();
+    let restored = false; try { restored = !!sessionStorage.getItem(guard); sessionStorage.removeItem(guard); } catch (e) {}
+    remoteWork = !!(remote && hasWork(remote.estado));
+    if (remote && remote.estado && remote.key) {
+      const lt = +(get(remote.key + '::t') || 0);
+      const local = get(remote.key);
+      if (!restored && sig(local) !== sig(remote.estado) && ((remote.stamp || 0) > lt || (!hasWork(local) && hasWork(remote.estado)))) {
+        put(remote.key, remote.estado); put(remote.key + '::t', remote.stamp);
+        try { sessionStorage.setItem(guard, '1'); } catch (e) {}
+        location.reload();
+        return;
+      }
+    }
+    ready = true;
+    if (failed) { setStatus('off'); schedule(15000); }
+    else if (KEY && get(KEY) && (!remote || sig(get(KEY)) !== sig(remote.estado)) && (hasWork(get(KEY)) || !remote || !hasWork(remote.estado))) { if (!get(KEY + '::t')) put(KEY + '::t', Date.now()); push().catch(() => {}); }
+    else { lastOk = Date.now(); setStatus('ok'); beat(); }
+    loadCorr();
+  }
+
+  /* "Send to my teacher": no more Formspree, the lesson is marked as delivered on the panel */
+  window.fetch = function (input) {
+    const u = typeof input === 'string' ? input : (input && input.url) || '';
+    if (/formspree\.io/.test(u)) return deliver();
+    return fetch0.apply(window, arguments);
+  };
+  const R = (ok, msg) => new Response(JSON.stringify(ok ? {ok: true} : {error: msg}), {status: ok ? 200 : 400, headers: {'Content-Type': 'application/json'}});
+  async function deliver() {
+    if (!ON) return R(false, 'The class panel is not set up yet');
+    if (!me) { openModal(true); return R(false, 'Type your student code first, in the box that just opened. Then press Send again'); }
+    await new Promise(r => setTimeout(r, 200));
+    try { await push({entregue: true}); return R(true); }
+    catch (e) { return R(false, 'No internet right now. Your answers are saved on this device: send again when you are online'); }
+  }
+
+  /* ---------- the little status pill ---------- */
+  let pill;
+  const ICONS = {
+    cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5h.5a4.25 4.25 0 0 1 0 8.5Z"/><path d="m9.5 13.5 2 2 3.5-4"/></svg>',
+    note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'
+  };
+  const hhmm = t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  function setStatus(s) {
+    status = s;
+    if (!pill) return;
+    const txt = {ok: `Saved online · ${hhmm(lastOk || Date.now())}`, busy: 'Saving…', off: 'Offline · saved on this device', err: 'Saved on this device · trying again', none: 'Add your student code', local: 'Saved on this device', idle: 'Saved on this device'}[s] || '';
+    pill.className = 'mc-pill ' + ({ok: 'ok', busy: 'busy', off: 'off', err: 'off', none: 'none'}[s] || '');
+    pill.querySelector('span').textContent = (me && s === 'ok' ? `${me.nome ? me.nome.split(' ')[0] + ' · ' : ''}` : '') + txt;
+  }
+
+  /* ---------- student code box ---------- */
+  let modal;
+  function openModal(forSend) {
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.className = 'mc-modal'; modal.hidden = true;
+      modal.innerHTML = `<div class="mc-box" role="dialog" aria-modal="true" aria-labelledby="mc-h"><div class="mc-ic">${ICONS.cloud}</div>
+        <h2 id="mc-h">Your student code</h2><p class="mc-txt"></p><div class="mc-who" hidden></div>
+        <input id="mc-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC-1234" aria-label="Student code">
+        <p class="mc-err" role="alert"></p>
+        <div class="mc-row"><button class="mc-link" type="button" data-mc="later">Not now</button><button class="mc-btn" type="button" data-mc="ok">Save my code</button></div></div>`;
+      document.body.append(modal);
+      modal.addEventListener('click', e => { const b = e.target.closest('[data-mc]'); if (b) (b.dataset.mc === 'ok' ? useCode() : closeModal()); else if (e.target === modal) closeModal(); });
+      $('#mc-code', modal).addEventListener('keydown', e => { if (e.key === 'Enter') useCode(); if (e.key === 'Escape') closeModal(); });
+    }
+    $('.mc-txt', modal).textContent = me
+      ? 'Your answers are saved online with this code. To use another code, type it below.'
+      : (forSend ? 'To send your answers, type the code your teacher gave you. You only need to do this once.'
+        : 'Type the code your teacher gave you. Your answers are saved online, and you can continue on any device.');
+    const who = $('.mc-who', modal); who.hidden = !me; who.textContent = me ? `✓ ${me.nome || 'Student'} · ${me.code}` : '';
+    $('.mc-err', modal).textContent = '';
+    $('#mc-code', modal).value = '';
+    modal.hidden = false;
+    setTimeout(() => $('#mc-code', modal).focus(), 50);
+  }
+  function closeModal() { if (modal) modal.hidden = true; try { sessionStorage.setItem('mc-later', '1'); } catch (e) {} }
+  async function useCode() {
+    const inp = $('#mc-code', modal), err = $('.mc-err', modal), btn = $('[data-mc="ok"]', modal);
+    const code = inp.value.toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '');
+    if (!code) { err.textContent = 'Type your code.'; return; }
+    btn.disabled = true; err.textContent = '';
+    let a = null;
+    try { a = await getDoc(`alunos/${code}`); } catch (e) { err.textContent = 'No internet right now. Try again in a moment.'; btn.disabled = false; return; }
+    btn.disabled = false;
+    if (!a) { err.textContent = 'We couldn’t find this code. Check it and try again.'; return; }
+    ready = false;                       /* nothing the page writes now may count as new work */
+    me = {code, nome: a.nome || ''};
+    put('mc-aluno', JSON.stringify(me));
+    modal.hidden = true;
+    await start();                       /* may bring the answers from another device (and reload) */
+    fillName();
+  }
+  function fillName() {
+    const nm = $('#name') || $('#studentName');
+    if (me && nm && !nm.value.trim() && me.nome) { nm.value = me.nome; nm.dispatchEvent(new Event('input', {bubbles: true})); }
+  }
+
+  /* ---------- teacher's corrections (student side) ---------- */
+  async function loadCorr() {
+    if (!me || !ON) return;
+    try { const d = await getDoc(`correcoes/${docId()}`); corrMap = (d && d.itens) || {}; paintCorr(corrMap, false); } catch (e) {}
+  }
+
+  /* ---------- start ---------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!KEY && isFormPage()) {
+      formMode = true; KEY = FORMKEY;
+      const s = get(KEY); lastSig = sig(s); if (s) applyForm(s);
+      const keep = e => { if (e.target instanceof Element && e.target.matches('input, textarea, select') && !e.target.closest('.mc-modal, .mc-t')) { try { localStorage.setItem(KEY, formState()); } catch (err) {} } };
+      document.addEventListener('input', keep, true);
+      document.addEventListener('change', keep, true);
+    }
+    pill = document.createElement('button');
+    pill.type = 'button'; pill.className = 'mc-pill'; pill.innerHTML = '<i class="dot"></i><span></span>';
+    pill.addEventListener('click', () => openModal(false));
+    document.body.append(pill);
+    setStatus(status);
+    let later = false; try { later = !!sessionStorage.getItem('mc-later'); } catch (e) {}
+    if (ON && !me && !later) setTimeout(() => openModal(false), 700);
+    start().then(() => { if (ON && ready) fillName(); });
+    setInterval(beat, 60000);
+    setInterval(() => { if (document.visibilityState === 'visible') loadCorr(); }, 90000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') { if (pushT && me) push(null, true).catch(() => {}); }
+      else { beat(); loadCorr(); }
+    });
+    window.addEventListener('pagehide', () => { if (pushT && me) push(null, true).catch(() => {}); });
+    window.addEventListener('online', () => { if (me && ready) schedule(300); });
+    watchCorr();
+  });
+
+  /* ===================== shared: anchors + correction bubbles ===================== */
+  function anchorsList() {
+    const out = [];
+    $$('main .item[data-id]').forEach(el => {
+      const ta = el.querySelector('textarea');
+      out.push({key: 'i:' + el.dataset.id, el, item: true, open: !!ta, answered: !!(ta && ta.value.trim())});
+    });
+    $$('.question-card').forEach((el, n) => {
+      const ta = el.querySelector('textarea');
+      out.push({key: 'q:' + (n + 1), el, item: true, open: !!ta, answered: !!(ta && ta.value.trim())});
+    });
+    $$('main section.view').forEach(v => {
+      let n = 0;
+      $$('article.ex', v).forEach(el => {
+        n++;
+        if (el.classList.contains('send-card') || el.classList.contains('item') || el.querySelector('#reset-area, [data-act="reset"], [data-act="send"]') || !el.querySelector('h2')) return;
+        out.push({key: 'e:' + (el.id || `${v.dataset.view}-${n}`), el, item: false, open: false});
+      });
+    });
+    return out;
+  }
+  function host(a) { return a.item ? (a.el.querySelector('.work') || a.el) : a.el; }
+  function place(a, node) {
+    if (a.item) host(a).append(node);
+    else { const h = a.el.querySelector('h2'); h.after(node); }
+  }
+  function paintCorr(map, teacher) {
+    painting = true;
+    try {
+      const seen = parse(get('mc-seen:' + LESSON) || '{}') || {};
+      const list = anchorsList();
+      let count = 0, fresh = 0, first = null;
+      list.forEach(a => {
+        const c = map[a.key];
+        let node = host(a).querySelector(':scope > .mc-sfb');
+        if (!a.item) node = a.el.querySelector(':scope > .mc-sfb');
+        if (!c) { if (node) node.remove(); return; }
+        count++;
+        const isNew = !teacher && seen[a.key] !== c.t;
+        if (isNew) fresh++;
+        if (!first) first = node || a;
+        const html = bubble(c, isNew ? ' new' : '');
+        if (node && node.dataset.v === String(c.t) + c.m + c.c) return;
+        if (!node) { node = document.createElement('div'); node.className = 'mc-sfb'; place(a, node); }
+        node.dataset.v = String(c.t) + c.m + c.c;
+        node.innerHTML = html;
+      });
+      if (!teacher) banner(count, fresh, map);
+    } finally { painting = false; }
+  }
+  function banner(count, fresh, map) {
+    let b = $('.mc-banner');
+    if (!count) { if (b) b.remove(); return; }
+    const main = $('main') || $('.content') || document.body; if (!main) return;
+    if (!b) { b = document.createElement('div'); b.className = 'mc-banner'; main.prepend(b); }
+    b.innerHTML = `<span class="mc-fi">${ICONS.note}</span><div><b>${fresh ? `New notes from your teacher` : `Notes from your teacher`}</b><span>Your teacher left ${count} ${count > 1 ? 'notes' : 'note'} on this lesson. ${fresh ? 'They are under your answers.' : ''}</span></div><button type="button">${fresh ? 'Show me' : 'See them'}</button>`;
+    b.querySelector('button').onclick = () => {
+      const all = $$('.mc-sfb .mc-fb');
+      const t = $('.mc-sfb .mc-fb.new') || all[0];
+      if (t) t.scrollIntoView({behavior: 'smooth', block: 'center'});
+      const seen = {}; Object.entries(map).forEach(([k, c]) => { seen[k] = c.t; }); put('mc-seen:' + LESSON, JSON.stringify(seen));
+      setTimeout(() => { $$('.mc-fb.new').forEach(x => x.classList.remove('new')); banner(count, 0, map); }, 2500);
+    };
+  }
+  /* the engines redraw parts of the page: put the bubbles back */
+  function watchCorr() {
+    const main = $('main') || document.body; if (!main) return;
+    let t;
+    new MutationObserver(() => { if (painting) return; clearTimeout(t); t = setTimeout(() => { if (Object.keys(corrMap).length) paintCorr(corrMap, false); }, 120); }).observe(main, {childList: true, subtree: true});
+  }
+
+  /* ===================== TEACHER VIEW UI ===================== */
+  function teacherView() {
+    const P = (() => { try { return window.parent !== window ? window.parent.__mcProf : null; } catch (e) { return null; } })();
+    let tmap = {};
+    if (VIEW && VIEW.key && VIEW.key.startsWith('form:')) applyForm(VIEW.estado);
+    /* read-only: the student's answers can be looked at, not changed */
+    const allow = '.mc-t, .tabs, .tab, .sm-fab, .sm-sheet, [data-act="jump"], [data-act="goto-results"], [data-act="goto"], a[href^="#"]';
+    const block = e => {
+      const t = e.target; if (!(t instanceof Element)) return;
+      if (t.closest(allow)) return;
+      if (t.closest('button, input, textarea, select, label, [data-act], .mc-opt, .num, .lbox, .bl')) { e.preventDefault(); e.stopPropagation(); }
+    };
+    ['click', 'keydown', 'beforeinput', 'paste', 'drop'].forEach(ev => document.addEventListener(ev, e => { if (ev === 'keydown' && !(e.target instanceof Element && e.target.matches('input, textarea'))) return; block(e); }, true));
+    document.addEventListener('mousedown', e => { if (e.target instanceof Element && e.target.closest('select') && !e.target.closest('.mc-t')) e.preventDefault(); }, true);
+    const ro = () => $$('input, textarea, select').forEach(i => { if (!i.closest('.mc-t')) { i.readOnly = true; i.tabIndex = -1; } });
+    function decorate() {
+      ro();
+      anchorsList().forEach(a => {
+        const hostEl = host(a);
+        a.el.classList.toggle('mc-open', !!(a.open && a.answered));
+        const open = a.open ? (a.answered ? 'ans' : 'vazio') : '';
+        let box = a.item ? hostEl.querySelector(':scope > .mc-t') : a.el.querySelector(':scope > .mc-t');
+        if (!box) { box = document.createElement('div'); box.className = 'mc-t'; box.dataset.key = a.key; box.dataset.open = open; place(a, box); drawBox(box); }
+        else if ((box.dataset.v !== stamp(tmap[a.key]) || box.dataset.open !== open) && !box.querySelector('.mc-ed')) { box.dataset.open = open; drawBox(box); }
+      });
+    }
+    const stamp = c => c ? String(c.t) + c.m + c.c : '';
+    function drawBox(box) {
+      const k = box.dataset.key, c = tmap[k];
+      box.dataset.v = stamp(c);
+      const tag = c ? '' : box.dataset.open === 'ans' ? '<span class="mc-tag">Resposta aberta · para você corrigir</span><br>'
+        : box.dataset.open === 'vazio' ? '<span class="mc-tag" style="background:#F1F3F5;color:#868E96">O aluno ainda não respondeu</span><br>' : '';
+      const PT = {ok: 'Certo', quase: 'Quase', refazer: 'Refazer', nota: 'Comentário'};
+      box.innerHTML = (c ? bubble(c).replace(/Your teacher · [^<]*/, 'Sua correção · ' + (PT[c.m] || PT.nota)) : tag) +
+        `<button type="button" class="mc-tbtn" data-mc="edit">✎ ${c ? 'Editar correção' : (k.startsWith('e:') ? 'Comentar o exercício' : 'Corrigir')}</button>`;
+    }
+    function editor(box) {
+      const k = box.dataset.key, c = tmap[k] || {m: box.dataset.open ? 'ok' : 'nota', c: ''};
+      box.innerHTML = `<div class="mc-ed"><div class="mc-seg" role="group" aria-label="Avaliação">
+        ${[['ok', '✓ Certo'], ['quase', '~ Quase'], ['refazer', '↺ Refazer'], ['nota', 'i Só comentário']].map(([v, l]) => `<button type="button" class="${v}" data-m="${v}" aria-pressed="${c.m === v}">${l}</button>`).join('')}</div>
+        <textarea placeholder="Comentário para o aluno (ele vai ler isto no site dele)">${esc(c.c || '')}</textarea>
+        <div class="mc-row"><span class="mc-st"></span><span><button type="button" class="mc-link" data-mc="cancel">Cancelar</button>${tmap[k] ? '<button type="button" class="mc-link" data-mc="del">Apagar</button>' : ''} <button type="button" class="mc-btn" data-mc="save">Salvar</button></span></div></div>`;
+      const ta = box.querySelector('textarea'); ta.readOnly = false; ta.tabIndex = 0; ta.focus();
+    }
+    document.addEventListener('click', async e => {
+      const box = e.target.closest('.mc-t'); if (!box) return;
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.mc === 'edit') return editor(box);
+      if (b.dataset.m) { $$('.mc-seg button', box).forEach(x => x.setAttribute('aria-pressed', String(x === b))); return; }
+      if (b.dataset.mc === 'cancel') return drawBox(box);
+      if (!P) { $('.mc-st', box).textContent = 'Abra pelo painel do professor para salvar.'; return; }
+      const st = $('.mc-st', box);
+      if (b.dataset.mc === 'del') { st.textContent = 'Apagando…'; box.dataset.saving = '1'; try { await P.salvar(PROF, box.dataset.key, null); } catch (err) { delete box.dataset.saving; st.textContent = 'Não consegui apagar.'; } return; }
+      if (b.dataset.mc === 'save') {
+        const m = ($('.mc-seg button[aria-pressed="true"]', box) || {}).dataset; const txt = box.querySelector('textarea').value.trim();
+        st.textContent = 'Salvando…'; b.disabled = true; box.dataset.saving = '1';
+        try { await P.salvar(PROF, box.dataset.key, {m: (m && m.m) || 'nota', c: txt}); }
+        catch (err) { delete box.dataset.saving; st.textContent = 'Não consegui salvar. Tente de novo.'; b.disabled = false; }
+      }
+    });
+    /* new corrections from the panel: redraw the boxes that changed (a box being edited is kept, unless it is the one just saved) */
+    window.__mcCorr = map => {
+      tmap = map || {};
+      $$('.mc-t').forEach(box => {
+        const now = stamp(tmap[box.dataset.key]);
+        if (box.dataset.v === now && !box.dataset.saving) return;
+        if (box.querySelector('.mc-ed') && !box.dataset.saving) return;
+        delete box.dataset.saving;
+        drawBox(box);
+      });
+      decorate();
+    };
+    window.__mcAnchors = () => anchorsList().map(a => ({key: a.key, open: a.open}));
+    let t;
+    new MutationObserver(() => { clearTimeout(t); t = setTimeout(decorate, 150); }).observe(document.body, {childList: true, subtree: true});
+    decorate();
+    if (P && P.pronto) P.pronto(PROF, window);
+  }
+})();
+</script>
+<!-- cloud-mode:end -->
 </head>
 <body>
 <header class="top">
@@ -894,7 +1427,7 @@ function renderResults() {
     ${t.p.map(r => row(`Exercise ${r.x.r}`, r.first || 0, r.x.total, r.done ? '' : 'Not finished yet.')).join('')}
   </div><p class="total">Score: <b>${t.first}/${TOTAL}</b>${left ? ` <span>(${left} exercise${left > 1 ? 's' : ''} not finished yet)</span>` : ''}</p></article>
   <article class="ex send-card"><h2>Send your answers to your teacher</h2>
-    <p class="send-note">Your score and your answers go straight to your teacher’s e-mail. Write your name and class number at the top of the page first. If you change something later, you can send again.</p>
+    <p class="send-note">Your teacher sees your score and all your answers. Write your name and class number at the top of the page first. If you change something later, you can send again.</p>
     <div class="res-actions"><button class="btn btn-primary" data-act="send">Send to my teacher</button><button class="btn btn-ghost" data-act="copy">Copy my answers</button></div>
     <div class="fb" id="send-fb" role="status"${state.sentAt ? '' : ' hidden'}>${state.sentAt ? fbTitle('ok', `Sent on ${esc(new Date(state.sentAt).toLocaleString())}.`) : ''}</div>
     <textarea class="report-box" id="report-box" readonly hidden aria-label="Your answers"></textarea></article>
@@ -924,7 +1457,7 @@ function report() {
   return L.join('\n');
 }
 const SEND_CARD = () => `<article class="ex send-card"><h2>Send your answers to your teacher</h2>
-  <p class="send-note">Finished this exercise? Send your answers now. Your teacher gets an e-mail with your score and all your answers so far. Write your name and class number at the top of the page first.</p>
+  <p class="send-note">Finished this exercise? Send your answers now. Your teacher sees your score and all your answers so far. Write your name and class number at the top of the page first.</p>
   <div class="res-actions"><button class="btn btn-primary" data-act="send">Send to my teacher</button><button class="btn btn-ghost" data-act="goto-results">See my results</button></div>
   <div class="fb" role="status"${state.sentAt ? '' : ' hidden'}>${state.sentAt ? fbTitle('ok', `Last sent on ${esc(new Date(state.sentAt).toLocaleString())}.`) : ''}</div></article>`;
 function ensureSendCards() {
@@ -955,15 +1488,15 @@ async function sendAnswers(btn) {
     if (r.ok) {
       state.sentAt = new Date().toISOString();
       save();
-      showFb(fb, 'ok', fbTitle('ok', 'Sent! Your teacher will get your answers by e-mail.') + '<p>If you change something later, you can send again.</p>');
-      $$('.send-card .fb').forEach(f => { if (f !== fb) showFb(f, 'ok', fbTitle('ok', 'Sent! Your teacher will get your answers by e-mail.')); });
+      showFb(fb, 'ok', fbTitle('ok', 'Sent! Your teacher can see your answers now.') + '<p>If you change something later, you can send again.</p>');
+      $$('.send-card .fb').forEach(f => { if (f !== fb) showFb(f, 'ok', fbTitle('ok', 'Sent! Your teacher can see your answers now.')); });
     } else {
       let msg = '';
       try { const j = await r.json(); msg = (j.errors || []).map(e => e.message).join(' ') || j.error || ''; } catch (e) {}
-      showFb(fb, 'bad', fbTitle('bad', 'Your answers were not sent.') + `<p>${esc(msg || 'The form service did not accept the message.')}${/[.!?]$/.test(msg) || !msg ? '' : '.'} Use Copy my answers and send them to your teacher another way.</p>`);
+      showFb(fb, 'bad', fbTitle('bad', 'Your answers were not sent.') + `<p>${esc(msg || 'Try again in a moment.')}${/[.!?]$/.test(msg) || !msg ? '' : '.'}</p>`);
     }
   } catch (e) {
-    showFb(fb, 'bad', fbTitle('bad', 'Your answers were not sent.') + '<p>This page could not reach the form service (no internet, or the page is open somewhere that blocks it). Use Copy my answers and send them to your teacher another way.</p>');
+    showFb(fb, 'bad', fbTitle('bad', 'Your answers were not sent.') + '<p>No internet right now. Your answers are saved on this device: send again when you are online.</p>');
   } finally { btn.disabled = false; }
 }
 
