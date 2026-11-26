@@ -399,6 +399,8 @@ textarea.line-in{resize:vertical;min-height:4.6em;line-height:1.5}
 .mc-pill.ok .dot{background:#12B886}.mc-pill.busy .dot{background:#4C6EF5;animation:mc-pulse 1s infinite}.mc-pill.off .dot{background:#F59F00}.mc-pill.none .dot{background:#FA5252}
 .mc-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:1079px){.mc-pill{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 58px)}}
+.mc-wiped{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));transform:translateX(-50%);z-index:210;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 28px);padding:12px 16px;border-radius:16px;background:#131B35;color:#fff;font:inherit;font-weight:700;font-size:14px;line-height:1.3;box-shadow:0 18px 40px -14px rgba(19,27,53,.6);animation:mc-fade .25s}
+.mc-wiped svg{width:20px;height:20px;flex:none}
 @keyframes mc-pulse{50%{opacity:.35}}
 .mc-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(19,27,53,.45);animation:mc-fade .2s}
 .mc-modal[hidden]{display:none}
@@ -617,7 +619,21 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
     if (!t) { let cur = ''; $$('.section-header').forEach(h => { if (h.getBoundingClientRect().top < window.innerHeight * 0.4) cur = (h.querySelector('.section-title') || h).textContent.replace(/\s+/g, ' ').trim(); }); return cur; }
     const c = t.querySelector('.count'); return (t.textContent || '').replace(c ? c.textContent : '', '').replace(/\s+/g, ' ').trim();
   };
+  /* the teacher can erase a submission on the panel: the correction doc then carries a new "reset" token.
+     A page that has not seen that token yet drops its local answers (and any copy it sent after the erase), so they never come back. */
+  const RKEY = () => 'mc-reset:' + docId();
   const base = () => ({code: me.code, lesson: LESSON, nome: me.nome || '', titulo: document.title, url: location.origin + location.pathname, secao: section()});
+  async function applyReset(c, remote) {
+    if (!put(RKEY(), c.reset) || get(RKEY()) !== c.reset) return false;   /* cannot remember it: do nothing rather than loop */
+    ready = false; clearTimeout(pushT); pushT = null;
+    [c.key, remote && remote.key, KEY, 'form:' + LESSON].filter(Boolean).forEach(k => { try { rawRemove.call(LS, k); rawRemove.call(LS, k + '::t'); } catch (e) {} });
+    if (remote && remote.estado && remote.reset !== c.reset) {
+      try { await commit(`progresso/${docId()}`, Object.assign(base(), {key: remote.key || c.key || '', estado: '', stamp: 0, feito: 0, entregue: false, reset: c.reset}), ['atualizado']); } catch (e) {}
+    }
+    try { sessionStorage.setItem('mc-wiped:' + docId(), '1'); } catch (e) {}
+    location.reload();
+    return true;
+  }
   async function push(extra, keepalive) {
     if (!me || !KEY || !ON) return;
     const st = get(KEY);
@@ -625,7 +641,8 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
     if (pushing) { if (!extra) { again = true; return; } while (pushing) await new Promise(r => setTimeout(r, 120)); }
     pushing = true; clearTimeout(pushT); pushT = null;
     const c = counts();
-    const data = Object.assign(base(), {key: KEY, estado: st, stamp: +(get(KEY + '::t') || Date.now()), feito: c.done, total: c.total, partes: JSON.stringify(c.parts)}, extra || {});
+    /* every answer sent says which erase it knows about ('' = none): a copy from before an erase can never pass for a new one */
+    const data = Object.assign(base(), {key: KEY, estado: st, stamp: +(get(KEY + '::t') || Date.now()), feito: c.done, total: c.total, partes: JSON.stringify(c.parts), reset: get(RKEY()) || ''}, extra || {});
     try {
       await commit(`progresso/${docId()}`, data, extra && extra.entregue ? ['atualizado', 'visto', 'entregueEm'] : ['atualizado', 'visto'], keepalive);
       lastOk = Date.now(); setStatus('ok');
@@ -640,8 +657,9 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   async function start() {
     if (!ON) { ready = true; setStatus('local'); return; }
     if (!me) { ready = true; setStatus('none'); return; }
-    let remote = null, failed = false;
-    try { remote = await getDoc(`progresso/${docId()}`); } catch (e) { failed = true; }
+    let remote = null, failed = false, cr = null;
+    try { [remote, cr] = await Promise.all([getDoc(`progresso/${docId()}`), getDoc(`correcoes/${docId()}`).catch(() => null)]); } catch (e) { failed = true; }
+    if (cr && cr.reset && cr.reset !== get(RKEY()) && await applyReset(cr, remote)) return;
     const guard = 'mc-restored:' + docId();
     let restored = false; try { restored = !!sessionStorage.getItem(guard); sessionStorage.removeItem(guard); } catch (e) {}
     remoteWork = !!(remote && hasWork(remote.estado));
@@ -742,7 +760,11 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
   /* ---------- teacher's corrections (student side) ---------- */
   async function loadCorr() {
     if (!me || !ON) return;
-    try { const d = await getDoc(`correcoes/${docId()}`); corrMap = (d && d.itens) || {}; paintCorr(corrMap, false); } catch (e) {}
+    try {
+      const d = await getDoc(`correcoes/${docId()}`);
+      if (d && d.reset && d.reset !== get(RKEY())) { const r = await getDoc(`progresso/${docId()}`).catch(() => null); if (await applyReset(d, r)) return; }
+      corrMap = (d && d.itens) || {}; paintCorr(corrMap, false);
+    } catch (e) {}
   }
 
   /* ---------- start ---------- */
@@ -759,6 +781,8 @@ html.mc-prof .mc-open{outline:2.5px dashed #F59F00;outline-offset:6px;border-rad
     pill.addEventListener('click', () => openModal(false));
     document.body.append(pill);
     setStatus(status);
+    let wiped = false; try { wiped = !!(me && sessionStorage.getItem('mc-wiped:' + docId())); sessionStorage.removeItem('mc-wiped:' + docId()); } catch (e) {}
+    if (wiped) { const n = document.createElement('div'); n.className = 'mc-wiped'; n.setAttribute('role', 'status'); n.innerHTML = `${ICONS.note}<span>Your teacher cleared this activity. You can start it again.</span>`; document.body.append(n); setTimeout(() => n.remove(), 8000); }
     let later = false; try { later = !!sessionStorage.getItem('mc-later'); } catch (e) {}
     if (ON && !me && !later) setTimeout(() => openModal(false), 700);
     start().then(() => { if (ON && ready) fillName(); });
