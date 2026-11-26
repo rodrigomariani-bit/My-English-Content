@@ -27,6 +27,12 @@ a{color:inherit}
 .btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--azul-esc)}
 .btn.g{background:#fff;color:var(--tinta);border:1.5px solid var(--linha-2);box-shadow:0 3px 0 var(--linha-2)}
 .btn.peq{padding:8px 13px;font-size:13.5px;border-radius:12px}
+.btn.perigo{background:#fff;color:#C92A2A;border:1.5px solid #FFC9C9;box-shadow:0 3px 0 #FFC9C9}
+.btn.perigo:hover{background:#FFF5F5}
+.lc-wrap{display:grid;gap:2px;align-content:start}
+.lc-wrap .lc{width:100%}
+.apagar-lc{justify-self:end;color:#C92A2A;font-size:13px;opacity:.75}
+.apagar-lc:hover{opacity:1}
 .btn.roxo{background:var(--roxo);box-shadow:0 4px 0 #5235C4}
 .btn svg{width:18px;height:18px}
 .link{border:0;background:none;padding:6px;color:var(--tinta-3);font-weight:700;text-decoration:underline}
@@ -144,6 +150,7 @@ main{padding:18px 0 80px}
     <div class="quem"><strong id="v-nome"></strong><small id="v-licao"></small></div>
     <div class="pct"><span id="v-pct"></span><div class="barra"><i id="v-barra"></i></div></div>
     <div class="chips" id="v-chips"></div>
+    <button class="btn peq perigo" data-a="apagar-envio" title="Apaga as respostas e as correções desta lição"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 12.5h9l1-12.5M10 11v5.5M14 11v5.5"/></svg>Apagar envio</button>
   </div>
   <iframe id="quadro" title="Atividade do aluno"></iframe>
 </div>
@@ -197,15 +204,32 @@ function toast(msg) { const t = document.createElement('div'); t.className = 'to
 async function copiar(txt, ok) { try { await navigator.clipboard.writeText(txt); toast(ok || 'Copiado'); } catch (e) { prompt('Copie:', txt); } }
 
 /* ---------- dados ---------- */
-let user = null, alunos = new Map(), prog = new Map(), corr = new Map(), subs = [];
+let user = null, alunos = new Map(), prog = new Map(), corr = new Map(), subs = [], progTodos = new Map();
+/* um envio apagado não aparece: sem respostas (estado vazio) ou mandado antes do apagamento (token "reset" diferente do da correção) */
+function filtrarProg() {
+  prog = new Map([...progTodos].filter(([id, p]) => { const c = corr.get(id); return p.estado && !(c && c.reset && p.reset !== c.reset); }));
+}
 function ouvir() {
   subs.forEach(u => u()); subs = [];
   subs.push(onSnapshot(collection(db, 'alunos'), s => { alunos = new Map(s.docs.map(d => [d.id, d.data()])); desenhar(); }, erroLeitura));
   subs.push(onSnapshot(collection(db, 'progresso'), s => {
-    const antes = prog; prog = new Map(s.docs.map(d => [d.id, d.data()]));
+    const antes = prog; progTodos = new Map(s.docs.map(d => [d.id, d.data()])); filtrarProg();
     desenhar(); visorAtualiza(antes);
   }, erroLeitura));
-  subs.push(onSnapshot(collection(db, 'correcoes'), s => { corr = new Map(s.docs.map(d => [d.id, d.data()])); desenhar(); visorCorr(); }, erroLeitura));
+  subs.push(onSnapshot(collection(db, 'correcoes'), s => { corr = new Map(s.docs.map(d => [d.id, d.data()])); filtrarProg(); desenhar(); visorCorr(); }, erroLeitura));
+}
+async function apagarEnvio(id) {
+  const p = prog.get(id); if (!p) return;
+  const n = nomeDe(p);
+  if (!confirm(`Apagar o envio de ${n} em ${curso(p)} · ${titulo(p)}?\n\nSomem as respostas e as suas correções desta lição. Quando ${n.split(' ')[0]} abrir a lição de novo, ela começa em branco, em qualquer aparelho. Não dá para desfazer.`)) return;
+  const token = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  try {
+    await setDoc(doc(db, 'correcoes', id), {code: p.code, lesson: p.lesson, key: p.key || '', reset: token, apagadoEm: serverTimestamp(), atualizado: serverTimestamp(), itens: {}});
+    await deleteDoc(doc(db, 'progresso', id));
+    fecharVisor(true);
+    location.hash = alunos.has(p.code) ? '#aluno/' + encodeURIComponent(p.code) : '#agora';
+    toast(`Envio de ${n.split(' ')[0]} apagado`);
+  } catch (err) { toast('Não consegui apagar: ' + (err.code || err.message)); }
 }
 function erroLeitura(e) { console.error(e); app.innerHTML = semAcesso('Não consegui ler os dados (' + esc(e.code || e.message) + ').'); }
 
@@ -314,12 +338,13 @@ function telaAluno(code) {
       <div><h1>${esc(a.nome)}</h1><div style="margin-top:8px"><span class="codigo">${esc(code)}</span></div></div>
       <div class="acoes"><button class="btn g peq" data-a="msg" data-code="${esc(code)}">${ICON.copiar}Copiar mensagem para o aluno</button><button class="btn g peq" data-a="cod" data-code="${esc(code)}">${ICON.copiar}Copiar só o código</button><button class="link" data-a="apagar" data-code="${esc(code)}">Apagar aluno</button></div></div>
     <div class="titulo-sec"><h2>Lições</h2><span class="cont">${ps.length}</span></div>
-    ${ps.length ? `<div class="licoes-aluno">${ps.map(([id, p]) => `<button class="lc" style="${cor(p.lesson)}" data-ver="${esc(id)}">
+    ${ps.length ? `<div class="licoes-aluno">${ps.map(([id, p]) => `<div class="lc-wrap"><button class="lc" style="${cor(p.lesson)}" data-ver="${esc(id)}">
         <span class="curso">${esc(curso(p))}</span><h3>${esc(titulo(p))}</h3>
         <div class="linha-info"><span class="pct">${pct(p)}%</span><span>${esc(relativo(p.atualizado))}</span></div>
         <div class="barra"><i style="width:${pct(p)}%"></i></div>
         <div class="chips" style="justify-content:flex-start">${chipsDe(id, p)}</div>
-        <span class="btn peq" style="justify-self:start;background:var(--k);box-shadow:0 3px 0 var(--k-esc)">${ICON.olho}Ver respostas</span></button>`).join('')}</div>`
+        <span class="btn peq" style="justify-self:start;background:var(--k);box-shadow:0 3px 0 var(--k-esc)">${ICON.olho}Ver respostas</span></button>
+        <button class="link apagar-lc" data-a="apagar-envio" data-id="${esc(id)}">Apagar envio</button></div>`).join('')}</div>`
       : '<div class="vazio">Este aluno ainda não abriu nenhuma atividade com o código.</div>'}`;
 }
 function telaLicoes() {
@@ -372,6 +397,7 @@ document.addEventListener('click', async e => {
   else if (a === 'apagar') { if (confirm(`Apagar ${(alunos.get(code) || {}).nome}? O código deixa de funcionar. As respostas que ele já mandou continuam no painel.`)) { await deleteDoc(doc(db, 'alunos', code)); location.hash = '#alunos'; } }
   else if (a === 'fechar') { history.length > 1 && /^#ver\//.test(location.hash) ? history.back() : (location.hash = '#agora'); }
   else if (a === 'atualizar') recarregarQuadro();
+  else if (a === 'apagar-envio') apagarEnvio(b.dataset.id || vId);
 });
 
 /* ---------- visor: a atividade do aluno, na mesma interface que ele usou ---------- */
