@@ -34,7 +34,8 @@ a{color:inherit}
 /* topo */
 header.topo{position:sticky;top:0;z-index:20;background:rgba(244,246,251,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--linha)}
 header.topo .wrap{display:flex;align-items:center;gap:14px;min-height:70px}
-.marca{display:flex;align-items:center;gap:12px;min-width:0}
+.marca{display:flex;align-items:center;gap:12px;min-width:0;color:inherit;text-decoration:none;border-radius:14px}
+a.marca:focus-visible{outline:3px solid #7048E8;outline-offset:3px}
 .marca .logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#7048E8,#4C6EF5);color:#fff;flex:none}
 .marca .logo svg{width:22px;height:22px}
 .marca strong{display:block;font-family:Sora,sans-serif;font-size:17px}
@@ -246,7 +247,7 @@ function topo() {
   const on = [...prog.values()].filter(online);
   const nomes = new Set(on.map(p => p.code));
   return `<header class="topo"><div class="wrap">
-    <div class="marca"><span class="logo">${ICON.logo}</span><div><strong>Painel do professor</strong><small>Online English · atividades e LCPs</small></div></div>
+    <a class="marca" href="./#professor" title="Voltar à área do professor"><span class="logo">${ICON.logo}</span><div><strong>Painel do professor</strong><small>Online English · atividades e LCPs</small></div></a>
     <div class="dir"><span class="online-pill${nomes.size ? '' : ' zero'}"><i class="pulso"></i>${nomes.size} ${nomes.size === 1 ? 'aluno online' : 'alunos online'}</span>
       <span class="eu">${user.photoURL ? `<img src="${esc(user.photoURL)}" alt="" referrerpolicy="no-referrer">` : ''}<span>${esc((user.displayName || '').split(' ')[0])}</span></span>
       <button class="link" data-a="sair">Sair</button></div></div></header>
@@ -303,7 +304,7 @@ function telaAlunos() {
         <div class="rod"><span>${ps.length} ${ps.length === 1 ? 'lição' : 'lições'}</span><span>${ult ? 'ativo ' + esc(relativo(ult)) : 'ainda não começou'}</span></div></a>`;
     }).join('')}</div>` : '<div class="vazio" style="margin-top:16px">Nenhum aluno ainda. Escreva o nome acima e crie o código dele.</div>'}`;
 }
-const mensagem = (a, code) => `Oi, ${(a.nome || '').split(' ')[0]}! Seu código para as atividades do curso é ${code}. Na primeira vez que abrir uma atividade ou um LCP, digite esse código na caixinha que aparece. Assim suas respostas ficam salvas na nuvem, você pode continuar de qualquer aparelho e eu acompanho tudo por aqui.`;
+const mensagem = (a, code) => `Oi, ${(a.nome || '').split(' ')[0]}! Seu código para as atividades do curso é ${code}. As lições ficam em https://rodrigomariani-bit.github.io/My-English-Content/#aluno. Na primeira vez que abrir uma atividade ou um LCP, digite esse código na caixinha que aparece. Assim suas respostas ficam salvas na nuvem, você pode continuar de qualquer aparelho e eu acompanho tudo por aqui.`;
 function telaAluno(code) {
   const a = alunos.get(code);
   if (!a) return `<a class="voltar" href="#alunos">← Alunos</a><div class="vazio">Aluno não encontrado.</div>`;

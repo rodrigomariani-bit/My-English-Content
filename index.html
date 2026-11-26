@@ -229,6 +229,73 @@ footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);colo
   .licao .acoes{grid-template-columns:repeat(2,minmax(0,1fr))}
   .licao .acoes .acao:only-child{grid-column:1/-1}
 }
+/* Início com duas portas: aluno (só o curso) e professor (painel, Darwin, aleatórios) · nov/2026 */
+[hidden]{display:none!important}
+body[data-tela="inicio"] .busca{display:none}
+.marca{border-radius:18px}
+.marca:focus-visible{outline:3px solid var(--darwin);outline-offset:4px}
+.boas-vindas{margin:4px 0 18px;color:var(--tinta-2);font-size:clamp(16px,1.8vw,19px);font-weight:600}
+.inicio{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:0 0 34px}
+.porta{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;gap:16px;min-height:360px;padding:28px clamp(22px,3vw,34px) 24px;border-radius:30px;color:#fff;box-shadow:0 26px 50px -30px var(--sombra);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s}
+.porta:hover{transform:translateY(-4px);box-shadow:0 34px 60px -28px var(--sombra)}
+.porta:focus-visible{outline:3px solid var(--sombra);outline-offset:4px}
+.porta.aluno{--sombra:#D43C25;background:radial-gradient(420px 260px at 100% 0,rgba(255,184,31,.35),transparent 70%),linear-gradient(140deg,#EE5A3F 0%,#C42E19 100%)}
+.porta.prof{--sombra:#131B35;background:radial-gradient(420px 260px at 100% 0,rgba(43,89,230,.55),transparent 70%),linear-gradient(140deg,#26345A 0%,#131B35 100%)}
+.porta .agua{position:absolute;right:-34px;bottom:-46px;width:250px;height:250px;color:#fff;opacity:.09;z-index:-1;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.porta:hover .agua{transform:rotate(-6deg) scale(1.05)}
+.topo-porta{display:flex;align-items:center;gap:12px}
+.icone-porta{width:54px;height:54px;border-radius:17px;background:rgba(255,255,255,.17);display:grid;place-items:center;flex:none}
+.icone-porta svg{width:29px;height:29px}
+.porta .rot{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.86}
+.porta h2{margin:0;font-family:Sora,sans-serif;font-weight:800;font-size:clamp(30px,3.6vw,40px);line-height:1.02;letter-spacing:-.025em}
+.porta p{margin:8px 0 0;font-size:15.5px;font-weight:600;opacity:.9;max-width:36ch}
+.porta .lista{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.porta .lista span{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.16);font-size:13.5px;font-weight:800}
+.porta .lista svg{width:16px;height:16px}
+.porta .lista i{width:9px;height:9px;border-radius:50%;background:#fff;flex:none}
+.rodape-porta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1.5px solid rgba(255,255,255,.18)}
+.rodape-porta .numeros{font-size:14px;font-weight:700;opacity:.88}
+.entrar{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:14px;background:#fff;color:var(--sombra);font-weight:800;font-size:15px}
+.entrar svg{width:18px;height:18px;transition:transform .2s}
+.porta:hover .entrar svg{transform:translateX(3px)}
+
+/* barra de cada área */
+.barra-area{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.inicio-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:12px;background:var(--papel);border:1.5px solid var(--linha);font-weight:800;font-size:14px;color:var(--tinta-2);transition:border-color .15s,color .15s}
+.inicio-btn svg{width:18px;height:18px;transform:rotate(180deg)}
+.inicio-btn:hover{border-color:var(--c);color:var(--e)}
+.inicio-btn:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.selo-area{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-weight:800;font-size:14px;background:var(--t);color:var(--e)}
+.selo-area svg{width:18px;height:18px}
+.link-area{margin-left:auto;font-weight:800;font-size:14px;color:var(--tinta-2);padding:8px 4px;border-bottom:1.5px dashed transparent}
+.link-area:hover{color:var(--curso-esc);border-bottom-color:currentColor}
+
+/* painel da turma, no topo da área do professor */
+.painel{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:22px;color:#fff;margin-bottom:22px;background:radial-gradient(360px 200px at 100% 0,rgba(43,89,230,.5),transparent 70%),linear-gradient(135deg,#26345A,#131B35);box-shadow:0 20px 36px -24px #131B35;transition:transform .18s,box-shadow .18s}
+.painel:hover{transform:translateY(-2px);box-shadow:0 26px 44px -24px #131B35}
+.painel:focus-visible{outline:3px solid var(--darwin);outline-offset:3px}
+.icone-painel{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+.icone-painel svg{width:27px;height:27px}
+.painel .txt{min-width:0;flex:1}
+.painel strong{display:block;font-family:Sora,sans-serif;font-weight:700;font-size:19px;line-height:1.2}
+.painel small{display:block;margin-top:3px;opacity:.84;font-size:14px;font-weight:600}
+.seta-p{width:42px;height:42px;border-radius:13px;background:#fff;color:#131B35;display:grid;place-items:center;flex:none;transition:transform .2s}
+.seta-p svg{width:20px;height:20px}
+.painel:hover .seta-p{transform:translateX(3px)}
+.divisoes.duas{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+@media (max-width:760px){
+  .inicio{grid-template-columns:1fr;gap:14px}
+  .porta{min-height:0;padding:22px 20px 20px;border-radius:24px;gap:14px}
+  .porta .agua{width:190px;height:190px}
+  .icone-porta{width:46px;height:46px;border-radius:14px}
+  .divisoes.duas{grid-template-columns:1fr}
+  .link-area{margin-left:0}
+  .painel{padding:14px 16px;gap:12px}
+  .icone-painel{width:44px;height:44px}
+  .painel small{font-size:13px}
+}
+/* fim das portas */
 </style>
 </head>
 <body>
@@ -257,11 +324,14 @@ footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);colo
   <symbol id="i-fone" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3.500" y="13.500" width="4.500" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="16" y="13.500" width="4.500" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="6" y="2.500" width="12" height="19" rx="2.500" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.500 18.500h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-aluno" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20.5c.9-4 3.9-6.2 7.5-6.2s6.6 2.2 7.5 6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-quadro" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="12.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 8h7M7 11.5h4.5M8.5 20.5l2-4.5M15.5 20.5l-2-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-painel" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="16.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 3h6v3.2H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 13.2l2.4 2.4 4.6-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="pagina">
   <header class="cabeca">
-    <div class="marca">
+    <a class="marca" href="#" aria-label="My English Content, início">
       <svg class="logo" viewBox="0 0 60 60" aria-hidden="true">
         <rect width="60" height="60" rx="18" fill="url(#grad-logo)"/>
         <path d="M15 16h30a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H28l-9 7v-7h-4a3 3 0 0 1-3-3V19a3 3 0 0 1 3-3z" fill="#fff"/>
@@ -269,9 +339,9 @@ footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);colo
       </svg>
       <div>
         <h1>My English Content</h1>
-        <p>Materiais de Ensino de Inglês · <span id="total"></span> materiais</p>
+        <p id="subtitulo">Materiais de Ensino de Inglês</p>
       </div>
-    </div>
+    </a>
     <label class="busca">
       <svg><use href="#i-busca"/></svg>
       <input id="busca" type="search" placeholder="Procurar material" aria-label="Procurar material" autocomplete="off">
@@ -279,13 +349,20 @@ footer{margin-top:18px;padding-top:18px;border-top:1.5px solid var(--linha);colo
     </label>
   </header>
 
-  <div class="novos" id="novos"></div>
+  <section id="tela-inicio" hidden>
+    <p class="boas-vindas">Escolha por onde entrar.</p>
+    <div class="inicio" id="inicio"></div>
+  </section>
 
-  <div class="divisoes" id="divisoes" role="tablist" aria-label="Divisões"></div>
+  <div id="area" hidden>
+    <div class="barra-area" id="barra"></div>
+    <div id="painel-slot"></div>
+    <div class="novos" id="novos"></div>
+    <div class="divisoes duas" id="divisoes" role="tablist" aria-label="Divisões"></div>
+    <main id="conteudo"></main>
+  </div>
 
-  <main id="conteudo"></main>
-
-  <footer>Desenvolvido para o ensino de inglês · 2026 · <a href="professor.html" style="color:inherit">Área do professor</a></footer>
+  <footer>Desenvolvido para o ensino de inglês · 2026</footer>
 </div>
 
 <script>
@@ -440,12 +517,18 @@ const SECOES = [
   const todos = SECOES.flatMap(s => s.grupos.flatMap(g => g.itens.flatMap(folhas).map(i => ({...i, secao: s, grupo: g.titulo}))));
   const nItens = g => g.itens.reduce((n, i) => n + (i.filhos ? i.filhos.length : 1), 0);
   const contar = s => s.grupos.reduce((n, g) => n + nItens(g), 0);
-  const recentes = todos.filter(i => i.data).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 3);
-  const maisNovo = new Set(recentes.slice(0, 2).map(i => i.h));
-  let atual = SECOES[0].id, sub = '', filtro = 'tudo';
+
+  /* duas áreas: a do aluno só tem o curso; a do professor tem o painel da turma, Darwin e Materiais aleatórios (e a busca procura em tudo) */
+  const CURSO = SECOES.find(s => s.id === 'curso');
+  const PROF = SECOES.filter(s => s.id !== 'curso');
+  const doCurso = todos.filter(i => i.secao.id === 'curso');
+  const doProf = todos.filter(i => i.secao.id !== 'curso');
+  const recentes = l => l.filter(i => i.data).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 3);
+  const novosAluno = recentes(doCurso), novosProf = recentes(doProf);
+  const maisNovo = new Set(novosAluno.slice(0, 2).concat(novosProf.slice(0, 2)).map(i => i.h));
+  let tela = 'inicio', atual = PROF[0].id, sub = '', filtro = 'tudo';
 
   /* os níveis do Meu curso, montados a partir dos grupos */
-  const CURSO = SECOES.find(s => s.id === 'curso');
   const NUM = t => +((t.match(/(?:Lesson|Test)\s+(\d+)/i) || [])[1] || 0);
   const cursos = CURSO.grupos.filter(g => g.itens.length && NIVEIS[g.titulo]).map(g => {
     const licoes = g.itens.filter(i => i.filhos).map(i => ({
@@ -461,18 +544,29 @@ const SECOES = [
   const embreve = CURSO.grupos.flatMap(g => g.embreve || []).filter(n => !cursos.some(c => c.nome === n));
   const ic = n => `<svg><use href="#i-${n}"/></svg>`;
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const soma = f => cursos.reduce((n, c) => n + f(c), 0);
 
-  $('#total').textContent = todos.length;
-  $('#novos').innerHTML = '<b>Novos</b>' + recentes.map(i => `<a class="novo" style="${estilo(i.secao.id)}" href="${esc(i.h)}"><i></i>${esc(i.t)}</a>`).join('');
-
-  const caixa = $('#divisoes');
-  caixa.innerHTML = SECOES.map(s => `<button class="divisao" role="tab" data-id="${s.id}" style="${estilo(s.id)}" aria-selected="false" aria-controls="conteudo">
-    <span class="topo-div"><span class="icone-div"><svg><use href="#i-${s.icone}"/></svg></span><span class="num-div">${contar(s)}</span></span>
-    <span class="texto-div"><h2>${esc(s.nome)}</h2><span class="sub">${esc(s.sub)}</span></span></button>`).join('');
-  caixa.addEventListener('click', e => { const b = e.target.closest('.divisao'); if (b) abrir(b.dataset.id, true); });
+  /* início: as duas portas */
+  function mostrarInicio(){
+    $('#inicio').innerHTML = `
+    <a class="porta aluno" href="#aluno">
+      <svg class="agua" aria-hidden="true"><use href="#i-curso"/></svg>
+      <div class="topo-porta"><span class="icone-porta">${ic('aluno')}</span><span class="rot">Online English</span></div>
+      <div><h2>Acesso do aluno</h2><p>As lições do curso, nível por nível, com as atividades, os LCPs e os practice tests.</p></div>
+      <div class="lista">${cursos.map(c => `<span><i style="background:${c.t}"></i>${esc(c.nome)}</span>`).join('')}${embreve.map(n => `<span style="opacity:.7">${esc(n)} · em breve</span>`).join('')}</div>
+      <div class="rodape-porta"><span class="numeros">${plural(soma(c => c.licoes.length), 'lição', 'lições')} · ${plural(soma(c => c.nAtiv), 'atividade', 'atividades')} · ${plural(soma(c => c.nLcp), 'LCP', 'LCPs')}</span><span class="entrar">Entrar${ic('seta')}</span></div>
+    </a>
+    <a class="porta prof" href="#professor">
+      <svg class="agua" aria-hidden="true"><use href="#i-quadro"/></svg>
+      <div class="topo-porta"><span class="icone-porta">${ic('quadro')}</span><span class="rot">Professor Rodrigo</span></div>
+      <div><h2>Acesso do professor</h2><p>O painel da turma, com as respostas dos alunos, e os materiais do Darwin e os aleatórios.</p></div>
+      <div class="lista"><span>${ic('painel')}Painel da turma</span>${PROF.map(s => `<span>${ic(s.icone)}${esc(s.nome)} · ${contar(s)}</span>`).join('')}</div>
+      <div class="rodape-porta"><span class="numeros">${plural(doProf.length, 'material', 'materiais')} + o painel</span><span class="entrar">Entrar${ic('seta')}</span></div>
+    </a>`;
+  }
 
   function cartao(i, comLocal){
-    const local = comLocal ? `<span class="onde">${esc(i.secao.nome)}</span>` : '';
+    const local = comLocal ? `<span class="onde">${esc(tela === 'aluno' ? i.grupo : i.secao.nome)}</span>` : '';
     const selo = maisNovo.has(i.h) ? '<span class="selo-novo">Novo</span>' : '';
     return `<a class="item" style="${estilo(i.secao.id)}" href="${esc(i.h)}">
       <span class="icone-item"><svg><use href="#i-${i.i}"/></svg></span>
@@ -492,7 +586,7 @@ const SECOES = [
         <span><strong>${esc(f.t)}</strong><small>${esc(f.e.join(' · '))}</small></span></a>`).join('')}</div></div>`;
   }
 
-  /* Meu curso: uma pasta por nível */
+  /* área do aluno: uma pasta por nível */
   function chipsCurso(c){
     const out = [];
     if (c.licoes.length) out.push(`<span>${ic('curso')}${plural(c.licoes.length, 'lição', 'lições')}</span>`);
@@ -529,7 +623,7 @@ const SECOES = [
     };
     const provas = (filtro === 'tudo' || filtro === 'provas') ? c.provas : [];
     $('#conteudo').innerHTML = `<div class="curso-vista" style="${corNivel(c.nome)}">
-      <button class="voltar" type="button" data-voltar>${ic('seta')}Meu curso</button>
+      <button class="voltar" type="button" data-voltar>${ic('seta')}Todos os níveis</button>
       <header class="heroi" data-nivel="${esc(c.nivel)}"><span class="rot">Online English · nível ${esc(c.nivel)}</span><h2>${esc(c.nome)}</h2><div class="chips">${chipsCurso(c)}</div></header>
       ${opcoes.length > 2 ? `<div class="filtros" role="group" aria-label="Mostrar">${opcoes.map(([v, r]) => `<button type="button" data-filtro="${v}" aria-pressed="${v === filtro}">${r}</button>`).join('')}</div>` : ''}
       ${licoes.length ? `<div class="cab-curso"><h3>Lições</h3><span class="cont">${licoes.length}</span></div><div class="licoes">${licoes.map(cartaoLicao).join('')}</div>` : ''}
@@ -537,44 +631,82 @@ const SECOES = [
         <span class="icone-item">${ic(p.i)}</span><span><strong>${esc(p.t.replace(/^Online /, ''))}${maisNovo.has(p.h) ? '<span class="selo-novo">Novo</span>' : ''}</strong><small>${esc(p.e.join(' · '))}</small></span></a>`).join('')}</div>` : ''}
     </div>`;
   }
+  /* área do professor: Darwin e Materiais aleatórios, grupo por grupo */
   function mostrarSecao(){
-    const s = SECOES.find(x => x.id === atual);
-    if (s.id === 'curso') {
-      const c = cursos.find(x => x.slug === sub);
-      return c ? mostrarCurso(c) : mostrarPastas();
-    }
+    const s = PROF.find(x => x.id === atual);
     $('#conteudo').innerHTML = s.grupos.map(g => `<section class="grupo" style="${estilo(s.id)}">
       <div class="cab-grupo"><h3>${esc(g.titulo)}</h3>${g.itens.length ? `<span class="cont">${nItens(g)}</span>` : ''}</div>
       ${g.itens.length ? `<div class="grade">${g.itens.map(i => i.filhos ? pasta(i, s) : cartao({...i, secao: s})).join('')}</div>` : ''}
       ${g.embreve ? `<div class="embreve">Em breve: ${g.embreve.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
     </section>`).join('');
   }
-  function abrir(id, gravar){
-    const [sec, resto] = String(id || '').split('/');
-    atual = SECOES.some(s => s.id === sec) ? sec : SECOES[0].id;
-    sub = atual === 'curso' && resto ? resto : '';
-    document.querySelectorAll('.divisao').forEach(b => b.setAttribute('aria-selected', b.dataset.id === atual));
-    if ($('#busca').value){ $('#busca').value = ''; $('#limpar').classList.add('oculto'); }
+  function mostrarConteudo(){
+    if ($('#busca').value.trim()) return buscar();
+    if (tela === 'aluno') { const c = cursos.find(x => x.slug === sub); return c ? mostrarCurso(c) : mostrarPastas(); }
     mostrarSecao();
-    const alvo = '#' + atual + (sub ? '/' + sub : '');
-    if (gravar && location.hash !== alvo) history.pushState(null, '', alvo);
+  }
+  function mostrarArea(){
+    const aluno = tela === 'aluno';
+    const cor = aluno ? estilo('curso') : '--c:#131B35;--e:#131B35;--t:#E4E8F2';
+    $('#barra').setAttribute('style', cor);
+    $('#barra').innerHTML = `<a class="inicio-btn" href="#">${ic('seta')}Início</a>
+      <span class="selo-area">${ic(aluno ? 'aluno' : 'quadro')}${aluno ? 'Área do aluno' : 'Área do professor'}</span>
+      ${aluno ? '' : '<a class="link-area" href="#aluno">Ver a área do aluno</a>'}`;
+    $('#painel-slot').innerHTML = aluno ? '' : `<a class="painel" href="professor.html">
+      <span class="icone-painel">${ic('painel')}</span>
+      <span class="txt"><strong>Painel da turma</strong><small>Respostas dos alunos em tempo real, entregas e correções.</small></span>
+      <span class="seta-p">${ic('seta')}</span></a>`;
+    const nv = aluno ? novosAluno : novosProf;
+    $('#novos').innerHTML = nv.length ? '<b>Novos</b>' + nv.map(i => `<a class="novo" style="${estilo(i.secao.id)}" href="${esc(i.h)}"><i></i>${esc(i.t)}</a>`).join('') : '';
+    $('#divisoes').hidden = aluno;
+    if (!aluno) $('#divisoes').innerHTML = PROF.map(s => `<button class="divisao" role="tab" data-id="${s.id}" style="${estilo(s.id)}" aria-selected="${s.id === atual}" aria-controls="conteudo">
+      <span class="topo-div"><span class="icone-div"><svg><use href="#i-${s.icone}"/></svg></span><span class="num-div">${contar(s)}</span></span>
+      <span class="texto-div"><h2>${esc(s.nome)}</h2><span class="sub">${esc(s.sub)}</span></span></button>`).join('');
+    $('#busca').placeholder = aluno ? 'Procurar lição ou atividade' : 'Procurar em todos os materiais';
+    $('#busca').setAttribute('aria-label', $('#busca').placeholder);
+    $('#subtitulo').textContent = aluno ? `Online English · ${plural(doCurso.length, 'material', 'materiais')}` : `Área do professor · ${plural(todos.length, 'material', 'materiais')}`;
+    mostrarConteudo();
+  }
+  function render(){
+    document.body.dataset.tela = tela;
+    $('#tela-inicio').hidden = tela !== 'inicio';
+    $('#area').hidden = tela === 'inicio';
+    if (tela === 'inicio') { $('#subtitulo').textContent = 'Materiais de Ensino de Inglês'; return mostrarInicio(); }
+    mostrarArea();
+  }
+  /* endereços: #aluno, #aluno/english-3, #professor/darwin, #professor/aleatorios; os antigos (#curso, #darwin...) continuam valendo */
+  function ir(hash, gravar){
+    let [a, b] = decodeURIComponent(String(hash || '')).split('/');
+    if (a === 'curso') a = 'aluno';
+    if (a === 'darwin' || a === 'aleatorios') { b = a; a = 'professor'; }
+    const antes = tela;
+    if (a === 'aluno') { tela = 'aluno'; sub = cursos.some(c => c.slug === b) ? b : ''; }
+    else if (a === 'professor') { tela = 'professor'; if (PROF.some(s => s.id === b)) atual = b; }
+    else tela = 'inicio';
+    if ($('#busca').value) { $('#busca').value = ''; $('#limpar').classList.add('oculto'); }
+    render();
+    const alvo = tela === 'inicio' ? '' : '#' + tela + (tela === 'aluno' ? (sub ? '/' + sub : '') : '/' + atual);
+    if (location.hash !== alvo) history[gravar ? 'pushState' : 'replaceState'](null, '', alvo || location.pathname + location.search);
+    if (antes !== tela) window.scrollTo(0, 0);
   }
   function buscar(){
     const bruto = $('#busca').value.trim();
     $('#limpar').classList.toggle('oculto', !bruto);
-    if (!bruto) return mostrarSecao();
+    if (!bruto) return mostrarConteudo();
     const partes = norm(bruto).split(/\s+/);
-    const achados = todos.filter(i => { const alvo = norm([i.t, i.secao.nome, i.grupo, ...i.e].join(' ')); return partes.every(p => alvo.includes(p)); });
+    const base = tela === 'aluno' ? doCurso : todos;
+    const achados = base.filter(i => { const alvo = norm([i.t, i.secao.nome, i.grupo, ...i.e].join(' ')); return partes.every(p => alvo.includes(p)); });
     $('#conteudo').innerHTML = achados.length
       ? `<h3 class="titulo-busca">${achados.length} ${achados.length === 1 ? 'resultado' : 'resultados'}</h3><div class="grade">${achados.map(i => cartao(i, true)).join('')}</div>`
       : '<div class="vazio">Nenhum material encontrado.</div>';
   }
+  $('#divisoes').addEventListener('click', e => { const b = e.target.closest('.divisao'); if (b) ir('professor/' + b.dataset.id, true); });
   $('#conteudo').addEventListener('click', e => {
     const p = e.target.closest('.pastinha[data-curso]');
-    if (p) { filtro = 'tudo'; abrir('curso/' + p.dataset.curso, true); window.scrollTo({top: Math.max(0, $('#divisoes').offsetTop - 12), behavior: 'smooth'}); return; }
-    if (e.target.closest('[data-voltar]')) { abrir('curso', true); return; }
+    if (p) { filtro = 'tudo'; ir('aluno/' + p.dataset.curso, true); window.scrollTo({top: Math.max(0, $('#area').offsetTop - 12), behavior: 'smooth'}); return; }
+    if (e.target.closest('[data-voltar]')) { ir('aluno', true); return; }
     const f = e.target.closest('[data-filtro]');
-    if (f) { filtro = f.dataset.filtro; mostrarSecao(); return; }
+    if (f) { filtro = f.dataset.filtro; mostrarConteudo(); return; }
     const b = e.target.closest('.abre');
     if (!b) return;
     const aberta = b.getAttribute('aria-expanded') !== 'true';
@@ -584,9 +716,9 @@ const SECOES = [
   });
   $('#busca').addEventListener('input', buscar);
   $('#limpar').addEventListener('click', () => { $('#busca').value = ''; buscar(); $('#busca').focus(); });
-  addEventListener('popstate', () => abrir(location.hash.slice(1)));
-  addEventListener('hashchange', () => abrir(location.hash.slice(1)));
-  abrir(location.hash.slice(1));
+  addEventListener('popstate', () => ir(location.hash.slice(1)));
+  addEventListener('hashchange', () => ir(location.hash.slice(1)));
+  ir(location.hash.slice(1));
 })();
 </script>
 </body>
