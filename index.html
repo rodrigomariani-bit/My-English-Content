@@ -284,6 +284,33 @@ body[data-tela="inicio"] .busca{display:none}
 .painel:hover .seta-p{transform:translateX(3px)}
 .divisoes.duas{grid-template-columns:repeat(2,minmax(0,1fr))}
 
+/* código do aluno: pedido na entrada da área do aluno */
+body[data-portaria] .busca{display:none}
+.portaria{max-width:540px;margin:10px auto 36px;padding:30px clamp(20px,4vw,34px) 26px;background:var(--papel);border:1.5px solid var(--linha);border-radius:28px;text-align:center;box-shadow:0 26px 48px -32px rgba(30,45,90,.5);animation:entra .35s cubic-bezier(.2,.8,.2,1)}
+.portaria .ic{width:66px;height:66px;margin:0 auto 14px;border-radius:21px;display:grid;place-items:center;background:var(--curso-claro);color:var(--curso-esc)}
+.portaria .ic svg{width:32px;height:32px}
+.portaria h2{margin:0;font-family:Sora,sans-serif;font-weight:800;font-size:clamp(24px,3vw,30px);letter-spacing:-.02em}
+.portaria p{margin:8px auto 20px;max-width:42ch;color:var(--tinta-2);font-weight:600}
+.portaria form{display:flex;gap:10px;flex-wrap:wrap}
+.portaria input{flex:1 1 220px;min-width:0;height:56px;border:1.5px solid var(--linha);border-radius:16px;padding:0 16px;background:var(--fundo);font-family:Sora,sans-serif;font-size:21px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+.portaria input::placeholder{color:#B5BCCF;letter-spacing:.06em}
+.portaria input:focus{border-color:var(--curso);background:var(--papel);box-shadow:0 0 0 4px rgba(212,60,37,.14)}
+.portaria form button{flex:1 1 130px;height:56px;border:0;border-radius:16px;background:var(--curso);color:#fff;font-weight:800;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.portaria form button:hover{background:var(--curso-esc)}
+.portaria form button:disabled{opacity:.6;cursor:progress}
+.portaria form button svg{width:19px;height:19px}
+.portaria form button:focus-visible{outline:3px solid var(--curso);outline-offset:2px}
+.portaria .erro{min-height:22px;margin:12px 0 0;color:#C92A2A;font-size:14px;font-weight:700}
+.portaria .sem{border:0;background:none;padding:2px 0;margin-top:10px;color:var(--tinta-2);font-weight:800;font-size:14px;cursor:pointer;border-bottom:1.5px dashed currentColor}
+.portaria .sem:hover{color:var(--curso-esc)}
+.portaria .obs{display:block;margin:12px auto 0;max-width:40ch;color:var(--tinta-3);font-size:12.5px;font-weight:600}
+.quem{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding:7px 14px 7px 10px;border-radius:999px;background:var(--papel);border:1.5px solid var(--linha);font-size:14px;font-weight:700;color:var(--tinta-2)}
+.quem svg{width:17px;height:17px;color:var(--curso)}
+.quem b{color:var(--tinta);font-weight:800}
+.quem span{font-family:Sora,sans-serif;font-size:12.5px;letter-spacing:.04em;color:var(--tinta-3)}
+.quem + .link-area{margin-left:0}
+button.link-area{border:0;background:none;cursor:pointer;font:inherit;font-weight:800;font-size:14px}
+
 @media (max-width:760px){
   .inicio{grid-template-columns:1fr;gap:14px}
   .porta{min-height:0;padding:22px 20px 20px;border-radius:24px;gap:14px}
@@ -327,6 +354,7 @@ body[data-tela="inicio"] .busca{display:none}
   <symbol id="i-aluno" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20.5c.9-4 3.9-6.2 7.5-6.2s6.6 2.2 7.5 6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-quadro" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="12.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 8h7M7 11.5h4.5M8.5 20.5l2-4.5M15.5 20.5l-2-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-painel" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="16.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 3h6v3.2H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 13.2l2.4 2.4 4.6-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chave" viewBox="0 0 24 24"><circle cx="8" cy="15.5" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11.3 12.2L20 3.5M16.5 7l2.8 2.8M14.2 9.3l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="pagina">
@@ -528,6 +556,67 @@ const SECOES = [
   const maisNovo = new Set(novosAluno.slice(0, 2).concat(novosProf.slice(0, 2)).map(i => i.h));
   let tela = 'inicio', atual = PROF[0].id, sub = '', filtro = 'tudo';
 
+  /* código do aluno: pedido na entrada da área do aluno e guardado em 'mc-aluno', a mesma memória que as lições leem
+     (vale para todas as lições neste aparelho; a lição só pede o código se ele ainda não existir) */
+  const FB = 'https://firestore.googleapis.com/v1/projects/painel-meu-curso/databases/(default)/documents/alunos/';
+  const FB_KEY = 'AIzaSyAgrXfpSBVJDHIIOmrdKLZA1klkeXTRoaU';
+  const ler = (k, s) => { try { return (s || localStorage).getItem(k); } catch (e) { return null; } };
+  const gravar = (k, v, s) => { try { v === null ? (s || localStorage).removeItem(k) : (s || localStorage).setItem(k, v); } catch (e) {} };
+  let me = null; try { me = JSON.parse(ler('mc-aluno') || 'null'); } catch (e) {}
+  if (me && !me.code) me = null;
+  let trocando = false, erroCodigo = '', conferido = false;
+  const pulou = () => !!ler('mc-later', sessionStorage);
+  const precisaCodigo = () => tela === 'aluno' && (trocando || (!me && !pulou()));
+  const limparCodigo = v => v.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '');
+  async function buscarAluno(code){
+    const r = await fetch(FB + encodeURIComponent(code) + '?key=' + FB_KEY);
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error('rede');
+    const d = await r.json();
+    return {code, nome: ((d.fields || {}).nome || {}).stringValue || ''};
+  }
+  /* uma vez por visita, confere se o código guardado ainda existe (aluno apagado no painel) */
+  function conferirCodigo(){
+    if (conferido || !me) return;
+    conferido = true;
+    buscarAluno(me.code).then(a => {
+      if (!a) { me = null; gravar('mc-aluno', null); erroCodigo = 'Esse código não está mais ativo. Peça um código novo ao professor.'; }
+      else if (a.nome && a.nome !== me.nome) { me = a; gravar('mc-aluno', JSON.stringify(me)); }
+      else return;
+      if (tela === 'aluno') render();
+    }).catch(() => {});
+  }
+  function mostrarPortaria(){
+    $('#conteudo').innerHTML = `<section class="portaria">
+      <span class="ic">${ic('chave')}</span>
+      <h2>${trocando && me ? 'Trocar o código' : 'Seu código de aluno'}</h2>
+      <p>${trocando && me ? `Agora este aparelho está com <b>${esc(me.code)}</b>. Digite o outro código abaixo.` : 'Digite o código que o professor mandou. É só uma vez: depois ele fica salvo neste aparelho e vale para todas as lições.'}</p>
+      <form data-codigo novalidate>
+        <input id="codigo" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="NOME-ABCD" aria-label="Código do aluno" enterkeyhint="go">
+        <button type="submit">Entrar${ic('seta')}</button>
+      </form>
+      <p class="erro" role="alert">${esc(erroCodigo)}</p>
+      <button type="button" class="sem" data-sem>${trocando ? 'Cancelar' : 'Entrar sem código'}</button>
+      ${trocando ? '' : '<small class="obs">Sem o código as lições abrem normalmente, mas as respostas ficam só neste aparelho e o professor não vê.</small>'}
+    </section>`;
+    setTimeout(() => { const i = $('#codigo'); if (i && matchMedia('(hover:hover)').matches) i.focus(); }, 60);
+  }
+  async function entrarComCodigo(form){
+    const inp = $('#codigo'), err = form.parentElement.querySelector('.erro'), btn = form.querySelector('button');
+    let code = limparCodigo(inp.value);
+    if (!code) { err.textContent = 'Digite o seu código.'; inp.focus(); return; }
+    btn.disabled = true; err.textContent = 'Conferindo…';
+    try {
+      let a = await buscarAluno(code);
+      if (!a && !code.includes('-') && code.length > 4) a = await buscarAluno(code.slice(0, -4) + '-' + code.slice(-4));
+      if (!a) { err.textContent = 'Não achei esse código. Confira as letras e tente de novo.'; btn.disabled = false; inp.focus(); return; }
+      me = a; conferido = true; trocando = false; erroCodigo = '';
+      gravar('mc-aluno', JSON.stringify(me));
+      gravar('mc-later', null, sessionStorage);
+      render();
+    } catch (e) { err.textContent = 'Sem internet agora. Tente de novo em um instante.'; btn.disabled = false; }
+  }
+
   /* os níveis do Meu curso, montados a partir dos grupos */
   const NUM = t => +((t.match(/(?:Lesson|Test)\s+(\d+)/i) || [])[1] || 0);
   const cursos = CURSO.grupos.filter(g => g.itens.length && NIVEIS[g.titulo]).map(g => {
@@ -641,6 +730,7 @@ const SECOES = [
     </section>`).join('');
   }
   function mostrarConteudo(){
+    if (precisaCodigo()) return mostrarPortaria();
     if ($('#busca').value.trim()) return buscar();
     if (tela === 'aluno') { const c = cursos.find(x => x.slug === sub); return c ? mostrarCurso(c) : mostrarPastas(); }
     mostrarSecao();
@@ -651,12 +741,18 @@ const SECOES = [
     $('#barra').setAttribute('style', cor);
     $('#barra').innerHTML = `<a class="inicio-btn" href="#">${ic('seta')}Início</a>
       <span class="selo-area">${ic(aluno ? 'aluno' : 'quadro')}${aluno ? 'Área do aluno' : 'Área do professor'}</span>
-      ${aluno ? '' : '<a class="link-area" href="#aluno">Ver a área do aluno</a>'}`;
+      ${!aluno ? '<a class="link-area" href="#aluno" data-ver-aluno>Ver a área do aluno</a>'
+        : precisaCodigo() ? ''
+        : me ? `<span class="quem">${ic('chave')}<b>${esc((me.nome || 'Aluno').split(' ')[0])}</b><span>${esc(me.code)}</span></span><button type="button" class="link-area" data-trocar>Trocar código</button>`
+        : '<button type="button" class="link-area" data-trocar>Colocar meu código</button>'}`;
+    const gate = precisaCodigo();
+    document.body.toggleAttribute('data-portaria', gate);
+    if (aluno) conferirCodigo();
     $('#painel-slot').innerHTML = aluno ? '' : `<a class="painel" href="professor.html">
       <span class="icone-painel">${ic('painel')}</span>
       <span class="txt"><strong>Painel da turma</strong><small>Respostas dos alunos em tempo real, entregas e correções.</small></span>
       <span class="seta-p">${ic('seta')}</span></a>`;
-    const nv = aluno ? novosAluno : novosProf;
+    const nv = gate ? [] : aluno ? novosAluno : novosProf;
     $('#novos').innerHTML = nv.length ? '<b>Novos</b>' + nv.map(i => `<a class="novo" style="${estilo(i.secao.id)}" href="${esc(i.h)}"><i></i>${esc(i.t)}</a>`).join('') : '';
     $('#divisoes').hidden = aluno;
     if (!aluno) $('#divisoes').innerHTML = PROF.map(s => `<button class="divisao" role="tab" data-id="${s.id}" style="${estilo(s.id)}" aria-selected="${s.id === atual}" aria-controls="conteudo">
@@ -683,6 +779,7 @@ const SECOES = [
     if (a === 'aluno') { tela = 'aluno'; sub = cursos.some(c => c.slug === b) ? b : ''; }
     else if (a === 'professor') { tela = 'professor'; if (PROF.some(s => s.id === b)) atual = b; }
     else tela = 'inicio';
+    if (tela !== 'aluno') trocando = false;
     if ($('#busca').value) { $('#busca').value = ''; $('#limpar').classList.add('oculto'); }
     render();
     const alvo = tela === 'inicio' ? '' : '#' + tela + (tela === 'aluno' ? (sub ? '/' + sub : '') : '/' + atual);
@@ -701,10 +798,17 @@ const SECOES = [
       : '<div class="vazio">Nenhum material encontrado.</div>';
   }
   $('#divisoes').addEventListener('click', e => { const b = e.target.closest('.divisao'); if (b) ir('professor/' + b.dataset.id, true); });
+  $('#barra').addEventListener('click', e => {
+    if (e.target.closest('[data-trocar]')) { trocando = !!me; if (!me) gravar('mc-later', null, sessionStorage); erroCodigo = ''; render(); return; }
+    /* o professor vendo a área do aluno não precisa de código */
+    if (e.target.closest('[data-ver-aluno]')) gravar('mc-later', '1', sessionStorage);
+  });
+  $('#conteudo').addEventListener('submit', e => { const f = e.target.closest('[data-codigo]'); if (f) { e.preventDefault(); entrarComCodigo(f); } });
   $('#conteudo').addEventListener('click', e => {
     const p = e.target.closest('.pastinha[data-curso]');
     if (p) { filtro = 'tudo'; ir('aluno/' + p.dataset.curso, true); window.scrollTo({top: Math.max(0, $('#area').offsetTop - 12), behavior: 'smooth'}); return; }
     if (e.target.closest('[data-voltar]')) { ir('aluno', true); return; }
+    if (e.target.closest('[data-sem]')) { if (trocando) trocando = false; else gravar('mc-later', '1', sessionStorage); erroCodigo = ''; render(); return; }
     const f = e.target.closest('[data-filtro]');
     if (f) { filtro = f.dataset.filtro; mostrarConteudo(); return; }
     const b = e.target.closest('.abre');
